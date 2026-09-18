@@ -16,6 +16,23 @@ jobs:
     name: Security · Types · Lint · Build · Migration safety
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: bidvera_ci
+          POSTGRES_PASSWORD: bidvera_ci
+          POSTGRES_DB: bidvera_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U bidvera_ci -d bidvera_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      # Disposable ephemeral CI DB only — never production / Neon / VPS credentials.
+      DATABASE_URL: postgresql://bidvera_ci:bidvera_ci@127.0.0.1:5432/bidvera_ci
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,6 +48,11 @@ jobs:
 
       - name: Migration safety scan
         run: npx tsx scripts/migration-safety-scan.ts
+
+      - name: Prepare ephemeral CI database
+        # Schema sync onto disposable empty Postgres (not production migrate path).
+        # Historical migrations are not replayed here — CI DB is throwaway only.
+        run: npx prisma db push
 
       - name: Security tests
         run: npm run test:security
