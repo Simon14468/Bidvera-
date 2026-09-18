@@ -1,0 +1,27 @@
+{
+  "form-type = competition AND buyer-country IN (MAR FRA ESP PRT) AND publication-date >= 20260613 AND deadline-receipt-tender-date-lot >= 20260911": {
+    "status": 200,
+    "err": null,
+    "sample": []
+  },
+  "form-type = competition AND buyer-country IN (MAR FRA ESP PRT) AND publication-date >= 20260613 AND (classification-cpv = 72* OR classification-cpv = 71* OR classification-cpv = 79* OR classification-cpv = 45*)": {
+    "status": 200,
+    "err": null,
+    "sample": []
+  },
+  "form-type = competition AND buyer-country IN (MAR FRA ESP PRT) AND publication-date >= 20260613 AND deadline-receipt-tender-date-lot >= 20260911 AND (classification-cpv = 72* OR classification-cpv = 71* OR classification-cpv = 79* OR classification-cpv = 45* OR classification-cpv = 48* OR classification-cpv = 32* OR classification-cpv = 33*)": {
+    "status": 200,
+    "err": null,
+    "sample": []
+  },
+  "form-type = competition AND buyer-country = MAR AND publication-date >= 20250101": {
+    "status": 200,
+    "err": null,
+    "sample": []
+  },
+  "form-type = competition AND buyer-country = ESP AND publication-date >= 20260801 AND deadline-receipt-tender-date-lot >= 20260911": {
+    "status": 200,
+    "err": null,
+    "sample": []
+  }
+}

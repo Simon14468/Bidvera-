@@ -1,0 +1,223 @@
+# Bidvera MULTI-INSTANCE isolated load-test stack.
+# NEVER point at production / Neon / customer data.
+#
+# Topology: Nginx → app1 + app2 + app3 → Postgres; separate worker.
+# Shared volume: bidvera_multi_data (STORAGE_ROOT / sessions seed / reports).
+# Single shared image (avoids parallel unpack I/O failures on Docker Desktop).
+#
+# Usage (from repo root):
+#   docker compose -f load-test/docker-compose.multi.yml build
+#   docker compose -f load-test/docker-compose.multi.yml up -d
+#   docker compose -f load-test/docker-compose.multi.yml --profile run-k6 run --rm k6
+#   docker compose -f load-test/docker-compose.multi.yml down -v
+
+name: bidvera-load-multi
+
+x-app-env: &app-env
+  NODE_ENV: production
+  DATABASE_URL: postgresql://bidvera:bidvera_load_test_only@postgres:5432/bidvera_load?schema=public
+  AUTH_SECRET: load-test-auth-secret-min-32-chars-xx
+  SUPER_ADMIN_PATH: bv-load-test-sa
+  SUPER_ADMIN_EMAIL: loadtest-sa@bidvera.test
+  SUPER_ADMIN_PASSWORD: LoadTestSuperAdmin1!
+  NEXT_PUBLIC_APP_URL: http://localhost:3100
+  NEXT_PUBLIC_APP_NAME: Bidvera-LoadTest-Multi
+  RATE_LIMIT_BACKEND: durable
+  # Connection budget (staging Postgres max_connections=200):
+  # (3 app + 1 worker) × 15 = 60 < 200 with headroom.
+  PRISMA_CONNECTION_LIMIT: "15"
+  PRISMA_POOL_TIMEOUT: "20"
+  STORAGE_ROOT: /app/.data/uploads
+  BACKUP_ROOT: /app/.data/backups
+  LOAD_TEST_MODE: "1"
+  LOAD_TEST_USER_COUNT: ${LOAD_TEST_USER_COUNT:-1000}
+  LOAD_TEST_REPORT_PATH: /app/.data/load-test/latest-report.json
+  LOAD_TEST_USERS_OUT: /app/.data/load-test/users.json
+  LOAD_TEST_SKIP_SEED: "1"
+  TURNSTILE_SITE_KEY: ""
+  TURNSTILE_SECRET_KEY: ""
+  RESEND_API_KEY: ""
+  STRIPE_SECRET_KEY: ""
+  PAYPAL_CLIENT_ID: ""
+  PAYPAL_CLIENT_SECRET: ""
+  AI_API_KEY: ""
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    command:
+      - postgres
+      - -c
+      - max_connections=200
+      - -c
+      - shared_buffers=256MB
+    environment:
+      POSTGRES_USER: bidvera
+      POSTGRES_PASSWORD: bidvera_load_test_only
+      POSTGRES_DB: bidvera_load
+    ports:
+      - "5433:5432"
+    volumes:
+      - bidvera_multi_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bidvera -d bidvera_load"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # Build once; seed/app*/worker reuse this tag.
+  seed:
+    build:
+      context: ..
+      dockerfile: load-test/Dockerfile
+    image: bidvera-load-multi-app:latest
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      <<: *app-env
+      LOAD_TEST_ROLE: seed
+      LOAD_TEST_SKIP_SEED: "0"
+    volumes:
+      - bidvera_multi_data:/app/.data
+    restart: "no"
+
+  app1:
+    image: bidvera-load-multi-app:latest
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+    environment:
+      <<: *app-env
+      INSTANCE_ID: app1
+      LOAD_TEST_ROLE: app
+    volumes:
+      - bidvera_multi_data:/app/.data
+    expose:
+      - "3000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 36
+      start_period: 180s
+
+  app2:
+    image: bidvera-load-multi-app:latest
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+    environment:
+      <<: *app-env
+      INSTANCE_ID: app2
+      LOAD_TEST_ROLE: app
+    volumes:
+      - bidvera_multi_data:/app/.data
+    expose:
+      - "3000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 36
+      start_period: 180s
+
+  app3:
+    image: bidvera-load-multi-app:latest
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+    environment:
+      <<: *app-env
+      INSTANCE_ID: app3
+      LOAD_TEST_ROLE: app
+    volumes:
+      - bidvera_multi_data:/app/.data
+    expose:
+      - "3000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 36
+      start_period: 180s
+
+  worker:
+    image: bidvera-load-multi-app:latest
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+      app1:
+        condition: service_healthy
+    environment:
+      <<: *app-env
+      INSTANCE_ID: worker
+      LOAD_TEST_ROLE: worker
+    volumes:
+      - bidvera_multi_data:/app/.data
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.27-alpine
+    depends_on:
+      app1:
+        condition: service_healthy
+      app2:
+        condition: service_healthy
+      app3:
+        condition: service_healthy
+    ports:
+      - "3100:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  k6:
+    image: grafana/k6:0.54.0
+    depends_on:
+      nginx:
+        condition: service_healthy
+    environment:
+      BASE_URL: http://nginx:80
+      USERS_FILE: /app-data/load-test/users.json
+      REPORT_OUT: /results/multi/k6-summary.json
+      APP_REPORT_OUT: /app-data/load-test/latest-report.json
+      MAX_VUS: ${MAX_VUS:-100}
+      HOLD_SECONDS: ${HOLD_SECONDS:-120}
+      ERROR_RATE_THRESHOLD: ${ERROR_RATE_THRESHOLD:-0.05}
+      P95_MS: ${P95_MS:-15000}
+      P99_MS: ${P99_MS:-45000}
+    volumes:
+      - ./k6:/scripts:ro
+      - ./fixtures:/fixtures:ro
+      - ./results:/results
+      - bidvera_multi_data:/app-data
+    entrypoint: ["k6"]
+    command: ["run", "--out", "json=/results/multi/k6-raw.json", "/scripts/journeys.js"]
+    profiles: ["run-k6"]
+
+volumes:
+  bidvera_multi_pg:
+  bidvera_multi_data:

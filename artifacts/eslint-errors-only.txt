@@ -1,0 +1,36 @@
+﻿
+C:\Users\Lenovo\Videos\SaaS Bidvera AI\src\application\tender-service.ts
+  195:7  error  'evidence' is never reassigned. Use 'const' instead  prefer-const
+
+C:\Users\Lenovo\Videos\SaaS Bidvera AI\src\components\tenders\decision-simulator-panel.tsx
+  67:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\Lenovo\Videos\SaaS Bidvera AI\src\components\tenders\decision-simulator-panel.tsx:67:5
+  65 |     if (!shouldLoad) return;
+  66 |     let cancelled = false;
+> 67 |     setLoading(true);
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  68 |     fetchDecisionSimulatorContextAction(tenderId)
+  69 |       .then((ctx) => {
+  70 |         if (cancelled) return;  react-hooks/set-state-in-effect
+
+C:\Users\Lenovo\Videos\SaaS Bidvera AI\src\domain\bid-score\compute.ts
+  183:7  error  'missingPenalty' is never reassigned. Use 'const' instead  prefer-const
+  195:7  error  'verifyPenalty' is never reassigned. Use 'const' instead   prefer-const
+
+C:\Users\Lenovo\Videos\SaaS Bidvera AI\src\lib\rate-limit.ts
+  40:9  error  React Hook "useMemoryBackend" cannot be called in a class component. React Hooks must be called in a React function component or a custom React Hook function  react-hooks/rules-of-hooks
+  56:9  error  React Hook "useMemoryBackend" cannot be called in a class component. React Hooks must be called in a React function component or a custom React Hook function  react-hooks/rules-of-hooks
+
+C:\Users\Lenovo\Videos\SaaS Bidvera AI\src\services\reports\premium-pdf-report.ts
+  315:7  error  'y' is never reassigned. Use 'const' instead  prefer-const
+
+Ô£û 7 problems (7 errors, 0 warnings)
+  4 errors and 0 warnings potentially fixable with the `--fix` option.
+

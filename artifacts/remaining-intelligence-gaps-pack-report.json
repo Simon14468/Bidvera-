@@ -1,0 +1,139 @@
+{
+  "pack": "C:\\Users\\Lenovo\\Videos\\SaaS Bidvera AI\\.data\\uploads\\cmtozosbe0000rkxc38a99c4w\\cmtq71rgs0d0irkw42bszridx",
+  "files": 7,
+  "failedFiles": 0,
+  "roles": [
+    {
+      "fileName": "1788722258345-ITB_Section_II_Schedule_of_Requirements.pdf",
+      "role": "SCHEDULE_OF_REQUIREMENTS"
+    },
+    {
+      "fileName": "1788722258346-ITB_Section_III_Returnable_Bidding_Forms.docx",
+      "role": "RETURNABLE_FORMS"
+    },
+    {
+      "fileName": "1788722258347-Section_I_-_Instruction_to_Offerors.pdf",
+      "role": "INSTRUCTIONS"
+    },
+    {
+      "fileName": "1788722258348-Section_VI_-_Contract_Forms.pdf",
+      "role": "SAMPLE_CONTRACT"
+    },
+    {
+      "fileName": "1788722258350-UNOPS_eSourcing_Vendor_Guide_v1.4_EN_final.pdf",
+      "role": "VENDOR_GUIDE"
+    },
+    {
+      "fileName": "1788722258350-UN_Supplier_Code_of_Conduct.pdf",
+      "role": "POLICY_OR_CODE"
+    },
+    {
+      "fileName": "1788722258351-Amendment_No._1_Form_C_and_D_Requirements_and_Price_List_ITB_2026_62687.xlsx",
+      "role": "SCHEDULE_OF_REQUIREMENTS"
+    }
+  ],
+  "heuristicDrafts": 245,
+  "harvestLimitReached": false,
+  "admittedCandidates": 46,
+  "sealedAdmitted": 45,
+  "canonical": 44,
+  "uniqueCanonicalFingerprints": 44,
+  "sealedCanonicalCandidates": 45,
+  "sealedUniqueCanonicalFingerprints": 44,
+  "collapsedAtCanonical": 1,
+  "collapsedPair": {
+    "fingerprint": "20 28 able cluster countries export facilitate following following least|life:pre|actor:bidder|pol:pos",
+    "a": {
+      "text": "UNOPS - Peace and Security Cluster is operating in the following countries. Bidders must be able to facilitate export to at least 20 out of 28 of the following ",
+      "actor": "BIDDER",
+      "phase": "BID_SUBMISSION"
+    },
+    "b": {
+      "text": "UNOPS - Peace and Security Cluster is operating in the following countries. Bidder must be able to facilitate export to at least 20 out of 28 of the following l",
+      "actor": "BIDDER",
+      "phase": "BID_SUBMISSION"
+    }
+  },
+  "legacyIdentityForks": 0,
+  "legacyIdentityForkSamples": [],
+  "rejected": 198,
+  "chromeInHarvest": 0,
+  "chromeInCanonical": 0,
+  "focalPersonActor": "AUTHORITY",
+  "focalPersonAdmitted": false,
+  "vendorGuideAdmitted": 0,
+  "policyAdmitted": 0,
+  "contractFormsAdmitted": 0,
+  "contaminationCount": 0,
+  "deadline": {
+    "status": "INCOMPLETE",
+    "iso": null,
+    "timezone": null,
+    "reason": "A bid-submission deadline is referenced but the calendar date is not present in the available package text.",
+    "evidence": "deadline for Proposal Submission, UNOPS may at its discretion modify the RFP Documents by"
+  },
+  "brochureIdentityMerged": true,
+  "brochureAdmitted": 1,
+  "actionPlanTotal": 44,
+  "genericLinkedRequirementActions": 0,
+  "sampleActionTitles": [
+    "Confirm technical capacity",
+    "Confirm the required form",
+    "Confirm the required form",
+    "Verify: a. process UNOPS Personal Data solely and exclusively in accordance with the requirements…",
+    "Verify: All Proposals shall be submitted to UNOPS in accordance with the requirements set out in…",
+    "Verify: All Proposals, information, documents and correspondence exchanged between UNOPS and the…",
+    "Verify: An Offeror is associated, or has been associated in the past, directly or indirectly, wit…",
+    "Verify: An Offeror shall not have a conflict of interest. An Offeror shall be considered to have…"
+  ],
+  "sampleAdmitted": [
+    {
+      "text": "The names of representatives of Offerors who will attend the clarification meeting shall be submitted in writing by Offerors to the UNOPS co",
+      "actor": "BIDDER",
+      "phase": "BID_SUBMISSION",
+      "source": "1788722258347-Section_I_-_Instruction_to_Offerors.pdf"
+    },
+    {
+      "text": "Unsuccessful Offerors’ Proposal securities will be discharged/returned as promptly as possible, but no later than thirty (30) days after the",
+      "actor": "BIDDER",
+      "phase": "BID_SUBMISSION",
+      "source": "1788722258347-Section_I_-_Instruction_to_Offerors.pdf"
+    },
+    {
+      "text": "UNOPS - Peace and Security Cluster is operating in the following countries. Bidders must be able to facilitate export to at least 20 out of ",
+      "actor": "BIDDER",
+      "phase": "BID_SUBMISSION",
+      "source": "1788722258345-ITB_Section_II_Schedule_of_Requirements.pdf; 1788722258346-ITB_Section_III_Returnable_Bidding_Forms.docx"
+    },
+    {
+      "text": "If applicable, the terms FCA, CPT and other similar terms shall be governed by the rules prescribed in the 2020 edition of Incoterms, publis",
+      "actor": "UNKNOWN",
+      "phase": "PRE_AWARD_COMMITMENT",
+      "source": "1788722258347-Section_I_-_Instruction_to_Offerors.pdf"
+    },
+    {
+      "text": "• An Offeror is associated, or has been associated in the past, directly or indirectly, with a firm or any of its affiliates which have been",
+      "actor": "OFFEROR",
+      "phase": "BID_SUBMISSION",
+      "source": "1788722258347-Section_I_-_Instruction_to_Offerors.pdf"
+    },
+    {
+      "text": "Without limiting Article 6, Offerors shall not rely upon any information, statement or representation made at the clarification meeting unle",
+      "actor": "BIDDER",
+      "phase": "PRE_BID",
+      "source": "1788722258347-Section_I_-_Instruction_to_Offerors.pdf"
+    },
+    {
+      "text": "Article 6, Offerors shall not rely upon any information, statement or representation made at a site visit unless that information, statement",
+      "actor": "BIDDER",
+      "phase": "PRE_BID",
+      "source": "1788722258347-Section_I_-_Instruction_to_Offerors.pdf"
+    },
+    {
+      "text": "Offerors must disclose any actual or potential conflict of interest in the Offeror Information Form and they shall be deemed ineligible for ",
+      "actor": "OFFEROR",
+      "phase": "BID_SUBMISSION",
+      "source": "1788722258347-Section_I_-_Instruction_to_Offerors.pdf"
+    }
+  ]
+}

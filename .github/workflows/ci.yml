@@ -1,0 +1,49 @@
+# CI — required gates before any deploy workflow may proceed.
+name: CI
+
+on:
+  push:
+    branches: [master, main, staging]
+  pull_request:
+    branches: [master, main, staging]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gates:
+    name: Security · Types · Lint · Build · Migration safety
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Migration safety scan
+        run: npx tsx scripts/migration-safety-scan.ts
+
+      - name: Security tests
+        run: npm run test:security
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+        env:
+          # Build-time public placeholders only — never real secrets
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          NEXT_PUBLIC_APP_NAME: Bidvera-CI

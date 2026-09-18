@@ -1,0 +1,115 @@
+# Staging auto-deploy — Cursor push → GitHub → VPS (staging only).
+#
+# Required GitHub Secrets (never commit):
+#   STAGING_SSH_HOST, STAGING_SSH_USER, STAGING_SSH_KEY, STAGING_REPO_URL
+# Optional:
+#   STAGING_SSH_PORT (default 22)
+#   STAGING_APP_PORTS (default "3000 3001 3002")
+#   STAGING_PUBLIC_URL (https://staging.example.com for post-deploy smoke)
+#
+# Production is NEVER triggered here.
+name: Deploy staging
+
+on:
+  push:
+    branches: [staging]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+jobs:
+  gates:
+    name: Pre-deploy CI gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npx tsx scripts/migration-safety-scan.ts
+      - run: npm run test:security
+      - run: npx tsc --noEmit
+      - run: npm run lint
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          NEXT_PUBLIC_APP_NAME: Bidvera-CI
+
+  deploy:
+    name: Staging VPS rolling deploy
+    needs: gates
+    runs-on: ubuntu-latest
+    environment: staging
+    timeout-minutes: 60
+    steps:
+      - name: Require staging SSH secrets
+        env:
+          STAGING_SSH_HOST: ${{ secrets.STAGING_SSH_HOST }}
+          STAGING_SSH_USER: ${{ secrets.STAGING_SSH_USER }}
+          STAGING_SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
+          STAGING_REPO_URL: ${{ secrets.STAGING_REPO_URL }}
+        run: |
+          missing=0
+          [ -n "$STAGING_SSH_HOST" ] || { echo "Missing secret STAGING_SSH_HOST"; missing=1; }
+          [ -n "$STAGING_SSH_USER" ] || { echo "Missing secret STAGING_SSH_USER"; missing=1; }
+          [ -n "$STAGING_SSH_KEY" ] || { echo "Missing secret STAGING_SSH_KEY"; missing=1; }
+          [ -n "$STAGING_REPO_URL" ] || { echo "Missing secret STAGING_REPO_URL"; missing=1; }
+          if [ "$missing" -ne 0 ]; then
+            echo "Staging deploy secrets not configured — refusing deploy (safe default)."
+            exit 1
+          fi
+
+      - name: Start SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.STAGING_SSH_KEY }}
+
+      - name: Add host to known_hosts
+        env:
+          HOST: ${{ secrets.STAGING_SSH_HOST }}
+          PORT: ${{ secrets.STAGING_SSH_PORT }}
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "${PORT:-22}" -H "$HOST" >> ~/.ssh/known_hosts
+
+      - name: Prepare release + rolling deploy on VPS
+        env:
+          HOST: ${{ secrets.STAGING_SSH_HOST }}
+          USER: ${{ secrets.STAGING_SSH_USER }}
+          PORT: ${{ secrets.STAGING_SSH_PORT }}
+          REPO_URL: ${{ secrets.STAGING_REPO_URL }}
+          APP_PORTS: ${{ secrets.STAGING_APP_PORTS }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          # github.sha is hex-only — safe for remote shell.
+          echo "$SHA" | grep -Eq '^[0-9a-f]{40}$' || { echo "Unexpected SHA"; exit 1; }
+          SSH=(ssh -p "${PORT:-22}" -o BatchMode=yes -o StrictHostKeyChecking=yes "${USER}@${HOST}")
+          PORTS="${APP_PORTS:-3000 3001 3002}"
+          "${SSH[@]}" env DEPLOY_SHA="$SHA" DEPLOY_ENV=staging DEPLOY_ROOT=/opt/bidvera REPO_URL="$REPO_URL" APP_PORTS="$PORTS" \
+            bash -lc 'set -euo pipefail
+              SCRIPTS=""
+              if [ -f /opt/bidvera/releases/'"$SHA"'/deploy/scripts/prepare-release.sh ]; then
+                SCRIPTS=/opt/bidvera/releases/'"$SHA"'/deploy/scripts
+              elif [ -f /opt/bidvera/bootstrap/deploy/scripts/prepare-release.sh ]; then
+                SCRIPTS=/opt/bidvera/bootstrap/deploy/scripts
+              else
+                echo "Bootstrap deploy scripts missing under /opt/bidvera/bootstrap — see docs/safe-auto-deploy.md"
+                exit 1
+              fi
+              bash "$SCRIPTS/prepare-release.sh"
+              bash "/opt/bidvera/releases/'"$SHA"'/deploy/scripts/remote-deploy.sh"
+            '
+
+      - name: Smoke health through public staging URL
+        if: ${{ vars.STAGING_PUBLIC_URL != '' }}
+        env:
+          URL: ${{ vars.STAGING_PUBLIC_URL }}
+        run: |
+          curl -sf --max-time 30 "${URL%/}/api/health" | grep -q '"ok":true'
+          curl -sf --max-time 30 "${URL%/}/api/ready" | grep -q '"ready":true'

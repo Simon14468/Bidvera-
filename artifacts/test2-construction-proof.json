@@ -1,0 +1,764 @@
+{
+  "analysisId": "fresh-t2-construction-1788718232761",
+  "sourceFile": "C:\\Users\\Lenovo\\Videos\\SaaS Bidvera AI\\.data\\uploads\\cmtfvf1vm0000rkgkqq291zux\\cmtk7556702o5rkm8n41hwuyl\\1788359618970-Bidvera_Test_2_Construction_Tender_2026.pdf",
+  "sourceFileHash": "d17103846eb73684ab8d9606055fc47f73ad4c2360075580803c0d40171ac740",
+  "sourceTextHash": "6f6d2a5751adf9d94eb14ff0ed76bf186dc5cff87b5a2c1ed8b6a618f5c85091",
+  "extractMethod": "pdf-parse",
+  "textLength": 6482,
+  "heuristicDraftCount": 24,
+  "canonicalItemCount": 13,
+  "contentHash": "ced967017",
+  "deadline": {
+    "iso": "2026-10-06T10:30:00",
+    "timezone": null,
+    "wallClock": "2026-10-06T10:30:00",
+    "sourceHasPhrase": true
+  },
+  "decision": "REVIEW",
+  "fitScore": 80,
+  "hardBlockers": [],
+  "reviewItems": [
+    "12 mandatory requirements require verification."
+  ],
+  "risks": [
+    {
+      "id": "risk-1",
+      "title": "• E-01 The bidder must be legally registered to perform building renovation and related electrical/HVAC works.",
+      "severity": "MEDIUM",
+      "requirementId": "E-01",
+      "evidenceState": "NEEDS_VERIFICATION"
+    },
+    {
+      "id": "risk-2",
+      "title": "• E-02 The bidder must provide valid tax-clearance and social-security compliance certificates.",
+      "severity": "MEDIUM",
+      "requirementId": "E-02",
+      "evidenceState": "NEEDS_VERIFICATION"
+    },
+    {
+      "id": "risk-3",
+      "title": "• E-03 The bidder must submit a signed declaration of honour using the prescribed form.",
+      "severity": "MEDIUM",
+      "requirementId": "E-03",
+      "evidenceState": "NEEDS_VERIFICATION"
+    },
+    {
+      "id": "risk-4",
+      "title": "• E-04 The bidder must provide a provisional tender guarantee of MAD 25,000.",
+      "severity": "MEDIUM",
+      "requirementId": "E-04",
+      "evidenceState": "NEEDS_VERIFICATION"
+    },
+    {
+      "id": "risk-5",
+      "title": "• E-05 The bidder must demonstrate at least 4 comparable building renovation projects completed during the previous 6 ye",
+      "severity": "MEDIUM",
+      "requirementId": "E-05",
+      "evidenceState": "NEEDS_VERIFICATION"
+    },
+    {
+      "id": "risk-6",
+      "title": "• T-01 Roof insulation must achieve a minimum thermal resistance of R = 5.0 m²K/W.",
+      "severity": "MEDIUM",
+      "requirementId": "T-01",
+      "evidenceState": "NEEDS_VERIFICATION"
+    },
+    {
+      "id": "risk-7",
+      "title": "• T-02 Replacement windows must use double glazing with a declared U-value not exceeding 1.6 W/m²K.",
+      "severity": "MEDIUM",
+      "requirementId": "T-02",
+      "evidenceState": "NEEDS_VERIFICATION"
+    },
+    {
+      "id": "risk-8",
+      "title": "• T-03 All replacement lighting fixtures must be LED with a minimum efficacy of 120 lm/W.",
+      "severity": "MEDIUM",
+      "requirementId": "T-03",
+      "evidenceState": "NEEDS_VERIFICATION"
+    },
+    {
+      "id": "risk-9",
+      "title": "• T-04 HVAC units must use refrigerant with a global-warming-potential value below 750 and include programmable controls",
+      "severity": "MEDIUM",
+      "requirementId": "T-04",
+      "evidenceState": "NEEDS_VERIFICATION"
+    },
+    {
+      "id": "risk-10",
+      "title": "• T-05 The bidder must provide electrical installation test certificates after completion.",
+      "severity": "MEDIUM",
+      "requirementId": "T-05",
+      "evidenceState": "NEEDS_VERIFICATION"
+    },
+    {
+      "id": "risk-11",
+      "title": "• T-07 The works must be completed within 120 calendar days from contractual commencement.",
+      "severity": "MEDIUM",
+      "requirementId": "T-07",
+      "evidenceState": "NEEDS_VERIFICATION"
+    },
+    {
+      "id": "risk-12",
+      "title": "• The contract price shall remain firm and non-revisable.",
+      "severity": "MEDIUM",
+      "requirementId": "t2c-r12",
+      "evidenceState": "NEEDS_VERIFICATION"
+    }
+  ],
+  "actions": [
+    {
+      "id": "ecd70087a1729309",
+      "title": "Provide evidence for linked requirement",
+      "linkedRequirementId": "E-01",
+      "blocking": false,
+      "sourceType": "MISSING_EVIDENCE",
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "f2d01a95e3d9b74f",
+      "title": "Provide evidence for linked requirement",
+      "linkedRequirementId": "E-02",
+      "blocking": false,
+      "sourceType": "MISSING_EVIDENCE",
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "792f9e37a3db82d5",
+      "title": "Provide evidence for linked requirement",
+      "linkedRequirementId": "E-03",
+      "blocking": false,
+      "sourceType": "MISSING_EVIDENCE",
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "e74696a5c10045be",
+      "title": "Provide evidence for linked requirement",
+      "linkedRequirementId": "E-04",
+      "blocking": false,
+      "sourceType": "MISSING_EVIDENCE",
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "c8f8048bd3872025",
+      "title": "Provide evidence for linked requirement",
+      "linkedRequirementId": "E-05",
+      "blocking": false,
+      "sourceType": "MISSING_EVIDENCE",
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "a0795b95097ffdc9",
+      "title": "Provide evidence for linked requirement",
+      "linkedRequirementId": "T-01",
+      "blocking": false,
+      "sourceType": "MISSING_EVIDENCE",
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "96f195af6bcfb2e2",
+      "title": "Provide evidence for linked requirement",
+      "linkedRequirementId": "T-02",
+      "blocking": false,
+      "sourceType": "MISSING_EVIDENCE",
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "e426f99c9a26888f",
+      "title": "Provide evidence for linked requirement",
+      "linkedRequirementId": "T-03",
+      "blocking": false,
+      "sourceType": "MISSING_EVIDENCE",
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "8221a72ff3c77fd7",
+      "title": "Provide evidence for linked requirement",
+      "linkedRequirementId": "T-04",
+      "blocking": false,
+      "sourceType": "MISSING_EVIDENCE",
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "6f3fa93ad6b502c9",
+      "title": "Provide evidence for linked requirement",
+      "linkedRequirementId": "T-05",
+      "blocking": false,
+      "sourceType": "MISSING_EVIDENCE",
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "229780fd9c1e0bcf",
+      "title": "Provide evidence for linked requirement",
+      "linkedRequirementId": "T-07",
+      "blocking": false,
+      "sourceType": "MISSING_EVIDENCE",
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "0057eb5fefcd2420",
+      "title": "Provide evidence for linked requirement",
+      "linkedRequirementId": "t2c-r12",
+      "blocking": false,
+      "sourceType": "MISSING_EVIDENCE",
+      "priority": "CRITICAL"
+    },
+    {
+      "id": "ab99d46d1d948962",
+      "title": "Provide evidence for linked requirement",
+      "linkedRequirementId": "T-09",
+      "blocking": false,
+      "sourceType": "MISSING_EVIDENCE",
+      "priority": "HIGH"
+    }
+  ],
+  "canonicalItems": [
+    {
+      "id": "E-01",
+      "semanticKind": "ELIGIBILITY_REQUIREMENT",
+      "category": "MANDATORY_ELIGIBILITY",
+      "obligationStrength": "MANDATORY",
+      "mandatory": true,
+      "sourceSection": "2. Eligibility and Administrative Requirements",
+      "page": 1,
+      "requirement": "• E-01 The bidder must be legally registered to perform building renovation and related electrical/HVAC works."
+    },
+    {
+      "id": "E-02",
+      "semanticKind": "REQUIRED_DOCUMENT",
+      "category": "MANDATORY_ADMINISTRATIVE",
+      "obligationStrength": "MANDATORY",
+      "mandatory": true,
+      "sourceSection": "2. Eligibility and Administrative Requirements",
+      "page": 1,
+      "requirement": "• E-02 The bidder must provide valid tax-clearance and social-security compliance certificates."
+    },
+    {
+      "id": "E-03",
+      "semanticKind": "REQUIRED_DOCUMENT",
+      "category": "MANDATORY_ADMINISTRATIVE",
+      "obligationStrength": "MANDATORY",
+      "mandatory": true,
+      "sourceSection": "2. Eligibility and Administrative Requirements",
+      "page": 1,
+      "requirement": "• E-03 The bidder must submit a signed declaration of honour using the prescribed form."
+    },
+    {
+      "id": "E-04",
+      "semanticKind": "GUARANTEE_SECURITY_REQUIREMENT",
+      "category": "CONTRACTUAL",
+      "obligationStrength": "MANDATORY",
+      "mandatory": true,
+      "sourceSection": "2. Eligibility and Administrative Requirements",
+      "page": 1,
+      "requirement": "• E-04 The bidder must provide a provisional tender guarantee of MAD 25,000."
+    },
+    {
+      "id": "E-05",
+      "semanticKind": "ELIGIBILITY_REQUIREMENT",
+      "category": "MANDATORY_ELIGIBILITY",
+      "obligationStrength": "MANDATORY",
+      "mandatory": true,
+      "sourceSection": "2. Eligibility and Administrative Requirements",
+      "page": 1,
+      "requirement": "• E-05 The bidder must demonstrate at least 4 comparable building renovation projects completed during the previous 6 years, including client references."
+    },
+    {
+      "id": "T-01",
+      "semanticKind": "TECHNICAL_REQUIREMENT",
+      "category": "CONTRACTUAL",
+      "obligationStrength": "MANDATORY",
+      "mandatory": true,
+      "sourceSection": "3. Technical Requirements",
+      "page": 2,
+      "requirement": "• T-01 Roof insulation must achieve a minimum thermal resistance of R = 5.0 m²K/W."
+    },
+    {
+      "id": "T-02",
+      "semanticKind": "TECHNICAL_REQUIREMENT",
+      "category": "CONTRACTUAL",
+      "obligationStrength": "MANDATORY",
+      "mandatory": true,
+      "sourceSection": "3. Technical Requirements",
+      "page": 2,
+      "requirement": "• T-02 Replacement windows must use double glazing with a declared U-value not exceeding 1.6 W/m²K."
+    },
+    {
+      "id": "T-03",
+      "semanticKind": "TECHNICAL_REQUIREMENT",
+      "category": "CONTRACTUAL",
+      "obligationStrength": "MANDATORY",
+      "mandatory": true,
+      "sourceSection": "3. Technical Requirements",
+      "page": 2,
+      "requirement": "• T-03 All replacement lighting fixtures must be LED with a minimum efficacy of 120 lm/W."
+    },
+    {
+      "id": "T-04",
+      "semanticKind": "TECHNICAL_REQUIREMENT",
+      "category": "CONTRACTUAL",
+      "obligationStrength": "MANDATORY",
+      "mandatory": true,
+      "sourceSection": "3. Technical Requirements",
+      "page": 2,
+      "requirement": "• T-04 HVAC units must use refrigerant with a global-warming-potential value below 750 and include programmable controls."
+    },
+    {
+      "id": "T-05",
+      "semanticKind": "TECHNICAL_REQUIREMENT",
+      "category": "CONTRACTUAL",
+      "obligationStrength": "MANDATORY",
+      "mandatory": true,
+      "sourceSection": "3. Technical Requirements",
+      "page": 2,
+      "requirement": "• T-05 The bidder must provide electrical installation test certificates after completion."
+    },
+    {
+      "id": "T-07",
+      "semanticKind": "TECHNICAL_REQUIREMENT",
+      "category": "CONTRACTUAL",
+      "obligationStrength": "MANDATORY",
+      "mandatory": true,
+      "sourceSection": "3. Technical Requirements",
+      "page": 2,
+      "requirement": "• T-07 The works must be completed within 120 calendar days from contractual commencement."
+    },
+    {
+      "semanticKind": "FINANCIAL_COMMERCIAL_CONDITION",
+      "category": "CONTRACTUAL",
+      "obligationStrength": "MANDATORY",
+      "mandatory": true,
+      "sourceSection": "4. Commercial and Contractual Conditions",
+      "page": 2,
+      "requirement": "• The contract price shall remain firm and non-revisable."
+    },
+    {
+      "id": "T-09",
+      "semanticKind": "TECHNICAL_REQUIREMENT",
+      "category": "MANDATORY_TECHNICAL",
+      "obligationStrength": "CONDITIONAL",
+      "mandatory": false,
+      "sourceSection": "8. Conditional Technical Requirement",
+      "page": 4,
+      "requirement": "• T-09 (conditional) If the bidder proposes replacing HVAC equipment rather than repairing existing units, the proposed replacement units must include manufacturer documentation confirming the required refrigerant specification and programmable control capability."
+    }
+  ],
+  "commercialAudit": [
+    {
+      "id": "firm-pricing",
+      "pattern": {},
+      "label": "Firm / non-revisable pricing",
+      "inSource": true,
+      "canonicalCount": 2,
+      "canonicalIds": [
+        null,
+        "T-09"
+      ],
+      "snippets": [
+        "• The contract price shall remain firm and non-revisable.",
+        "• T-09 (conditional) If the bidder proposes replacing HVAC equipment rather than repairing existing units, the proposed replacement units mu"
+      ]
+    },
+    {
+      "id": "performance-guarantee",
+      "pattern": {},
+      "label": "Performance guarantee",
+      "inSource": true,
+      "canonicalCount": 0,
+      "canonicalIds": [],
+      "snippets": []
+    },
+    {
+      "id": "monthly-payment",
+      "pattern": {},
+      "label": "Monthly / certified progress payment",
+      "inSource": true,
+      "canonicalCount": 0,
+      "canonicalIds": [],
+      "snippets": []
+    },
+    {
+      "id": "delay-penalty",
+      "pattern": {},
+      "label": "Delay penalties",
+      "inSource": true,
+      "canonicalCount": 0,
+      "canonicalIds": [],
+      "snippets": []
+    },
+    {
+      "id": "site-safety",
+      "pattern": {},
+      "label": "Site safety / protection / waste",
+      "inSource": true,
+      "canonicalCount": 0,
+      "canonicalIds": [],
+      "snippets": []
+    },
+    {
+      "id": "insurance",
+      "pattern": {},
+      "label": "Insurance",
+      "inSource": true,
+      "canonicalCount": 0,
+      "canonicalIds": [],
+      "snippets": []
+    },
+    {
+      "id": "imported-materials",
+      "pattern": {},
+      "label": "Imported materials responsibility",
+      "inSource": true,
+      "canonicalCount": 0,
+      "canonicalIds": [],
+      "snippets": []
+    }
+  ],
+  "specialChecks": {
+    "e05": {
+      "source": {
+        "presentInSource": true,
+        "needles": [
+          "4",
+          "6 year",
+          "client reference"
+        ]
+      },
+      "canonical": [
+        "• E-05 The bidder must demonstrate at least 4 comparable building renovation projects completed during the previous 6 years, including client references."
+      ]
+    },
+    "t04": {
+      "source": {
+        "presentInSource": true,
+        "needles": [
+          "750",
+          "programmable"
+        ]
+      },
+      "canonical": [
+        "• T-04 HVAC units must use refrigerant with a global-warming-potential value below 750 and include programmable controls.",
+        "• T-09 (conditional) If the bidder proposes replacing HVAC equipment rather than repairing existing units, the proposed replacement units must include manufacturer documentation confirming the required refrigerant specification and programmable control capability."
+      ]
+    },
+    "t09": {
+      "source": {
+        "presentInSource": true,
+        "needles": [
+          "if",
+          "replacement",
+          "HVAC",
+          "manufacturer",
+          "refrigerant",
+          "programmable"
+        ]
+      },
+      "canonical": [
+        "• T-04 HVAC units must use refrigerant with a global-warming-potential value below 750 and include programmable controls.",
+        "• T-09 (conditional) If the bidder proposes replacing HVAC equipment rather than repairing existing units, the proposed replacement units must include manufacturer documentation confirming the required refrigerant specification and programmable control capability."
+      ]
+    }
+  },
+  "guardian": {
+    "ok": false,
+    "durationMs": 27,
+    "checksRun": [
+      "document-integrity",
+      "canonical-boundary",
+      "requirement-completeness",
+      "semantic-identity",
+      "conditionality",
+      "deadlines",
+      "provenance",
+      "high-risk-facts",
+      "evidence-rules",
+      "source-conflicts",
+      "external-sources",
+      "derived-fields",
+      "stale-result",
+      "unsupported-ai-claims",
+      "cross-module",
+      "decision-integrity",
+      "report-integrity"
+    ],
+    "blocking": [
+      {
+        "code": "MISSING_COMMERCIAL_OBLIGATION",
+        "explanation": "Expected commercial/contractual obligation cue missing from canonical set: \"performance guarantee\""
+      },
+      {
+        "code": "MISSING_COMMERCIAL_OBLIGATION",
+        "explanation": "Expected commercial/contractual obligation cue missing from canonical set: \"payment\""
+      },
+      {
+        "code": "MISSING_COMMERCIAL_OBLIGATION",
+        "explanation": "Expected commercial/contractual obligation cue missing from canonical set: \"penalt\""
+      }
+    ],
+    "advisory": [
+      {
+        "code": "DEADLINE_TIMEZONE_LOST",
+        "explanation": "Deadline timezone UNKNOWN (not stated in source). Wall-clock date/time preserved without inventing a timezone."
+      }
+    ],
+    "snapshot": null,
+    "error": "Decision Guardian blocked release: [MISSING_COMMERCIAL_OBLIGATION] Expected commercial/contractual obligation cue missing from canonical set: \"performance guarantee\""
+  },
+  "webPdfParity": {
+    "decision": {
+      "web": "REVIEW",
+      "pdf": "REVIEW",
+      "match": true
+    },
+    "fit": {
+      "web": "80%",
+      "pdf": "80%",
+      "match": true
+    },
+    "deadline": {
+      "web": "2026-10-06T10:30:00",
+      "pdf": "2026-10-06T10:30:00",
+      "match": true
+    },
+    "counts": {
+      "web": 13,
+      "pdf": 13,
+      "match": true
+    }
+  },
+  "regressionTargets": {
+    "1_deadline_1030_not_0100": {
+      "source": "6 October 2026 at 10:30",
+      "observedIso": "2026-10-06T10:30:00",
+      "observedTz": null,
+      "wallClock": "2026-10-06T10:30:00",
+      "webDeadline": "2026-10-06T10:30:00",
+      "pdfDeadline": "2026-10-06T10:30:00",
+      "pass": true
+    },
+    "2_count_drift": {
+      "canonical": 13,
+      "matrix": 13,
+      "readiness": 13,
+      "complianceSummary": 13,
+      "actionsLinked": 13,
+      "webCount": 13,
+      "pdfCount": 13,
+      "pass": true
+    },
+    "3_T09_conditional_preserved": {
+      "items": [
+        {
+          "id": "T-04",
+          "strength": "MANDATORY",
+          "text": "• T-04 HVAC units must use refrigerant with a global-warming-potential value below 750 and include programmable controls."
+        },
+        {
+          "id": "T-09",
+          "strength": "CONDITIONAL",
+          "text": "• T-09 (conditional) If the bidder proposes replacing HVAC equipment rather than repairing existing units, the proposed replacement units must include manufacturer documentation confirming the required refrigerant specification and programmable control capability."
+        }
+      ],
+      "pass": true
+    },
+    "4_E05_complete": {
+      "items": [
+        {
+          "id": "E-05",
+          "text": "• E-05 The bidder must demonstrate at least 4 comparable building renovation projects completed during the previous 6 years, including client references."
+        }
+      ],
+      "pass": true
+    },
+    "5_T04_programmable_controls": {
+      "items": [
+        {
+          "id": "T-04",
+          "text": "• T-04 HVAC units must use refrigerant with a global-warming-potential value below 750 and include programmable controls."
+        },
+        {
+          "id": "T-09",
+          "text": "• T-09 (conditional) If the bidder proposes replacing HVAC equipment rather than repairing existing units, the proposed replacement units must include manufacturer documentation confirming the required refrigerant specification and programmable control capability."
+        }
+      ],
+      "pass": true
+    },
+    "6_commercial_contractual_present": {
+      "audit": [
+        {
+          "id": "firm-pricing",
+          "pattern": {},
+          "label": "Firm / non-revisable pricing",
+          "inSource": true,
+          "canonicalCount": 2,
+          "canonicalIds": [
+            null,
+            "T-09"
+          ],
+          "snippets": [
+            "• The contract price shall remain firm and non-revisable.",
+            "• T-09 (conditional) If the bidder proposes replacing HVAC equipment rather than repairing existing units, the proposed replacement units mu"
+          ]
+        },
+        {
+          "id": "performance-guarantee",
+          "pattern": {},
+          "label": "Performance guarantee",
+          "inSource": true,
+          "canonicalCount": 0,
+          "canonicalIds": [],
+          "snippets": []
+        },
+        {
+          "id": "monthly-payment",
+          "pattern": {},
+          "label": "Monthly / certified progress payment",
+          "inSource": true,
+          "canonicalCount": 0,
+          "canonicalIds": [],
+          "snippets": []
+        },
+        {
+          "id": "delay-penalty",
+          "pattern": {},
+          "label": "Delay penalties",
+          "inSource": true,
+          "canonicalCount": 0,
+          "canonicalIds": [],
+          "snippets": []
+        },
+        {
+          "id": "site-safety",
+          "pattern": {},
+          "label": "Site safety / protection / waste",
+          "inSource": true,
+          "canonicalCount": 0,
+          "canonicalIds": [],
+          "snippets": []
+        },
+        {
+          "id": "insurance",
+          "pattern": {},
+          "label": "Insurance",
+          "inSource": true,
+          "canonicalCount": 0,
+          "canonicalIds": [],
+          "snippets": []
+        },
+        {
+          "id": "imported-materials",
+          "pattern": {},
+          "label": "Imported materials responsibility",
+          "inSource": true,
+          "canonicalCount": 0,
+          "canonicalIds": [],
+          "snippets": []
+        }
+      ],
+      "pass": false
+    },
+    "7_action_plan_grounding": {
+      "actionCount": 13,
+      "orphanCount": 0,
+      "pass": true
+    },
+    "8_fresh_not_stale": {
+      "analysisId": "fresh-t2-construction-1788718232761",
+      "contentHash": "ced967017",
+      "guardianOk": false,
+      "snapshotHash": null,
+      "pass": false
+    }
+  },
+  "defects": [
+    {
+      "target": "6_commercial_contractual_present",
+      "detail": {
+        "audit": [
+          {
+            "id": "firm-pricing",
+            "pattern": {},
+            "label": "Firm / non-revisable pricing",
+            "inSource": true,
+            "canonicalCount": 2,
+            "canonicalIds": [
+              null,
+              "T-09"
+            ],
+            "snippets": [
+              "• The contract price shall remain firm and non-revisable.",
+              "• T-09 (conditional) If the bidder proposes replacing HVAC equipment rather than repairing existing units, the proposed replacement units mu"
+            ]
+          },
+          {
+            "id": "performance-guarantee",
+            "pattern": {},
+            "label": "Performance guarantee",
+            "inSource": true,
+            "canonicalCount": 0,
+            "canonicalIds": [],
+            "snippets": []
+          },
+          {
+            "id": "monthly-payment",
+            "pattern": {},
+            "label": "Monthly / certified progress payment",
+            "inSource": true,
+            "canonicalCount": 0,
+            "canonicalIds": [],
+            "snippets": []
+          },
+          {
+            "id": "delay-penalty",
+            "pattern": {},
+            "label": "Delay penalties",
+            "inSource": true,
+            "canonicalCount": 0,
+            "canonicalIds": [],
+            "snippets": []
+          },
+          {
+            "id": "site-safety",
+            "pattern": {},
+            "label": "Site safety / protection / waste",
+            "inSource": true,
+            "canonicalCount": 0,
+            "canonicalIds": [],
+            "snippets": []
+          },
+          {
+            "id": "insurance",
+            "pattern": {},
+            "label": "Insurance",
+            "inSource": true,
+            "canonicalCount": 0,
+            "canonicalIds": [],
+            "snippets": []
+          },
+          {
+            "id": "imported-materials",
+            "pattern": {},
+            "label": "Imported materials responsibility",
+            "inSource": true,
+            "canonicalCount": 0,
+            "canonicalIds": [],
+            "snippets": []
+          }
+        ],
+        "pass": false
+      }
+    },
+    {
+      "target": "8_fresh_not_stale",
+      "detail": {
+        "analysisId": "fresh-t2-construction-1788718232761",
+        "contentHash": "ced967017",
+        "guardianOk": false,
+        "snapshotHash": null,
+        "pass": false
+      }
+    }
+  ],
+  "sourceTextPreview": "--- Page 1 (pdf-parse) ---\n\nBidvera Test 2 • Fictional construction tender Page 1\nINVITATION TO TENDER\nRenovation and Energy-Efficiency Upgrade of Municipal Office Building\nTender Reference: MUN-BLD-2026-041\nContracting authority: Coastal Municipal Development Agency (CMDA)\nPublication: 8 September 2026\nSubmission deadline: 6 October 2026 at 10:30\nContract period: 120 calendar days\nEstimated value: MAD 1,250,000 excluding VAT\nProcedure: Open competitive procedure\n1. Project Scope\nThe authority intends to renovate a four-storey municipal office building and improve its energy performance. Works\ninclude roof insulation, selected window replacement, LED lighting, HVAC improvements, electrical adjustments,\npainting, commissioning, testing and handover.\n2. Eligibility and Administrative Requirements\n• E-01 The bidder must be legally registered to perform building renovation and related electrical/HVAC works.\n• E-02 The bidder must provide valid tax-clearance and social-security compliance certificates.\n• E-03 The bidder must submit a signed declaration of honour using the prescribed form.\n• E-04 The bidder must provide a provisional tender guarantee of MAD 25,000.\n• E-05 The bidder must demonstrate at least 4 comparable building renovation projects completed during the\nprevious 6 years, including client references.\n\n--- Page 2 (pdf-parse) ---\n\nBidvera Test 2 • Fictional construction tender Page 2\n3. Technical Requirements\n• T-01 Roof insulation must achieve a minimum thermal resistance of R = 5.0 m²K/W.\n• T-02 Replacement windows must use double glazing with a declared U-value not exceeding 1.6 W/m²K.\n• T-03 All replacement lighting fixtures must be LED with a minimum efficacy of 120 lm/W.\n• T-04 HVAC units must use refrigerant with a global-warming-potential value below 750 and include programmable\ncontrols.\n• T-05 The bidder must provide electrical installation test certificates after completion.\n• T-06 The contractor must complete commissioning and provide as-built drawings and maintenance documentation.\n• T-07 The works must be completed within 120 calendar days from contractual commencement.\n• T-08 The contractor must provide a minimum 24-month defects liability/warranty period.\n4. Commercial and Contractual Conditions\n• The contract price shall remain firm and non-revisable.\n• A performance guarantee equal to 10% of the awarded contract amount shall be provided by the successful\ncontractor.\n• Payment will be made through monthly certified progress statements, subject to approval and contractual retention\nprovisions.\n• Delay penalties may be applied at 1/1000 of the contract amount per calendar day, subject to the contractual cap.\n\n--- Page 3 (pdf-parse) ---\n\nBidvera Test 2 • Fictional construction tender Page 3\n5. Evaluation Method\n• Technical quality: 45%\n• Price: 35%\n• Relevant experience: 10%\n• Work methodology and schedule: 10%\nEvaluation weights are assessment criteria, not additional bidder requirements.\n6. Submission Documents\n• Administrative certificates and declaration required by Section 2.\n• Technical proposal and methodology.\n• Detailed bill of quantities and financial offer.\n• Project schedule and work programme.\n• Product technical datasheets where applicable.\n7. Clarifications\nRequests for clarification may be submitted up to 8 calendar days before the tender deadline. The authority may request\nclarification but will not accept a material change to the offer.\nThe deadline is procedural information and must not be interpreted as a bidder qualification requirement.\n\n--- Page 4 (pdf-parse) ---\n\nBidvera Test 2 • Fictional construction tender Page 4\n8. Conditional Technical Requirement\n• T-09 (conditional) If the bidder proposes replacing HVAC equipment rather than repairing existing units, the proposed\nreplacement units must include manufacturer documentation confirming the required refrigerant specification and\nprogrammable control capability.\n9. Repeated References and Cross-References\nThe following statements r",
+  "sourceTextFullPathHint": "see artifacts/test2-construction-proof-source.txt"
+}

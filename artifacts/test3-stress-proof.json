@@ -1,0 +1,562 @@
+{
+  "STATUS": "FAIL",
+  "defectCount": 5,
+  "criticalDefectCount": 5,
+  "analysisId": "fresh-t3-stress-1788718232890",
+  "analysisTimestamp": "2026-09-06T18:10:37.270Z",
+  "sourceFile": "C:\\Users\\Lenovo\\Videos\\SaaS Bidvera AI\\.data\\uploads\\cmtfvf1vm0000rkgkqq291zux\\cmtk43nw100i5rkr04tkf5qb3\\1788354511070-Bidvera_Stress_Test_Tender_2026.pdf",
+  "sourceFileSha256": "1d43362350e9fb062788baed622c93f4410eab7ae5cedacebe3d35bb9ea47982",
+  "sourceTextSha256": "f71dda98129b009a5ffd39416103aed8a410cf836a65d3b9a4b813fd1c08a4ef",
+  "canonicalReleaseHash": "c7b6874fd",
+  "canonicalItemCount": 9,
+  "decision": "REVIEW",
+  "fit": 80,
+  "guardianOk": false,
+  "guardianDurationMs": 103,
+  "guardianChecksRun": [
+    "document-integrity",
+    "canonical-boundary",
+    "requirement-completeness",
+    "semantic-identity",
+    "conditionality",
+    "deadlines",
+    "provenance",
+    "high-risk-facts",
+    "evidence-rules",
+    "source-conflicts",
+    "external-sources",
+    "derived-fields",
+    "stale-result",
+    "unsupported-ai-claims",
+    "cross-module",
+    "decision-integrity",
+    "report-integrity"
+  ],
+  "guardianBlocking": [
+    {
+      "code": "MISSING_COMMERCIAL_OBLIGATION",
+      "explanation": "Expected commercial/contractual obligation cue missing from canonical set: \"performance guarantee\""
+    },
+    {
+      "code": "MISSING_COMMERCIAL_OBLIGATION",
+      "explanation": "Expected commercial/contractual obligation cue missing from canonical set: \"12,000\""
+    }
+  ],
+  "webPdfParity": {
+    "decision": true,
+    "fit": true,
+    "deadline": true,
+    "counts": true,
+    "identities": true,
+    "hardBlockers": true,
+    "risks": true,
+    "actions": true,
+    "verification": true,
+    "importantValues": true,
+    "ok": true
+  },
+  "staleResult": true,
+  "actionCount": 9,
+  "riskCount": 8,
+  "totalAnalysisTime": 4380,
+  "hardBlockers": [],
+  "reviewItems": [
+    "8 mandatory requirements require verification."
+  ],
+  "deadline": {
+    "iso": "2026-09-28T11:00:00",
+    "timezone": null,
+    "wallClock": "2026-09-28T11:00:00",
+    "sourceDeadlineWindow": "28 September 2026 at 11:00",
+    "sourceHasLocalTime": true
+  },
+  "hardData": {
+    "mad12000": false,
+    "performance10pct": false,
+    "firmPricing": true,
+    "gbps": true,
+    "wifi6": true,
+    "doors16": true,
+    "cat6a": true,
+    "warranty24": true,
+    "support24h": true,
+    "projects3y5": false
+  },
+  "actionPlanPhase8": {
+    "everyActionHasCanonicalItemId": true,
+    "orphanCount": 0,
+    "duplicatePrimaryCount": 0,
+    "genericVerificationCount": 0,
+    "integrityOk": true,
+    "alignedWithCanonicalCount": true
+  },
+  "performance": {
+    "totalMs": 4380,
+    "extractMs": 3695,
+    "guardianMs": 103,
+    "reportMs": 17
+  },
+  "canonicalItems": [
+    {
+      "id": "R-06",
+      "semanticKind": "TECHNICAL_REQUIREMENT",
+      "obligationStrength": "MANDATORY",
+      "category": "MANDATORY_TECHNICAL",
+      "mandatory": true,
+      "description": "• R-06 The proposed firewall must support at least 1 Gbps stateful throughput and include active security subscriptions for the first 12 months.",
+      "provenance": {
+        "section": "3. Technical Requirements",
+        "page": 2
+      }
+    },
+    {
+      "id": "R-07",
+      "semanticKind": "TECHNICAL_REQUIREMENT",
+      "obligationStrength": "MANDATORY",
+      "category": "CONTRACTUAL",
+      "mandatory": true,
+      "description": "• R-07 The wireless solution must provide Wi-Fi 6 access points with centralized management and support a minimum of 120 concurrent clients per access point.",
+      "provenance": {
+        "section": "3. Technical Requirements",
+        "page": 2
+      }
+    },
+    {
+      "id": "R-08",
+      "semanticKind": "TECHNICAL_REQUIREMENT",
+      "obligationStrength": "MANDATORY",
+      "category": "CONTRACTUAL",
+      "mandatory": true,
+      "description": "• R-08 The access-control system must support at least 16 controlled doors, RFID credentials, event logging and a central administration console.",
+      "provenance": {
+        "section": "3. Technical Requirements",
+        "page": 2
+      }
+    },
+    {
+      "id": "R-09",
+      "semanticKind": "TECHNICAL_REQUIREMENT",
+      "obligationStrength": "MANDATORY",
+      "category": "MANDATORY_TECHNICAL",
+      "mandatory": true,
+      "description": "• R-09 The bidder must supply and install Category 6A structured cabling and provide certification test results for all installed links.",
+      "provenance": {
+        "section": "3. Technical Requirements",
+        "page": 2
+      }
+    },
+    {
+      "id": "R-10",
+      "semanticKind": "FINANCIAL_COMMERCIAL_CONDITION",
+      "obligationStrength": "MANDATORY",
+      "category": "CONTRACTUAL",
+      "mandatory": true,
+      "description": "• R-10 The bidder must provide a minimum 24-month warranty covering supplied hardware and installation workmanship.",
+      "provenance": {
+        "section": "3. Technical Requirements",
+        "page": 2
+      }
+    },
+    {
+      "id": "R-11",
+      "semanticKind": "TECHNICAL_REQUIREMENT",
+      "obligationStrength": "MANDATORY",
+      "category": "CONTRACTUAL",
+      "mandatory": true,
+      "description": "• R-11 The bidder must provide on-site corrective support within 24 hours after a covered critical incident is reported.",
+      "provenance": {
+        "section": "3. Technical Requirements",
+        "page": 2
+      }
+    },
+    {
+      "id": "R-12",
+      "semanticKind": "REQUIRED_DOCUMENT",
+      "obligationStrength": "MANDATORY",
+      "category": "MANDATORY_ADMINISTRATIVE",
+      "mandatory": true,
+      "description": "• R-12 The bidder must submit a detailed implementation schedule and commissioning plan before contract award.",
+      "provenance": {
+        "section": "3. Technical Requirements",
+        "page": 2
+      }
+    },
+    {
+      "semanticKind": "FINANCIAL_COMMERCIAL_CONDITION",
+      "obligationStrength": "MANDATORY",
+      "category": "CONTRACTUAL",
+      "mandatory": true,
+      "description": "• Prices shall remain firm and non-revisable throughout the contract.",
+      "provenance": {
+        "section": "4. Commercial and Contractual Conditions",
+        "page": 2
+      }
+    },
+    {
+      "id": "R-13",
+      "semanticKind": "TECHNICAL_REQUIREMENT",
+      "obligationStrength": "CONDITIONAL",
+      "category": "MANDATORY_TECHNICAL",
+      "mandatory": false,
+      "description": "• R-13 (conditional) If the bidder proposes equipment manufactured outside Morocco, the bidder must provide evidence of manufacturer authorization or an authorized distribution channel.",
+      "provenance": {
+        "section": "10. Conditional Requirement",
+        "page": 4
+      }
+    }
+  ],
+  "excludedClasses": [
+    {
+      "class": "Evaluation weights / notes",
+      "reason": "Evaluation criterion / meta — not bidder obligations"
+    },
+    {
+      "class": "Verification scenarios",
+      "reason": "Reviewer/test scenario — not bidder obligations"
+    },
+    {
+      "class": "Quality-control test note",
+      "reason": "QA/meta instruction to analysis system"
+    },
+    {
+      "class": "Estimated contract value MAD 420,000",
+      "reason": "Informational tender fact"
+    },
+    {
+      "class": "Section headings / Scope narrative / tender title",
+      "reason": "Document structure / buyer narrative — not bidder obligations"
+    },
+    {
+      "class": "Required Submission Package noun-list cross-refs",
+      "reason": "Packaging checklist duplicates substantive R-IDs"
+    },
+    {
+      "class": "Procedural deadline statement",
+      "reason": "Deadline is hard-data fact, not a qualification requirement"
+    }
+  ],
+  "defects": [
+    {
+      "id": "4_lost_requirement_id",
+      "layer": "Source → Canonical",
+      "detail": {
+        "uniqueSourceIds": [
+          "R-01",
+          "R-02",
+          "R-03",
+          "R-04",
+          "R-05",
+          "R-06",
+          "R-07",
+          "R-08",
+          "R-09",
+          "R-10",
+          "R-11",
+          "R-12",
+          "R-13"
+        ],
+        "missingSourceIds": [
+          "R-01",
+          "R-02",
+          "R-03",
+          "R-04",
+          "R-05"
+        ],
+        "canonicalIds": [
+          "R-06",
+          "R-07",
+          "R-08",
+          "R-09",
+          "R-10",
+          "R-11",
+          "R-12",
+          null,
+          "R-13"
+        ]
+      }
+    },
+    {
+      "id": "6_dropped_commercial",
+      "layer": "Source → Canonical",
+      "detail": {
+        "mad12000": false,
+        "performance10pct": false,
+        "firmPricing": true,
+        "gbps": true,
+        "wifi6": true,
+        "doors16": true,
+        "cat6a": true,
+        "warranty24": true,
+        "support24h": true,
+        "projects3y5": false
+      }
+    },
+    {
+      "id": "17_stale_result",
+      "layer": "Guardian / release",
+      "detail": {
+        "contentHash": "c7b6874fd",
+        "snapshot": null
+      }
+    },
+    {
+      "id": "hard_data_integrity",
+      "layer": "Hard data",
+      "detail": {
+        "mad12000": false,
+        "performance10pct": false,
+        "firmPricing": true,
+        "gbps": true,
+        "wifi6": true,
+        "doors16": true,
+        "cat6a": true,
+        "warranty24": true,
+        "support24h": true,
+        "projects3y5": false
+      }
+    },
+    {
+      "id": "guardian_pass",
+      "layer": "Guardian",
+      "detail": {
+        "blocking": [
+          {
+            "code": "MISSING_COMMERCIAL_OBLIGATION",
+            "explanation": "Expected commercial/contractual obligation cue missing from canonical set: \"performance guarantee\""
+          },
+          {
+            "code": "MISSING_COMMERCIAL_OBLIGATION",
+            "explanation": "Expected commercial/contractual obligation cue missing from canonical set: \"12,000\""
+          }
+        ],
+        "checksRun": [
+          "document-integrity",
+          "canonical-boundary",
+          "requirement-completeness",
+          "semantic-identity",
+          "conditionality",
+          "deadlines",
+          "provenance",
+          "high-risk-facts",
+          "evidence-rules",
+          "source-conflicts",
+          "external-sources",
+          "derived-fields",
+          "stale-result",
+          "unsupported-ai-claims",
+          "cross-module",
+          "decision-integrity",
+          "report-integrity"
+        ]
+      }
+    }
+  ],
+  "criticalDefects": [
+    {
+      "id": "4_lost_requirement_id",
+      "layer": "Source → Canonical",
+      "detail": {
+        "uniqueSourceIds": [
+          "R-01",
+          "R-02",
+          "R-03",
+          "R-04",
+          "R-05",
+          "R-06",
+          "R-07",
+          "R-08",
+          "R-09",
+          "R-10",
+          "R-11",
+          "R-12",
+          "R-13"
+        ],
+        "missingSourceIds": [
+          "R-01",
+          "R-02",
+          "R-03",
+          "R-04",
+          "R-05"
+        ],
+        "canonicalIds": [
+          "R-06",
+          "R-07",
+          "R-08",
+          "R-09",
+          "R-10",
+          "R-11",
+          "R-12",
+          null,
+          "R-13"
+        ]
+      }
+    },
+    {
+      "id": "6_dropped_commercial",
+      "layer": "Source → Canonical",
+      "detail": {
+        "mad12000": false,
+        "performance10pct": false,
+        "firmPricing": true,
+        "gbps": true,
+        "wifi6": true,
+        "doors16": true,
+        "cat6a": true,
+        "warranty24": true,
+        "support24h": true,
+        "projects3y5": false
+      }
+    },
+    {
+      "id": "17_stale_result",
+      "layer": "Guardian / release",
+      "detail": {
+        "contentHash": "c7b6874fd",
+        "snapshot": null
+      }
+    },
+    {
+      "id": "hard_data_integrity",
+      "layer": "Hard data",
+      "detail": {
+        "mad12000": false,
+        "performance10pct": false,
+        "firmPricing": true,
+        "gbps": true,
+        "wifi6": true,
+        "doors16": true,
+        "cat6a": true,
+        "warranty24": true,
+        "support24h": true,
+        "projects3y5": false
+      }
+    },
+    {
+      "id": "guardian_pass",
+      "layer": "Guardian",
+      "detail": {
+        "blocking": [
+          {
+            "code": "MISSING_COMMERCIAL_OBLIGATION",
+            "explanation": "Expected commercial/contractual obligation cue missing from canonical set: \"performance guarantee\""
+          },
+          {
+            "code": "MISSING_COMMERCIAL_OBLIGATION",
+            "explanation": "Expected commercial/contractual obligation cue missing from canonical set: \"12,000\""
+          }
+        ],
+        "checksRun": [
+          "document-integrity",
+          "canonical-boundary",
+          "requirement-completeness",
+          "semantic-identity",
+          "conditionality",
+          "deadlines",
+          "provenance",
+          "high-risk-facts",
+          "evidence-rules",
+          "source-conflicts",
+          "external-sources",
+          "derived-fields",
+          "stale-result",
+          "unsupported-ai-claims",
+          "cross-module",
+          "decision-integrity",
+          "report-integrity"
+        ]
+      }
+    }
+  ],
+  "priorFixCycle": {
+    "firstFailAnalysisId": "fresh-t3-stress-1788372011454",
+    "firstFailDefect": "11_duplicate_semantic",
+    "firstDivergenceLayer": "Boundary / obligation classification",
+    "rootCause": "Title, Scope narrative, and submission-package noun phrases accepted via bare activity verbs; commercial cues too narrow; provisional-acceptance false-positive in duplicate check",
+    "fixApplied": [
+      "Split strong modality vs activity cues in isRealBidderObligation",
+      "Reject titles, buyer-scope narratives, bare package-list items",
+      "Exclude Scope + Required Submission Package from harvest",
+      "Expand commercial cues (remains responsible, may apply)",
+      "Prefer financial classification for payment terms",
+      "Dedupe implementation schedule / commissioning plan"
+    ],
+    "rerunAfterFixAnalysisId": "fresh-t3-stress-1788372493516",
+    "thisRunAnalysisId": "fresh-t3-stress-1788718232890",
+    "sameSourceSha256": true,
+    "freshRerun": true
+  },
+  "leaks": [
+    {
+      "id": "heading-admin",
+      "reason": "Section heading",
+      "leaked": false,
+      "items": []
+    },
+    {
+      "id": "evaluation-note",
+      "reason": "Evaluation meta / QA instruction",
+      "leaked": false,
+      "items": []
+    },
+    {
+      "id": "evaluation-weights",
+      "reason": "Evaluation criterion",
+      "leaked": false,
+      "items": []
+    },
+    {
+      "id": "reviewer-scenario",
+      "reason": "Reviewer/test scenario",
+      "leaked": false,
+      "items": []
+    },
+    {
+      "id": "qa-meta",
+      "reason": "QA/meta instruction",
+      "leaked": false,
+      "items": []
+    },
+    {
+      "id": "estimated-value-fact",
+      "reason": "Informational tender fact",
+      "leaked": false,
+      "items": []
+    }
+  ],
+  "regressionTargets": {
+    "1_wrong_deadline_timezone": true,
+    "2_count_drift": true,
+    "3_truncated_requirement": true,
+    "4_lost_requirement_id": false,
+    "5_lost_conditional_clause": true,
+    "6_dropped_commercial": false,
+    "7_false_heading_requirement": true,
+    "8_evaluation_criteria_leak": true,
+    "9_reviewer_scenario_leak": true,
+    "10_qa_meta_leak": true,
+    "11_duplicate_semantic": true,
+    "12_unsupported_fit_claim": true,
+    "13_missing_evidence_as_gap": true,
+    "14_verification_as_hard_blocker": true,
+    "15_action_without_canonical_identity": true,
+    "16_web_pdf_mismatch": true,
+    "17_stale_result": false,
+    "18_conditionality_inversion": true,
+    "19_evidence_conflict": true,
+    "20_ai_override_of_canonical_decision": true,
+    "hard_data_integrity": false,
+    "guardian_pass": false,
+    "decision_valid": true,
+    "estimated_value_not_requirement": true,
+    "action_plan_phase8": true
+  },
+  "reusedPriorResult": false,
+  "proofFreshness": {
+    "analysisIdUnique": "fresh-t3-stress-1788718232890",
+    "analyzedAt": "2026-09-06T18:10:37.233Z",
+    "contentHash": "c7b6874fd",
+    "note": "Offline pipeline from PDF bytes — no DB tender/decision row reused; assertFinalReleaseIntegrity only (no OCR/AI inside Guardian)",
+    "freshRerun": true
+  },
+  "sourceTextPreview": "--- Page 1 (pdf-parse) ---\n\nBidvera Stress Test Tender • Fictional test document Page 1\nREQUEST FOR TENDER\nSupply, Installation and Maintenance of a Network & Access-Control System\nTender Reference: RFT-SEC-2026-027\nProcuring entity North Atlas Business Center (NABC)\nPublication date 4 September 2026\nSubmission deadline 28 September 2026 at 11:00\nContract duration 90 calendar days\nEstimated value MAD 420,000 excluding VAT\nMethod Open competitive tender\n1. Scope\nThe contracting authority seeks a qualified supplier to supply, install, configure, test and maintain a network\ninfrastructure and electronic access-control system for a three-floor business facility. The scope includes switches,\nwireless access points, firewall equipment, access-control readers, controllers, cabling, configuration, commissioning,\ndocumentation and staff handover.\n2. Mandatory Administrative and Eligibility Requirements\n• R-01 The bidder must be legally registered and authorized to perform the contracted activities.\n• R-02 The bidder must provide a valid tax-clearance certificate and a valid social-security compliance certificate at the\ntime of submission.\n• R-03 The bidder must submit a signed tender declaration using the form included in this tender dossier.\n• R-04 The bidder must provide a provisional bid security of MAD 12,000.\n• R-05 The bidder must demonstrate at least 3 completed comparable projects during the last 5 years, with\ndocumentary references.\n\n--- Page 2 (pdf-parse) ---\n\nBidvera Stress Test Tender • Fictional test document Page 2\n3. Technical Requirements\n• R-06 The proposed firewall must support at least 1 Gbps stateful throughput and include active security subscriptions\nfor the first 12 months.\n• R-07 The wireless solution must provide Wi-Fi 6 access points with centralized management and support a minimum\nof 120 concurrent clients per access point.\n• R-08 The access-control system must support at least 16 controlled doors, RFID credentials, event logging and a\ncentral administration console.\n• R-09 The bidder must supply and install Category 6A structured cabling and provide certification test results for all\ninstalled links.\n• R-10 The bidder must provide a minimum 24-month warranty covering supplied hardware and installation\nworkmanship.\n• R-11 The bidder must provide on-site corrective support within 24 hours after a covered critical incident is reported.\n• R-12 The bidder must submit a detailed implementation schedule and commissioning plan before contract a"
+}

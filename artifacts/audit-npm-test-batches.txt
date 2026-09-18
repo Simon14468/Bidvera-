@@ -1,0 +1,2702 @@
+total files: 142
+
+=== batch 1: 25 files ===
+✔ 1. high-fit high-readiness yields high Bid Score (11.3708ms)
+✔ 2. low-fit tender yields lower Bid Score (0.6317ms)
+✔ 3. high-risk tender is penalized (1.1886ms)
+✔ 4. missing contract value is not invented (0.7301ms)
+✔ 5. missing pursuit cost stays unknown (157.7767ms)
+✔ 6. missing historical data does not invent a signal (0.6586ms)
+✔ 7. verified positive historical pattern can strengthen score (224.3036ms)
+✔ 8. verified negative historical pattern can weaken score (3.6591ms)
+✔ 9. conflicting / mixed historical lean does not invent probability (8.4082ms)
+✔ 10. current mandatory gaps block historical influence on score (0.9783ms)
+✔ 11. Bid decision with moderate Bid Score is allowed (0.6563ms)
+✔ 12. REVIEW decision with high Bid Score is allowed (0.6472ms)
+✔ 13. insufficient data reduces certainty and leaves EV unknown (1.3808ms)
+✔ 14. duplicate drivers are collapsed (0.4834ms)
+✔ 15. malicious / invalid financial values are rejected (1.276ms)
+✔ 16. same inputs produce identical Bid Score (reproducible) (4.1735ms)
+✔ score never presented as win probability string (0.6404ms)
+✔ suppressed historical signal notes current evidence priority (0.6196ms)
+▶ company knowledge — classification
+  ✔ classifies company profile text as COMPANY_PROFILE, never TENDER (4.6901ms)
+  ✔ classifies RFP language as TENDER (1.521ms)
+✔ company knowledge — classification (9.4911ms)
+▶ company knowledge — normalization
+  ✔ normalizes web/mobile/api synonyms without merging unrelated concepts (1.7035ms)
+  ✔ exposes expected capability groups used in matching (0.4923ms)
+✔ company knowledge — normalization (2.5132ms)
+▶ company knowledge — Atlas PDF extraction
+  ✔ extracts services, projects, compliance, limitations, historical outcomes from document (22.0705ms)
+  ✔ matches web tender requirement positively against extracted capabilities (9.205ms)
+  ✔ marks ISO 27001 as explicit gap when company states not held (4.8862ms)
+  ✔ matches public-sector, geography, capacity, and explicit 24/7 negative evidence (13.2713ms)
+  ✔ surfaces 24/7 limitation as risk only when tender requires 24/7 (5.6495ms)
+✔ company knowledge — Atlas PDF extraction (70.3012ms)
+▶ company knowledge — company-only message
+  ✔ exports the required company-only analysis message (0.8155ms)
+✔ company knowledge — company-only message (1.0946ms)
+▶ company knowledge only analysis
+  ✔ builds zero tender scores and no decision recommendation (40.6378ms)
+  ✔ stores extracted company knowledge fields without tender requirements (4228.2897ms)
+  ✔ does not treat historical outcomes as current tender requirements (3.0319ms)
+  ✔ exports required company-only user message (0.7337ms)
+✔ company knowledge only analysis (4286.6473ms)
+▶ company + tender path unchanged
+  ✔ still runs decision engine when tender requirements exist (95.8251ms)
+✔ company + tender path unchanged (96.1376ms)
+✔ compliance matrix summary is derived from real rows only (4.4815ms)
+✔ normalizeComplianceMatrix strips placeholder evidence and does not invent sources (1.5665ms)
+✔ buildTenderIntelligence produces dynamic matrix from analysis input (37.8612ms)
+✔ roles control access only — never change analytical truth helpers (0.4499ms)
+✔ historical signals for learning stay non-identifying (0.7675ms)
+✔ privacy filter drops free-form identity and keeps coarse buckets (0.5918ms)
+✔ feature keys are stable and opaque (1.0748ms)
+✔ insufficient data stays CANDIDATE or VALIDATING — cannot influence (0.6721ms)
+✔ one-company dominance blocks verification (0.6198ms)
+✔ sufficient multi-org evidence reaches VERIFIED or ACTIVE (0.6569ms)
+✔ degraded ACTIVE pattern moves to MONITORED or RETIRED (0.6283ms)
+✔ CANDIDATE and VALIDATING patterns never enter learning signal (0.861ms)
+✔ similar-company pattern detection for ACTIVE patterns (0.6752ms)
+✔ similarity score requires meaningful overlap (0.6649ms)
+✔ missing mandatory requirements suppress historical influence (0.6333ms)
+✔ hard no-bid from tender evidence blocks historical BID influence (0.3067ms)
+✔ decision engine hard failure stays NO_BID regardless of optimistic AI (9.9028ms)
+✔ company–tender fit and readiness still compute (5.2347ms)
+✔ data quality and consistency scores are bounded 0–100 (0.559ms)
+✔ company-specific vs global intelligence remain conceptually separated (0.6082ms)
+✔ duplicate outcome protection: feature key + tender contribution is unique by design (0.2785ms)
+
+--- Audiovisual extraction audit ---
+Extracted requirement count: 5
+Deadline (fact): 2026-09-30T17:00:00+01:00
+Estimated value (fact): 4200000
+[MANDATORY_ELIGIBILITY] mandatory=true | Minimum five (5) years of experience in public-sector audiovisual installation projects is… | doc=Tender_Audiovisual_Equipment.pdf p?
+[CONTRACTUAL] mandatory=true | Bidders must submit a provisional bond (caution provisoire) together with the tender dossi… | doc=Tender_Audiovisual_Equipment.pdf p?
+[MANDATORY_TECHNICAL] mandatory=true | The bidder shall supply, install, configure and commission a complete audiovisual system i… | doc=Tender_Audiovisual_Equipment.pdf p?
+[MANDATORY_ADMINISTRATIVE] mandatory=true | Attestation CNSS and tax clearance certificate are mandatory.… | doc=Tender_Audiovisual_Equipment.pdf p?
+[MANDATORY_TECHNICAL] mandatory=true | The supplier must provide a minimum warranty period of 24 months on all installed AV equip… | doc=Tender_Audiovisual_Equipment.pdf p?
+▶ audiovisual tender — extraction audit
+  ✔ captures genuine obligations and filters facts/noise (616.8879ms)
+  ✔ classifies AV obligations correctly (20.0725ms)
+  ✔ merges sparse AI with heuristic without duplicates (88.4391ms)
+✔ audiovisual tender — extraction audit (728.1369ms)
+▶ audiovisual tender — canonical consistency
+  ✔ readiness/compliance counts align; fit is single canonical value (66.3163ms)
+  ✔ web and PDF display share identical fit and counts (68.0105ms)
+✔ audiovisual tender — canonical consistency (134.8318ms)
+▶ canonical extraction — tender facts are not requirements
+  ✔ deadline lines are rejected as requirements (1.2544ms)
+  ✔ contract value is rejected as a requirement (0.6673ms)
+  ✔ evaluation percentages are rejected as requirements (8.3913ms)
+  ✔ headings and synthetic meta are rejected (1.0923ms)
+  ✔ buyer/project descriptions without obligations are rejected (1.271ms)
+✔ canonical extraction — tender facts are not requirements (13.8127ms)
+▶ canonical extraction — semantic deduplication
+  ✔ merges paraphrased provisional bond obligations into one (7.8223ms)
+  ✔ merges MAD bid security paraphrases into one obligation (3.2863ms)
+  ✔ AI + heuristic sources converge without duplicate count inflation (21.1574ms)
+✔ canonical extraction — semantic deduplication (33.352ms)
+▶ canonical extraction — genuine obligations preserved
+  ✔ audiovisual fixture yields exactly five canonical requirements (21.9341ms)
+  ✔ ambiguous referenced-only lines are not fabricated requirements (1.2342ms)
+✔ canonical extraction — genuine obligations preserved (23.4893ms)
+▶ Part2 — conditional requirements preserve trigger context
+  ✔ keeps trigger: "If applicable, the bidder must provide a local c…" (166.9276ms)
+  ✔ keeps trigger: "Where applicable, the Tenderer shall submit manu…" (19.6567ms)
+  ✔ keeps trigger: "When applicable, a performance bond must be furn…" (17.3427ms)
+  ✔ keeps trigger: "Only if a joint venture is proposed, the JV must…" (22.0151ms)
+  ✔ keeps trigger: "Applicable to Lot 2 only: the contractor shall p…" (62.7829ms)
+  ✔ keeps trigger: "For joint ventures, each member must demonstrate…" (3.9787ms)
+  ✔ orphan CONDITIONAL without recoverable trigger becomes NEEDS_VERIFICATION (4.8757ms)
+✔ Part2 — conditional requirements preserve trigger context (303.2049ms)
+▶ Part2 — lots applicability
+  ✔ extracts lot-specific applicability (30.0316ms)
+  ✔ detects all-lots applicability (21.5177ms)
+  ✔ merges identical obligations across lots without duplicating rows (77.5486ms)
+  ✔ does not merge distinct lot-specific thresholds (49.893ms)
+  ✔ canonical normalize encodes lot into sourceSection (3.8301ms)
+✔ Part2 — lots applicability (183.772ms)
+▶ Part2 — numbering is semantic, not structural
+  ✔ rejects numbered instructions without obligation (1.1844ms)
+  ✔ keeps numbered obligation with shall (3.0508ms)
+✔ Part2 — numbering is semantic, not structural (4.5188ms)
+▶ Part2 — tables preserve obligations, not headers
+  ✔ rejects table header lines (0.4941ms)
+  ✔ keeps obligation rows from specification tables (10.8282ms)
+  ✔ heuristic harvest keeps table obligation and drops header (372.6405ms)
+✔ Part2 — tables preserve obligations, not headers (384.3148ms)
+▶ Part2 — page breaks and OCR text quality
+  ✔ joins hyphenated wraps and skips repeated OCR headers (1.5266ms)
+  ✔ continues obligation across pdf-parse page markers (27.4524ms)
+✔ Part2 — page breaks and OCR text quality (29.4773ms)
+▶ Part2 — duplicates preserve provenance and do not over-merge
+  ✔ collapses paraphrases while keeping pages and conditional context (5.2368ms)
+  ✔ does not merge merely similar wording with different obligations (1.6794ms)
+✔ Part2 — duplicates preserve provenance and do not over-merge (7.1444ms)
+▶ Part2 — requirement IDs stay meaningful
+  ✔ preserves ETR codes and does not invent IDs from section numbers (8.4878ms)
+✔ Part2 — requirement IDs stay meaningful (31.8967ms)
+▶ Part2 — required documents vs capability vs evidence
+  ✔ keeps experience capability separate from evidence document (5.825ms)
+✔ Part2 — required documents vs capability vs evidence (6.0098ms)
+▶ Part2 — UNKNOWN remains uncertain, not a false requirement
+  ✔ ambiguous non-obligation text does not enter canonical set (40.1051ms)
+  ✔ clear obligation without domain cues can remain UNKNOWN but never mandatory/high-confidence (2.0522ms)
+✔ Part2 — UNKNOWN remains uncertain, not a false requirement (42.4013ms)
+▶ canonical layer hardening — headings never become requirements
+  ✔ rejects heading: "2. Mandatory Administrative Requirements…" (166.4633ms)
+  ✔ rejects heading: "3. Technical Specifications…" (1.16ms)
+  ✔ rejects heading: "6. Evaluation Criteria…" (0.3938ms)
+  ✔ rejects heading: "Mandatory Documents…" (4.4738ms)
+  ✔ rejects heading: "Required Documents…" (52.8505ms)
+  ✔ rejects heading: "List of Documents…" (22.7061ms)
+  ✔ rejects heading: "Lot 1: Supply of IT Equipment…" (1.3172ms)
+  ✔ rejects heading: "Lot 2 — Cleaning Services…" (15.5649ms)
+  ✔ rejects heading: "Annex A Technical Specifications…" (7.7283ms)
+  ✔ rejects heading: "Annex 1 — Forms…" (2.0432ms)
+  ✔ rejects heading: "Section 4.2 Eligibility…" (2.1326ms)
+  ✔ rejects heading: "Table des matieres…" (51.4783ms)
+  ✔ rejects heading: "Description | Qty | Unit | Remarks…" (0.7632ms)
+✔ canonical layer hardening — headings never become requirements (368.5543ms)
+▶ canonical layer hardening — procedural / meta content
+  ✔ rejects procedural/meta: "A pre-bid meeting will be held on 15 March 2026 at t…" (12.9621ms)
+  ✔ rejects procedural/meta: "Tenderers may submit clarification questions before …" (1.8047ms)
+  ✔ rejects procedural/meta: "Note to tenderers: please read the entire document b…" (0.3637ms)
+  ✔ rejects procedural/meta: "The following scenarios illustrate reviewer checks. …" (0.5179ms)
+  ✔ rejects procedural/meta: "Scenario B: A reviewer checks whether the warranty d…" (0.4494ms)
+  ✔ rejects procedural/meta: "This section contains instructions to an analysis sy…" (0.384ms)
+✔ canonical layer hardening — procedural / meta content (17.0529ms)
+▶ canonical layer hardening — facts vs obligations
+  ✔ rejects fact: "Tender Reference: AAO/RWA028-2026-0002…" (0.5608ms)
+  ✔ rejects fact: "Reference No: IT-2026-0042…" (0.2312ms)
+  ✔ rejects fact: "Publication date: 12 January 2026…" (0.2572ms)
+  ✔ rejects fact: "Estimated contract value: MAD 420,000 excluding VAT…" (1.0851ms)
+  ✔ rejects fact: "Contract duration: 24 months…" (0.3457ms)
+  ✔ rejects fact: "Place of performance: Nairobi, Kenya…" (1.3355ms)
+  ✔ rejects fact: "Delivery location: Central warehouse, Rabat…" (0.4745ms)
+  ✔ rejects fact: "Technical score: 70% · Financial offer: 30%…" (0.6616ms)
+  ✔ rejects fact: "The contracting authority aims to modernize public i…" (1.7603ms)
+  ✔ rejects fact: "Delivery / performance location in Morocco reference…" (0.7667ms)
+✔ canonical layer hardening — facts vs obligations (8.4504ms)
+▶ canonical layer hardening — true obligations preserved
+  ✔ preserves: "R-01 The bidder must be legally registered and autho…" (45.2319ms)
+  ✔ preserves: "T-02 The contractor shall install and configure a hy…" (6.1887ms)
+  ✔ preserves: "The supplier must provide a minimum warranty period …" (7.5918ms)
+  ✔ preserves: "Bidders must submit a provisional bond (caution prov…" (2.868ms)
+  ✔ preserves: "R-13 (conditional) If the bidder proposes equipment …" (2.7867ms)
+  ✔ preserves: "Bonus points may be awarded for ISO 14001 certificat…" (55.0347ms)
+✔ canonical layer hardening — true obligations preserved (126.6459ms)
+▶ canonical layer hardening — obligation strength integrity
+  ✔ UNKNOWN without mandatory cues stays INFORMATIONAL and is excluded from canonical set (6.5204ms)
+  ✔ OPTIONAL obligations are canonical but not mandatory (1.9385ms)
+  ✔ CONDITIONAL obligations retain trigger context and are not mandatory (2.9955ms)
+✔ canonical layer hardening — obligation strength integrity (11.8647ms)
+▶ canonical layer hardening — buildCanonicalRequirements boundary
+  ✔ mixed tender text yields obligations only, not headings or facts (304.5156ms)
+  ✔ does not inject geographic fact rows from location mentions alone (66.6979ms)
+✔ canonical layer hardening — buildCanonicalRequirements boundary (378.6268ms)
+▶ canonical obligation identity — collapse and distinctions
+  ✔ exact duplicate → 1 canonical row (117.1665ms)
+  ✔ decorative-prefix duplicate → 1 canonical row (32.4535ms)
+  ✔ same text + same semantic facets → 1 (31.6489ms)
+  ✔ same text + different quantity → 2 (11.9662ms)
+  ✔ same text + different duration → 2 (16.8794ms)
+  ✔ same text + different currency → 2 (1.7554ms)
+  ✔ same obligation + different lot applicability preserves both lots (4.1176ms)
+  ✔ same fingerprint with complementary provenance → 1 row with merged provenance (1.9737ms)
+  ✔ conflicting substantive records → REVIEW, never silent merge (28.2747ms)
+  ✔ pre-award vs post-award lifecycle stays distinct (1.1021ms)
+  ✔ EVALUATION and BID_SUBMISSION of the same bidder duty collapse (0.9371ms)
+  ✔ repeated execution → identical canonical output (5.2769ms)
+  ✔ concurrent/repeated canonical build does not persist duplicate identities (2.1508ms)
+  ✔ completion invariant uses the same fingerprint and stays armed (39.9932ms)
+✔ canonical obligation identity — collapse and distinctions (301.5084ms)
+▶ Task 2 — heading filtering
+  ✔ A. heading false positive: technical noun titles are not requirements (44.5062ms)
+  ✔ B. section title false positive (1.0736ms)
+  ✔ C. genuine bidder obligation survives heading-shaped verbs (180.7926ms)
+✔ Task 2 — heading filtering (230.638ms)
+▶ Task 2 — bidder vs procedural text
+  ✔ D. procedural entity instruction excluded (5.7996ms)
+  ✔ C. bidder must/shall remains an obligation (12.4317ms)
+✔ Task 2 — bidder vs procedural text (18.8451ms)
+▶ Task 2 — requirement continuation
+  ✔ E. technical sentence split across page (23.833ms)
+  ✔ F. table-wrapped requirement reconstruction (16.0404ms)
+  ✔ numbered continuation, OCR line, hyphenation, long multi-line (48.689ms)
+✔ Task 2 — requirement continuation (89.3461ms)
+▶ Task 2 — package metadata aggregation
+  ✔ G/I/M. metadata found in later documents including deadline (46.8676ms)
+  ✔ H. notice buyer outranks a labelled contract-form restatement (5.0084ms)
+  ✔ H2. two notices with different labelled buyers stay CONFLICT (6.0041ms)
+  ✔ J. timezone preservation — UNKNOWN when absent, explicit when present (1.4267ms)
+  ✔ K. duplicate requirement across documents is merged with provenance (7.0572ms)
+  ✔ L. corrigendum provenance (2.4051ms)
+  ✔ aggregatePackageMetadata does not invent missing buyer (0.4872ms)
+✔ Task 2 — package metadata aggregation (70.1629ms)
+▶ requirement intelligence — semantic classification
+  ✔ classifies "Bidder must have 5 years of experience in audiov…" as ELIGIBILITY_REQUIREMENT (116.845ms)
+  ✔ classifies "Submit company registration certificate with the…" as REQUIRED_DOCUMENT (16.3039ms)
+  ✔ classifies "Equipment must support 4K UHD resolution for all…" as TECHNICAL_REQUIREMENT (7.2007ms)
+  ✔ classifies "Delivery must occur within 60 days of contract s…" as PERFORMANCE_OBLIGATION (6.5379ms)
+  ✔ classifies "Performance guarantee: 10% of contract value (ca…" as GUARANTEE_SECURITY_REQUIREMENT (5.7008ms)
+  ✔ classifies "Technical score: 40% · Financial offer: 60%…" as EVALUATION_CRITERION (1.0755ms)
+  ✔ classifies "Submission deadline: 30 September 2026 at 16:00…" as DEADLINE (1.4066ms)
+  ✔ classifies "Estimated contract value: MAD 780,000 excluding …" as INFORMATIONAL_FACT (0.7345ms)
+  ✔ classifies "Supply and Installation of Audiovisual Equipment…" as INFORMATIONAL_FACT (1.142ms)
+  ✔ rejects example verification scenarios (36.8014ms)
+  ✔ rejects realistic tender QA lines (subject, tender facts, verification scenario) (2.1625ms)
+  ✔ preserves mandatory language without weakening (32.2846ms)
+  ✔ does not infer mandatory without evidence (0.6216ms)
+  ✔ merges duplicate obligations with shared fingerprint (3.4672ms)
+✔ requirement intelligence — semantic classification (238.7686ms)
+▶ semantic kind × category compatibility SoT
+  ✔ REQUIRED_DOCUMENT + MANDATORY + TECHNICAL is valid (2.3803ms)
+  ✔ REQUIRED_DOCUMENT + MANDATORY + ADMINISTRATIVE is valid (0.3338ms)
+  ✔ REQUIRED_DOCUMENT + MANDATORY + FINANCIAL/ELIGIBILITY domain is valid (0.3394ms)
+  ✔ REQUIRED_DOCUMENT + CONDITIONAL + ELIGIBILITY is valid (0.3054ms)
+  ✔ PERFORMANCE_OBLIGATION + MANDATORY + TECHNICAL is valid (0.3931ms)
+  ✔ FINANCIAL_COMMERCIAL_CONDITION + MANDATORY + FINANCIAL domain is valid (0.3648ms)
+  ✔ invalid semantic/category combinations are rejected (0.3954ms)
+  ✔ normalize preserves REQUIRED_DOCUMENT with technical domain from draft (88.3355ms)
+  ✔ normalize preserves REQUIRED_DOCUMENT with administrative domain (88.8355ms)
+  ✔ headings / facts / procedure still rejected from canonical set (3.0262ms)
+  ✔ merge reconcile keeps REQUIRED_DOCUMENT + TECHNICAL compatible (10.0403ms)
+  ✔ final-consistency does not abort on REQUIRED_DOCUMENT + MANDATORY_TECHNICAL (2.6153ms)
+  ✔ reconcileMergedSemanticTriple recovers incompatible pairs (0.6662ms)
+  ✔ resolveCompatibleCategory maps FINANCIAL domain for documents (0.4632ms)
+  ✔ certification does not fail on valid cross-dimension combinations (6.1489ms)
+✔ semantic kind × category compatibility SoT (246.518ms)
+▶ tender requirement classification
+  ✔ classifies mandatory vs preferred vs informational (69.9305ms)
+  ✔ normalize drops informational noise and preserves distinct obligations (129.2025ms)
+  ✔ weights mandatory failures harder than preferred uncertain (1.1903ms)
+✔ tender requirement classification (203.6355ms)
+▶ canonical Fit consistency
+  ✔ keeps fitScore and fitBreakdown.overall identical (23.4241ms)
+✔ canonical Fit consistency (23.73ms)
+▶ document-compliance module identity
+  ✔ exposes stable module id and feature key (35.0927ms)
+  ✔ does not import tender-analysis internals (2.6897ms)
+✔ document-compliance module identity (42.905ms)
+▶ metadata extraction
+  ✔ extracts labeled expiry and issue dates without inventing (5.8571ms)
+  ✔ marks no-expiry documents (1.5857ms)
+  ✔ does not treat signature dates as expiry (0.5196ms)
+  ✔ marks empty / weak extraction as uncertain (0.4264ms)
+✔ metadata extraction (9.0939ms)
+▶ compliance status
+  ✔ VALID when expiry is beyond soon window (0.8328ms)
+  ✔ EXPIRING_SOON within 90 days (0.4781ms)
+  ✔ EXPIRED after expiry date (date-only) (4.4188ms)
+  ✔ NO_EXPIRY when no expiry and not uncertain (2.2654ms)
+  ✔ UNKNOWN when uncertain and no expiry (0.3348ms)
+✔ compliance status (9.2998ms)
+▶ 90/30/7-day reminders
+  ✔ plans 90, 30, 7 and expired fire dates with date-only math (1.065ms)
+  ✔ respects disabled reminder settings (2.6382ms)
+  ✔ date-only day math does not invent timezone shifts (5.2138ms)
+✔ 90/30/7-day reminders (10.8119ms)
+▶ access when module is OFF
+  ✔ API routes assert module availability before serving (2.4563ms)
+  ✔ entry uploadDocument throws FORBIDDEN when assert fails (0.6711ms)
+✔ access when module is OFF (3.6862ms)
+▶ tenant isolation and ownership invariants
+  ✔ repository list/get always scope by companyId (1.5633ms)
+  ✔ file download checks storage key ownership prefix (0.8468ms)
+  ✔ duplicate versions increment versionNumber (0.7446ms)
+  ✔ reminder reconcile skips terminal alerts and cancels scheduled alerts (1.1755ms)
+✔ tenant isolation and ownership invariants (4.7976ms)
+▶ supplier-qualification module identity
+  ✔ exposes stable module id and feature key (86.0095ms)
+  ✔ does not import tender-analysis or document-compliance internals (4.2784ms)
+✔ supplier-qualification module identity (116.6425ms)
+▶ completeness calculation
+  ✔ returns 0 for empty profile (1.2948ms)
+  ✔ returns 100 when all required fields are populated (0.6188ms)
+  ✔ accepts phone as contact without email (0.4485ms)
+  ✔ is deterministic and equal-weight (15.2471ms)
+✔ completeness calculation (18.3583ms)
+▶ custom sectors/services and validation
+  ✔ normalizes custom sector lists without hard-coded taxonomy (17.1229ms)
+  ✔ validates structured profile fields (21.216ms)
+  ✔ validates evidence metadata (3.6515ms)
+  ✔ treats explicit null patch fields as cleared for completeness (27.5337ms)
+✔ custom sectors/services and validation (73.5083ms)
+▶ tenant isolation and evidence ownership
+  ✔ service scopes profile and evidence by companyId (1.3806ms)
+  ✔ entry always asserts module availability (permissions / OFF) (0.8809ms)
+✔ tenant isolation and evidence ownership (17.1204ms)
+▶ module OFF blocking and Super Admin testing
+  ✔ API routes assert availability before serving (10.8605ms)
+  ✔ access preserves Super Admin enter-session bypass when globally OFF (16.0219ms)
+  ✔ create/update/read are exposed via public entry (1.1379ms)
+✔ module OFF blocking and Super Admin testing (29.1085ms)
+▶ tender-analysis module identity
+  ✔ exposes a stable module id and feature key (18.7899ms)
+  ✔ preserves the full analysis pipeline order (1.5452ms)
+  ✔ declares owned packages covering the pipeline layers (0.9686ms)
+✔ tender-analysis module identity (23.389ms)
+▶ tender-analysis public entry wiring
+  ✔ production actions and worker import the module entry, not processing internals (1.8458ms)
+  ✔ usage gate resolves Tender Analysis via the module availability check (0.7717ms)
+  ✔ app layout and tender routes gate on the module (0.9631ms)
+  ✔ eslint forbids importing module internals from outside the module (0.7102ms)
+✔ tender-analysis public entry wiring (4.8381ms)
+▶ tender-calendar module identity
+  ✔ exposes stable module id and feature key (38.6931ms)
+  ✔ does not import analysis / compliance / qualification internals (1.4564ms)
+✔ tender-calendar module identity (44.6158ms)
+▶ date-only and timezone handling
+  ✔ preserves date-only without inventing a timezone (1.3262ms)
+  ✔ preserves explicit timezone when provided with datetime (0.609ms)
+  ✔ does not invent timezone for datetime without one (0.6682ms)
+✔ date-only and timezone handling (3.2381ms)
+▶ deadline ordering and past status
+  ✔ orders by occursAt ascending (2.1105ms)
+  ✔ marks past and due-today for date-only deadlines (0.7701ms)
+✔ deadline ordering and past status (3.4128ms)
+▶ reminders
+  ✔ plans 30/14/7/3/1/same-day offsets (1.126ms)
+  ✔ respects disabled reminder settings (0.5744ms)
+✔ reminders (8.198ms)
+▶ tenant isolation, CRUD, permissions, OFF, SA testing
+  ✔ service scopes every query by companyId (2.3581ms)
+  ✔ entry asserts module availability on mutations and reads (1.1396ms)
+  ✔ API routes block when module is OFF (1.6793ms)
+  ✔ access preserves Super Admin enter-session bypass (1.0234ms)
+  ✔ exposes CRUD through public entry (0.7564ms)
+  ✔ cancels scheduled alerts when cancelling deadline reminders (0.7899ms)
+  ✔ dashboard queries upcoming and past separately (0.8683ms)
+✔ tenant isolation, CRUD, permissions, OFF, SA testing (9.6322ms)
+✔ resolveStripePriceId maps monthly vs yearly from Super Admin fields (3.4512ms)
+✔ resolvePaypalPlanId maps monthly vs yearly independently (49.3995ms)
+✔ resolvePlanAmountCents returns distinct monthly and yearly DB amounts (0.5853ms)
+✔ trial blocks 4th analysis when 3 credits used (0.733ms)
+✔ trial unlimited plans never exhaust via credit counter (0.609ms)
+✔ trialing subscription access ends when period expires (0.8533ms)
+✔ revocation idempotency skips duplicate providerReferenceId (1.0564ms)
+✔ revocation idempotency skips already EXPIRED restricted state (0.7409ms)
+✔ revocation idempotency allows first revocation on ACTIVE paid plan (19.3082ms)
+✔ extractRevocationReferenceIds collects provider ids from events (3.8809ms)
+✔ paid ACTIVE subscription allows access until revoked (0.4697ms)
+✔ EXPIRED paid subscription denies access after refund revocation (0.5805ms)
+✔ parsePayPalCustomId requires all four segments (3.5757ms)
+✔ assertExactAmountCents rejects any mismatch (44.9219ms)
+✔ assertCurrencyMatch is case-insensitive (0.7435ms)
+✔ assertStripeCheckoutPaid requires paid and complete (1.1089ms)
+✔ parsePayPalCustomId rejects manipulated client amounts (0.646ms)
+✔ frontend plan manipulation cannot bypass custom_id amount segment (1.3119ms)
+✔ billing gateway schema rejects invalid default gateway (14.9899ms)
+✔ billing gateway schema accepts stripe/paypal defaults (47.2396ms)
+✔ billing gateway schema accepts custom graceDays (0.5093ms)
+✔ resolvePlanAmountCents uses DB amounts only (1.015ms)
+✔ disabled gateway settings keep cancel flags off by default (0.6721ms)
+✔ ACTIVE within period allows access (2.6263ms)
+✔ ACTIVE after period end blocks and maps to EXPIRED (1.0494ms)
+✔ TRIALING after period end is trial_expired (0.8005ms)
+✔ TRIALING within period allows access (1.6647ms)
+✔ PAST_DUE within grace allows access with warning (0.6873ms)
+✔ PAST_DUE after grace blocks (0.4566ms)
+✔ PAYMENT_FAILED uses same grace rules (0.5154ms)
+✔ CANCELED keeps access until period end (0.5013ms)
+✔ CANCELED after period end blocks (0.5526ms)
+✔ EXPIRED / UNPAID / INCOMPLETE never allow (1.2416ms)
+✔ missing subscription denies access (0.4496ms)
+✔ nextPeriodWindow advances month and year (7.7242ms)
+✔ shouldResetUsageForPeriod only when period advances (0.4861ms)
+✔ computeGracePeriodEndsAt respects zero days (0.519ms)
+✔ normalizePaymentFailureStatus is PAST_DUE (0.2872ms)
+✔ YEARLY interval snapshot respects period end independently of calendar month (0.7782ms)
+✔ plan translations parse valid locale copy (32.9028ms)
+✔ localize prefers admin translations over built-in map (16.1667ms)
+✔ monthly vs yearly features switch from Admin copy (1.6975ms)
+✔ published locale with name only uses EN features not phantom map (0.5713ms)
+✔ unpublished locale uses temporary suggestions until Admin saves (0.9479ms)
+✔ localize keeps English canonical fields (1.4176ms)
+✔ buildPlanLanguagesDraft fills monthly and yearly (1.5397ms)
+✔ mergePlanTranslations keeps yearly when patching monthly (2.0869ms)
+✔ translateMarketingFeatureLine covers entitlement + dynamic limits (35.0509ms)
+✔ buildPlanLanguagesDraft seeds from Plan Editor entitlement bullets (8.5501ms)
+✔ trial / starter can upgrade when Pro is top public plan (10.921ms)
+✔ Pro (highest public plan) hides Upgrade (28.3311ms)
+✔ no public plans means no upgrade CTA (0.5243ms)
+✔ canonicalFeatureKey maps alerts → smart_alerts (7.6674ms)
+✔ marketing labels derive from structured limits + keys (32.9358ms)
+✔ interval limits prefer yearly when set (2.3133ms)
+✔ projectIntelligenceForEntitlements strips premium blobs when disabled (3.2896ms)
+✔ projectIntelligenceForEntitlements preserves fields when entitled (19.1194ms)
+✔ deriveCanonicalReportSections denies premium sections by default (0.8947ms)
+✔ deriveCanonicalReportSections allows action plan with explicit access (0.4961ms)
+✔ tender detail loader projects intelligence before serialization (1.2615ms)
+✔ report payload projects intelligence before return (0.6796ms)
+✔ shared report page resolves live feature access (0.6554ms)
+✔ explainable decision gates evidence_intelligence separately (0.7007ms)
+✔ decision simulator does not persist simulation results (0.9205ms)
+✔ tender action plan has no client completion mutation path (1.2403ms)
+✔ premium feature keys are in admin catalog and plan defaults (3.7394ms)
+✔ trial plan excludes premium capabilities (same entitlement system) (0.4622ms)
+✔ starter includes evidence + explainable but not simulator or action plan (0.5496ms)
+✔ upgrade to pro enables pro-only premium features (1.5476ms)
+✔ downgrade removes premium access without deleting stored data paths (2.6352ms)
+✔ enabled feature passes isFeatureEnabledInMap (0.4183ms)
+✔ disabled feature fails isFeatureEnabledInMap (deny by default) (0.4455ms)
+✔ assertFeature uses safe upgrade message without internals (0.6712ms)
+✔ application layers enforce server-side assertFeature at boundaries (2.1698ms)
+✔ advanced_ai_trust gates diagnostics only — fundamental ai-trust guards remain (1.4315ms)
+✔ tender action plan preserves tenant isolation when entitled (1.0754ms)
+✔ FORBIDDEN entitlement error shape for UI-safe responses (0.545ms)
+✔ super admin plan editor keys include all premium capabilities (0.4314ms)
+✔ backward compat fills missing PlanFeature rows from slug defaults (0.496ms)
+✔ seed script uses canonical planDefaultFeatureKeys (single source of truth) (0.8084ms)
+ℹ tests 334
+ℹ suites 53
+ℹ pass 334
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9542.4996
+
+exit:0
+
+=== batch 2: 25 files ===
+▶ deadline timezone UNKNOWN semantics
+  ✔ 1 — explicit timezone is preserved (4.9767ms)
+  ✔ 2 — missing timezone → UNKNOWN, no invented timezone (5.0867ms)
+  ✔ 3 — missing timezone + REVIEW → Guardian advisory only (no block / no loop) (52.5872ms)
+  ✔ 3b — missing timezone + BID remains blocked (GO unsafe) (6.3757ms)
+  ✔ 4 — real deadline date/time remains unchanged when timezone UNKNOWN (2.0411ms)
+  ✔ 5 — existing Guardian protections intact with explicit timezone (4.4637ms)
+✔ deadline timezone UNKNOWN semantics (78.936ms)
+▶ Prompt 2 — high-risk fact tokens
+  ✔ extracts amounts, percentages, refs, times, conditionals (6.8508ms)
+✔ Prompt 2 — high-risk fact tokens (14.9586ms)
+▶ Prompt 2 — wrong timezone / derived deadline
+  ✔ rejects wrong timezone mutation 10:30 → 01:00 on derived channels (119.8183ms)
+✔ Prompt 2 — wrong timezone / derived deadline (120.1882ms)
+▶ Prompt 2 — truncated / lost ID / lost conditional / wrong section
+  ✔ flags truncated requirement (30.1863ms)
+  ✔ flags lost requirement ID between evidence and canonical text (4.1585ms)
+  ✔ flags wrong section provenance (title-like) (3.8755ms)
+✔ Prompt 2 — truncated / lost ID / lost conditional / wrong section (38.8282ms)
+▶ Prompt 2 — commercial, duplicates, QA/evaluation/reviewer leaks
+  ✔ flags missing commercial obligation cue (2.961ms)
+  ✔ flags duplicate obligation (8.155ms)
+  ✔ flags false QA / evaluation / reviewer scenario leaks (3.1943ms)
+✔ Prompt 2 — commercial, duplicates, QA/evaluation/reviewer leaks (14.9826ms)
+▶ Prompt 2 — count drift, stale result, contradictions, AI, evidence rules
+  ✔ flags count drift (2.2583ms)
+  ✔ flags stale result mismatch (5.6162ms)
+  ✔ flags contradictory source clauses without silent resolution (2.6946ms)
+  ✔ flags unsupported AI claim affecting decision (3.2843ms)
+  ✔ flags CONFIRMED_GAP when only tender text is present (1.5599ms)
+  ✔ flags CONFIRMED_FIT without company evidence (1.0791ms)
+  ✔ flags NEEDS_VERIFICATION escalated to HIGH risk (1.768ms)
+  ✔ flags external overwrite of tender fact (6.1877ms)
+  ✔ passes consistent commercial set quickly (4.6097ms)
+✔ Prompt 2 — count drift, stale result, contradictions, AI, evidence rules (30.1759ms)
+▶ Decision Guardian — happy path
+  ✔ passes a consistent structured payload in milliseconds (68.4424ms)
+✔ Decision Guardian — happy path (72.5262ms)
+▶ Decision Guardian — document integrity
+  ✔ fail-closes on unreadable document (2.4873ms)
+  ✔ fail-closes when validity gate failed (2.3743ms)
+✔ Decision Guardian — document integrity (5.2846ms)
+▶ Decision Guardian — canonical boundary
+  ✔ rejects QA/meta and evaluation leaks (2.106ms)
+  ✔ rejects heading false positives (2.4675ms)
+✔ Decision Guardian — canonical boundary (5.0293ms)
+▶ Decision Guardian — conditionality & completeness
+  ✔ rejects conditional promoted to mandatory (1.8652ms)
+  ✔ rejects lost conditional context (1.8894ms)
+✔ Decision Guardian — conditionality & completeness (4.3843ms)
+▶ Decision Guardian — deadlines
+  ✔ rejects 10:30 → 01:00 mutation (43.4006ms)
+✔ Decision Guardian — deadlines (43.6844ms)
+▶ Decision Guardian — semantic identity & counts
+  ✔ rejects duplicate semantic obligations (6.6598ms)
+  ✔ rejects count drift across modules (1.7426ms)
+✔ Decision Guardian — semantic identity & counts (8.6647ms)
+▶ Decision Guardian — decision & actions
+  ✔ rejects NO_BID without hard blockers (1.6843ms)
+  ✔ rejects BID with confirmed mandatory gap (1.4629ms)
+  ✔ rejects verification-only actions marked blocking (2.638ms)
+  ✔ rejects AI override of canonical rules (4.3009ms)
+  ✔ throws DecisionGuardianError with structured payload on assert (2.3453ms)
+✔ Decision Guardian — decision & actions (13.5385ms)
+▶ Decision Guardian — buildDecisionGuardianInput adapter
+  ✔ maps pipeline objects into guardian input without reinterpretation (1.628ms)
+✔ Decision Guardian — buildDecisionGuardianInput adapter (1.829ms)
+▶ Test 2 — canonical integrity
+  ✔ extracts exactly 11 bidder-stage canonical obligations with correct semantic kinds (512.6073ms)
+  ✔ count parity across decision, matrix, evidence, risk, actions (103.5115ms)
+✔ Test 2 — canonical integrity (618.5635ms)
+▶ Test 2 — classifier regressions
+  ✔ explicit Not a Tender Requirement marker rejected (1.4197ms)
+✔ Test 2 — classifier regressions (1.6987ms)
+▶ production lock — single analysis → Guardian → Web/PDF identity
+  ✔ one canonical dataset drives identical Web and PDF projections after Guardian (195.6343ms)
+  ✔ Guardian failure prevents final report publication (no misleading COMPLETED release) (75.9332ms)
+  ✔ assertFinalReleaseIntegrity fails closed on critical defects before release (1.1451ms)
+✔ production lock — single analysis → Guardian → Web/PDF identity (273.3ms)
+▶ regression memory catalog
+  ✔ covers every architectural category (6.0921ms)
+  ✔ DOCUMENT/unreadable_document (doc-unreadable) (7.0116ms)
+  ✔ DOCUMENT/wrong_document_type (doc-invalid-type) (65.9197ms)
+  ✔ DOCUMENT/incomplete_or_ocr_insufficient_text (doc-insufficient-text) (3.9155ms)
+  ✔ EXTRACTION/truncated_obligation (ext-truncated) (8.5395ms)
+  ✔ EXTRACTION/duplicated_obligation (ext-duplicate) (18.4053ms)
+  ✔ EXTRACTION/false_obligation_qa_meta (ext-false-obligation) (1.9409ms)
+  ✔ CLASSIFICATION/evaluation_criterion_as_requirement (cls-evaluation) (1.616ms)
+  ✔ CLASSIFICATION/deadline_as_requirement (cls-deadline) (1.4221ms)
+  ✔ CLASSIFICATION/reviewer_instruction_as_requirement (cls-reviewer) (1.3368ms)
+  ✔ CLASSIFICATION/conditional_promoted_to_mandatory (cls-conditional-mandatory) (6.6506ms)
+  ✔ DATA/wrong_timezone_or_wall_clock (data-timezone) (45.5906ms)
+  ✔ DATA/lost_requirement_id (data-lost-id) (2.9064ms)
+  ✔ DATA/lost_conditional_clause (data-lost-condition) (1.5222ms)
+  ✔ DATA/wrong_source_section (data-wrong-section) (1.0694ms)
+  ✔ DATA/missing_commercial_obligation (data-missing-commercial) (1.1217ms)
+  ✔ EVIDENCE/unsupported_confirmed_fit (ev-unsupported-fit) (1.1644ms)
+  ✔ EVIDENCE/unsupported_confirmed_gap (ev-unsupported-gap) (0.8951ms)
+  ✔ RISK/verification_treated_as_high_critical_risk (risk-verify-as-failure) (1.0218ms)
+  ✔ DECISION/invalid_no_bid_without_blocker (dec-invalid-nobid) (1.0308ms)
+  ✔ DECISION/invalid_bid_with_confirmed_gap (dec-invalid-bid) (1.1014ms)
+  ✔ DECISION/ai_overriding_canonical_rules (dec-ai-override) (1.0851ms)
+  ✔ ACTION_PLAN/verification_action_marked_blocking (act-verify-blocking) (0.9666ms)
+  ✔ ACTION_PLAN/action_referencing_nonexistent_requirement (act-orphan) (1.1483ms)
+  ✔ ACTION_PLAN/action_count_drift (act-count-drift) (1.6157ms)
+  ✔ REPORT/web_pdf_count_mismatch (rep-count-mismatch) (1.2401ms)
+  ✔ REPORT/fit_score_mismatch (rep-fit-mismatch) (0.983ms)
+  ✔ REPORT/stale_report_data (rep-stale) (1.2936ms)
+  ✔ REPORT/deadline_web_pdf_mismatch (rep-deadline-mismatch) (2.0661ms)
+  ✔ SOURCE_EXTERNAL/external_overriding_tender_fact (src-external-overwrite) (0.9852ms)
+  ✔ SOURCE_EXTERNAL/unsupported_external_claim (src-unsupported-external) (1.7564ms)
+  ✔ SOURCE_EXTERNAL/contradictory_source_clauses (src-contradiction) (2.6039ms)
+✔ regression memory catalog (213.034ms)
+▶ REQUIREMENT_CONDITION_LOST — token identity + PE disclaimer
+  ✔ PE disclaimer with 'if the bidder fails' → no CONDITIONAL token / no false CONDITION_LOST (65.174ms)
+  ✔ genuine if applicable / (conditional) / if the bidder obligation → CONDITIONAL cue preserved (1.8612ms)
+  ✔ genuine condition lost from canonical → Guardian still blocks (8.5116ms)
+✔ REQUIREMENT_CONDITION_LOST — token identity + PE disclaimer (79.7318ms)
+▶ UDI format adapters
+  ✔ registry covers PDF DOC DOCX XLS XLSX CSV PPT PPTX TXT images ZIP RAR (3.6009ms)
+  ✔ never classifies OOXML as archive for text extract (65.0419ms)
+✔ UDI format adapters (78.0997ms)
+▶ UDI quality gate
+  ✔ maps legacy qualities to VALID / PARTIALLY_READABLE / UNREADABLE (4.6615ms)
+  ✔ partial package failure does not force whole package UNREADABLE when peers VALID (0.5988ms)
+✔ UDI quality gate (6.4481ms)
+▶ UDI table-first structure
+  ✔ preserves headers as non-requirement and keeps cell obligations (2.5613ms)
+  ✔ records merge spans and cell addresses from SheetJS (66.9206ms)
+  ✔ xlsx extraction returns structure.tables (64.5933ms)
+✔ UDI table-first structure (134.7589ms)
+▶ UDI structure from plain text
+  ✔ reconstructs pipe tables from PDF-like text (4.0281ms)
+  ✔ marks section headings nonRequirement and keeps paragraphs (1.6619ms)
+✔ UDI structure from plain text (6.2195ms)
+▶ UDI package inventory — zero silent drops
+  ✔ 1 PDF package inventory (2.8375ms)
+  ✔ 10 PDFs package inventory (11.159ms)
+  ✔ 100 PDFs inventory integrity (0.9664ms)
+  ✔ duplicate filenames remain distinct fileIds — no silent merge (0.5943ms)
+  ✔ unsupported + unreadable stay explicit in inventory (1.6169ms)
+✔ UDI package inventory — zero silent drops (18.1943ms)
+▶ UDI multilingual text preservation
+  ✔ preserves French accents and Arabic digits in structure blocks (7.3528ms)
+✔ UDI multilingual text preservation (7.6861ms)
+▶ UDI ZIP expansion still authoritative for archives
+  ✔ ZIP expands members into inventory candidates without treating OOXML as archive (10.9958ms)
+✔ UDI ZIP expansion still authoritative for archives (11.1902ms)
+▶ UDI semantic document units
+  ✔ harvests obligation-shaped table rows with neighbors and cell context (6.252ms)
+✔ UDI semantic document units (6.4287ms)
+▶ professional risk assessment engine
+  ✔ confirmed fit → no false negative risk (6.6463ms)
+  ✔ confirmed gap → appropriate HIGH/CRITICAL risk with provenance (1.5786ms)
+  ✔ missing evidence → verification risk only (never HIGH/CRITICAL) (0.9479ms)
+  ✔ conflicting evidence produces verification/conflict risk (0.692ms)
+  ✔ mandatory confirmed gap may be HIGH/CRITICAL (27.1156ms)
+  ✔ optional requirement does not become material compliance risk (6.5325ms)
+  ✔ conditional requirement with unknown applicability preserves uncertainty (1.0479ms)
+  ✔ categorizes eligibility, technical, financial, contractual, deadline risks (1.2801ms)
+  ✔ multiple requirements produce one underlying risk (semantic dedupe) (1.1212ms)
+  ✔ provenance preserved on material risks (1.3066ms)
+  ✔ severity calibration — mandatory alone does not force CRITICAL without material finding (0.8074ms)
+  ✔ Risk → Decision: confirmed risks downgrade BID; verification does not force NO_BID (2.4271ms)
+  ✔ rejects invalid risk consistency states (0.9776ms)
+✔ professional risk assessment engine (56.5966ms)
+
+--- Audiovisual extraction audit ---
+Extracted requirement count: 5
+Deadline (fact): 2026-09-30T17:00:00+01:00
+Estimated value (fact): 4200000
+[MANDATORY_ELIGIBILITY] mandatory=true | Minimum five (5) years of experience in public-sector audiovisual installation projects is… | doc=Tender_Audiovisual_Equipment.pdf p?
+[CONTRACTUAL] mandatory=true | Bidders must submit a provisional bond (caution provisoire) together with the tender dossi… | doc=Tender_Audiovisual_Equipment.pdf p?
+[MANDATORY_TECHNICAL] mandatory=true | The bidder shall supply, install, configure and commission a complete audiovisual system i… | doc=Tender_Audiovisual_Equipment.pdf p?
+[MANDATORY_ADMINISTRATIVE] mandatory=true | Attestation CNSS and tax clearance certificate are mandatory.… | doc=Tender_Audiovisual_Equipment.pdf p?
+[MANDATORY_TECHNICAL] mandatory=true | The supplier must provide a minimum warranty period of 24 months on all installed AV equip… | doc=Tender_Audiovisual_Equipment.pdf p?
+
+--- Audiovisual risk audit (after fix) ---
+Requirements: 5
+Verify/missing/unknown rows: 5
+Canonical identified risks (summary): 0
+Structured HIGH/CRITICAL risks: 0
+▶ audiovisual tender — extraction audit
+  ✔ captures genuine obligations and filters facts/noise (362.1505ms)
+  ✔ classifies AV obligations correctly (16.3342ms)
+  ✔ merges sparse AI with heuristic without duplicates (57.5616ms)
+✔ audiovisual tender — extraction audit (439.6529ms)
+▶ audiovisual tender — canonical consistency
+  ✔ readiness/compliance counts align; fit is single canonical value (132.2011ms)
+  ✔ web and PDF display share identical fit and counts (53.1179ms)
+✔ audiovisual tender — canonical consistency (185.7597ms)
+▶ canonical risk classification
+  ✔ unknown requirement state is not HIGH risk (0.8292ms)
+  ✔ missing profile data is NEEDS_VERIFICATION not confirmed risk (0.6746ms)
+  ✔ CERT_MISSING finding does not create structured HIGH risk (2.1998ms)
+  ✔ explicit non-compliance creates confirmed HIGH/CRITICAL risk (1.5203ms)
+  ✔ confirmed inability (revenue below) is a risk (1.0605ms)
+  ✔ objectively expired mandatory certificate is confirmed non-compliance (0.716ms)
+  ✔ ambiguous requirement stays verification — not high risk (0.5209ms)
+  ✔ risk count is not equal to unknown/verify count (1.9254ms)
+  ✔ audiovisual tender — unknown obligations do not inflate risk count (25.0598ms)
+  ✔ compliance summary risk count matches structured risks (0.5641ms)
+✔ canonical risk classification (38.8097ms)
+▶ risk duplicate integrity A–G
+  ✔ A. exact duplicate certification risk collapses to one (9.6901ms)
+  ✔ B. same certification issue from two documents collapses (12.8275ms)
+  ✔ C. same issue linked to multiple evidence records still one risk (6.6158ms)
+  ✔ D. two genuinely different certification requirements stay separate (1.4568ms)
+  ✔ E. different certification categories/severities remain distinct when issues differ (0.5454ms)
+  ✔ F. duplicate risk after persistence/rehydration collapses with matrix risk (1.4787ms)
+  ✔ G. legitimate distinct risks must remain separate (cert + geography) (4.7193ms)
+✔ risk duplicate integrity A–G (41.0216ms)
+▶ Phase 2 semantic matrix
+  ✔ authority statement — excluded (83.6905ms)
+  ✔ bidder obligation — admitted (26.3103ms)
+  ✔ conditional bidder obligation — preserves condition, not mandatory promotion (22.7689ms)
+  ✔ optional requirement (14.5707ms)
+  ✔ document-quality statement — excluded (2.9632ms)
+  ✔ Q&A — excluded (1.7853ms)
+  ✔ clarification — excluded (4.9488ms)
+  ✔ corrigendum / revision metadata — excluded (1.7814ms)
+  ✔ technical bidder clause — admitted; contractor post-award — excluded (16.9075ms)
+  ✔ commercial clause (39.0874ms)
+  ✔ contractor post-award clause — excluded from canonical bid requirements (4.0374ms)
+  ✔ table obligation text — admitted; table header — excluded (5.0207ms)
+  ✔ multi-lot requirement preserves lot applicability (3.6499ms)
+  ✔ cross-document duplicate collapses with provenance links (10.3108ms)
+  ✔ long clause remains boundary-complete (2.5942ms)
+  ✔ OCR incomplete fragment — excluded (2.2346ms)
+  ✔ French bidder obligation admitted; French authority excluded (30.3647ms)
+  ✔ English / Spanish modality does not alone force mandatory without actor (1.6038ms)
+  ✔ Arabic numerals preserved in interpreted text (34.0556ms)
+  ✔ similar but distinct obligations remain separate (2.8083ms)
+  ✔ sentence mentioning bidder is not automatically a bidder obligation (0.9537ms)
+  ✔ never creates candidate without provenance (1.2481ms)
+  ✔ packageLabel supplies provenance fallback (1.2927ms)
+✔ Phase 2 semantic matrix (324.1855ms)
+
+--- Audiovisual extraction audit ---
+Extracted requirement count: 5
+Deadline (fact): 2026-09-30T17:00:00+01:00
+Estimated value (fact): 4200000
+[MANDATORY_ELIGIBILITY] mandatory=true | Minimum five (5) years of experience in public-sector audiovisual installation projects is… | doc=Tender_Audiovisual_Equipment.pdf p?
+[CONTRACTUAL] mandatory=true | Bidders must submit a provisional bond (caution provisoire) together with the tender dossi… | doc=Tender_Audiovisual_Equipment.pdf p?
+[MANDATORY_TECHNICAL] mandatory=true | The bidder shall supply, install, configure and commission a complete audiovisual system i… | doc=Tender_Audiovisual_Equipment.pdf p?
+[MANDATORY_ADMINISTRATIVE] mandatory=true | Attestation CNSS and tax clearance certificate are mandatory.… | doc=Tender_Audiovisual_Equipment.pdf p?
+[MANDATORY_TECHNICAL] mandatory=true | The supplier must provide a minimum warranty period of 24 months on all installed AV equip… | doc=Tender_Audiovisual_Equipment.pdf p?
+▶ audiovisual tender — extraction audit
+  ✔ captures genuine obligations and filters facts/noise (326.0962ms)
+  ✔ classifies AV obligations correctly (16.696ms)
+  ✔ merges sparse AI with heuristic without duplicates (60.9209ms)
+✔ audiovisual tender — extraction audit (406.3575ms)
+▶ audiovisual tender — canonical consistency
+  ✔ readiness/compliance counts align; fit is single canonical value (66.746ms)
+  ✔ web and PDF display share identical fit and counts (76.7552ms)
+✔ audiovisual tender — canonical consistency (144.1197ms)
+▶ hardening — actor attribution A–I
+  ✔ A/B. Authority / procuring-entity obligations excluded (131.5508ms)
+  ✔ C. Document-quality tender dossier sentence excluded (1.2781ms)
+  ✔ D. Clarification / Q&A authority statement excluded (0.796ms)
+  ✔ E/G/H/I. Genuine bidder must/shall/doit + technical/financial/submission kept (110.9242ms)
+  ✔ Second-person / veuillez fournir is a bidder obligation (0.7432ms)
+  ✔ F. Genuine bidder conditional requirement remains CONDITIONAL (2.3656ms)
+✔ hardening — actor attribution A–I (250.9374ms)
+▶ hardening — counts J–K
+  ✔ J. Canonical count partition (1.1878ms)
+  ✔ K. Decision explanation uses canonical verification count, not driver subset alone (5.0823ms)
+✔ hardening — counts J–K (6.9051ms)
+▶ hardening — action / report text L–Q
+  ✔ L/M/N/O/P. Action references canonical ID and keeps complete FR requirement text (15.5642ms)
+  ✔ Q/R. Multiline and page-break requirements stay complete (54.0278ms)
+✔ hardening — action / report text L–Q (70.0743ms)
+▶ hardening — multi-document S–T
+  ✔ S/T. Corrigendum / clarification does not create authority rows; distinct obligations stay (158.701ms)
+  ✔ Web/PDF/API totals match snapshot for the same canonical set (3.5177ms)
+✔ hardening — multi-document S–T (162.5688ms)
+▶ hardening — snapshot deadline and action-plan consistency
+  ✔ report deadline and action titles come from the same snapshot counts (6.4857ms)
+✔ hardening — snapshot deadline and action-plan consistency (6.802ms)
+▶ hardening — explicit authority never-enter list
+  ✔ never enters canonical bidder requirements (2.0994ms)
+✔ hardening — explicit authority never-enter list (2.3026ms)
+▶ conditional obligation context preservation
+  ✔ provisional bond without trigger is MANDATORY, not invented CONDITIONAL (60.7341ms)
+  ✔ conditional requirement with explicit trigger stays CONDITIONAL with trigger text (30.647ms)
+  ✔ dedupe prefers trigger-bearing text over short unconditional paraphrase (7.7338ms)
+  ✔ persistence + rehydration preserves conditional trigger via requirement text (103.662ms)
+  ✔ missing trigger context must not crash the pipeline — fails safe as NEEDS_VERIFICATION (24.3634ms)
+  ✔ unconditional mandatory requirements behave as before (37.792ms)
+✔ conditional obligation context preservation (268.5427ms)
+▶ deadline wall-clock — 23:59 never becomes 00:59
+  ✔ 1 — 23:59 local round-trip through Date persist/rebuild (49.0793ms)
+  ✔ 2 — Europe/Copenhagen winter and summer keep 23:59 (14.0607ms)
+  ✔ 3 — UTC and positive/negative offsets round-trip (7.8857ms)
+  ✔ 4 — DST transition dates keep stated 23:59 (17.4645ms)
+  ✔ 5 — date-only deadlines stay date-only (no invented 00:59) (4.9057ms)
+  ✔ 6 — explicit timezone in source is preserved with DST-correct offset (3.9412ms)
+  ✔ 7 — no explicit timezone → naive wall-clock, no invented offset (0.9133ms)
+  ✔ 8 — extraction → canonical → snapshot readback → Guardian equivalence (63.4905ms)
+  ✔ 9 — re-running the same analysis is idempotent (18.9633ms)
+  ✔ 10 — real 23:59 must never become 00:59 (Copenhagen / CET summer) (26.0077ms)
+  ✔ country is never timezone evidence (0.5614ms)
+✔ deadline wall-clock — 23:59 never becomes 00:59 (211.5075ms)
+▶ obligation actor attribution
+  ✔ 1. bidder must/shall/doit → included (99.988ms)
+  ✔ 2. Contracting Authority must/doit → excluded (14.2319ms)
+  ✔ 3. Procuring Entity disclaimer → excluded (0.6804ms)
+  ✔ 4. Tender document/procedure obligation → excluded (1.3142ms)
+  ✔ 5. Clarification question → excluded (30.1382ms)
+  ✔ 6. Clarification answer → excluded (0.7075ms)
+  ✔ 7. Revision/addendum procedural text → excluded (0.5639ms)
+  ✔ 8. Genuine bidder conditional requirement → CONDITIONAL (1.7884ms)
+  ✔ 9. UNKNOWN + obligation wording → UNCERTAIN, never mandatory (3.6036ms)
+  ✔ 10. Multi-document: clarification does not create a new requirement; distinct obligations stay separate (121.7684ms)
+✔ obligation actor attribution (278.845ms)
+▶ canonical count integrity
+  ✔ 11. Canonical count partition invariant (3.0165ms)
+  ✔ 12–13. Readiness / report / snapshot / API totals share one canonical set (14.7563ms)
+✔ canonical count integrity (18.1367ms)
+▶ realistic tender — canonical requirements
+  ✔ excludes subject, tender facts, and verification scenarios (372.6297ms)
+  ✔ dedupes bid security and 5-year experience to one row each (88.6903ms)
+✔ realistic tender — canonical requirements (463.7003ms)
+▶ realistic tender — fit, decision, and report projection
+  ✔ single fit value across engine, intelligence, web, and PDF paths (85.1422ms)
+✔ realistic tender — fit, decision, and report projection (85.4999ms)
+
+--- Audiovisual extraction audit ---
+Extracted requirement count: 5
+Deadline (fact): 2026-09-30T17:00:00+01:00
+Estimated value (fact): 4200000
+[MANDATORY_ELIGIBILITY] mandatory=true | Minimum five (5) years of experience in public-sector audiovisual installation projects is… | doc=Tender_Audiovisual_Equipment.pdf p?
+[CONTRACTUAL] mandatory=true | Bidders must submit a provisional bond (caution provisoire) together with the tender dossi… | doc=Tender_Audiovisual_Equipment.pdf p?
+[MANDATORY_TECHNICAL] mandatory=true | The bidder shall supply, install, configure and commission a complete audiovisual system i… | doc=Tender_Audiovisual_Equipment.pdf p?
+[MANDATORY_ADMINISTRATIVE] mandatory=true | Attestation CNSS and tax clearance certificate are mandatory.… | doc=Tender_Audiovisual_Equipment.pdf p?
+[MANDATORY_TECHNICAL] mandatory=true | The supplier must provide a minimum warranty period of 24 months on all installed AV equip… | doc=Tender_Audiovisual_Equipment.pdf p?
+
+--- Audiovisual counting audit ---
+Raw heuristic drafts: 6
+Canonical requirements: 5
+Missing documents (separate): 3
+Readiness total: 5
+Compliance total: 5
+Matrix rows: 5
+▶ audiovisual tender — extraction audit
+  ✔ captures genuine obligations and filters facts/noise (352.8389ms)
+  ✔ classifies AV obligations correctly (17.694ms)
+  ✔ merges sparse AI with heuristic without duplicates (30.9598ms)
+✔ audiovisual tender — extraction audit (403.6013ms)
+▶ audiovisual tender — canonical consistency
+  ✔ readiness/compliance counts align; fit is single canonical value (66.2186ms)
+  ✔ web and PDF display share identical fit and counts (25.6435ms)
+✔ audiovisual tender — canonical consistency (92.3573ms)
+▶ canonical counting — semantic deduplication
+  ✔ merges paraphrased tax clearance obligations into one requirement (5.2635ms)
+  ✔ adversarial pack excludes facts and dedupes obligations (11.6362ms)
+✔ canonical counting — semantic deduplication (17.4756ms)
+▶ canonical counting — missing documents never inflate requirement totals
+  ✔ requirement exists once; missing document does not add to total (0.8431ms)
+  ✔ detects legacy stored totals that counted missing documents (0.8291ms)
+  ✔ detects matrix length divergence from canonical requirements (0.7016ms)
+✔ canonical counting — missing documents never inflate requirement totals (2.9004ms)
+▶ canonical counting — full pipeline invariants
+  ✔ audiovisual tender: one canonical count across readiness, compliance, matrix (20.8941ms)
+  ✔ multiple extraction sources for one obligation preserve provenance without duplicate count (7.2123ms)
+✔ canonical counting — full pipeline invariants (28.4166ms)
+▶ stress test — canonical boundary
+  ✔ excludes headings, evaluation notes, reviewer scenarios, and QA meta (439.2183ms)
+  ✔ preserves R-01..R-13 semantics including conditional R-13 (64.8064ms)
+  ✔ semantic dedupe — bid security and experience appear once (49.0733ms)
+✔ stress test — canonical boundary (555.8416ms)
+▶ stress test — action plan integrity
+  ✔ one primary action per canonical item — no verification explosion (44.0312ms)
+  ✔ web report counts align with canonical requirements (71.8516ms)
+✔ stress test — action plan integrity (116.2915ms)
+▶ canonical boundary — semantic classifier regressions
+  ✔ heading false positive rejected (9.1857ms)
+  ✔ evaluation-note false positive rejected (0.7154ms)
+  ✔ reviewer-scenario false positive rejected (0.6554ms)
+  ✔ QA meta instruction rejected (0.8904ms)
+  ✔ NEEDS_VERIFICATION classification does not imply hard blocker language (0.5504ms)
+✔ canonical boundary — semantic classifier regressions (13.7528ms)
+▶ action deduplication unit
+  ✔ collapsePrimaryActionsPerRequirement keeps one action per requirement (1.1982ms)
+  ✔ conditional requirement keeps CONDITIONAL strength (0.4764ms)
+✔ action deduplication unit (2.069ms)
+▶ Test 2 — canonical integrity
+  ✔ extracts exactly 11 bidder-stage canonical obligations with correct semantic kinds (388.2298ms)
+  ✔ count parity across decision, matrix, evidence, risk, actions (91.6949ms)
+✔ Test 2 — canonical integrity (482.487ms)
+▶ Test 2 — classifier regressions
+  ✔ explicit Not a Tender Requirement marker rejected (0.915ms)
+✔ Test 2 — classifier regressions (1.2633ms)
+▶ UNKNOWN semantic kind confidence invariant
+  ✔ UNKNOWN + obligation-like wording never becomes mandatory or HIGH confidence (73.2594ms)
+  ✔ UNKNOWN obligation-like French TVA fragment stays UNCERTAIN / non-mandatory when not clarification (22.748ms)
+  ✔ clarification Q&A with doit/must is CLARIFICATION_PROCEDURAL — excluded from scoring set (1.1064ms)
+  ✔ clarification answer / PE confirmation is CLARIFICATION_PROCEDURAL (1.037ms)
+  ✔ revision / modification notice is CLARIFICATION_PROCEDURAL (0.7718ms)
+  ✔ genuine mandatory requirement stays mandatory with domain kind (8.3049ms)
+  ✔ genuine conditional requirement retains trigger and is not mandatory (2.9138ms)
+  ✔ informational fact does not enter scoring canonical set (2.9423ms)
+  ✔ heading / procedural text does not enter scoring canonical set (14.1364ms)
+  ✔ merge must not upgrade UNKNOWN confidence to HIGH (3.0349ms)
+✔ UNKNOWN semantic kind confidence invariant (141.6968ms)
+▶ UTI inventory never shrinks after intake
+  ✔ keeps Sample Contract / company-looking member in UTI when pack has tender siblings (28.7074ms)
+  ✔ inventories UNKNOWN, supporting annex, returnable, volumes, corrigendum, clarification (2.3936ms)
+  ✔ keeps unreadable inventoried member with failure status — count unchanged (1.2284ms)
+  ✔ mixed PDF/DOCX/XLSX/PPTX package inventory equals part count (1.1602ms)
+  ✔ assertPackageInventoryConsistency: intake ↔ UTI ↔ snapshot (0.8425ms)
+  ✔ intakeStoredMemberCount is identity-based from files[] (disjoint states) (1.4677ms)
+  ✔ intakeStoredMemberCount does not double-count when legacy accepted already includes recoverable (0.6522ms)
+  ✔ intakeStoredMemberCount prefers proceedableFileCount when files absent (0.4707ms)
+  ✔ assertPackageInventoryConsistency: 6/6/6/6 ok; overlapping-counter phantom fails (0.7364ms)
+  ✔ certification SNAPSHOT_MISMATCH still fires when UTI shrinks vs intake (27.1277ms)
+  ✔ true solo company profile remains COMPANY_PROFILE without package context (2.0103ms)
+  ✔ assertFinalPackageInventoryContract + reconcileInventoryIdentities (5.1008ms)
+✔ UTI inventory never shrinks after intake (80.0129ms)
+▶ adversarial inventory firewall — state matrix
+  ✔ one package: every lifecycle/readiness state is one identity, never extra members (5.1357ms)
+  ✔ state transitions mutate dimensions of the same identity — totalFiles never increases (0.8558ms)
+  ✔ PASSWORD_REQUIRED / OCR_REQUIRED / USER_ACTION_REQUIRED never invent members (0.631ms)
+✔ adversarial inventory firewall — state matrix (11.8024ms)
+▶ adversarial inventory firewall — finalization fail-closed
+  ✔ comparable non-disc identity mismatch fails closed (not count-only success) (4.0082ms)
+  ✔ legacy disc_* intake vs cuid-only UTI skips set equality without inventing members (6.831ms)
+  ✔ duplicate intake identity fails closed at finalization (0.6521ms)
+  ✔ provenance mismatch fails closed when both sides have archivePath (0.7235ms)
+  ✔ legacy inflated 6+2=8 never becomes inventory membership (0.812ms)
+  ✔ reconcile reports missing / unexpected / duplicates explicitly (2.2887ms)
+  ✔ extending proceedable states does not require a+b formulas (0.7778ms)
+✔ adversarial inventory firewall — finalization fail-closed (18.1001ms)
+▶ pipeline inventory propagation A–R
+  ✔ A: 4 ACCEPTED + 2 RECOVERABLE = 6 unique through final contract (14.558ms)
+  ✔ B: same filename different file IDs stay distinct (0.4596ms)
+  ✔ C: duplicate file ID detected once (0.6432ms)
+  ✔ D/E: ACCEPTED ↔ RECOVERABLE transitions keep identity count (0.7015ms)
+  ✔ F/G/H/I/J: future/adjacent states do not invent members (0.7998ms)
+  ✔ K/L: archive extracted + recovered members keep one identity each (1.3888ms)
+  ✔ M: legacy inflated counters do not create phantoms (0.8596ms)
+  ✔ N: order-independent inventory (0.6356ms)
+  ✔ O: identical filenames with different archive provenance stay distinct by ID (0.5728ms)
+  ✔ P/Q: missing and unexpected UTI identities fail reconcile (2.2359ms)
+  ✔ R: no manual counter accumulation in final stored count (0.715ms)
+✔ pipeline inventory propagation A–R (27.3172ms)
+▶ real Tender_310896 intake report regression
+  ✔ legacy report on disk yields 6 proceedable — never phantom 8 (4.6565ms)
+✔ real Tender_310896 intake report regression (4.9424ms)
+▶ UTI document roles (content-first)
+  ✔ classifies corrigendum from content, not filename alone (5.0704ms)
+  ✔ classifies pricing schedule from commercial content (1.2204ms)
+  ✔ classifies long ITT as INVITATION even when Form of Tender is mentioned (0.5523ms)
+  ✔ classifies Q&A from question/answer structure (0.4024ms)
+✔ UTI document roles (content-first) (9.0221ms)
+▶ UTI semantic content classification
+  ✔ V. authority statements do not admit as bidder requirements (63.3984ms)
+  ✔ W. document-quality statements are document procedure (18.3182ms)
+  ✔ X. genuine bidder obligations admit (13.4279ms)
+  ✔ Y. conditional obligations preserve condition (18.9485ms)
+  ✔ Z. informational facts are not bidder obligations (7.5823ms)
+  ✔ rejects incomplete fragments (3.4737ms)
+✔ UTI semantic content classification (126.1428ms)
+▶ UTI quality gate hard rejects
+  ✔ rejects authority + heading + fragment; keeps genuine bidder obligation (23.4961ms)
+✔ UTI quality gate hard rejects (23.8023ms)
+▶ UTI package build — inventory & versions
+  ✔ A–H style mixed package: no silent drops; version edges for corrigendum (10.9187ms)
+  ✔ T. duplicate documents produce DUPLICATE edges without dropping either (2.034ms)
+  ✔ S. conflicting versions are flagged CONFLICTING_VERSION (1.1479ms)
+✔ UTI package build — inventory & versions (18.2183ms)
+▶ UTI adversarial matrix smoke (A–AH categories)
+  ✔ matrix J-table-header (3.0434ms)
+  ✔ matrix L-fragment (1.3468ms)
+  ✔ matrix P-corrigendum-meta (1.8722ms)
+  ✔ matrix Q-clarification (2.9917ms)
+  ✔ matrix AA-evaluation (1.8946ms)
+  ✔ matrix X-bidder (1.8359ms)
+  ✔ matrix AC-lot (1.5015ms)
+  ✔ matrix U-fr (7.8843ms)
+  ✔ matrix V-authority-fr (1.4656ms)
+✔ UTI adversarial matrix smoke (A–AH categories) (24.6297ms)
+▶ UTI invariants
+  ✔ no authority / heading / Q&A / revision metadata in admitted set (8.795ms)
+✔ UTI invariants (9.0289ms)
+ℹ tests 301
+ℹ suites 70
+ℹ pass 301
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6435.1459
+
+exit:0
+
+=== batch 3: 25 files ===
+▶ Phase 3 analysis integrity
+  ✔ passes partition + linkage for a consistent package (15.9749ms)
+  ✔ rejects CONFIRMED_GAP without company evidence (missing ≠ gap) (2.502ms)
+  ✔ rejects orphan risk and duplicate underlyingKey (3.0156ms)
+  ✔ rejects orphan actions and broken partition (0.718ms)
+  ✔ rejects CONDITIONAL requirement that lost trigger context (0.7335ms)
+  ✔ NEEDS_VERIFICATION without company evidence is allowed (0.7411ms)
+✔ Phase 3 analysis integrity (33.3144ms)
+▶ STI admission firewall — adversarial matrix
+  ✔ A submission: admit=true (137.9032ms)
+  ✔ B qualification: admit=true (46.0486ms)
+  ✔ C procedural: admit=true (10.1192ms)
+  ✔ D methodology: admit=true (1.6437ms)
+  ✔ E capability: admit=true (8.1993ms)
+  ✔ F conditional: admit=true (3.2067ms)
+  ✔ G award-stage: admit=true (5.9853ms)
+  ✔ H after contract: admit=false (17.0019ms)
+  ✔ I supplier delivery: admit=false (21.0993ms)
+  ✔ J transportation: admit=false (16.072ms)
+  ✔ K installation: admit=false (5.1644ms)
+  ✔ L testing commissioning: admit=false (1.5856ms)
+  ✔ M training: admit=false (1.6948ms)
+  ✔ N warranty execution: admit=false (1.0233ms)
+  ✔ O repair: admit=false (3.9655ms)
+  ✔ P contractor reports: admit=false (4.5923ms)
+  ✔ Q buyer evaluation: admit=false (2.4459ms)
+  ✔ R buyer approval: admit=false (4.242ms)
+  ✔ S buyer payment: admit=false (1.8734ms)
+  ✔ T template: admit=false (1.1543ms)
+  ✔ U returnable form: admit=true (3.9567ms)
+  ✔ W ambiguous successful bidder: admit=false (6.9186ms)
+  ✔ X amendment: admit=false (51.0988ms)
+  ✔ Y clarification: admit=false (6.367ms)
+  ✔ Z buyer debrief: admit=false (0.8712ms)
+  ✔ V mixed clause — fail closed (1.1669ms)
+  ✔ AA table cell obligation admits; header does not (3.9743ms)
+  ✔ AB spreadsheet-style row remains bidder obligation when framed as bid submission (1.4325ms)
+  ✔ AC OCR reunified bidder text admits; incomplete fragment does not (2.0272ms)
+  ✔ AD multi-document seal collapses buyer contamination (49.6326ms)
+✔ STI admission firewall — adversarial matrix (428.7439ms)
+▶ STI admission firewall — hard invariants I1–I18
+  ✔ I1–I6: post-award / execution / buyer / template / mixed never enter canonical (75.0805ms)
+  ✔ I7–I8: pre-award and award-stage remain distinct and admissible (38.3125ms)
+  ✔ I9: conditionality is not upgraded to mandatory (17.7357ms)
+  ✔ I10–I13: vocabulary / section alone do not force lifecycle (1.7241ms)
+  ✔ I14–I15: forged seal rejected; normalize cannot resurrect excluded (0.7079ms)
+  ✔ I16–I18: admitted rows carry STI provenance; exclusions auditable (7.3359ms)
+  ✔ firewall strips post-award if STI fields were somehow present on a bad row (1.3824ms)
+  ✔ legacy snapshot without stiAdmission is stale (0.8219ms)
+✔ STI admission firewall — hard invariants I1–I18 (145.0022ms)
+▶ sti alternate path audit
+  ✔ forged STI seals throw (2.672ms)
+  ✔ UTI draft gate is not an admission path (106.3021ms)
+  ✔ filename alone cannot classify a document role past the content threshold (6.4197ms)
+  ✔ heuristic drafts still must pass STI before canonical rows exist (25.0979ms)
+  ✔ production source mentions unit harvest and per-file provenance (1.6209ms)
+✔ sti alternate path audit (146.7253ms)
+▶ STI authoritative interpretation matrix
+  ✔ A. Bidder requirement — admitted (121.9505ms)
+  ✔ B. Buyer obligation — never canonical (26.0117ms)
+  ✔ C. Contractor post-award obligation — excluded (3.7469ms)
+  ✔ D. Bidder award-stage obligation — classified AWARD, may admit (7.0452ms)
+  ✔ E. Template placeholder — never canonical (4.5624ms)
+  ✔ F. Template note — never canonical (6.8198ms)
+  ✔ G. Conditional requirement — condition preserved, admitted (5.5742ms)
+  ✔ H. Unresolved conditional — NEEDS_VERIFICATION, not forced canonical (28.471ms)
+  ✔ I. Bidder procedural clarification request — admissible as BIDDER_PROCEDURAL (8.4363ms)
+  ✔ I2. Buyer / e-sourcing procedural — excluded (2.7701ms)
+  ✔ J. Legal reservation — excluded (1.8798ms)
+  ✔ K. Heading — excluded (1.5382ms)
+  ✔ L. Informational fact — excluded (16.2413ms)
+  ✔ M. Q&A — excluded (1.1131ms)
+  ✔ N. Amendment metadata — excluded (1.2753ms)
+  ✔ O. Table requirement cell — admitted (1.5356ms)
+  ✔ P. Table heading — excluded (11.8327ms)
+  ✔ Q. Multi-paragraph requirement boundary (2.1167ms)
+  ✔ R. Continuation across fragmented OCR — incomplete excluded (1.2911ms)
+  ✔ S. Mixed actor clause — buyer side wins exclusion (3.7968ms)
+  ✔ T. Ambiguous actor — not forced canonical (4.5968ms)
+  ✔ U. Ambiguous phase for contractor-like duty without bidder subject (1.7014ms)
+  ✔ V. Required document — admitted (1.6742ms)
+  ✔ W. Evaluation criterion — excluded from requirements (0.9945ms)
+  ✔ X. Metadata extraction is not a requirement (2.2801ms)
+✔ STI authoritative interpretation matrix (275.6364ms)
+▶ STI template structural detection
+  ✔ detects insert placeholders and notes (0.7096ms)
+✔ STI template structural detection (1.1467ms)
+▶ STI regression patterns (generic IFI / multi-file packs)
+  ✔ UNOPS-style buyer (1.5119ms)
+  ✔ UNOPS-style template (1.8212ms)
+  ✔ UNOPS-style note (1.0725ms)
+  ✔ Philippines schedule bidder (3.3733ms)
+  ✔ Indonesia consultancy bidder (1.1891ms)
+  ✔ AfDB cybersecurity bidder (15.4141ms)
+  ✔ Scottish authority (10.6187ms)
+  ✔ EIB financing institution (4.6015ms)
+  ✔ IGL multi-file bidder (1.8281ms)
+  ✔ Kenya IP phones bidder (1.5522ms)
+  ✔ Kenya offline backup bidder (10.7705ms)
+  ✔ WHO SIDS buyer procedure (4.9361ms)
+  ✔ heading pollution (1.6659ms)
+  ✔ post-award insurance (1.1081ms)
+  ✔ canonical count is cleaner than raw shall-harvest (22.2555ms)
+✔ STI regression patterns (generic IFI / multi-file packs) (87.1075ms)
+▶ cross-format semantic invariance
+  ✔ same clause interprets identically across wrappers and layouts (156.9326ms)
+  ✔ post-award execution stays excluded across formats (28.082ms)
+✔ cross-format semantic invariance (188.3022ms)
+▶ adversarial unseen procurement patterns
+  ✔ morphology / language-adjacent bidder duty still admits (34.915ms)
+  ✔ unseen buyer acronym subject never admits (2.9458ms)
+  ✔ passive performer voice is not a bidder requirement (1.4086ms)
+  ✔ table header tokens never admit regardless of worksheet name (24.2946ms)
+  ✔ clarification Q/A shape remains excluded while neighboring restated duties can admit (13.0675ms)
+✔ adversarial unseen procurement patterns (84.6626ms)
+▶ multi-document package + conflicting sources
+  ✔ keeps bidder duties, drops execution/buyer/qa, merges identity across files (90.6662ms)
+✔ multi-document package + conflicting sources (91.0239ms)
+▶ sti cross-format equivalence
+  ✔ PDF paragraph, DOCX block, XLSX row, CSV, PPTX slide, OCR page agree (139.4218ms)
+  ✔ layout labels do not change the same clause identity (5.455ms)
+✔ sti cross-format equivalence (148.5422ms)
+▶ STI complexity — multi-paragraph / AfDB conditional attachment
+  ✔ reunifies orphan condition + following mandatory action (AfDB pattern) (113.4369ms)
+  ✔ attaches preceding condition to isolated action sentence (26.6441ms)
+  ✔ orphan condition without action stays verification — never unconditional (48.4121ms)
+✔ STI complexity — multi-paragraph / AfDB conditional attachment (191.879ms)
+▶ STI complexity — conditional structure preservation
+  ✔ preserves PROVIDED THAT + exception (0.824ms)
+  ✔ WHEN condition keeps CONDITIONAL strength on admission (1.673ms)
+✔ STI complexity — conditional structure preservation (4.6623ms)
+▶ STI complexity — tables
+  ✔ table headers never become requirements (6.8998ms)
+  ✔ table requirement cell preserves lot/unit/threshold provenance (16.4875ms)
+✔ STI complexity — tables (23.9892ms)
+▶ STI complexity — document role changes meaning
+  ✔ same sentence: sample contract → post-award; ITB → may admit differently (6.0204ms)
+✔ STI complexity — document role changes meaning (6.4009ms)
+▶ STI complexity — procurement phase
+  ✔ post-award contractor never becomes bidder compliance (2.578ms)
+  ✔ award-stage successful bidder remains AWARD (31.7532ms)
+✔ STI complexity — procurement phase (34.9723ms)
+▶ STI complexity — templates & surrounding protection
+  ✔ protects surrounding template-dependent clauses (1.9042ms)
+✔ STI complexity — templates & surrounding protection (3.0103ms)
+▶ STI complexity — procedural content
+  ✔ buyer arithmetic correction is procedural (4.7654ms)
+  ✔ eSourcing click path is procedural (3.202ms)
+✔ STI complexity — procedural content (8.3891ms)
+▶ STI complexity — versioning
+  ✔ addendum metadata is not a requirement (1.4533ms)
+  ✔ unproven replacement is REVIEW — never invents substitute clause (0.5301ms)
+✔ STI complexity — versioning (2.2498ms)
+▶ STI complexity — fragments, duplicates, provenance, no silent drops
+  ✔ rejects incomplete fragments with machine-readable reason (1.637ms)
+  ✔ every rejected candidate in batch has exclusionCode (6.5003ms)
+  ✔ cross-document duplicate collapses with provenance links (5.2659ms)
+✔ STI complexity — fragments, duplicates, provenance, no silent drops (15.1334ms)
+▶ document purpose firewall — vendor guide vs portal vs policy
+  ✔ portal operation instructions never enter canonical (122.9188ms)
+  ✔ a vendor guide may still admit a genuine bidder obligation (43.7509ms)
+  ✔ vendor-guide process descriptions without a bidder-stage duty stay excluded (10.7492ms)
+  ✔ vendor-guide portal clicks stay non-requirement context (1.4318ms)
+  ✔ policy or code-of-conduct context is not a bidder requirement (2.7128ms)
+  ✔ explicit bidder compliance with a code remains eligibility (29.9439ms)
+✔ document purpose firewall — vendor guide vs portal vs policy (214.538ms)
+▶ actor and lifecycle — no keyword promotion
+  ✔ buyer/authority actions never become bidder requirements (6.5148ms)
+  ✔ supplier post-award execution stays excluded (4.3727ms)
+  ✔ pre-award delivery commitment is PRE_AWARD, not invented post-award (15.8302ms)
+  ✔ impersonal bid-submission duty is admitted without promoting actor to BIDDER (3.246ms)
+  ✔ incomplete impersonal methodology is not promoted to BIDDER (3.0101ms)
+  ✔ evaluation methodology without bidder obligation stays excluded (15.7346ms)
+  ✔ evaluation scoring under an Evaluation heading is not promoted by must/shall (1.3932ms)
+  ✔ deadline metadata is not a requirement (5.7702ms)
+✔ actor and lifecycle — no keyword promotion (57.6766ms)
+▶ lots, duplicates, amendments, rejected context
+  ✔ lot-specific obligations do not merge across lots (0.9551ms)
+  ✔ different numeric thresholds do not share identity (0.7572ms)
+  ✔ different conditions do not share a normalize-layer fingerprint (82.3042ms)
+  ✔ same obligation across formats merges and keeps both provenances (4.6532ms)
+  ✔ amendment metadata is rejected; a restated bidder duty may still admit (53.0106ms)
+  ✔ rejected content is preserved as contextual intelligence with reason and provenance (3.2223ms)
+  ✔ conditional lot-specific requirement keeps condition and lot (2.3605ms)
+✔ lots, duplicates, amendments, rejected context (147.9233ms)
+▶ STI final authority — 16-check admission gate
+  ✔ exposes exactly 16 named conjuncts (2.6417ms)
+  ✔ AfDB conditional obligation preserves condition + action through seal (205.3331ms)
+  ✔ UNOPS buyer / procedural never contaminates bidder requirements (68.1434ms)
+  ✔ contractor / template never becomes pre-bid bidder requirement (13.8715ms)
+  ✔ WHO legal-reservation pattern is never a requirement (3.6201ms)
+  ✔ table requirements admit with provenance; headers do not (6.0592ms)
+  ✔ amendments / corrigenda do not invent replacement clauses (23.1113ms)
+  ✔ multi-document package collapses duplicates with provenance (16.9763ms)
+  ✔ metadata remains a separate semantic output (11.4304ms)
+  ✔ cross-page reunification admits; orphan fragment does not (14.2953ms)
+  ✔ ambiguous cases stay REVIEW/UNKNOWN — never invented requirements (2.7227ms)
+✔ STI final authority — 16-check admission gate (371.6637ms)
+▶ STI final authority — contamination invariants
+  ✔ blocks Buyer → bidder (2.0679ms)
+  ✔ blocks Contractor → bidder (1.9707ms)
+  ✔ blocks Manufacturer → bidder (5.4994ms)
+  ✔ blocks Procedural/eSourcing (1.6939ms)
+  ✔ blocks Form/template (1.0545ms)
+  ✔ blocks Heading (30.2251ms)
+  ✔ blocks Missing provenance (1.0616ms)
+  ✔ never uses shall/must alone as proof (0.6021ms)
+✔ STI final authority — contamination invariants (50.0371ms)
+▶ STI final authority — complete field carry-through
+  ✔ canonical requirements carry full STI interpretation (4.8214ms)
+  ✔ production path still seals before buildCanonicalRequirements (1.4019ms)
+  ✔ final gate rejections are traceable on the seal (2.2763ms)
+✔ STI final authority — complete field carry-through (9.3012ms)
+▶ STI lifecycle / bidder obligation boundary
+  ✔ buyer shall/must/may — institutional acronym subject never admits (126.9968ms)
+  ✔ buyer + bidder mentioned in same paragraph — grammatical actor controls (8.1394ms)
+  ✔ bidder procedural obligations remain admissible when bidder is actor (19.2477ms)
+  ✔ post-award contractor obligations excluded (3.3422ms)
+  ✔ pre-award commitment to post-award capability remains bidder requirement (13.437ms)
+  ✔ contract forms do not auto-admit contractor performance clauses (6.1708ms)
+  ✔ returnable form submission requirements remain valid (39.4564ms)
+  ✔ template placeholders and insert-here drafting notes excluded (11.9868ms)
+  ✔ evaluation committee actions excluded (16.0475ms)
+  ✔ performance after award vs bid security at submission (33.1944ms)
+  ✔ passive contractor voice does not become bidder requirement (35.9896ms)
+  ✔ conditional bidder clause preserves conditionality (2.1617ms)
+  ✔ final seal rejects buyer contamination batch (10.0898ms)
+✔ STI lifecycle / bidder obligation boundary (330.3214ms)
+▶ STI single authoritative boundary — architecture
+  ✔ StiApprovedRequirementBatch cannot be forged with a plain object (11.0653ms)
+  ✔ production tender-processing seals STI candidates before canonical build (1.7501ms)
+  ✔ draft inputs are forced through STI — buyer shall never becomes canonical (161.8793ms)
+  ✔ sealed path preserves STI procurement phase on award-stage obligations (7.9827ms)
+✔ STI single authoritative boundary — architecture (185.468ms)
+▶ STI critical regressions A–G (pipeline)
+  ✔ A. UNOPS shall… is not a bidder requirement (9.4663ms)
+  ✔ B. Contractor + [insert date] is not a pre-bid bidder requirement (7.6399ms)
+  ✔ C. [Note to be deleted] never becomes a requirement (5.9693ms)
+  ✔ D. Unresolved clarification-meeting conditionality stays non-unconditional (14.008ms)
+  ✔ E. Bidder audited statements remain canonical (4.219ms)
+  ✔ F. Successful bidder performance security is AWARD phase (2.5164ms)
+  ✔ G. Table technical requirement keeps provenance (6.6483ms)
+✔ STI critical regressions A–G (pipeline) (61.3102ms)
+▶ STI post-award execution vs pre-award bidder commitment
+  ✔ supplier install/commission after delivery — excluded (107.5239ms)
+  ✔ contractor training after installation — excluded (20.5796ms)
+  ✔ warranty / defective replacement execution — excluded (11.6505ms)
+  ✔ delivery/installation reports after award — excluded (1.5265ms)
+  ✔ successful bidder performance security after receipt of contract — excluded (3.9543ms)
+  ✔ successful bidder award-timed performance security — may admit as award-stage (7.7912ms)
+  ✔ bidder performance security with the bid — admitted (5.1969ms)
+  ✔ bidder demonstrate installation capability — admitted pre-award (24.0004ms)
+  ✔ bidder include installation methodology in proposal — admitted (3.2896ms)
+  ✔ buyer install obligation never becomes bidder requirement (11.6697ms)
+  ✔ excluded candidates retain audit exclusion codes (4.5301ms)
+  ✔ joint-venture conditional submission remains admissible (21.2173ms)
+✔ STI post-award execution vs pre-award bidder commitment (227.0655ms)
+▶ quality audit — uncertainty never becomes admission
+  ✔ admissionBlockedByUncertainty equals uncertaintyPreserved (no bid-time waiver) (205.8016ms)
+  ✔ UNKNOWN procurement phase is never admitted (1.368ms)
+✔ quality audit — uncertainty never becomes admission (209.5038ms)
+▶ quality audit — actor identity is not invented
+  ✔ impersonal methodology obligation is not promoted to BIDDER (54.0945ms)
+  ✔ unattributed documentary evidence keeps actor UNKNOWN and still admits (13.8065ms)
+  ✔ unattributed commercial conditions keep actor UNKNOWN and still admit (3.9769ms)
+  ✔ unattributed eligibility evidence keeps actor UNKNOWN and still admits (14.6588ms)
+✔ quality audit — actor identity is not invented (87.5854ms)
+▶ quality audit — sealed STI category is not rewritten
+  ✔ trustStiSemantics does not infer a new domain from keywords (12.7666ms)
+✔ quality audit — sealed STI category is not rewritten (13.2711ms)
+▶ quality audit — stale pre-firewall snapshot is not resurrected
+  ✔ isStalePreFirewallSnapshot is true without an STI admission stamp (1.2177ms)
+  ✔ canonical read hydrates stored intelligence instead of rebuilding from raw text (1.1381ms)
+✔ quality audit — stale pre-firewall snapshot is not resurrected (2.9061ms)
+▶ quality audit — company fit is not a token-overlap green
+  ✔ shared long tokens in an unrelated project do not create a MATCHED fit (10.0056ms)
+✔ quality audit — company fit is not a token-overlap green (10.4826ms)
+▶ STI root-cause — actor ≠ phase ≠ recipient
+  ✔ buyer institutional subject is never a bidder requirement (91.6607ms)
+  ✔ contractor subject is post-award, not pre-bid bidder (18.4453ms)
+  ✔ manufacturer incidental mention does not steal bidder actor (17.6536ms)
+  ✔ successful bidder award-stage keeps AWARD phase (12.1791ms)
+✔ STI root-cause — actor ≠ phase ≠ recipient (143.808ms)
+▶ STI root-cause — template / form / procedural
+  ✔ template insert never becomes a requirement (2.4305ms)
+  ✔ note to be deleted is form/template instruction (6.1787ms)
+  ✔ form fill-in instructions are excluded (5.7832ms)
+  ✔ eSourcing click instructions are procedural (3.0485ms)
+✔ STI root-cause — template / form / procedural (18.1561ms)
+▶ STI root-cause — headings / facts / definitions / examples
+  ✔ headings excluded (2.505ms)
+  ✔ definitions excluded (2.3051ms)
+  ✔ examples excluded (1.3926ms)
+  ✔ metadata deadline is not a requirement (3.8791ms)
+✔ STI root-cause — headings / facts / definitions / examples (10.8302ms)
+▶ STI root-cause — conditionality preservation
+  ✔ IF bidder → MUST action keeps condition and admits as CONDITIONAL (3.0643ms)
+  ✔ unresolved clarification-meeting conditionality is not unconditional (16.5974ms)
+  ✔ structured conditionality captures threshold and timeframe (0.4479ms)
+✔ STI root-cause — conditionality preservation (20.6355ms)
+▶ STI root-cause — Q&A / amendment / fragments
+  ✔ Q&A excluded (1.1488ms)
+  ✔ amendment metadata excluded (1.3493ms)
+  ✔ fragmented clause ending mid-preposition is incomplete (9.6801ms)
+✔ STI root-cause — Q&A / amendment / fragments (12.551ms)
+▶ STI root-cause — recipient resolution
+  ✔ buyer actor with notify verb still has buyer purpose (0.8235ms)
+✔ STI root-cause — recipient resolution (2.0054ms)
+▶ sti signal cooperation
+  ✔ shall/must alone never admits a heading or fragment (123.1059ms)
+  ✔ filename-like packaging is lexical_weak and cannot admit alone (2.061ms)
+  ✔ column title alone does not admit a table header (19.4421ms)
+  ✔ grammar + bid-time + submit action cooperate to admit (13.6376ms)
+  ✔ conflicting actor and execution temporal do not guess a bidder duty (4.7802ms)
+✔ sti signal cooperation (165.7966ms)
+▶ sti uncertainty preservation
+  ✔ mixed lifecycle stays MIXED_OR_AMBIGUOUS and is excluded (110.3585ms)
+  ✔ does not coerce mixed meaning into POST_AWARD_OBLIGATION as a certainty (25.5868ms)
+  ✔ unknown actor is not rewritten as BIDDER (11.9738ms)
+  ✔ successful bidder without award timing stays ambiguous rather than guessed (20.9888ms)
+✔ sti uncertainty preservation (173.5145ms)
+
+--- Audiovisual extraction audit ---
+Extracted requirement count: 5
+Deadline (fact): 2026-09-30T17:00:00+01:00
+Estimated value (fact): 4200000
+[MANDATORY_ELIGIBILITY] mandatory=true | Minimum five (5) years of experience in public-sector audiovisual installation projects is… | doc=Tender_Audiovisual_Equipment.pdf p?
+[CONTRACTUAL] mandatory=true | Bidders must submit a provisional bond (caution provisoire) together with the tender dossi… | doc=Tender_Audiovisual_Equipment.pdf p?
+[MANDATORY_TECHNICAL] mandatory=true | The bidder shall supply, install, configure and commission a complete audiovisual system i… | doc=Tender_Audiovisual_Equipment.pdf p?
+[MANDATORY_ADMINISTRATIVE] mandatory=true | Attestation CNSS and tax clearance certificate are mandatory.… | doc=Tender_Audiovisual_Equipment.pdf p?
+[MANDATORY_TECHNICAL] mandatory=true | The supplier must provide a minimum warranty period of 24 months on all installed AV equip… | doc=Tender_Audiovisual_Equipment.pdf p?
+▶ Test 2 — canonical integrity
+  ✔ extracts exactly 11 bidder-stage canonical obligations with correct semantic kinds (235.7952ms)
+  ✔ count parity across decision, matrix, evidence, risk, actions (93.8468ms)
+✔ Test 2 — canonical integrity (332.3623ms)
+▶ Test 2 — classifier regressions
+  ✔ explicit Not a Tender Requirement marker rejected (2.5554ms)
+✔ Test 2 — classifier regressions (2.9387ms)
+▶ audiovisual tender — extraction audit
+  ✔ captures genuine obligations and filters facts/noise (33.1293ms)
+  ✔ classifies AV obligations correctly (5.1721ms)
+  ✔ merges sparse AI with heuristic without duplicates (36.9448ms)
+✔ audiovisual tender — extraction audit (76.9827ms)
+▶ audiovisual tender — canonical consistency
+  ✔ readiness/compliance counts align; fit is single canonical value (37.1367ms)
+  ✔ web and PDF display share identical fit and counts (17.5722ms)
+✔ audiovisual tender — canonical consistency (55.5906ms)
+▶ stress test — canonical boundary
+  ✔ excludes headings, evaluation notes, reviewer scenarios, and QA meta (47.8693ms)
+  ✔ preserves R-01..R-13 semantics including conditional R-13 (42.5262ms)
+  ✔ semantic dedupe — bid security and experience appear once (48.9153ms)
+✔ stress test — canonical boundary (139.6666ms)
+▶ stress test — action plan integrity
+  ✔ one primary action per canonical item — no verification explosion (44.6554ms)
+  ✔ web report counts align with canonical requirements (48.3344ms)
+✔ stress test — action plan integrity (93.2402ms)
+▶ canonical boundary — semantic classifier regressions
+  ✔ heading false positive rejected (0.9257ms)
+  ✔ evaluation-note false positive rejected (0.4464ms)
+  ✔ reviewer-scenario false positive rejected (0.4334ms)
+  ✔ QA meta instruction rejected (0.4656ms)
+  ✔ NEEDS_VERIFICATION classification does not imply hard blocker language (0.2433ms)
+✔ canonical boundary — semantic classifier regressions (3.0747ms)
+▶ action deduplication unit
+  ✔ collapsePrimaryActionsPerRequirement keeps one action per requirement (0.5294ms)
+  ✔ conditional requirement keeps CONDITIONAL strength (0.3183ms)
+✔ action deduplication unit (1.0393ms)
+▶ CERT — adversarial corpus (pre/award/post/buyer/template)
+  ✔ #1 admit=true (1.3876ms)
+  ✔ #2 admit=true (1.0406ms)
+  ✔ #3 admit=true (1.051ms)
+  ✔ #4 admit=true (0.8773ms)
+  ✔ #5 admit=true (2.717ms)
+  ✔ #6 admit=true (1.2991ms)
+  ✔ #7 admit=true (1.1702ms)
+  ✔ #8 admit=true (0.8278ms)
+  ✔ #9 admit=true (1.0671ms)
+  ✔ #10 admit=true (1.8361ms)
+  ✔ #11 admit=true (0.8994ms)
+  ✔ #12 admit=true (0.9212ms)
+  ✔ #13 admit=false (1.1718ms)
+  ✔ #14 admit=false (0.6418ms)
+  ✔ #15 admit=false (0.7494ms)
+  ✔ #16 admit=false (0.6143ms)
+  ✔ #17 admit=false (5.4556ms)
+  ✔ #18 admit=false (0.8926ms)
+  ✔ #19 admit=false (0.7874ms)
+  ✔ #20 admit=false (0.6784ms)
+  ✔ #21 admit=false (0.6324ms)
+  ✔ #22 admit=false (0.6132ms)
+  ✔ #23 admit=false (0.8335ms)
+  ✔ #24 admit=false (0.6407ms)
+  ✔ #25 admit=false (0.6071ms)
+  ✔ #26 admit=false (0.9189ms)
+  ✔ #27 admit=false (0.8922ms)
+  ✔ #28 admit=false (0.7288ms)
+  ✔ #29 admit=false (0.7262ms)
+  ✔ #30 admit=false (0.7677ms)
+  ✔ #31 admit=false (0.7649ms)
+  ✔ #32 admit=false (0.6387ms)
+  ✔ #33 admit=false (0.7621ms)
+  ✔ #34 admit=false (0.5847ms)
+  ✔ #35 admit=false (0.8104ms)
+  ✔ #36 admit=true (0.7769ms)
+✔ CERT — adversarial corpus (pre/award/post/buyer/template) (40.5614ms)
+▶ CERT — mixed / ambiguous
+  ✔ mixed bidder+contractor clause fails closed (no invented split) (1.4002ms)
+  ✔ buyer + bidder same paragraph — buyer subject wins exclusion (0.8901ms)
+  ✔ conditional post-award does not become mandatory bidder requirement (0.9748ms)
+  ✔ table rows with different actors — header excluded; bidder cell may admit (1.2329ms)
+✔ CERT — mixed / ambiguous (5.1607ms)
+▶ CERT — I1–I25 hard invariants
+  ✔ I1–I6 blocked phases/purposes never in canonical (0.6947ms)
+  ✔ I7–I8 pre-award and award-stage remain admissible and distinct (0.8047ms)
+  ✔ I9 conditionality not upgraded (2.3975ms)
+  ✔ I10–I14 vocabulary/section alone do not force lifecycle (7.6034ms)
+  ✔ I15–I16 normalization/downstream cannot resurrect excluded (2.2605ms)
+  ✔ I17–I19 provenance + auditable exclusions + STI stamp (8.9093ms)
+  ✔ I20 forged STI seal cannot bypass (0.5047ms)
+  ✔ I21 format invariance — equivalent clauses identical across extensions (1.9588ms)
+  ✔ I22 multi-document package preserves lifecycle + provenance (6.6284ms)
+  ✔ I23 amendment/corrigendum metadata cannot become requirements (1.5537ms)
+  ✔ I24 buyer/contractor excluded even with bidder terminology nearby (1.882ms)
+  ✔ I25 genuine bidder procedural remains admissible (1.0873ms)
+✔ CERT — I1–I25 hard invariants (37.246ms)
+▶ CERT — persistence / snapshot boundary
+  ✔ stiAdmission stamp round-trip; stale pre-firewall detected (2.9948ms)
+  ✔ read-path cannot reinterpret excluded DB-like text into canonical (0.9538ms)
+✔ CERT — persistence / snapshot boundary (4.1619ms)
+▶ CERT — real-package offline fixtures (3 packages)
+  ✔ Package A — Canonical Integrity Test 2 (IT/admin mix) (26.58ms)
+  ✔ Package B — Audiovisual synthetic pack (13.8338ms)
+  ✔ Package C — Stress test pack (34.5424ms)
+✔ CERT — real-package offline fixtures (3 packages) (75.2715ms)
+▶ semantic situation — independent signals
+  ✔ document role and section role are always weak (34.0153ms)
+  ✔ grammar actor is not interchangeable with temporal or action (11.6606ms)
+✔ semantic situation — independent signals (47.7525ms)
+▶ semantic situation — weak labels never become truth
+  ✔ filename / Q_AND_A package does not exclude a restated bidder obligation (80.8112ms)
+  ✔ amendment packaging does not erase a restated bidder duty (27.5291ms)
+  ✔ amendment metadata remains excluded (50.0306ms)
+  ✔ technical section label does not convert a buyer duty into a bidder requirement (7.0119ms)
+  ✔ definitions section does not force DEFINITION when the clause is a bidder duty (17.8932ms)
+✔ semantic situation — weak labels never become truth (184.3235ms)
+▶ semantic situation — conflict and uncertainty
+  ✔ mixed pre-award and post-award frames preserve uncertainty (6.2883ms)
+  ✔ does not convert mixed uncertainty into a post-award factual purpose unless execution is the only frame (1.4818ms)
+  ✔ pre-award commitment about future installation stays bidder-stage (4.7348ms)
+  ✔ unknown actor is not promoted when execution temporal is present (7.643ms)
+✔ semantic situation — conflict and uncertainty (22.5766ms)
+▶ semantic situation — documentary evidence class
+  ✔ numbered documentary list items are not document-author headings (2.7057ms)
+  ✔ numbered introductions remain non-documentary headings (0.6574ms)
+  ✔ impersonal required documentary evidence admits across languages (11.9297ms)
+✔ semantic situation — documentary evidence class (15.7809ms)
+▶ semantic situation — provenance of admission
+  ✔ admitted clauses carry a situation explanation with independent sources (1.2374ms)
+✔ semantic situation — provenance of admission (1.7874ms)
+▶ sti unseen procurement patterns
+  ✔ numbered-only headings stay unknown and never admit (140.4504ms)
+  ✔ buyer-as-subject evaluation is excluded (25.1409ms)
+  ✔ award-window security is award-stage, not open execution (11.4317ms)
+  ✔ post-award execution by contractor is excluded from bidder-stage canonical (5.5384ms)
+  ✔ templates, examples, Q&A, and form instructions stay excluded (18.2777ms)
+  ✔ multi-document conflicting versions do not silently merge into one admitted fact (87.3807ms)
+  ✔ new morphology still admits when actor, action, and bid-time cooperate (3.1411ms)
+✔ sti unseen procurement patterns (295.755ms)
+▶ Phase 4 tender certification
+  ✔ CERTIFIED for consistent frozen analysis (42.9904ms)
+  ✔ REVIEW_REQUIRED when package metadata CONFLICT is preserved (2.723ms)
+  ✔ fails when CONFIRMED_GAP lacks company evidence (2.6969ms)
+  ✔ fails on incomplete requirement fragment (1.4967ms)
+  ✔ fails on orphan risk and count mismatch (1.6868ms)
+  ✔ PARTIALLY_READABLE package does not auto-fail when peers are valid (4.7649ms)
+  ✔ is deterministic for the same frozen input (6.0633ms)
+✔ Phase 4 tender certification (65.545ms)
+▶ substantive content vs document role
+  ✔ does not treat title/deadline/value/weights as substantive (152.1519ms)
+  ✔ keeps short French avis notice as ONLY_AVIS even with thin eligibility lines (44.4415ms)
+  ✔ A — AVIS-only with substantive canonical obligations must allow scoring (no false CPS/TECHNICAL_SPECIFICATION missing) (98.5106ms)
+  ✔ B — AVIS-only with only notice metadata must remain INCOMPLETE (no scoring) (10.9193ms)
+  ✔ TEST1 — construction tender may be AVIS/RFP but substantive content allows scoring without false missing CPS (106.1443ms)
+  ✔ TEST3 — multi-document Avis+CPS still allows scoring from combined package (13.3922ms)
+  ✔ does not allow scoring from requirement count alone without semantic substance (1.1335ms)
+  ✔ does not score a truncated package as complete (6.4096ms)
+✔ substantive content vs document role (435.8681ms)
+▶ tender document role classification
+  ✔ classifies French avis as AVIS, not CPS (4.2173ms)
+  ✔ classifies CPS as CPS (1.4158ms)
+  ✔ classifies Malay kenyataan/iklan notice as AVIS (0.5008ms)
+✔ tender document role classification (8.3963ms)
+▶ A — real avis / notice only
+  ✔ extracts verified notice facts without inventing fake technical CPS requirements (82.9782ms)
+  ✔ extracts Malay notice deadline and eligibility without scoring (24.9171ms)
+✔ A — real avis / notice only (108.3077ms)
+▶ B — real CPS requirements
+  ✔ extracts mandatory technical requirements with evidence (6.158ms)
+  ✔ loads real CPS PDF when available (1845.3379ms)
+✔ B — real CPS requirements (1851.8347ms)
+▶ C — Avis + CPS package assembly
+  ✔ combines documents, preserves roles, and allows scoring when requirements exist (8.1007ms)
+✔ C — Avis + CPS package assembly (8.2353ms)
+▶ D — company + complete tender decision path
+  ✔ matches company knowledge and produces fit / bid score after valid extraction (39.982ms)
+✔ D — company + complete tender decision path (40.0832ms)
+▶ E — broken / unreadable tender fail-safe
+  ✔ blocks scoring and invents no requirements for unreadable package (1.9923ms)
+✔ E — broken / unreadable tender fail-safe (2.0851ms)
+▶ canonical admission path audit
+  ✔ production analysis seals STI before canonical construction (5.6943ms)
+  ✔ canonical extraction has a single convergence point (0.9418ms)
+  ✔ normalize cannot resurrect excluded content on the production STI path (65.0607ms)
+  ✔ forged seal objects cannot enter buildCanonicalRequirements (0.9257ms)
+  ✔ UTI adapter cannot admit what STI rejected (55.7166ms)
+  ✔ UTI does not map manufacturer or subcontractor onto bidder (51.5663ms)
+  ✔ decision / evidence / fit modules consume canonical rows, not raw drafts (1.7744ms)
+✔ canonical admission path audit (185.1353ms)
+▶ canonical package inventory — identity authority
+  ✔ A/B: 4 ACCEPTED + 2 RECOVERABLE = 6 unique; disjoint counters (2.6864ms)
+  ✔ C: same RECOVERABLE file cannot contribute to both accepted and recoverable (0.5552ms)
+  ✔ D: rollup calculation is deterministic when called twice (3.9054ms)
+  ✔ E: order of files does not change counts (0.8851ms)
+  ✔ F: duplicate canonical identities are detected, not counted twice (0.6568ms)
+  ✔ G: state change ACCEPTED → RECOVERABLE changes state counters, not identity count (0.5272ms)
+  ✔ H: PARTIALLY_RECOVERABLE does not require modifying arithmetic formulas (0.4765ms)
+  ✔ I: PASSWORD_REQUIRED / PASSWORD_PROTECTED does not double count (0.4249ms)
+  ✔ J: OCR_REQUIRED as readiness does not create a second identity (0.5277ms)
+  ✔ K: USER_ACTION_REQUIRED remains one file (0.6246ms)
+  ✔ L: unknown/future state does not create duplicate inventory members (0.4985ms)
+  ✔ M: inventory authority remains identity-based when rollups change (0.4345ms)
+  ✔ N: intakeStoredMemberCount never encodes accepted+recoverable when accepted already includes recoverable (0.978ms)
+  ✔ extending proceedable set does not require a+b formulas (0.5648ms)
+✔ canonical package inventory — identity authority (17.1792ms)
+▶ Universal Intake Engine
+  ✔ accepts a single PDF and marks INTAKE_READY (10.5808ms)
+  ✔ rejects zero-byte files with explicit terminal state (1.0426ms)
+  ✔ rejects dangerous PE bytes (1.0608ms)
+  ✔ expands ZIP packages and inventories skipped unsupported members (38.528ms)
+  ✔ classifies encrypted ZIP as password-protected block (5.9357ms)
+  ✔ expands nested archives within limits (4.139ms)
+  ✔ blocks path traversal archives (2.2531ms)
+  ✔ assertIntakeMayProceed throws AppError with uploadStage for UI (1.8247ms)
+  ✔ discoverTenderPackage remains compatible and attaches intake (1.5989ms)
+  ✔ format validation flags malformed PDF (0.7353ms)
+  ✔ format validation accepts PDF header (0.3468ms)
+  ✔ every inventoried file has an explicit terminal state (10.24ms)
+✔ Universal Intake Engine (81.0388ms)
+ℹ tests 392
+ℹ suites 73
+ℹ pass 392
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7923.9847
+
+exit:0
+
+=== batch 4: 25 files ===
+▶ decision memory — labels
+  ✔ maps engine decisions to GO / CONDITIONAL GO / NO-BID (1.6935ms)
+✔ decision memory — labels (6.1252ms)
+▶ decision memory — relevance
+  ✔ explains overlapping known features only (1.3972ms)
+  ✔ ranks relevant priors and excludes current tender (2.2949ms)
+  ✔ returns empty safely when nothing is relevant (0.4318ms)
+✔ decision memory — relevance (4.8382ms)
+▶ decision memory — integrity
+  ✔ hashes content stably and flags empty payloads (2.6743ms)
+✔ decision memory — integrity (3.6798ms)
+▶ decision outcome — lifecycle
+  ✔ allows PENDING to any terminal state (2.5831ms)
+  ✔ blocks terminal → PENDING without reversal (0.7781ms)
+  ✔ allows terminal → PENDING with explicit reversal (0.3921ms)
+  ✔ allows terminal outcome corrections (0.395ms)
+  ✔ validateOutcomePayload enforces lifecycle on update (0.612ms)
+✔ decision outcome — lifecycle (7.4507ms)
+▶ decision outcome — validation
+  ✔ requires outcome date for WON/LOST (0.6681ms)
+  ✔ normalizes legacy outcomes for learning aggregates (0.5123ms)
+✔ decision outcome — validation (1.8324ms)
+▶ decision outcome — recommendation evaluation
+  ✔ does not assume GO = WON — REVIEW stays NOT_EVALUATED (1.1333ms)
+  ✔ BID + WON is SUCCESSFUL; BID + LOST is UNSUCCESSFUL (0.4185ms)
+  ✔ NO_BID + LOST is SUCCESSFUL (correct avoidance) (14.8193ms)
+  ✔ NO_BID + WON is UNSUCCESSFUL (missed opportunity) (0.971ms)
+  ✔ pending outcomes are NOT_EVALUATED (0.4276ms)
+✔ decision outcome — recommendation evaluation (27.9682ms)
+▶ decision outcome — evidence
+  ✔ marks user evidence explicitly and never as AI (7.4797ms)
+  ✔ detects attachment changes for audit (0.4143ms)
+✔ decision outcome — evidence (8.4181ms)
+▶ decision outcome — statistics and sample size
+  ✔ returns null win rate when decisive sample is insufficient (0.7863ms)
+  ✔ computes win rate only with MIN_DECISIVE_SAMPLE (0.3148ms)
+  ✔ uses n=X of Y summary only with sufficient comparable sample (36.4665ms)
+  ✔ does not invent win rate from unrelated candidates (0.4958ms)
+✔ decision outcome — statistics and sample size (38.4651ms)
+▶ decision outcome — traceability
+  ✔ trace notes use tender title not internal ids (0.6116ms)
+  ✔ patterns reference recorded titles only (0.7681ms)
+✔ decision outcome — traceability (1.6224ms)
+▶ decision outcome — engine context (advisory only)
+  ✔ exports reference-only signal without score fields (0.6412ms)
+✔ decision outcome — engine context (advisory only) (0.8513ms)
+▶ decision outcome — Decision Memory enrichment
+  ✔ adds outcome fields without changing ranking order (4.8011ms)
+✔ decision outcome — Decision Memory enrichment (5.1694ms)
+▶ decision outcome — permissions
+  ✔ blocks VIEWER from recording outcomes (12.424ms)
+✔ decision outcome — permissions (12.6539ms)
+▶ decision outcome — buildDecisionOutcomeView
+  ✔ includes recommendation evaluation and user evidence disclaimer (0.9432ms)
+✔ decision outcome — buildDecisionOutcomeView (1.4249ms)
+▶ decision outcome — scoring isolation
+  ✔ rankRelevantMemories unchanged by outcome enrichment (1.0555ms)
+✔ decision outcome — scoring isolation (1.249ms)
+▶ decision outcome — legacy evaluateDecisionSuccess
+  ✔ maps SUCCESSFUL to successful (0.4326ms)
+✔ decision outcome — legacy evaluateDecisionSuccess (0.7327ms)
+▶ decision-simulator production
+  ✔ simulation isolation — snapshot is never mutated (88.6269ms)
+  ✔ rejects prompt-injection in simulated evidence notes (2.3473ms)
+  ✔ sanitizeSimulationOverrides strips unsafe payload fields (0.6692ms)
+  ✔ real vs simulated evidence provenance (104.4901ms)
+  ✔ CONDITIONAL GO transition via engine when blockers removed (42.3077ms)
+  ✔ NO-BID → improved tier uses canonical engine not arbitrary math (17.6551ms)
+  ✔ unchanged decision uses standard explanation (19.5603ms)
+  ✔ historical Decision Memory appears as reference only (6.344ms)
+  ✔ quick scenarios and comparison run without persistence (10.2223ms)
+  ✔ minimal improvement path is deterministic (58.9724ms)
+  ✔ concurrent simulations are isolated (76.0263ms)
+  ✔ large tender simulation completes within performance budget (4512.5462ms)
+  ✔ team verification flagged when requirement simulated (2.9523ms)
+  ✔ applySimulationOverrides rejects unknown requirement ids (1.8095ms)
+  ✔ GO transition when all blockers and cert gaps resolved (2.4035ms)
+  ✔ insufficient data — scoring blocked snapshot rejects simulation (1.0594ms)
+  ✔ Unknown remains Unknown under sparse profile (2.7408ms)
+  ✔ simulator path does not invoke Smart Alerts services (21.3487ms)
+  ✔ deterministic repeatability — same input yields same output (5.6039ms)
+✔ decision-simulator production (4982.6186ms)
+▶ decision-simulator
+  ✔ validateSimulationOverrides rejects empty overrides (60.5501ms)
+  ✔ GO / CONDITIONAL GO / NO-BID — simulating cert match can improve decision (107.061ms)
+  ✔ unchanged decision reports no decision change (20.7752ms)
+  ✔ applySimulationOverrides does not mutate the original snapshot (12.1258ms)
+  ✔ uses production runTenderDecisionEngine rules — not arbitrary point math (16.8442ms)
+  ✔ UNKNOWN readiness stays UNKNOWN when profile is sparse and requirement is MISSING (6.2207ms)
+✔ decision-simulator (230.1186ms)
+▶ decision integrity — outcomes
+  ✔ clear BID when mandatory requirements are confirmed fit (33.615ms)
+  ✔ clear NO_BID from confirmed mandatory blocker (3.3095ms)
+  ✔ REVIEW from unresolved verification — never NO_BID (4.5628ms)
+  ✔ missing evidence is not NO_BID (34.8551ms)
+  ✔ confirmed fit never contributes a negative blocker (0.4981ms)
+  ✔ confirmed gap on mandatory is a hard blocker (1.9141ms)
+  ✔ optional requirement is not a hard blocker (1.0445ms)
+  ✔ conditional / informational requirements do not hard-block (0.3744ms)
+  ✔ duplicate requirements representing one issue do not double-count (0.7768ms)
+  ✔ financial/commercial blocker yields NO_BID (1.82ms)
+  ✔ deadline constraint downgrades BID to REVIEW — not NO_BID from missing evidence (2.2537ms)
+  ✔ AI recommendation conflicting with canonical evidence cannot force BID or invent NO_BID (2.4804ms)
+  ✔ explainability inputs are exposed for Explainable Decision (50.1167ms)
+  ✔ assertDecisionIntegrity rejects NO_BID from verification-only (0.7623ms)
+  ✔ assertDecisionIntegrity rejects BID with confirmed mandatory gap (1.3168ms)
+✔ decision integrity — outcomes (144.3673ms)
+▶ decision integrity — simulator consistency
+  ✔ Simulator uses same canonical decision rules as baseline engine (52.2143ms)
+✔ decision integrity — simulator consistency (52.4679ms)
+▶ decision integrity — resolveCanonicalDecision
+  ✔ never forces BID merely because no blocker was found when fit suggests REVIEW (9.1709ms)
+✔ decision integrity — resolveCanonicalDecision (9.4007ms)
+▶ buildDecisionSeverityView
+  ✔ classifies VERIFY mandatory rows as review items, not hard blockers (11.2967ms)
+  ✔ does not promote team tasks or contract size to hard blockers (2.4368ms)
+  ✔ treats verification-only findings as review items (0.7367ms)
+  ✔ promotes confirmed missing mandatory rows to hard blockers only (1.3987ms)
+✔ buildDecisionSeverityView (19.4729ms)
+▶ report projection — blocker counts match canonical severity
+  ✔ web and PDF display content use identical blocker and review semantics (31.8487ms)
+  ✔ missing evidence without contradictory proof stays out of criticalBlockers (2.0401ms)
+✔ report projection — blocker counts match canonical severity (34.4045ms)
+▶ extraction gate — blocked analysis
+  ✔ zero reliable requirements blocks scoring (3.8109ms)
+  ✔ unreliable short package text blocks scoring (0.4874ms)
+  ✔ avis-only package reason is preserved in gate messaging (0.8727ms)
+  ✔ failed extraction produces UNAVAILABLE scores (DB placeholder REVIEW) (1.8184ms)
+  ✔ displayFitScore hides numeric fit when gate blocked (0.6275ms)
+✔ extraction gate — blocked analysis (11.2493ms)
+▶ extraction gate — successful path unchanged
+  ✔ valid extraction still computes fit, readiness, and bid score (128.9788ms)
+  ✔ computeCompanyTenderFit still scores dimensions when requirements exist (2.0244ms)
+✔ extraction gate — successful path unchanged (133.2201ms)
+▶ geographic coverage obligation semantics
+  ✔ national court does not create GEO_MISMATCH (6.6094ms)
+  ✔ National Pharmaceutical Authority does not create GEO_MISMATCH (8.2741ms)
+  ✔ national regulatory requirements does not create GEO_MISMATCH (0.609ms)
+  ✔ real bidder geographic coverage can create GEO_MISMATCH when profile contradicts (12.4574ms)
+  ✔ missing company geographic evidence produces NEEDS_VERIFICATION path, not GEO_MISMATCH (17.2158ms)
+  ✔ conditional geographic obligation not applicable at bidding does not create confirmed gap (0.5578ms)
+✔ geographic coverage obligation semantics (49.3565ms)
+▶ legal reservation semantic admission
+  ✔ privileges/immunities legal-reservation text is rejected as bidder requirement (122.0143ms)
+  ✔ cross-document semantic admission remains intact for real bidder obligations (61.8478ms)
+✔ legal reservation semantic admission (184.4514ms)
+▶ recommendation finding identity dedupe
+  ✔ identical underlying GEO_MISMATCH finding is emitted once (3.5827ms)
+  ✔ distinct legitimate findings remain distinct (1.8139ms)
+✔ recommendation finding identity dedupe (5.9327ms)
+▶ requirement fit status — canonical derivation
+  ✔ CONFIRMED_FIT requires provenance-backed evidence (2.795ms)
+  ✔ missing evidence is NEEDS_VERIFICATION not CONFIRMED_GAP (0.7005ms)
+  ✔ explicit negative limitation yields CONFIRMED_GAP (1.086ms)
+  ✔ conflicting certification evidence stays NEEDS_VERIFICATION (0.4512ms)
+  ✔ informational requirements are NOT_APPLICABLE (0.5466ms)
+✔ requirement fit status — canonical derivation (8.5591ms)
+▶ evidence matching — semantic specialization
+  ✔ confirms fit for public-sector experience with provenance (30.7133ms)
+  ✔ experience shortfall with stated years is FAILED not uncertain (13.1422ms)
+  ✔ 24/7 requirement with explicit limitation is FAILED (3.5107ms)
+  ✔ required document checks availability not generic capability (1.9132ms)
+  ✔ MATCHED without provenance downgrades to UNCERTAIN (11.2689ms)
+✔ evidence matching — semantic specialization (61.7343ms)
+▶ requirement fit — downstream readiness/risk/decision
+  ✔ readiness consumes canonical fit status (1.8037ms)
+  ✔ missing certification listing yields NEEDS_VERIFICATION via engine finalize (15.2791ms)
+  ✔ experience shortfall with profile provenance yields CONFIRMED_GAP (2.3585ms)
+  ✔ risk does not treat NEEDS_VERIFICATION as confirmed non-compliance (0.7674ms)
+  ✔ finalize produces one fit record per requirement (0.5244ms)
+✔ requirement fit — downstream readiness/risk/decision (21.2884ms)
+✔ labels: BID/REVIEW/NO_BID map to GO / CONDITIONAL GO / NO-BID everywhere (2.657ms)
+✔ hard mandatory cert failure → NO-BID with critical blockers (17.2665ms)
+✔ strong fit without blockers can yield GO (3.5793ms)
+✔ GO downgrades to CONDITIONAL GO when readiness missing items exist (2.0036ms)
+✔ Decision Memory never overrides current evidence (2.5269ms)
+✔ deadline passed downgrades GO to CONDITIONAL GO (1.5769ms)
+✔ missing deadline is noted — never invented (5.6373ms)
+✔ same inputs produce identical recommendation hash (deterministic) (4.2849ms)
+✔ soft AI NO_BID without hard rules stays CONDITIONAL GO (engine invariant) (1.7848ms)
+✔ report display labels stay consistent with Decision Memory and dashboard (5.1288ms)
+✔ never upgrades NO-BID to GO via secondary evidence (2.1202ms)
+▶ requirement → evidence mapping
+  ✔ maps each requirement to at most one primary evidence row (16.935ms)
+  ✔ executive readiness summary matches Supported / Need Verification / Missing (14.4086ms)
+✔ requirement → evidence mapping (46.2701ms)
+▶ evidence states — foundation
+  ✔ verified evidence with team task (1.551ms)
+  ✔ found but unverified evidence (0.9401ms)
+  ✔ missing evidence (0.7528ms)
+  ✔ expired evidence from parsed dates (1.2592ms)
+  ✔ unknown expiry when no date in text (0.8515ms)
+  ✔ unsupported / rejected evidence → INVALID (1.2738ms)
+✔ evidence states — foundation (7.6503ms)
+▶ source traceability
+  ✔ includes document, page, and section when available (5.741ms)
+  ✔ unknown source when no location data (10.0801ms)
+✔ source traceability (23.9668ms)
+▶ no hallucinated evidence
+  ✔ rejects placeholder excerpts as evidence records (1.3829ms)
+✔ no hallucinated evidence (1.697ms)
+▶ no automatic verification
+  ✔ INFERRED evidence never maps to VERIFIED without team task (0.7709ms)
+  ✔ domain invariants forbid auto-verify and mutations (0.3735ms)
+✔ no automatic verification (1.433ms)
+▶ duplicate evidence handling
+  ✔ detects same evidence id assigned to multiple requirements (3.5934ms)
+  ✔ selectBestEvidenceByRequirement keeps one primary row per requirement (0.7269ms)
+✔ duplicate evidence handling (4.6118ms)
+▶ permission enforcement
+  ✔ company members may view tender analysis (0.6927ms)
+  ✔ application layer uses session + view permission (static contract) (84.5792ms)
+  ✔ server action enforces view permission before load (6.3852ms)
+✔ permission enforcement (92.2056ms)
+▶ data safety — read-only wiring
+  ✔ domain build has no side effects on input evidence (1.6631ms)
+  ✔ application module does not import billing or mutation paths (32.5447ms)
+✔ data safety — read-only wiring (34.5836ms)
+▶ executive summary helper
+  ✔ buildEvidenceReadinessSummary excludes NOT_APPLICABLE from totals (0.5084ms)
+✔ executive summary helper (0.7114ms)
+▶ permission denial contract
+  ✔ AppError FORBIDDEN exists for access denial (0.5994ms)
+✔ permission denial contract (0.9901ms)
+▶ evidence intelligence states
+  ✔ CNSS found but unverified → FOUND_UNVERIFIED, not VERIFIED (3.4429ms)
+  ✔ no excerpt → MISSING (0.3873ms)
+  ✔ team verified → VERIFIED (0.4149ms)
+  ✔ rejected evidence → INVALID (0.4506ms)
+  ✔ parsed past expiry → EXPIRED (1.9309ms)
+  ✔ no expiry in text → validity UNKNOWN, does not assume forever valid (1.3418ms)
+✔ evidence intelligence states (10.8805ms)
+▶ evidence intelligence bundle
+  ✔ builds explainable rows from canonical verification chains (32.9892ms)
+  ✔ does not treat filename alone as proof — placeholder excerpt is missing (15.3779ms)
+  ✔ summary counts match row cardinality (1.169ms)
+✔ evidence intelligence bundle (58.7175ms)
+▶ evidence intelligence isolation
+  ✔ does not mutate canonical evidence input (1.0964ms)
+✔ evidence intelligence isolation (1.4625ms)
+▶ evidence matching
+  ✔ selects human-verified evidence over AI-inferred (2.0379ms)
+  ✔ prefers located excerpts over unlocated (0.47ms)
+  ✔ detects duplicate evidence assignment across requirements (1.9845ms)
+  ✔ ignores unlinked evidence rows (0.4761ms)
+✔ evidence matching (8.915ms)
+▶ verification status derivation
+  ✔ never treats AI/INFERRED as VERIFIED without team task (2.1141ms)
+  ✔ VERIFIED only with teamTaskId and VERIFIED evidence status (4.4717ms)
+  ✔ flags missing evidence when readiness is MISSING (0.5343ms)
+  ✔ marks NOT_APPLICABLE requirements (0.5058ms)
+  ✔ flags ambiguous INFERRED evidence as NEEDS_VERIFICATION (0.9112ms)
+✔ verification status derivation (9.7485ms)
+▶ automated evidence checks
+  ✔ suggests validity review when expiry language present (1.0865ms)
+  ✔ flags certification not confirmed in excerpt (0.5032ms)
+  ✔ never upgrades to VERIFIED — advisory reasons only (0.6219ms)
+✔ automated evidence checks (2.7821ms)
+▶ page traceability
+  ✔ formats document · section · page location label (0.5743ms)
+  ✔ builds chains with exact page from canonical evidence (1.1982ms)
+✔ page traceability (2.2092ms)
+▶ no invented evidence
+  ✔ rejects placeholder text as real evidence (0.4058ms)
+  ✔ summary counts match requirement cardinality only (0.4885ms)
+✔ no invented evidence (1.1628ms)
+▶ team workflow integration
+  ✔ seeds EVIDENCE_REQUEST tasks for NEEDS_VERIFICATION chains (1.0663ms)
+✔ team workflow integration (1.429ms)
+▶ readiness and intelligence alignment
+  ✔ verification intelligence total equals compliance matrix rows (18.3093ms)
+  ✔ readiness counts unchanged by verification layer (0.8037ms)
+✔ readiness and intelligence alignment (19.391ms)
+▶ decision engine re-evaluation signal
+  ✔ detects material decision change after verified evidence (0.535ms)
+✔ decision engine re-evaluation signal (0.7427ms)
+▶ scoring formulas unchanged
+  ✔ decision memory ranking ignores verification fields (1.3175ms)
+✔ scoring formulas unchanged (1.6414ms)
+▶ PDF / web consistency
+  ✔ web and PDF derive the same verification chains (7.6099ms)
+✔ PDF / web consistency (7.9237ms)
+▶ company isolation
+  ✔ verification audit records companyId scope (schema contract) (391.543ms)
+✔ company isolation (391.9563ms)
+▶ explainable decision — GO / CONDITIONAL GO / NO-BID
+  ✔ NO-BID explanation identifies blockers as decision drivers (65.31ms)
+  ✔ CONDITIONAL GO explanation highlights verification gaps (15.7346ms)
+  ✔ GO-capable scenario includes positive factors when verified (10.2053ms)
+✔ explainable decision — GO / CONDITIONAL GO / NO-BID (99.5613ms)
+▶ traceability
+  ✔ requirement items link requirementId and source (7.9632ms)
+  ✔ evidence traceability includes document reference when located (4.0493ms)
+  ✔ missing source uses UNKNOWN — never invents page numbers (1.9691ms)
+✔ traceability (14.691ms)
+▶ unknown and hallucination safeguards
+  ✔ unknown handling uses UNKNOWN status — not negative claims (1.9326ms)
+  ✔ executive summary is structured — not empty for NO-BID (3.5558ms)
+  ✔ deterministic — same inputs produce same contentHash linkage (3.5781ms)
+✔ unknown and hallucination safeguards (9.7143ms)
+▶ Decision Memory context only
+  ✔ historical signals are referenceOnly and CONTEXT_ONLY (4.24ms)
+✔ Decision Memory context only (4.6023ms)
+▶ evidence states in explanation
+  ✔ missing and unverified evidence categories (3.9368ms)
+✔ evidence states in explanation (4.2217ms)
+▶ data safety and permissions
+  ✔ invariants forbid decision mutation (0.5002ms)
+  ✔ application layer is read-only (31.3384ms)
+✔ data safety and permissions (32.3068ms)
+▶ company-fit and readiness sections
+  ✔ includes fit and readiness factors from recommendation (11.2592ms)
+✔ company-fit and readiness sections (34.7131ms)
+▶ extraction corpus — authoritative full text vs context windows
+  ✔ sanitizes a 100k+ document without dropping characters past the old 80k/200k caps (32.2077ms)
+  ✔ package assembly preserves every document past the old 120k package cap (19.1412ms)
+  ✔ pages after the old 80k boundary remain analyzable for metadata, deadline, and requirements (86.759ms)
+  ✔ package content after the old 120k boundary remains analyzable (57.4789ms)
+  ✔ AI context windows do not change canonical source completeness (16.2422ms)
+  ✔ deterministic chunks cover 100% of the corpus in stable order (4.8158ms)
+  ✔ PDF/DOCX/XLSX/PPTX/TXT-shaped extracts and multi-document packages keep complete coverage (31.8259ms)
+  ✔ genuine unreadable and source-truncated extracts still fail closed (2.8999ms)
+  ✔ merged AI chunk drafts keep later-window facts without marking the source truncated (10.4716ms)
+✔ extraction corpus — authoritative full text vs context windows (271.8467ms)
+{"level":"info","event":"pdf.extract.start","documentId":null,"fileName":"specification.pdf","bytes":9342446,"ts":"2026-09-07T16:26:30.255Z"}
+{"level":"info","event":"pdf.worker.configured","source":"pdf-parse/worker#getData","ts":"2026-09-07T16:26:31.661Z"}
+{"level":"info","event":"pdf.extract.failed","documentId":null,"characterCount":469,"pageCount":30,"cause":null,"forceOcr":false,"willTryOcr":true,"ts":"2026-09-07T16:26:33.906Z"}
+{"level":"info","event":"pdf.ocr.start","documentId":null,"totalPages":30,"toProcess":30,"languages":["eng","fra","ara"],"ts":"2026-09-07T16:26:34.428Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":1,"chars":1460,"confidence":91,"ts":"2026-09-07T16:26:37.243Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":2,"chars":402,"confidence":79,"ts":"2026-09-07T16:26:38.616Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":3,"chars":1651,"confidence":79,"ts":"2026-09-07T16:26:44.178Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":4,"chars":1197,"confidence":87,"ts":"2026-09-07T16:26:46.821Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":5,"chars":546,"confidence":77,"ts":"2026-09-07T16:26:49.031Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":6,"chars":458,"confidence":79,"ts":"2026-09-07T16:26:50.765Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":7,"chars":2851,"confidence":91,"ts":"2026-09-07T16:26:57.730Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":8,"chars":3027,"confidence":93,"ts":"2026-09-07T16:27:02.089Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":9,"chars":1414,"confidence":88,"ts":"2026-09-07T16:27:05.177Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":10,"chars":2834,"confidence":91,"ts":"2026-09-07T16:27:11.600Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":11,"chars":2451,"confidence":92,"ts":"2026-09-07T16:27:16.457Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":12,"chars":2176,"confidence":94,"ts":"2026-09-07T16:27:19.596Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":13,"chars":2944,"confidence":94,"ts":"2026-09-07T16:27:23.443Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":14,"chars":3170,"confidence":94,"ts":"2026-09-07T16:27:28.439Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":15,"chars":3034,"confidence":93,"ts":"2026-09-07T16:27:34.210Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":16,"chars":3509,"confidence":94,"ts":"2026-09-07T16:27:38.789Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":17,"chars":2613,"confidence":94,"ts":"2026-09-07T16:27:43.275Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":18,"chars":2973,"confidence":93,"ts":"2026-09-07T16:27:48.238Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":19,"chars":2864,"confidence":94,"ts":"2026-09-07T16:27:52.812Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":20,"chars":3011,"confidence":94,"ts":"2026-09-07T16:27:57.120Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":21,"chars":2504,"confidence":94,"ts":"2026-09-07T16:28:00.534Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":22,"chars":2881,"confidence":93,"ts":"2026-09-07T16:28:04.427Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":23,"chars":3152,"confidence":94,"ts":"2026-09-07T16:28:08.592Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":24,"chars":3026,"confidence":94,"ts":"2026-09-07T16:28:13.864Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":25,"chars":2787,"confidence":94,"ts":"2026-09-07T16:28:17.963Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":26,"chars":3867,"confidence":94,"ts":"2026-09-07T16:28:22.687Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":27,"chars":3819,"confidence":93,"ts":"2026-09-07T16:28:27.912Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":28,"chars":1081,"confidence":93,"ts":"2026-09-07T16:28:29.685Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":29,"chars":2461,"confidence":82,"ts":"2026-09-07T16:28:36.668Z"}
+{"level":"info","event":"pdf.ocr.page","documentId":null,"page":30,"chars":84,"confidence":95,"ts":"2026-09-07T16:28:36.952Z"}
+{"level":"info","event":"pdf.ocr.ok","documentId":null,"pages":30,"characterCount":70986,"method":"OCR","ts":"2026-09-07T16:28:36.953Z"}
+{"level":"info","event":"pdf.ocr.ok","documentId":null,"pageCount":30,"characterCount":70986,"method":"OCR","ocrPages":30,"ts":"2026-09-07T16:28:36.955Z"}
+{"level":"info","event":"pdf.extract.ok","documentId":null,"pageCount":30,"characterCount":70986,"method":"OCR","ts":"2026-09-07T16:28:36.955Z"}
+▶ extraction corpus — real multi-document pack when present
+  ✔ preserves the full native extract of a large uploaded specification volume (126918.5649ms)
+✔ extraction corpus — real multi-document pack when present (126919.0318ms)
+▶ evidence source of truth — document identity
+  ✔ does not stamp every requirement with the package label (25.1273ms)
+  ✔ does not attach company evidence as the tender source document (4.0278ms)
+✔ evidence source of truth — document identity (37.1578ms)
+▶ evidence source of truth — tables and versions
+  ✔ normalize and dedupe keep Excel cell and column header (71.5893ms)
+  ✔ duplicate obligations from two cells keep both provenance links (31.2877ms)
+  ✔ amendment provenance does not silently drop the original source (3.7925ms)
+  ✔ conflicting source texts are not collapsed into one invented clause (2.7853ms)
+  ✔ truncated extraction keeps incompleteness instead of looking located from a package label (2.2983ms)
+✔ evidence source of truth — tables and versions (114.9579ms)
+▶ evidence source of truth — no raw-text reconstruction
+  ✔ does not invent a deadline excerpt by scanning concatenated package text (3.2594ms)
+  ✔ report sections consume stored tender source, not a reconstructed package name (4.9963ms)
+✔ evidence source of truth — no raw-text reconstruction (8.9097ms)
+▶ provenance validation
+  ✔ rejects invalid and out-of-range page numbers (2.0799ms)
+  ✔ rejects page not in extraction markers (0.4448ms)
+  ✔ assertProvenanceConsistency blocks tender/company basis mix-up (1.691ms)
+✔ provenance validation (6.814ms)
+▶ tender source vs company evidence
+  ✔ compliance matrix separates tender excerpt from company evidence message (31.1786ms)
+  ✔ formatCompanyEvidenceDisplay never returns tender text as company proof (0.6373ms)
+✔ tender source vs company evidence (39.4758ms)
+▶ provenance report parity
+  ✔ web/PDF display uses same source location as compliance matrix (23.532ms)
+  ✔ placeholder tender evidence is not treated as located source (0.6971ms)
+  ✔ company evidence line matches between web display and canonical matrix (4.8397ms)
+✔ provenance report parity (29.7497ms)
+▶ decision traceability
+  ✔ failed mandatory requirements link to tender source and company evidence refs (5.1705ms)
+✔ decision traceability (5.453ms)
+✔ buildPostAnalysisAlertCandidates emits decision from real data only (24.6978ms)
+✔ buildPostAnalysisAlertCandidates never invents missing-doc or risk alerts (48.4185ms)
+✔ high-risk and missing-doc candidates only when facts present (0.7017ms)
+✔ score change requires prior + threshold; never invents delta (0.8879ms)
+✔ requirement status change only when counts actually differ (0.7917ms)
+✔ decision memory candidate uses real match ids only (0.6652ms)
+✔ priorSnapshotFromStored never invents scores from empty breakdown (0.9485ms)
+✔ workflow candidate is traceable to gate reason (0.5799ms)
+✔ duplicate candidates share stable dedupe keys across identical facts (1.9908ms)
+✔ prefersAlertType respects Smart Alert toggles (1.0813ms)
+✔ notification prefs schema accepts Smart Alert fields (14.5313ms)
+✔ smart alert flow: create → deliver → read → dedupe → retry (1.55ms)
+✔ only OWNER/ADMIN can verify evidence (8.3985ms)
+✔ decision-critical tasks require verification before complete (0.428ms)
+✔ default applied status becomes MATCHED for gaps when VERIFIED (0.5019ms)
+✔ closed-loop hash is stable and changes with response (0.8414ms)
+✔ verified evidence provenance never invents company facts (0.9509ms)
+✔ meaningful decision change detects decision and readiness deltas (0.6218ms)
+✔ seed candidates dedupe and never invent requirements (14.1043ms)
+✔ readiness updates only from canonical requirement statuses (2.7432ms)
+✔ verified MATCHED requirement improves readiness vs FAILED gap (0.9076ms)
+✔ effectiveTaskStatus marks overdue without inventing completion (3.7632ms)
+✔ seed candidates only from real gaps — never invents (1.5832ms)
+✔ dedupe keys are stable for the same source (0.4758ms)
+✔ permissions: viewers cannot assign; assignees can respond (0.5458ms)
+✔ unresolved critical tasks summary never invents titles (2.0891ms)
+✔ team workflow never flips Decision Engine NO-BID (17.4393ms)
+✔ department suggestion is deterministic (0.6727ms)
+✔ open status helper (0.3947ms)
+▶ sanitizeArchiveEntryPath
+  ✔ accepts relative nested paths (2.1112ms)
+  ✔ rejects path traversal and absolute paths (3.0335ms)
+✔ sanitizeArchiveEntryPath (7.8966ms)
+▶ archive content sniffing
+  ✔ classifies plain ZIP as archive, not a document (10.2647ms)
+  ✔ classifies RAR magic as archive (0.505ms)
+  ✔ keeps DOCX (ZIP + word/) as a document, not an archive (0.9821ms)
+  ✔ sniffs PNG / JPEG / TXT / CSV (0.7968ms)
+  ✔ rejects executable bytes even with .pdf name (1.0833ms)
+✔ archive content sniffing (14.558ms)
+▶ expandTenderPackageUploads — ZIP packages
+  ✔ expands a multi-document ZIP into one flat tender package with provenance (165.5453ms)
+  ✔ expands ZIP containing many supported files as one package (12.7239ms)
+  ✔ passes through loose PDF uploads unchanged (single-file regression) (1.0472ms)
+  ✔ accepts many loose PDFs as one package (0.9185ms)
+  ✔ accepts mixed supported loose documents (0.7291ms)
+  ✔ merges loose files with archive members as one package (13.0355ms)
+  ✔ rejects corrupted ZIP bytes (4.8397ms)
+  ✔ rejects encrypted ZIP members without password (PASSWORD_REQUIRED) (2.1309ms)
+  ✔ expands nested archives within configured nesting depth (4.7544ms)
+  ✔ rejects nested archives that exceed nesting depth (23.0086ms)
+  ✔ rejects path traversal entries (2.2235ms)
+  ✔ rejects archives that exceed the max extracted document count (124.6017ms)
+  ✔ rejects archives with only unsupported members (11.5067ms)
+  ✔ rejects spoofed extension that is not a real archive or document (0.9608ms)
+  ✔ rejects dangerous executable content inside a ZIP (8.2887ms)
+✔ expandTenderPackageUploads — ZIP packages (379.1196ms)
+▶ expandTenderPackageUploads — RAR
+  ✔ rejects corrupted RAR payload after magic-byte detection (52.428ms)
+  ✔ routes RAR magic through the same package expansion boundary as ZIP (17.1112ms)
+✔ expandTenderPackageUploads — RAR (69.967ms)
+▶ package discovery — A–P
+  ✔ A — single PDF discovers exactly 1 file (14.3463ms)
+  ✔ B — long PDF still discovers exactly 1 file (21.7601ms)
+  ✔ C — multiple loose files (24.0886ms)
+  ✔ D — ZIP with 3 files (98.9988ms)
+  ✔ E — ZIP with 20 files (56.3221ms)
+  ✔ F — ZIP with 100 files (package max) (137.9455ms)
+  ✔ G — ZIP with 101 files is rejected (PACKAGE_LIMIT_EXCEEDED) (67.6513ms)
+  ✔ H — mixed supported formats (3.9642ms)
+  ✔ I — malformed archive (3.9993ms)
+  ✔ J — nested archive expanded with provenance (3.8167ms)
+  ✔ K — path traversal rejected (3.4682ms)
+  ✔ L — duplicate filenames get unique storage names with provenance (3.0289ms)
+  ✔ M — inventory survives one conceptual failed extraction (count preserved) (1.5241ms)
+  ✔ N — package provenance fields present on every inventory row (2.8021ms)
+  ✔ O — bounded concurrency preserves order and isolates item results (74.7063ms)
+  ✔ P — tenant isolation contract: discovery does not invent cross-tenant ids (2.42ms)
+  ✔ discoveredFileCount === eligible files; skipped members stay in inventory (4.1697ms)
+  ✔ UI/API package limit is 100, not 5 (0.413ms)
+✔ package discovery — A–P (538.1019ms)
+▶ tender package multi-file upload limits
+  ✔ accepts 1 file (6.617ms)
+  ✔ accepts many loose files up to the configured package limit (0.7872ms)
+  ✔ accepts the configured maximum document count (1.1288ms)
+  ✔ rejects more documents than the configured package limit (2.3003ms)
+  ✔ does not hard-code a maximum of 5 files (2.6657ms)
+  ✔ rejects empty package (1.3556ms)
+  ✔ enforces configured per-file size in schema (1.1518ms)
+  ✔ accepts mixed supported document MIME types (0.5584ms)
+✔ tender package multi-file upload limits (21.451ms)
+▶ multi-file package assembly processes every document
+  ✔ includes all five files with independent roles and combined text (17.0167ms)
+  ✔ does not silently drop a document from the package text (1.4927ms)
+✔ multi-file package assembly processes every document (18.9716ms)
+▶ Archive Processing — normal ZIP
+  ✔ extracts multi-document ZIP with provenance (90.4313ms)
+✔ Archive Processing — normal ZIP (93.2907ms)
+▶ Archive Processing — normal RAR
+  ✔ extracts supported members from a real RAR fixture (ratio override) (74.0771ms)
+✔ Archive Processing — normal RAR (74.8354ms)
+▶ Archive Processing — encrypted ZIP
+  ✔ marks PASSWORD_REQUIRED without continuing extraction (14.6693ms)
+  ✔ continues with correct ephemeral password (8.3845ms)
+  ✔ returns WRONG_PASSWORD without corrupting retryability (5.9181ms)
+✔ Archive Processing — encrypted ZIP (29.7573ms)
+▶ Archive Processing — encrypted RAR
+  ✔ requires password for HeaderEnc1234.rar (4.083ms)
+  ✔ extracts with correct password (184.11ms)
+  ✔ rejects wrong password and allows retry (162.3384ms)
+✔ Archive Processing — encrypted RAR (351.5167ms)
+▶ Archive Processing — nested / corrupted / security
+  ✔ recursively expands nested ZIP with provenance chain (12.9129ms)
+  ✔ marks corrupted archive as CORRUPTED (4.404ms)
+  ✔ rejects archive bombs by compression ratio (19.0816ms)
+  ✔ rejects path traversal (1.9905ms)
+  ✔ rejects symlinks (2.1142ms)
+  ✔ rejects executable payloads (3.5471ms)
+  ✔ accepts large packages under configurable file-count limit (13.2601ms)
+  ✔ renames duplicate filenames with provenance (4.2948ms)
+  ✔ skips unsupported members while keeping valid documents (mixed) (2.8228ms)
+  ✔ never redacts by leaking password fields into logs (0.7821ms)
+✔ Archive Processing — nested / corrupted / security (66.5556ms)
+▶ File Recovery classes
+  ✔ READY — clean PDF proceeds without repair (5.4373ms)
+  ✔ AUTO_RECOVERABLE — strips leading junk before %PDF- (1.4582ms)
+  ✔ AUTO_RECOVERABLE — trims trailing junk after %%EOF (0.4619ms)
+  ✔ AUTO_RECOVERABLE — scanned/image-only PDF schedules OCR (forceOcr) (0.9419ms)
+  ✔ AUTO_RECOVERABLE — OCR execution path with injectable runner + low confidence flag (1.2158ms)
+  ✔ USER_ACTION_REQUIRED — encrypted PDF does not invent content (0.7353ms)
+  ✔ UNSUPPORTED — unknown binary rejected (0.479ms)
+  ✔ CORRUPTED_UNRECOVERABLE — PDF extension without PDF magic (0.3994ms)
+  ✔ SECURITY_BLOCKED — via intake for PE bytes (5.8435ms)
+  ✔ AUTO_RECOVERABLE — text UTF-8 BOM stripped without inventing content (1.0481ms)
+  ✔ AUTO_RECOVERABLE — misleading extension corrected from sniff (0.6134ms)
+  ✔ partial package — valid PDF proceeds while corrupted peer is marked (2.6656ms)
+  ✔ intake surfaces non-blocking auto-repair user notice (1.8427ms)
+  ✔ duplicate filenames recorded as recovery rename (43.9351ms)
+  ✔ format-validate remains available for OCR-likely soft path (0.504ms)
+  ✔ OOXML missing PK is CORRUPTED_UNRECOVERABLE (0.7553ms)
+✔ File Recovery classes (72.3334ms)
+ℹ tests 334
+ℹ suites 83
+ℹ pass 334
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 132422.1119
+
+exit:0
+
+=== batch 5: 25 files ===
+▶ adversarial PDF — extraction survives injection
+  ✔ flags malicious instructions while preserving legitimate tender obligations (27.6764ms)
+  ✔ heuristic extraction still finds requirements and deadline from adversarial PDF (136.8731ms)
+  ✔ canonical requirements merge adversarial AI drafts with heuristic facts (265.7552ms)
+  ✔ pipeline trust snapshot is advisory only (4.1243ms)
+✔ adversarial PDF — extraction survives injection (440.394ms)
+▶ decision immutability under adversarial tender text
+  ✔ Decision Engine ignores AI GO when mandatory certification fails (27.9368ms)
+  ✔ finalizeTenderDecision remains canonical over AI wording (5.6498ms)
+✔ decision immutability under adversarial tender text (34.0138ms)
+▶ pipeline stage trust — evidence, explainability, memory
+  ✔ Evidence Intelligence never auto-verifies from AI (6.8707ms)
+  ✔ explainable decision includes trust anomaly note without changing decision (27.2314ms)
+  ✔ source basis maps AI interpretation separately from tender facts (0.8876ms)
+✔ pipeline stage trust — evidence, explainability, memory (36.0463ms)
+▶ authorization and client security
+  ✔ blocks cross-tenant resource access (3.3213ms)
+  ✔ rejects client-provided scores and verification state (1.0499ms)
+  ✔ read-only pipeline stages enforce assist boundaries (0.6296ms)
+✔ authorization and client security (5.4706ms)
+▶ regression — security wiring does not break canonical modules
+  ✔ tender-processing persists aiTrust on intelligence (134.6975ms)
+  ✔ explainable and evidence application layers use ai-trust guards (26.8396ms)
+  ✔ ai-trust modules do not import billing or credit mutation (4.2832ms)
+✔ regression — security wiring does not break canonical modules (166.5864ms)
+▶ AI Trust — authoritative tender DATA vs control instructions
+  ✔ wrap marks PDF as authoritative tender DATA (4.0754ms)
+  ✔ long wrap is CONTEXT_WINDOW_ONLY and does not claim the source is truncated (1.023ms)
+  ✔ document extract module delegates to ai-trust wrap (64.9872ms)
+  ✔ legitimate tender obligations remain usable as DATA (2.0255ms)
+  ✔ malicious PDF override attempts are flagged as content — not executed (2.3512ms)
+  ✔ deadlines in PDF remain authoritative tender facts (0.5946ms)
+  ✔ tender content cannot mutate control-plane fields (1.028ms)
+✔ AI Trust — authoritative tender DATA vs control instructions (81.4449ms)
+▶ AI Trust — source separation and provenance
+  ✔ AI inference cannot be presented as tender fact (0.7332ms)
+  ✔ no fabricated page numbers beyond document bounds (1.024ms)
+  ✔ AI extraction drafts drop invalid pages (0.8742ms)
+  ✔ UNKNOWN remains UNKNOWN — no auto-upgrade (0.2789ms)
+✔ AI Trust — source separation and provenance (3.5853ms)
+▶ AI Trust — Decision Engine authority
+  ✔ principles lock Decision Engine as final authority (0.3776ms)
+✔ AI Trust — Decision Engine authority (0.5354ms)
+▶ AI Trust — client manipulation and permissions
+  ✔ rejects client-provided decision that diverges from server canonical (0.5446ms)
+  ✔ structured override text blocked in simulator path (0.9645ms)
+  ✔ tender-processing and ai services use ai-trust wrap (39.0356ms)
+  ✔ cross-company isolation remains server-side — canonical read uses companyId (8.4741ms)
+✔ AI Trust — client manipulation and permissions (50.5578ms)
+▶ AI Trust — requirements still extracted from PDF content
+  ✔ injection-laced requirement description is still classifiable as tender obligation context (0.379ms)
+✔ AI Trust — requirements still extracted from PDF content (0.5855ms)
+▶ explainable decision integration
+  ✔ decision and explanation stay consistent for GO / CONDITIONAL GO / NO-BID (101.2368ms)
+  ✔ fails safely when stored decision diverges from explanation (5.231ms)
+  ✔ requirement and evidence items remain traceable (3.7296ms)
+  ✔ evidence intelligence states map to human labels without conversion (0.6282ms)
+  ✔ risk, readiness, and company fit sections reflect recommendation (40.4893ms)
+  ✔ decision memory stays isolated as historical context (8.0983ms)
+  ✔ team workflow links attach without auto-verifying requirements (3.8533ms)
+  ✔ simulated results never overwrite canonical explainable decision (103.6119ms)
+  ✔ report and PDF display content include explainable summary (10.8307ms)
+  ✔ deriveExplainableDecisionForReport matches buildExplainableDecision (18.2283ms)
+  ✔ unknown sources stay unknown — no fabricated page numbers (4.0943ms)
+  ✔ explainable path does not emit Smart Alerts (188.9801ms)
+  ✔ permissions enforced in application layer (21.8412ms)
+  ✔ re-analysis produces stable explainable hash for same canonical inputs (20.0816ms)
+  ✔ insufficient data label is reserved for missing canonical facts (4.5852ms)
+✔ explainable decision integration (542.0444ms)
+▶ deriveRequirementActionTitle
+  ✔ classifies universal obligation objects without inventing facts (7.8422ms)
+  ✔ never returns a linked-requirement generic when a specific title can be derived (1.5498ms)
+  ✔ prefers a specific requiredAction and rejects generic requiredAction (5.4848ms)
+  ✔ builds one specific linked action per unverified mandatory requirement (50.5271ms)
+  ✔ does not infer company registration from qualification, nationality, or conflict of interest (2.9552ms)
+  ✔ maps only when the obligation explicitly supports the class (1.1753ms)
+  ✔ never emits generic linked-requirement titles (1.0217ms)
+✔ deriveRequirementActionTitle (75.172ms)
+▶ tender action plan integration
+  ✔ builds plan from full intelligence pipeline output (83.3551ms)
+  ✔ permission contract: plan items always have sourceId (17.7797ms)
+  ✔ re-analysis with resolved evidence cancels stale actions (33.6034ms)
+  ✔ simulator hints stay isolated from real actions (37.1429ms)
+✔ tender action plan integration (174.604ms)
+▶ action plan full chain integration
+  ✔ generates actions from requirement gaps through intelligence pipeline (105.5808ms)
+  ✔ explainable decision and action plan stay consistent — no direct GO override (22.9211ms)
+  ✔ smart alerts include action plan critical blockers without duplication of decision alert (1.1682ms)
+  ✔ PDF/report uses action plan lines and avoids empty-only sections (31.0652ms)
+  ✔ simulation items stay isolated from real action plan in report content (5.5359ms)
+✔ action plan full chain integration (169.149ms)
+▶ tender action plan invariants
+  ✔ domain is read-only and does not mutate decision (1.9301ms)
+  ✔ rejects client-provided status, priority, and source (2.1986ms)
+✔ tender action plan invariants (8.0257ms)
+▶ action generation
+  ✔ generates action from missing evidence (19.873ms)
+  ✔ generates action from unverified evidence (4.1368ms)
+  ✔ generates requirement blocker actions (5.6036ms)
+  ✔ generates risk blocker actions (31.5027ms)
+  ✔ generates readiness blocker from keyBlockers (9.9742ms)
+  ✔ generates company-fit gap actions (1.0234ms)
+  ✔ adds deadline urgency when blocking items exist (1.268ms)
+  ✔ does not invent deadline when unknown (1.3446ms)
+  ✔ links team workflow tasks (1.6408ms)
+  ✔ isolates Decision Simulator actions as SIMULATION ONLY (1.3843ms)
+  ✔ does not create filler actions when nothing unresolved (0.9652ms)
+✔ action generation (80.655ms)
+▶ action state transitions
+  ✔ verified evidence resolves verification action to COMPLETED (0.8576ms)
+  ✔ team task completed with unverified evidence → AWAITING_VERIFICATION (0.3727ms)
+✔ action state transitions (1.5278ms)
+▶ deduplication and re-analysis
+  ✔ stable id from source type and source id (0.4595ms)
+  ✔ re-analysis does not duplicate same source (1.3895ms)
+  ✔ stale actions cancelled when source resolved (1.019ms)
+✔ deduplication and re-analysis (3.2359ms)
+▶ priority rules
+  ✔ mandatory missing → CRITICAL (0.676ms)
+  ✔ does not invent urgency without signals (0.321ms)
+✔ priority rules (1.2895ms)
+▶ after completion contract
+  ✔ actions describe canonical re-run, not direct GO (1.1681ms)
+✔ after completion contract (1.3836ms)
+▶ canonical analysis snapshot
+  ✔ INVARIANT 4: totalRequirements === snapshot.requirementIds.length (4.901ms)
+  ✔ INVARIANT 9/10: headings and fragments fail freeze checks (2.2666ms)
+  ✔ INVARIANT 11: missing company evidence is not CONFIRMED_GAP (4.9254ms)
+  ✔ INVARIANT 5–7: web/PDF/API totals must match snapshot (16.6606ms)
+  ✔ metricsFromComplianceSummary keeps total distinct from derived buckets (0.9695ms)
+✔ canonical analysis snapshot (32.883ms)
+▶ same canonical package architecture — files / zip
+  ✔ loose files and zip expansion share discover → assemble → canonical set (389.9315ms)
+✔ same canonical package architecture — files / zip (392.7534ms)
+▶ report requirement-count consistency
+  ✔ readiness total/counts match compliance when missing documents exist (23.5865ms)
+  ✔ fails the consistency contract when totals diverge (guard) (1.0126ms)
+  ✔ empty requirements stay consistent with zero totals (0.5545ms)
+  ✔ avis-style single-requirement package stays 1:1 with matrix (1.5768ms)
+✔ report requirement-count consistency (29.7651ms)
+▶ analysis-batch-writes chunking
+  ✔ chunks 282 items into bounded batches (2.0772ms)
+✔ analysis-batch-writes chunking (4.3931ms)
+▶ buildSeedSideEffectRows — 282-task logical parity
+  ✔ emits one CREATED event per task and verify audits for :verify: keys only (2.3172ms)
+  ✔ skips side effects when task was not inserted (idempotent race) (0.5612ms)
+✔ buildSeedSideEffectRows — 282-task logical parity (3.281ms)
+▶ buildEvidenceFoundBatchRows — 143 audits
+  ✔ preserves one audit + one AuditLog row per evidence item (1.28ms)
+✔ buildEvidenceFoundBatchRows — 143 audits (1.5911ms)
+▶ batch write source contracts
+  ✔ seed and evidence services use createMany batching (91.7631ms)
+✔ batch write source contracts (92.7894ms)
+▶ document extract quality & encryption
+  ✔ detects encrypted PDF markers without decoding as UTF-8 text (38.6238ms)
+  ✔ does not flag normal PDF headers as encrypted (0.6593ms)
+  ✔ rejects raw PDF binary mistaken for text (5.2192ms)
+  ✔ sanitizes nulls but keeps multilingual letters (0.8213ms)
+  ✔ marks empty OCR results as unusable (0.7981ms)
+  ✔ does not cap sanitized extract at 200k characters (1.8983ms)
+  ✔ accepts substantial native extract (0.5248ms)
+✔ document extract quality & encryption (52.9626ms)
+{"level":"info","event":"spreadsheet.extract.ok","sheets":1,"chars":138,"kind":"xlsx","tables":1,"ts":"2026-09-07T16:28:41.258Z"}
+{"level":"info","event":"spreadsheet.extract.ok","sheets":1,"chars":120,"kind":"xls","tables":1,"ts":"2026-09-07T16:28:41.280Z"}
+▶ extraction capability contract
+  ✔ advertises only formats with declared extractors for text-analyzable kinds (43.8371ms)
+✔ extraction capability contract (46.0179ms)
+▶ ZIP sniff — container vs OOXML
+  ✔ does not classify a multi-doc ZIP containing XLSX as spreadsheet (59.7787ms)
+  ✔ still classifies a real XLSX as xlsx (11.0212ms)
+✔ ZIP sniff — container vs OOXML (71.3936ms)
+▶ spreadsheet extraction
+  ✔ extracts XLSX sheet names, cells, and numbers (94.6332ms)
+  ✔ extracts legacy XLS (19.6962ms)
+  ✔ marks unreadable spreadsheet as extraction failure (4.8156ms)
+✔ spreadsheet extraction (122.1577ms)
+▶ other format extractors
+  ✔ extracts CSV rows (30.7848ms)
+  ✔ extracts TXT (2.4922ms)
+{"level":"info","event":"docx.extract.ok","chars":31,"tables":0,"ts":"2026-09-07T16:28:42.056Z"}
+  ✔ extracts DOCX via mammoth path (734.1337ms)
+  ✔ extracts PPTX slide text (5.9215ms)
+  ✔ rejects unsupported loose format (1.834ms)
+✔ other format extractors (776.1095ms)
+{"level":"info","event":"spreadsheet.extract.ok","sheets":1,"chars":91,"kind":"xlsx","tables":1,"ts":"2026-09-07T16:28:42.128Z"}
+{"level":"info","event":"spreadsheet.extract.ok","sheets":1,"chars":91,"kind":"xlsx","tables":1,"ts":"2026-09-07T16:28:42.132Z"}
+▶ mixed ZIP package discovery
+  ✔ expands PDF + XLSX + DOCX with provenance and no silent drops (67.4841ms)
+{"level":"info","event":"spreadsheet.extract.ok","sheets":1,"chars":64,"kind":"xlsx","tables":1,"ts":"2026-09-07T16:28:42.148Z"}
+  ✔ partial extraction failure does not invent empty tender text for failed file (16.1482ms)
+✔ mixed ZIP package discovery (84.1369ms)
+✔ EmailProvider interface allows alternate providers without Smart Alert rewrite (8.5703ms)
+✔ unready delivery must not claim success (20.5408ms)
+✔ channel email result shape supports retry semantics (0.6362ms)
+✔ Resend vault encrypt/decrypt round-trip (9.1698ms)
+✔ corrupt vault ciphertext returns empty object (27.4788ms)
+✔ apiKeyHint never returns full key (0.6328ms)
+✔ maskEmail hides local part (0.5062ms)
+✔ audit snapshot never contains raw apiKey field (0.6137ms)
+✔ save schema rejects empty from when parsed for enable path (4.2757ms)
+✔ public settings schema defaults are safe (2.7685ms)
+✔ email.resend.vault is a secret setting key (0.3369ms)
+✔ safe Resend error scrubber redacts key-like tokens (16.4683ms)
+✔ disabled delivery config reason is exposed without secrets (1.3068ms)
+▶ isNonRetryableAnalysisError
+  ✔ marks DecisionGuardianError as non-retryable (43.7044ms)
+  ✔ marks Guardian message string as non-retryable (0.476ms)
+  ✔ marks VALIDATION AppError as non-retryable (0.6253ms)
+  ✔ allows transient UPSTREAM errors to retry (0.454ms)
+✔ isNonRetryableAnalysisError (48.5421ms)
+▶ upload poll reflects terminal FAILED
+  ✔ FAILED status yields failed poll step with Guardian message (0.8494ms)
+  ✔ detail page source maps FAILED without decision to failed kind (32.2942ms)
+  ✔ soft wait does not invent FAILED while still ANALYZING (0.4971ms)
+✔ upload poll reflects terminal FAILED (34.2052ms)
+▶ executive summary view
+  ✔ displays canonical REVIEW decision as CONDITIONAL GO (30.8686ms)
+  ✔ summary reasons and actions come from canonical analysis (4.1717ms)
+  ✔ surfaces critical blockers — mandatory gaps and missing documents (2.8431ms)
+  ✔ includes expired deadline in critical alerts (2.7393ms)
+  ✔ includes professional decision disclaimer (2.3404ms)
+  ✔ short explanation is concise — not the full reasoning paragraph repeated (4.8281ms)
+  ✔ detailed canonical sections remain complete alongside summary (4.8824ms)
+✔ executive summary view (55.2889ms)
+▶ PDF branding
+  ✔ uses Report by with configured localhost origin when no production domain is set (3.5361ms)
+  ✔ prefers configured production NEXT_PUBLIC_APP_URL over localhost request (1.0234ms)
+  ✔ uses request production origin when env is unset (0.9248ms)
+  ✔ never invents bidvera.com (1.0471ms)
+✔ PDF branding (9.3818ms)
+▶ premium PDF fonts — script-aware registration
+  ✔ detects only latin for FR/EN report text (2.2013ms)
+  ✔ detects Arabic without treating it as CJK (0.4056ms)
+  ✔ detects CJK when Han characters are present (0.2481ms)
+  ✔ latin-only registration does not bind Arabic or CJK faces (19.3056ms)
+  ✔ Arabic text binds Arabic faces and still skips CJK (3.8824ms)
+✔ premium PDF fonts — script-aware registration (28.1328ms)
+▶ PDF locale policy
+  ✔ maps Arabic UI to English PDF (2.062ms)
+  ✔ keeps Latin-script locales (0.3396ms)
+  ✔ falls back Chinese UI to English PDF chrome (0.3678ms)
+  ✔ strips Arabic script while preserving French and English (1.0521ms)
+✔ PDF locale policy (6.5582ms)
+▶ premium-pdf-pagination
+  ✔ addContentPage resets Y to margin top (15.9528ms)
+  ✔ ensureSpaceForBlock breaks when block would clip (4.5444ms)
+  ✔ ensureSpaceForBlock allows tall blocks to start on a fresh page without cascading breaks (6.0263ms)
+  ✔ ensureSectionHeadingSpace prevents orphan headings (2.7207ms)
+  ✔ tableFitsWithHeader requires header plus one row (2.6619ms)
+  ✔ remainingSpace reflects content bottom (1.6722ms)
+✔ premium-pdf-pagination (36.235ms)
+▶ premium PDF text — Arabic shaping & bidi
+  ✔ preserves French and English when shaping mixed logical text (2.1842ms)
+  ✔ uses RTL paragraph direction for Arabic UI locale labels (0.4279ms)
+  ✔ keeps Arabic words semantically intact through shape + bidi roundtrip (10.2143ms)
+  ✔ orders mixed English label + Arabic value correctly under RTL (0.9195ms)
+  ✔ pdfTextBlockPaginated breaks long text across pages without leaving doc.y past content bottom (177.6785ms)
+✔ premium PDF text — Arabic shaping & bidi (193.1203ms)
+▶ premium-pdf-validate
+  ✔ extractMeaningfulPageText strips chrome lines and repeating header titles (24.8566ms)
+  ✔ validatePremiumPdfBuffer rejects nearly-empty synthetic page text (1266.9768ms)
+  ✔ generated report passes blank-page and density validation (7776.2745ms)
+
+--- Audiovisual extraction audit ---
+Extracted requirement count: 5
+Deadline (fact): 2026-09-30T17:00:00+01:00
+Estimated value (fact): 4200000
+[MANDATORY_ELIGIBILITY] mandatory=true | Minimum five (5) years of experience in public-sector audiovisual installation projects is… | doc=Tender_Audiovisual_Equipment.pdf p?
+[CONTRACTUAL] mandatory=true | Bidders must submit a provisional bond (caution provisoire) together with the tender dossi… | doc=Tender_Audiovisual_Equipment.pdf p?
+[MANDATORY_TECHNICAL] mandatory=true | The bidder shall supply, install, configure and commission a complete audiovisual system i… | doc=Tender_Audiovisual_Equipment.pdf p?
+[MANDATORY_ADMINISTRATIVE] mandatory=true | Attestation CNSS and tax clearance certificate are mandatory.… | doc=Tender_Audiovisual_Equipment.pdf p?
+[MANDATORY_TECHNICAL] mandatory=true | The supplier must provide a minimum warranty period of 24 months on all installed AV equip… | doc=Tender_Audiovisual_Equipment.pdf p?
+  ✔ pagination regression — 1, 8, 14, and 50+ requirements produce no blank pages (22568.661ms)
+  ▶ audiovisual canonical tender PDF has compact page count and full body on every page
+    ▶ audiovisual tender — extraction audit
+      ✔ captures genuine obligations and filters facts/noise (150.8271ms)
+      ✔ classifies AV obligations correctly (8.5337ms)
+      ✔ merges sparse AI with heuristic without duplicates (12.202ms)
+    ✔ audiovisual tender — extraction audit (172.5049ms)
+    ▶ audiovisual tender — canonical consistency
+      ✔ readiness/compliance counts align; fit is single canonical value (18.0047ms)
+      ✔ web and PDF display share identical fit and counts (8.4165ms)
+    ✔ audiovisual tender — canonical consistency (26.6104ms)
+  ✔ audiovisual canonical tender PDF has compact page count and full body on every page (4763.3309ms)
+  ✔ multi-page PDF repeats table dimension header on continuation (4478.2253ms)
+  ✔ empty list sections are omitted to avoid title-only pages (4496.8771ms)
+✔ premium-pdf-validate (45377.8207ms)
+▶ PDF report data integrity
+  ✔ UI derivation and PDF plain text use identical canonical counts (58.1519ms)
+  ✔ unavailable scores render Not available — never fabricate (4.1906ms)
+  ✔ generated PDF buffer embeds branding and the same requirement totals as the API report (10400.4901ms)
+  ✔ Arabic UI generates English PDF without Arabic glyphs or tofu (4411.0462ms)
+  ✔ fails integrity when readiness total diverges from compliance (guard) (3.0815ms)
+  ✔ blocks PDF generation when display content is tampered (1.458ms)
+  ✔ display content decision label matches localized web report (0.9771ms)
+✔ PDF report data integrity (14881.9293ms)
+▶ tender package heuristic extraction
+  ✔ extracts FR public-procurement requirements with provenance and deadline (309.5166ms)
+  ✔ keeps short mandatory ID rows in 'Mandatory Requirements' tables (17.8725ms)
+  ✔ does not invent a submission deadline from an opening date alone (8.0007ms)
+  ✔ picks the explicitly labeled submission deadline when multiple dates exist (2.1099ms)
+  ✔ returns null client when buyer identity is not explicitly present (2.0594ms)
+  ✔ does not invent a deadline when none is present (2.8705ms)
+  ✔ extracts Malay tender notice deadline and eligibility with provenance (9.3246ms)
+  ✔ 1 — requirement continuation after a PDF page marker is not persisted as truncated text (5.8458ms)
+  ✔ 2 — long technical requirement spanning page breaks is canonical and non-truncated (3.6391ms)
+  ✔ 3 — supplier warranty execution spanning pages is excluded (not bidder-stage) (8.9935ms)
+  ✔ 3b — long bidder submission obligation spanning page breaks is canonical and non-truncated (4.086ms)
+  ✔ 4 — numbered obligation split across pages is merged into a full canonical requirement (4.511ms)
+  ✔ 5 — no truncation after normalization/deduplication for all extracted canonical requirements (6.3857ms)
+  ✔ 6 — Decision Guardian sees the same full canonical text (no REQUIREMENT_TRUNCATED) (67.7321ms)
+✔ tender package heuristic extraction (456.8202ms)
+✔ new pipeline phases have monotonic progress (1.3136ms)
+✔ legacy phases map to same progress as canonical phases (0.3567ms)
+✔ completed status returns 100 even without phase (0.4334ms)
+ℹ tests 206
+ℹ suites 46
+ℹ pass 206
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 51175.153
+
+exit:0
+
+=== batch 6: 17 files ===
+✔ completed poll transitions to success (1.9434ms)
+✔ failed poll transitions to failed with message (0.3939ms)
+✔ poll errors retry until exhausted (0.4459ms)
+✔ elapsed beyond wait budget yields still_processing while incomplete (0.4961ms)
+✔ analyzing status maps to analyzing phase (0.426ms)
+▶ resolveIntelligenceForCanonicalRead
+  ✔ keeps incomplete packages INCOMPLETE even when counts look stale (30.0439ms)
+  ✔ never drops a persisted Guardian stamp on stale complete reads (1.8628ms)
+  ✔ blocks COMPLETE publication when Guardian stamp is missing (1.307ms)
+✔ resolveIntelligenceForCanonicalRead (35.7327ms)
+▶ result delivery — shared canonical builders
+  ✔ builds report from canonical without second intelligence rebuild (37.4463ms)
+  ✔ strips premium intelligence for unentitled companies (0.6297ms)
+  ✔ explainable decision builder uses persisted canonical recommendation (1.2322ms)
+  ✔ blocks explainable decision when entitlement missing (66.0499ms)
+  ✔ blocks cross-company canonical via companyId mismatch at load layer (1.0916ms)
+✔ result delivery — shared canonical builders (109.7686ms)
+▶ upload polling and navigation
+  ✔ COMPLETED stops polling (success step) (0.7018ms)
+  ✔ FAILED does not continue polling indefinitely (0.945ms)
+  ✔ prevents duplicate navigation (3.3628ms)
+✔ upload polling and navigation (5.7403ms)
+▶ result delivery — canonical read path
+  ✔ uses React.cache for request-level deduplication (8.4503ms)
+  ✔ skips per-read learning lookup when analysis is fresh (0.8836ms)
+  ✔ loads extractedText only when stale or missing intelligence (2.2863ms)
+  ✔ result page uses single orchestrator (0.8983ms)
+  ✔ in-progress result page mounts live status poller; ready path does not (0.6822ms)
+  ✔ live status poll stops on terminal statuses and skips ready pages (0.9244ms)
+✔ result delivery — canonical read path (15.1683ms)
+✔ EXTRACTING → COMPLETED is terminal (auto-refresh path) (1.9584ms)
+✔ EXTRACTING → FAILED is terminal (show failure after refresh) (0.3256ms)
+✔ ANALYZING → ANALYSIS_INCOMPLETE is terminal (0.3162ms)
+✔ already COMPLETED page kind does not start polling (0.3491ms)
+✔ in-progress statuses continue with live phase updates (0.616ms)
+✔ slow processing is not failure — continues with slower interval (0.4074ms)
+✔ poll errors do not mark analysis failed; exhausted slows interval (9.7851ms)
+✔ duplicate in-flight / unmount / terminal block new poll starts (0.9943ms)
+✔ terminal status helper covers required terminals (0.469ms)
+✔ AI request timeout error encodes duration (2.0791ms)
+✔ default AI timeout is at least 5 seconds (0.5408ms)
+▶ incomplete package canonical state
+  ✔ blocked analysis has no fabricated tender risks (46.7143ms)
+  ✔ report projection nulls decision and scores for scoring-blocked package (2.6121ms)
+  ✔ rejects fabricated score titles (1.2364ms)
+  ✔ strips invented midnight time and timezone from date-only deadlines (0.8439ms)
+  ✔ keeps real local timestamps with timezone (0.8669ms)
+✔ incomplete package canonical state (58.1184ms)
+▶ package identity — metadata authority
+  ✔ Q&A vendor names do not pollute or CONFLICT a labelled notice buyer (57.0005ms)
+  ✔ pre-bid minutes and sample-contract parties do not override notice buyer (70.136ms)
+  ✔ template placeholders are not accepted as buyer (1.2814ms)
+  ✔ truncated labelled fragments are INCOMPLETE, not authoritative OK (0.7981ms)
+  ✔ two equal-authority labelled buyers stay CONFLICT with both sources (3.7481ms)
+✔ package identity — metadata authority (137.4382ms)
+▶ package identity — document roles
+  ✔ classifies a multi-volume pack into distinct procurement roles from content (2.9228ms)
+  ✔ filename alone cannot assign a role when content has no evidence (0.556ms)
+  ✔ a vendor/eSourcing guide is not a tender notice because it lists notices (0.5822ms)
+  ✔ instructions to offerors remain instructions, not a schedule mention (0.7504ms)
+  ✔ STI mapping preserves instructions, schedule, returnable, pre-bid and UTI tenderers (0.7938ms)
+✔ package identity — document roles (6.4017ms)
+▶ package identity — deadline integrity
+  ✔ reads a bid deadline when the date is on the next line (0.6917ms)
+  ✔ does not treat opening, clarification or validity dates as the bid deadline (0.8065ms)
+  ✔ package identity keeps a labelled submission deadline and exposes conflict (2.7019ms)
+  ✔ document opening identity is not overridden by later artefact mentions (1.8642ms)
+  ✔ section-numbered filename cannot assign a role without content evidence (0.492ms)
+✔ package identity — deadline integrity (7.1187ms)
+▶ package identity — location and country authority
+  ✔ Q&A location fragments do not override a labelled notice location (1.3199ms)
+✔ package identity — location and country authority (1.5604ms)
+▶ package identity — deadline integrity
+  ✔ pre-bid restatement cannot author OK when instructions exist without a parsed date (1.9174ms)
+  ✔ reads a particulars Date/Time split after Deadline for Proposal Submission (81.0084ms)
+  ✔ does not treat meeting, warranty or contract dates as the bid deadline (0.6147ms)
+  ✔ keeps a pointer-only deadline as INCOMPLETE with evidence, not a invented date (1.496ms)
+  ✔ uses an amendment replacement date over the original when replacement is stated (1.5566ms)
+  ✔ marks a labelled deadline without a date as incomplete rather than silent UNKNOWN (0.5796ms)
+✔ package identity — deadline integrity (87.9344ms)
+▶ durable-compatible rate limiter (memory backend)
+  ✔ enforces the same limit across two limiter instances sharing memory only when same instance (54.8324ms)
+  ✔ two separate memory instances do not share state (documents why durable is required) (0.8294ms)
+✔ durable-compatible rate limiter (memory backend) (63.6404ms)
+▶ durable rate limiter multi-instance (DB backend)
+  ✔ two limiter instances share one bucket via durable backend (3043.5957ms)
+✔ durable rate limiter multi-instance (DB backend) (3044.3015ms)
+▶ upload content sniffing
+  ✔ accepts real PDF magic bytes (0.8429ms)
+  ✔ rejects extension/MIME spoof — executable bytes labeled as PDF (0.2399ms)
+  ✔ rejects random bytes even if named .pdf (0.2541ms)
+  ✔ accepts OLE legacy DOC signature (0.2901ms)
+  ✔ accepts ZIP that contains word/ as DOCX (0.3729ms)
+  ✔ classifies ZIP without word/ as archive (not a document) (0.2042ms)
+  ✔ classifies RAR magic bytes as archive (0.1713ms)
+✔ upload content sniffing (2.8284ms)
+▶ super admin fail-closed
+  ✔ rejects missing path (0.3468ms)
+  ✔ rejects banned trivial values and does not invent a default path (0.1749ms)
+  ✔ accepts an explicit operator-configured control path (0.1536ms)
+  ✔ rejects short paths (0.0964ms)
+  ✔ accepts a strong configured path (0.1118ms)
+  ✔ unconfigured path resolution does not throw (middleware-safe) (0.2385ms)
+✔ super admin fail-closed (1.4654ms)
+▶ assistant abuse protection contract
+  ✔ ask route requires authenticated user and user-scoped quotas (1.042ms)
+  ✔ tts route requires authenticated user and user-scoped quotas (0.8358ms)
+✔ assistant abuse protection contract (2.0707ms)
+▶ tender report route identity
+  ✔ uses the same loadTenderResultPageData orchestrator as the detail page (1.815ms)
+  ✔ keeps notFound for missing/unauthorized tenders (0.4202ms)
+  ✔ maps Guardian publication blocks to not-ready — not notFound (0.5482ms)
+  ✔ streams PDF through a tenant-scoped GET route, not a base64 server action (0.5285ms)
+✔ tender report route identity (5.8058ms)
+▶ report publication gate — no invented COMPLETE
+  ✔ allows incomplete analysis without Guardian snapshot (1.0163ms)
+  ✔ allows missing complianceStatus without inventing COMPLETE (0.3501ms)
+  ✔ still blocks explicit COMPLETE without Guardian (1.8566ms)
+✔ report publication gate — no invented COMPLETE (3.8215ms)
+▶ lifecycle frame — execution without trigger stays UNKNOWN
+  ✔ supplier delivery / unload / install / commission without trigger is not admitted (172.1468ms)
+  ✔ corrective maintenance / replacement / post-contract service without trigger stay REVIEW (4.5827ms)
+  ✔ does not invent post-award from the words supplier, deliver, install, warranty or payment alone (2.2818ms)
+✔ lifecycle frame — execution without trigger stays UNKNOWN (181.5655ms)
+▶ lifecycle frame — explicit post-award trigger excludes
+  ✔ delivery / site / reception / contract-period / artefact triggers are EXCLUDED_POST_AWARD (18.3696ms)
+✔ lifecycle frame — explicit post-award trigger excludes (18.7395ms)
+▶ lifecycle frame — genuine pre-award commitments still admit
+  ✔ bidder capability / plan / bid-inclusion frames remain admissible (13.0163ms)
+  ✔ technical specifications, eligibility and required documents remain admissible (5.1034ms)
+  ✔ buyer / authority procedural statements remain non-requirements (2.8837ms)
+✔ lifecycle frame — genuine pre-award commitments still admit (21.6143ms)
+▶ lifecycle intelligence — unattributed bid-stage commercial
+  ✔ unattributed firm/fixed offer prices during bid validity are admitted (164.6851ms)
+  ✔ unattributed bid validity of the offer is admitted (26.1881ms)
+  ✔ unattributed currency and payment terms of the offer are admitted (6.718ms)
+  ✔ does not force every unattributed commercial sentence to UNKNOWN (1.4521ms)
+  ✔ firm prices throughout the contract period stay bid-disclosed commercial, not MULTI_PHASE (3.156ms)
+✔ lifecycle intelligence — unattributed bid-stage commercial (205.1926ms)
+▶ lifecycle intelligence — capability vs execution
+  ✔ bidder capability for future delivery stays pre-award (15.9372ms)
+  ✔ actual delivery after PO is post-award and not admitted (13.6045ms)
+  ✔ installation after award is post-award and not admitted (16.4364ms)
+  ✔ warranty/maintenance during the warranty period is post-award unless a bid commitment (16.7402ms)
+✔ lifecycle intelligence — capability vs execution (64.4139ms)
+▶ lifecycle intelligence — successful bidder and security
+  ✔ successful bidder without an award trigger stays MIXED_OR_AMBIGUOUS (8.418ms)
+  ✔ award-triggered security is AWARD, not open execution (6.1867ms)
+  ✔ bid-stage security with the bid is admitted (4.1424ms)
+✔ lifecycle intelligence — successful bidder and security (19.3259ms)
+▶ lifecycle intelligence — mixed, conditional, lot, amendment
+  ✔ mixed pre/post clause is MIXED_OR_AMBIGUOUS with REVIEW, not silently dropped (3.3171ms)
+  ✔ conditional lifecycle preserves conditionality and does not invent a phase (2.1857ms)
+  ✔ lot-specific lifecycle identities stay distinct (2.5245ms)
+  ✔ amendment changing the lifecycle trigger does not collapse identity (5.1208ms)
+✔ lifecycle intelligence — mixed, conditional, lot, amendment (13.6484ms)
+▶ lifecycle intelligence — cross-format and non-bidder frames
+  ✔ equivalent wording is invariant across PDF/DOCX/XLSX/TXT wrappers (5.5865ms)
+  ✔ buyer/authority actions never become bidder-stage requirements (1.4604ms)
+  ✔ portal/vendor guidance process text is not admitted as a bidder duty (3.0447ms)
+✔ lifecycle intelligence — cross-format and non-bidder frames (10.4778ms)
+▶ lifecycle intelligence — identity and downstream seal
+  ✔ pre-award commitment and post-award execution never share identity (8.7878ms)
+  ✔ normalize fingerprints keep lifecycle families apart (4.6557ms)
+  ✔ trustStiSemantics does not re-infer lifecycle from raw keywords (6.1555ms)
+  ✔ does not add a 17th final admission check (0.3677ms)
+✔ lifecycle intelligence — identity and downstream seal (20.4143ms)
+▶ root cause — post-award / contract-execution must not enter bidder stage
+  ✔ bidder delivery after signing a purchase instrument is excluded (137.8792ms)
+  ✔ delivery after a call-off / PO instrument is excluded without inventing the buyer (22.4278ms)
+  ✔ site transportation / offloading / placement is contract execution (5.4976ms)
+  ✔ passive repair/replacement of defective items is execution, not a bid duty (17.1527ms)
+  ✔ performance artefacts (delivery notes / warranty certificates) are not bid documents (2.2289ms)
+  ✔ supplier KPI during the contract period is excluded (1.5036ms)
+  ✔ payment administration after performance artefacts is excluded (2.0112ms)
+  ✔ bid-disclosed payment terms remain commercial, not execution (34.0274ms)
+  ✔ genuine pre-award commitments remain admissible (20.8383ms)
+  ✔ UNKNOWN/ambiguous meaning is not promoted to BIDDER (15.6854ms)
+✔ root cause — post-award / contract-execution must not enter bidder stage (263.9428ms)
+▶ root cause — table/Excel representations share one semantic identity
+  ✔ response-column chrome never admits (4.5737ms)
+  ✔ heading, row, and cell of the same duty collapse to one candidate (40.5384ms)
+  ✔ decorative prefixes and numbering share one identity; quantity/duration stay distinct (0.8172ms)
+✔ root cause — table/Excel representations share one semantic identity (46.4194ms)
+▶ root cause — tender deadline requires authoritative evidence
+  ✔ opening date alone stays UNKNOWN (6.1982ms)
+  ✔ delivery date is not a submission deadline (2.3233ms)
+  ✔ explicit submission deadline is preserved; timezone stays UNKNOWN unless stated (13.5854ms)
+  ✔ bid submission due date with compact time and stated timezone is preserved (2.0891ms)
+✔ root cause — tender deadline requires authoritative evidence (25.0848ms)
+▶ root cause — non-requirement text cannot enter canonical
+  ✔ document identifier + disclaimer is metadata, not a bidder duty (127.1843ms)
+  ✔ instrument abbreviation + reference label is metadata even with trailing prose (5.812ms)
+  ✔ heading / section label never admits (36.821ms)
+  ✔ introductory / background prose never admits (2.4856ms)
+  ✔ buyer / authority statements never admit (4.8739ms)
+  ✔ disclaimer without a bidder duty never admits (2.0267ms)
+  ✔ factual dates / values / locations alone never admit (14.1165ms)
+  ✔ evaluation description without a bidder duty never admits (0.9058ms)
+  ✔ example / note / template text never admits (5.6417ms)
+  ✔ incomplete fragment never admits (18.3433ms)
+  ✔ mixed document: identifier is dropped, genuine bidder duty remains (24.1806ms)
+  ✔ genuine pre-award bidder requirements still pass (45.2306ms)
+✔ root cause — non-requirement text cannot enter canonical (292.8967ms)
+▶ spreadsheet semantic cleanup
+  ✔ extract text never embeds cell-address prefixes as harvestable meaning (27.9268ms)
+  ✔ leftover cell chrome is stripped before semantic identity (51.4455ms)
+✔ spreadsheet semantic cleanup (80.5515ms)
+▶ discovery completeness
+  ✔ heuristic harvest is not silently capped at 80 obligations (29.435ms)
+  ✔ structured label-value and numbered fields are discoverable without shall/must (1.217ms)
+✔ discovery completeness (30.8655ms)
+▶ actor attribution
+  ✔ supplier as recipient of a buyer-agent duty is not the obligated actor (6.6246ms)
+  ✔ supplier as grammatical subject remains SUPPLIER (3.3305ms)
+  ✔ unproven actor stays UNKNOWN and is not invented as BIDDER (9.987ms)
+✔ actor attribution (20.3475ms)
+▶ document purpose and contextual volumes
+  ✔ pre-bid minutes without a bidder-stage duty are BACKGROUND (4.1586ms)
+  ✔ a genuine bidder duty inside instructions remains admissible (1.2333ms)
+✔ document purpose and contextual volumes (5.6705ms)
+▶ semantic identity without over-merge
+  ✔ quantity, duration and currency facets stay distinct (3.0386ms)
+  ✔ pre-award commitment and post-award execution never share identity (0.5769ms)
+✔ semantic identity without over-merge (3.8225ms)
+▶ structured tables, metadata, amendments, contradictions
+  ✔ table headers and cell coordinates are not admitted as requirements (1.9789ms)
+  ✔ opening date and offer validity are not submission-deadline metadata (0.3653ms)
+  ✔ an amendment sentence is not assumed to replace a prior clause (1.5486ms)
+  ✔ conflicting proven values across documents are preserved as REVIEW contradictions (7.5701ms)
+✔ structured tables, metadata, amendments, contradictions (11.7008ms)
+▶ failure isolation and provenance
+  ✔ one malformed unit does not abort harvest of independent units (0.4869ms)
+  ✔ interpretation failure is excluded with an explicit code and does not invent certainty (1.9718ms)
+  ✔ equivalent PDF/DOCX/XLSX wrappers keep the same admitted meaning (2.5125ms)
+✔ failure isolation and provenance (5.1532ms)
+▶ hardening — lifecycle frame
+  ✔ supplier execution without a trigger stays UNKNOWN, not invented post-award (127.171ms)
+  ✔ explicit post-award trigger excludes; bidder bid-scope still admits (43.3237ms)
+✔ hardening — lifecycle frame (173.0674ms)
+▶ hardening — lot and condition scope
+  ✔ identical lot restatements may union lots but never become ALL_LOTS (36.4667ms)
+  ✔ different lot thresholds stay separate (1.7327ms)
+  ✔ ALL + LOTS merge never expands a lot-specific duty to all lots (1.7853ms)
+  ✔ conditional lot text remains conditional and is not admitted as global mandatory (6.6112ms)
+✔ hardening — lot and condition scope (47.4344ms)
+▶ hardening — versioning
+  ✔ amendment document role does not invent a proven replacement (0.8683ms)
+  ✔ unproven replace language stays REVIEW and is not admitted (2.2645ms)
+✔ hardening — versioning (3.8912ms)
+▶ hardening — isolated vocabulary is not a decision
+  ✔ the words supplier, deliver, install, warranty, payment do not invent post-award (5.188ms)
+  ✔ buyer procedural statements stay non-requirements (3.4731ms)
+  ✔ metadata and headings are preserved as context, not canonical requirements (7.6783ms)
+✔ hardening — isolated vocabulary is not a decision (16.74ms)
+▶ hardening — deadlines and timezone
+  ✔ opening, validity, delivery and contract dates are not bid deadlines (3.5829ms)
+  ✔ labelled submission deadline is extracted; timezone stays UNKNOWN unless stated (2.5318ms)
+  ✔ unknown IANA zone is not invented as UTC offset (18.345ms)
+  ✔ compact 1430 hrs is preserved when labelled as a bid deadline (3.3709ms)
+✔ hardening — deadlines and timezone (28.2311ms)
+▶ hardening — table surfaces and one-candidate failure
+  ✔ the same obligation across row and response-column surfaces is one candidate (3.5897ms)
+  ✔ one unreadable fragment does not block genuine neighbouring admission (12.3348ms)
+✔ hardening — table surfaces and one-candidate failure (16.2999ms)
+▶ hardening — seal path cannot bypass condition or lot scope
+  ✔ unresolved orphan condition on the sealed candidate is not admitted (1.2566ms)
+  ✔ lot-specific text cannot be expanded to ALL_LOTS or dropped (0.9758ms)
+✔ hardening — seal path cannot bypass condition or lot scope (2.5125ms)
+▶ hardening — genuine bidder intelligence is preserved
+  ✔ eligibility, required documents, technical specs and commercial bid terms remain (3.9242ms)
+✔ hardening — genuine bidder intelligence is preserved (4.0842ms)
+▶ tender validity gate
+  ✔ rejects invoice documents before analysis (5.1789ms)
+  ✔ accepts RFP with bidder obligations (2.5674ms)
+  ✔ rejects unreadable empty text (0.4997ms)
+  ✔ provides localized NOT_A_TENDER message (0.8029ms)
+✔ tender validity gate (11.207ms)
+▶ document understanding — examples excluded
+  ✔ detects example sections in structure (2.7642ms)
+  ✔ rejects sample questions and test scenarios as requirements (15.4957ms)
+  ✔ keeps real obligations in canonical set (112.6543ms)
+✔ document understanding — examples excluded (131.3379ms)
+▶ unknown ≠ high risk — AI risk sanitization
+  ✔ caps uncertain AI risks below HIGH (0.8155ms)
+✔ unknown ≠ high risk — AI risk sanitization (1.1005ms)
+▶ database capacity errors
+  ✔ detects Neon transfer quota lockouts (1.6169ms)
+  ✔ maps Decision Guardian blocks instead of a generic 500 (0.717ms)
+  ✔ maps quota failures to a 503 instead of a generic 500 (0.4021ms)
+  ✔ rethrows quota errors as AppError (0.7738ms)
+✔ database capacity errors (5.8219ms)
+ℹ tests 194
+ℹ suites 49
+ℹ pass 194
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4671.7305
+
+exit:0
+
+NPM_TEST_EXIT:0

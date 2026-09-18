@@ -1,0 +1,2791 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+enum DecisionType {
+  BID
+  REVIEW
+  NO_BID
+}
+
+enum RiskSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum RequirementMatchStatus {
+  MATCHED
+  FAILED
+  UNCERTAIN
+  MISSING
+}
+
+enum TenderStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+/** Real-world bid outcome recorded by the company — used for privacy-safe learning only after filtering. */
+enum TenderOutcome {
+  WON
+  LOST
+  WITHDRAWN
+  CANCELLED
+  NOT_SUBMITTED
+  PENDING
+  /** @deprecated use PENDING */
+  BID_SUBMITTED
+  /** @deprecated use NOT_SUBMITTED */
+  NO_BID_CONFIRMED
+}
+
+/** Safe learning pattern lifecycle — only VERIFIED/ACTIVE may influence recommendations. */
+enum LearningPatternLifecycle {
+  CANDIDATE
+  VALIDATING
+  VERIFIED
+  ACTIVE
+  MONITORED
+  RETIRED
+}
+
+enum AnalysisStatus {
+  UPLOADING
+  PROCESSING
+  EXTRACTING
+  ANALYZING
+  COMPLETED
+  FAILED
+}
+
+enum ConfidenceLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum DocumentProcessingStatus {
+  PENDING
+  STORED
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum EvidenceVerificationStatus {
+  VERIFIED
+  INFERRED
+  UNKNOWN
+}
+
+enum MissingDocumentStatus {
+  OPEN
+  RESOLVED
+  IGNORED
+}
+
+enum RiskStatus {
+  OPEN
+  MITIGATED
+  ACCEPTED
+}
+
+enum AlertType {
+  DEADLINE_APPROACHING
+  DEADLINE_PASSED
+  MISSING_DOCUMENT
+  HIGH_RISK
+  DECISION_GENERATED
+  TRIAL_LIMIT
+  SYSTEM
+  SCORE_CHANGED
+  REQUIREMENT_STATUS
+  DECISION_MEMORY
+  WORKFLOW_EVENT
+}
+
+/** Document Compliance Manager — company document status (date-only expiry semantics). */
+enum ComplianceStatus {
+  VALID
+  EXPIRING_SOON
+  EXPIRED
+  NO_EXPIRY
+  UNKNOWN
+}
+
+enum ComplianceReminderKind {
+  DAYS_90
+  DAYS_30
+  DAYS_7
+  EXPIRED
+}
+
+enum ComplianceReminderStatus {
+  SCHEDULED
+  SENT
+  CANCELLED
+}
+
+enum AlertStatus {
+  SCHEDULED
+  SENT
+  READ
+  DISMISSED
+  CANCELLED
+}
+
+enum SubscriptionPlan {
+  TRIAL
+  STARTER
+  PRO
+  BUSINESS
+  FREE
+}
+
+enum SubscriptionStatus {
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  INCOMPLETE
+  UNPAID
+  EXPIRED
+  PAYMENT_FAILED
+}
+
+enum UsageAction {
+  TENDER_ANALYSIS
+  DOCUMENT_UPLOAD
+  AI_EXTRACTION
+  AI_REASONING
+  CHECKOUT_STARTED
+  UPGRADE_VIEWED
+}
+
+enum JobStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  DEAD
+}
+
+enum JobType {
+  PROCESS_TENDER_DOCUMENT
+  RUN_TENDER_ANALYSIS
+  SEND_ALERT
+  SCHEDULE_DEADLINE_ALERTS
+  PROCESS_BILLING_WEBHOOK
+  SEND_EMAIL
+}
+
+enum OnboardingStep {
+  VERIFY_EMAIL
+  COMPANY
+  PLAN
+  DONE
+}
+
+enum AuditAction {
+  SIGNUP
+  COMPANY_CREATED
+  PROFILE_UPDATED
+  TENDER_UPLOADED
+  ANALYSIS_STARTED
+  ANALYSIS_COMPLETED
+  FIRST_DECISION
+  DECISION_GENERATED
+  TRIAL_USAGE
+  UPGRADE_VIEWED
+  CHECKOUT_STARTED
+  SUBSCRIPTION_CREATED
+  SUBSCRIPTION_CANCELED
+  PAYMENT_FAILURE
+  LOGIN
+  LOGOUT
+  EMAIL_VERIFIED
+  EMAIL_VERIFICATION_SENT
+  EMAIL_CHANGE_REQUESTED
+  EMAIL_CHANGE_CANCELLED
+  EMAIL_CHANGE_CONFIRMED
+  EMAIL_CHANGED
+  EMAIL_CHANGE_FAILED
+  PASSWORD_RESET_REQUESTED
+  PASSWORD_RESET_COMPLETED
+  ONBOARDING_COMPANY
+  ACCOUNT_PROFILE_UPDATED
+  ONBOARDING_PLAN
+  TENDER_OUTCOME_RECORDED
+  LEARNING_CONTRIBUTED
+  DECISION_MEMORY_RECORDED
+  DECISION_MEMORY_COMPARED
+  TEAM_TASK_CREATED
+  TEAM_TASK_ASSIGNED
+  TEAM_TASK_STATUS_CHANGED
+  TEAM_TASK_RESPONDED
+  TEAM_TASK_COMPLETED
+  TEAM_TASK_REOPENED
+  TEAM_TASK_VERIFIED
+  TEAM_TASK_REJECTED
+  TEAM_EVIDENCE_UPLOADED
+  TEAM_CLOSED_LOOP_RERUN
+  DECISION_MEMORY_REVISION
+  DECISION_OUTCOME_RECORDED
+  DECISION_OUTCOME_UPDATED
+  EVIDENCE_FOUND
+  VERIFICATION_REQUESTED
+  VERIFIED
+  VERIFICATION_REJECTED
+  EVIDENCE_UPDATED
+}
+
+enum TrialRiskVerdict {
+  ALLOW
+  STEP_UP
+  REVIEW
+  BLOCK
+}
+
+enum CompanyStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum PlanStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+enum FeatureScope {
+  GLOBAL
+  PLAN
+  COMPANY
+}
+
+enum AiTaskType {
+  PDF_EXTRACTION
+  REQUIREMENT_EXTRACTION
+  CLASSIFICATION
+  COMPANY_MATCHING
+  RISK_ANALYSIS
+  FINAL_REASONING
+}
+
+enum BillingProvider {
+  STRIPE
+  PAYPAL
+  MANUAL
+}
+
+enum BillingInterval {
+  MONTH
+  YEAR
+}
+
+enum BillingPaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum BillingInvoiceStatus {
+  DRAFT
+  OPEN
+  PAID
+  VOID
+  UNCOLLECTIBLE
+}
+
+enum WebhookProcessStatus {
+  RECEIVED
+  PROCESSING
+  PROCESSED
+  FAILED
+  IGNORED
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  OPS
+  READ_ONLY
+}
+
+// ─── Identity & tenancy ───────────────────────────────────────────────────────
+
+model User {
+  id              String         @id @default(cuid())
+  companyId       String?
+  company         Company?       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  name            String
+  email           String         @unique
+  emailVerified   Boolean        @default(false)
+  passwordHash    String
+  /** Public path for profile photo, e.g. /uploads/avatars/{userId}/….png */
+  avatarUrl       String?
+  role            UserRole       @default(OWNER)
+  onboardingStep  OnboardingStep @default(VERIFY_EMAIL)
+  acceptedTermsAt DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  sessions                 Session[]
+  auditLogs                AuditLog[]
+  decidedTenders           TenderDecision[]        @relation("DecidedBy")
+  emailVerificationTokens  EmailVerificationToken[]
+  emailChangeTokens        EmailChangeToken[]
+  passwordResetTokens      PasswordResetToken[]
+  assignedTeamTasks        TeamWorkflowTask[]      @relation("TeamTaskAssignee")
+  createdTeamTasks         TeamWorkflowTask[]      @relation("TeamTaskCreator")
+  completedTeamTasks       TeamWorkflowTask[]      @relation("TeamTaskCompleter")
+  respondedTeamTasks       TeamWorkflowTask[]      @relation("TeamTaskResponder")
+  verifiedTeamTasks        TeamWorkflowTask[]      @relation("TeamTaskVerifier")
+  teamWorkflowEvents       TeamWorkflowEvent[]     @relation("TeamWorkflowEventActor")
+  targetedAlerts           Alert[]                 @relation("AlertTargetUser")
+
+  @@index([companyId])
+  @@index([email])
+  @@index([onboardingStep])
+}
+
+model EmailVerificationToken {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash       String    @unique
+  /** AES-GCM ciphertext of raw link token for worker delivery — never log; clear after send/use. */
+  deliverySecretEnc String?
+  expiresAt       DateTime
+  usedAt          DateTime?
+  createdAt       DateTime  @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+/** Pending email change — applied only after the new address clicks the confirm link. */
+model EmailChangeToken {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  newEmail        String
+  tokenHash       String    @unique
+  deliverySecretEnc String?
+  expiresAt       DateTime
+  usedAt          DateTime?
+  createdAt       DateTime  @default(now())
+
+  @@index([userId])
+  @@index([newEmail])
+  @@index([expiresAt])
+}
+
+model PasswordResetToken {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash       String    @unique
+  deliverySecretEnc String?
+  expiresAt       DateTime
+  usedAt          DateTime?
+  createdAt       DateTime  @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+/** One-time Super Admin enter-company exchange — raw session never in the URL. */
+model SaEnterClaim {
+  id                String    @id @default(cuid())
+  sessionTokenEnc   String
+  expiresAt         DateTime
+  usedAt            DateTime?
+  createdAt         DateTime  @default(now())
+
+  @@index([expiresAt])
+}
+
+model Session {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash        String   @unique
+  expiresAt        DateTime
+  ipHash           String?
+  userAgentHash    String?
+  deviceFingerprint String?
+  createdAt        DateTime @default(now())
+  lastSeenAt       DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Company {
+  id            String        @id @default(cuid())
+  name          String
+  slug          String        @unique
+  domain        String?
+  country       String?
+  companySize   String?
+  status        CompanyStatus @default(ACTIVE)
+  suspendedAt   DateTime?
+  suspendReason String?
+  /**
+   * Opt into contributing anonymized outcomes to the global learning layer.
+   * Company-private outcomes remain available regardless.
+   */
+  globalLearningConsent Boolean @default(true)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  users         User[]
+  profile       CompanyProfile?
+  usage         CompanyUsage?
+  subscription  Subscription?
+  notificationPrefs CompanyNotificationPrefs?
+  tenders       Tender[]
+  alerts        Alert[]
+  usageRecords  UsageRecord[]
+  jobs          Job[]
+  auditLogs     AuditLog[]
+  trialSignals  TrialRiskSignal[]
+  planOverride  CompanyPlanOverride?
+  featureOverrides CompanyFeatureOverride[]
+  aiUsageLogs   AiUsageLog[]
+  subscriptionEvents SubscriptionEvent[]
+  billingPayments BillingPayment[]
+  billingInvoices BillingInvoice[]
+  decisionMemories DecisionMemory[]
+  decisionMemoryRevisions DecisionMemoryRevision[]
+  tenderDecisionOutcomes TenderDecisionOutcome[]
+  teamWorkflowTasks TeamWorkflowTask[]
+  teamWorkflowEvents TeamWorkflowEvent[]
+  complianceDocuments ComplianceDocument[]
+  complianceDocumentCategories ComplianceDocumentCategory[]
+  complianceDocumentVersions ComplianceDocumentVersion[]
+  complianceExpiryReminders ComplianceExpiryReminder[]
+  complianceReminderSettings ComplianceReminderSettings?
+  supplierQualificationProfile SupplierQualificationProfile?
+  calendarTenders CalendarTender[]
+  calendarTenderDeadlines CalendarTenderDeadline[]
+  calendarTenderEvents CalendarTenderEvent[]
+  calendarTenderReminders CalendarTenderReminder[]
+  calendarTenderReminderSettings CalendarTenderReminderSettings?
+  clientRequests ClientRequest[]
+  clientRequestItems ClientRequestItem[]
+  clientRequestActivities ClientRequestActivity[]
+  clientRequestShares ClientRequestShare[]
+  clientRequestReminders ClientRequestReminder[]
+  reportShares ReportShare[]
+  questionnairePacks QuestionnairePack[]
+  questionnaireQuestions QuestionnaireQuestion[]
+  questionnaireDraftAnswers QuestionnaireDraftAnswer[]
+  matchingProfile CompanyMatchingProfile?
+  matchingPreferenceSnapshot CompanyMatchingPreferenceSnapshot?
+  matchRecommendations MatchRecommendation[]
+  matchingBehaviorEvents MatchingBehaviorEvent[]
+  matchingSponsorships MatchingSponsorship[]
+  matchingSponsorshipPricingPlans MatchingSponsorshipPricingPlan[]
+  matchingSponsorshipPricingRequests MatchingSponsorshipPricingRequest[]
+
+  @@index([slug])
+  @@index([domain])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model CompanyProfile {
+  id                       String   @id @default(cuid())
+  companyId                String   @unique
+  company                  Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  industry                 String?
+  country                  String?
+  companySize              String?
+  /** Optional categorical experience for tender-fit (not a sensitive field). */
+  experienceLevel          String?
+  services                 String[] @default([])
+  certifications           String[] @default([])
+  experienceYears          Int?
+  revenueRange             String?
+  employeeRange            String?
+  geographicCoverage       String[] @default([])
+  contractSizeMin          Int?
+  contractSizeMax          Int?
+  customQualificationRules String[] @default([])
+  /**
+   * Structured company knowledge extracted from uploaded evidence (with provenance).
+   * Flat columns above remain the matching surface; this is the source-of-truth trace.
+   */
+  knowledgeJson            Json?
+  completeness             Int      @default(0)
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+}
+
+model CompanyUsage {
+  id             String   @id @default(cuid())
+  companyId      String   @unique
+  company        Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  analysesUsed   Int      @default(0)
+  analysesLimit  Int      @default(3)
+  /** Billing-period window for analysesUsed (aligned to subscription period, not calendar month). */
+  periodStart    DateTime?
+  periodEnd      DateTime?
+  updatedAt      DateTime @updatedAt
+}
+
+// ─── Tenders ──────────────────────────────────────────────────────────────────
+
+model Tender {
+  id               String         @id @default(cuid())
+  companyId        String
+  company          Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  title            String
+  client           String?
+  country          String?
+  region           String?
+  industry         String?
+  deadline         DateTime?
+  deadlineTimezone String?
+  estimatedValue   Int?
+  guarantee        String?
+  status           TenderStatus   @default(DRAFT)
+  analysisStatus   AnalysisStatus @default(UPLOADING)
+  analysisError    String?
+  /** Fine-grained phase for upload progress (READING_PDF, OCR, CLASSIFYING, …). */
+  analysisPhase    String?
+  idempotencyKey   String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  analyzedAt       DateTime?
+  /** Company-private outcome — never exposed cross-tenant; only coarse features enter learning. */
+  outcome          TenderOutcome?
+  outcomeRecordedAt DateTime?
+  /** Coarse learning fingerprint stored at analysis time (no PII / no document text). */
+  learningFeatureKey String?
+
+  documents    TenderDocument[]
+  requirements TenderRequirement[]
+  risks        TenderRisk[]
+  evidence     TenderEvidence[]
+  decision     TenderDecision?
+  missingDocs  MissingDocument[]
+  nextActions  NextAction[]
+  alerts       Alert[]
+  jobs         Job[]
+  learningContribution LearningContribution?
+  decisionMemory       DecisionMemory?
+  decisionMemoryRevisions DecisionMemoryRevision[]
+  decisionOutcome      TenderDecisionOutcome?
+  teamWorkflowTasks    TeamWorkflowTask[]
+  questionnairePacks QuestionnairePack[]
+  reportShares ReportShare[]
+
+  @@unique([companyId, idempotencyKey])
+  @@index([companyId])
+  @@index([companyId, analysisStatus])
+  @@index([companyId, deadline])
+  @@index([companyId, status])
+  @@index([companyId, createdAt])
+  @@index([learningFeatureKey])
+  @@index([outcome])
+}
+
+/** Revocable report share links. Legacy HMAC tokens remain valid until expiry. */
+model ReportShare {
+  id              String    @id @default(cuid())
+  companyId       String
+  company         Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  tenderId        String
+  tender          Tender    @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  tokenHash       String    @unique
+  expiresAt       DateTime
+  revokedAt       DateTime?
+  createdByUserId String?
+  createdAt       DateTime  @default(now())
+
+  @@index([companyId, tenderId])
+  @@index([tenderId, revokedAt])
+}
+
+model TenderDocument {
+  id               String                   @id @default(cuid())
+  tenderId         String
+  tender           Tender                   @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  companyId        String
+  fileName         String
+  storageKey       String
+  mimeType         String
+  fileSize         Int
+  checksumSha256   String?
+  processingStatus DocumentProcessingStatus @default(PENDING)
+  extractedText    String?                  @db.Text
+  pageCount        Int?
+  /** Extraction provenance: method, pages[{page,method,confidence}], usedOcrFallback */
+  extractionMeta   Json?
+  /** COMPANY_PROFILE | TENDER | SUPPORTING_EVIDENCE | HISTORICAL_OUTCOME */
+  documentKind     String?
+  createdAt        DateTime                 @default(now())
+  updatedAt        DateTime                 @updatedAt
+
+  @@index([tenderId])
+  @@index([companyId])
+  @@index([storageKey])
+  @@index([documentKind])
+}
+
+model TenderRequirement {
+  id          String                 @id @default(cuid())
+  tenderId    String
+  tender      Tender                 @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  category    String
+  description String
+  mandatory   Boolean                @default(true)
+  value       String?
+  status      RequirementMatchStatus @default(UNCERTAIN)
+  sourcePage  Int?
+  sourceSection String?
+  evidence    String?
+  sortOrder   Int                    @default(0)
+  createdAt   DateTime               @default(now())
+
+  evidenceLinks TenderEvidence[]
+  teamTasks     TeamWorkflowTask[]
+
+  @@index([tenderId])
+  @@index([tenderId, status])
+}
+
+model TenderRisk {
+  id          String       @id @default(cuid())
+  tenderId    String
+  tender      Tender       @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  severity    RiskSeverity
+  category    String
+  description String
+  sourcePage  Int?
+  status      RiskStatus   @default(OPEN)
+  mitigation  String?
+  sortOrder   Int          @default(0)
+  createdAt   DateTime     @default(now())
+
+  teamTasks TeamWorkflowTask[]
+
+  @@index([tenderId])
+  @@index([tenderId, severity])
+}
+
+model TenderEvidence {
+  id                 String                      @id @default(cuid())
+  tenderId           String
+  tender             Tender                      @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  requirementId      String?
+  requirement        TenderRequirement?          @relation(fields: [requirementId], references: [id], onDelete: SetNull)
+  documentId         String?
+  sourcePage         Int?
+  sourceSection      String?
+  evidenceText       String
+  verificationStatus EvidenceVerificationStatus  @default(UNKNOWN)
+  verificationReason String?                     @db.Text
+  verifiedById       String?
+  verifiedAt         DateTime?
+  /** Provenance link to team workflow task when evidence came from verified team response */
+  teamTaskId         String?
+  createdAt          DateTime                    @default(now())
+
+  @@index([tenderId])
+  @@index([requirementId])
+  @@index([teamTaskId])
+  @@index([documentId])
+}
+
+model RequirementVerificationAudit {
+  id            String   @id @default(cuid())
+  companyId     String
+  tenderId      String
+  requirementId String
+  evidenceId    String?
+  userId        String?
+  action        String
+  snapshot      Json
+  createdAt     DateTime @default(now())
+
+  @@index([companyId, tenderId])
+  @@index([requirementId])
+  @@index([companyId, createdAt])
+}
+
+model MissingDocument {
+  id           String                @id @default(cuid())
+  tenderId     String
+  tender       Tender                @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  documentName String
+  reason       String
+  severity     RiskSeverity          @default(MEDIUM)
+  status       MissingDocumentStatus @default(OPEN)
+  sortOrder    Int                   @default(0)
+  createdAt    DateTime              @default(now())
+
+  teamTasks TeamWorkflowTask[]
+
+  @@index([tenderId])
+}
+
+model NextAction {
+  id          String   @id @default(cuid())
+  tenderId    String
+  tender      Tender   @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  priority    Int      @default(0)
+  completed   Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  @@index([tenderId])
+}
+
+// ─── Team Decision Workflow ───────────────────────────────────────────────────
+
+enum TeamWorkflowTaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  OVERDUE
+  CANCELLED
+}
+
+enum TeamWorkflowDepartment {
+  FINANCE
+  LEGAL
+  TECHNICAL
+  MANAGEMENT
+  PROCUREMENT
+  COMMERCIAL
+  OPERATIONS
+  OTHER
+}
+
+enum TeamWorkflowTaskKind {
+  REQUIREMENT_GAP
+  RISK_MITIGATION
+  MISSING_DOCUMENT
+  CLARIFICATION
+  EVIDENCE_REQUEST
+  CUSTOM
+}
+
+enum TeamWorkflowEventType {
+  CREATED
+  ASSIGNED
+  STATUS_CHANGED
+  RESPONSE_ADDED
+  EVIDENCE_LINKED
+  COMPLETED
+  REOPENED
+  COMMENT
+  VERIFICATION_REQUESTED
+  VERIFIED
+  REJECTED
+  REQUIREMENT_UPDATED
+  DECISION_RERUN
+}
+
+/**
+ * Team evidence verification — NEVER auto-VERIFIED.
+ * NONE = no response yet; PENDING = awaiting human verifier;
+ * VERIFIED / REJECTED = explicit human judgment.
+ */
+enum TeamEvidenceVerificationStatus {
+  NONE
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+/** Human team task linked to a tender item — never invents evidence. */
+model TeamWorkflowTask {
+  id               String                   @id @default(cuid())
+  companyId        String
+  company          Company                  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  tenderId         String
+  tender           Tender                   @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  kind             TeamWorkflowTaskKind
+  title            String
+  description      String?                  @db.Text
+  /** What response is required from the assignee (plain language). */
+  requiredResponse String?                  @db.Text
+  department       TeamWorkflowDepartment?
+  assigneeUserId   String?
+  assigneeUser     User?                    @relation("TeamTaskAssignee", fields: [assigneeUserId], references: [id], onDelete: SetNull)
+  status           TeamWorkflowTaskStatus    @default(PENDING)
+  priority         RiskSeverity             @default(MEDIUM)
+  deadline         DateTime?
+  /** Team response text — unverified until verificationStatus=VERIFIED */
+  responseText     String?                  @db.Text
+  /** Optional link back to uploaded evidence text / note */
+  evidenceNote     String?                  @db.Text
+  responseSubmittedAt   DateTime?
+  responseSubmittedById String?
+  responseSubmittedBy   User?  @relation("TeamTaskResponder", fields: [responseSubmittedById], references: [id], onDelete: SetNull)
+  verificationStatus    TeamEvidenceVerificationStatus @default(NONE)
+  verifiedAt            DateTime?
+  verifiedById          String?
+  verifiedBy            User?  @relation("TeamTaskVerifier", fields: [verifiedById], references: [id], onDelete: SetNull)
+  verificationNote      String? @db.Text
+  /** Applied only when VERIFIED — exact requirement status chosen by verifier */
+  appliedRequirementStatus RequirementMatchStatus?
+  /** Provenance: TenderEvidence created on VERIFIED */
+  verifiedEvidenceId    String?
+  requirementId    String?
+  requirement      TenderRequirement?       @relation(fields: [requirementId], references: [id], onDelete: SetNull)
+  riskId           String?
+  risk             TenderRisk?              @relation(fields: [riskId], references: [id], onDelete: SetNull)
+  missingDocId     String?
+  missingDoc       MissingDocument?         @relation(fields: [missingDocId], references: [id], onDelete: SetNull)
+  /** Stable id from intelligence ClarificationQuestion when not a Prisma row */
+  clarificationId  String?
+  /** Idempotent seed/create key — prevents duplicate tasks for the same source */
+  dedupeKey        String                   @unique
+  /** Prevents duplicate closed-loop re-analysis for the same verified payload */
+  closedLoopHash   String?
+  createdById      String?
+  createdBy        User?                    @relation("TeamTaskCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  completedAt      DateTime?
+  completedById    String?
+  completedBy      User?                    @relation("TeamTaskCompleter", fields: [completedById], references: [id], onDelete: SetNull)
+  createdAt        DateTime                 @default(now())
+  updatedAt        DateTime                 @updatedAt
+
+  events      TeamWorkflowEvent[]
+  attachments TeamWorkflowAttachment[]
+
+  @@index([companyId, status])
+  @@index([companyId, assigneeUserId, status])
+  @@index([companyId, verificationStatus])
+  @@index([tenderId, status])
+  @@index([tenderId, priority])
+  @@index([deadline])
+  @@index([requirementId])
+  @@index([riskId])
+  @@index([missingDocId])
+  @@index([closedLoopHash])
+}
+
+model TeamWorkflowEvent {
+  id          String                @id @default(cuid())
+  companyId   String
+  company     Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  taskId      String
+  task        TeamWorkflowTask      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  actorUserId String?
+  actor       User?                 @relation("TeamWorkflowEventActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+  eventType   TeamWorkflowEventType
+  fromStatus  TeamWorkflowTaskStatus?
+  toStatus    TeamWorkflowTaskStatus?
+  message     String?               @db.Text
+  metadata    Json?
+  createdAt   DateTime              @default(now())
+
+  @@index([taskId, createdAt])
+  @@index([companyId, createdAt])
+}
+
+model TeamWorkflowAttachment {
+  id             String           @id @default(cuid())
+  companyId      String
+  taskId         String
+  task           TeamWorkflowTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  fileName       String
+  storageKey     String
+  mimeType       String
+  fileSize       Int
+  checksumSha256 String?
+  uploadedById   String?
+  createdAt      DateTime         @default(now())
+
+  @@index([taskId])
+  @@index([companyId])
+  @@index([storageKey])
+}
+
+// ─── Alerts, usage, billing ───────────────────────────────────────────────────
+
+model Alert {
+  id           String      @id @default(cuid())
+  companyId    String
+  company      Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  tenderId     String?
+  tender       Tender?     @relation(fields: [tenderId], references: [id], onDelete: SetNull)
+  type         AlertType
+  title        String
+  message      String
+  href         String?
+  /** Optional primary recipient (assignee/verifier) — still tenant-scoped */
+  targetUserId String?
+  targetUser   User?       @relation("AlertTargetUser", fields: [targetUserId], references: [id], onDelete: SetNull)
+  /** Stable key for idempotent scheduling (e.g. company:tender:deadline:7d) */
+  dedupeKey    String?     @unique
+  scheduledFor DateTime?
+  status       AlertStatus @default(SCHEDULED)
+  createdAt    DateTime    @default(now())
+  sentAt       DateTime?
+  readAt       DateTime?
+  /** When email channel successfully delivered (null if email disabled or not yet sent) */
+  emailSentAt  DateTime?
+  /** Delivery attempts for retryable channel sends */
+  attemptCount Int         @default(0)
+  lastError    String?
+
+  @@index([companyId, status])
+  @@index([companyId, createdAt])
+  @@index([scheduledFor, status])
+  @@index([tenderId])
+  @@index([targetUserId])
+}
+
+/** Per-company notification preferences — channels are modular for future WhatsApp/SMS/push. */
+model CompanyNotificationPrefs {
+  companyId            String   @id
+  company              Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  /** IANA timezone for deadline wall-clock scheduling/display (e.g. Africa/Casablanca) */
+  timezone             String   @default("UTC")
+  inAppEnabled         Boolean  @default(true)
+  emailEnabled         Boolean  @default(true)
+  whatsappEnabled      Boolean  @default(false)
+  smsEnabled           Boolean  @default(false)
+  pushEnabled          Boolean  @default(false)
+  deadlineAlert7d      Boolean  @default(true)
+  deadlineAlert3d      Boolean  @default(true)
+  deadlineAlert24h     Boolean  @default(true)
+  deadlineAlertPassed  Boolean  @default(true)
+  highRiskAlerts       Boolean  @default(true)
+  decisionAlerts       Boolean  @default(true)
+  missingDocAlerts     Boolean  @default(true)
+  scoreChangeAlerts    Boolean  @default(true)
+  requirementAlerts    Boolean  @default(true)
+  decisionMemoryAlerts Boolean  @default(true)
+  workflowAlerts       Boolean  @default(true)
+  updatedAt            DateTime @updatedAt
+}
+
+model UsageRecord {
+  id        String      @id @default(cuid())
+  companyId String
+  company   Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  action    UsageAction
+  quantity  Int         @default(1)
+  metadata  Json?
+  createdAt DateTime    @default(now())
+
+  @@index([companyId, action])
+  @@index([companyId, createdAt])
+}
+
+model Subscription {
+  id                     String             @id @default(cuid())
+  companyId              String             @unique
+  company                Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  provider               String             @default("paypal")
+  providerCustomerId     String?
+  providerSubscriptionId String?
+  plan                   SubscriptionPlan   @default(TRIAL)
+  planId                 String?
+  billingPlan            Plan?              @relation(fields: [planId], references: [id], onDelete: SetNull)
+  status                 SubscriptionStatus @default(TRIALING)
+  billingInterval        BillingInterval?
+  paymentMethodBrand     String?
+  paymentMethodLast4     String?
+  /** First time this subscription became active/trialing (immutable once set). */
+  startedAt              DateTime?
+  currentPeriodStart     DateTime?
+  currentPeriodEnd       DateTime?
+  /**
+   * When set, PAST_DUE / PAYMENT_FAILED keep access until this instant.
+   * Cleared on successful renewal / reactivation.
+   */
+  gracePeriodEndsAt      DateTime?
+  cancelAtPeriodEnd      Boolean            @default(false)
+  canceledAt             DateTime?
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+
+  events   SubscriptionEvent[]
+  payments BillingPayment[]
+  invoices BillingInvoice[]
+
+  @@index([providerCustomerId])
+  @@index([providerSubscriptionId])
+  @@index([status])
+  @@index([planId])
+  @@index([provider, status])
+  @@index([currentPeriodEnd])
+  @@index([gracePeriodEndsAt])
+}
+
+model SubscriptionEvent {
+  id             String   @id @default(cuid())
+  companyId      String
+  company        Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  subscriptionId String?
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+  eventType      String
+  fromStatus     String?
+  toStatus       String?
+  fromPlan       String?
+  toPlan         String?
+  metadata       Json?
+  createdAt      DateTime @default(now())
+
+  @@index([companyId, createdAt])
+  @@index([subscriptionId])
+}
+
+model TenderDecision {
+  id            String          @id @default(cuid())
+  tenderId      String          @unique
+  tender        Tender          @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  companyId     String
+  decision      DecisionType
+  fitScore      Int
+  confidence    ConfidenceLevel @default(MEDIUM)
+  reasoning     String
+  /** Structured company–tender fit breakdown (dimensions, matches, unknowns). */
+  fitBreakdown  Json?
+  /** Tender readiness / requirements gap snapshot (READY/MISSING/VERIFY/…). */
+  readinessBreakdown Json?
+  /** Compliance matrix, risks, contradictions, clarification questions. */
+  intelligenceBreakdown Json?
+  /** Bid Score + Expected Value prioritization layer (not win probability). */
+  bidScoreBreakdown Json?
+  decidedById   String?
+  decidedBy     User?           @relation("DecidedBy", fields: [decidedById], references: [id], onDelete: SetNull)
+  isAiSuggested Boolean         @default(true)
+  aiProvider    String?
+  aiModel       String?
+  aiTask        String?
+  tokensIn      Int?
+  tokensOut     Int?
+  costCentsEst  Int?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  decisionOutcome TenderDecisionOutcome?
+
+  @@index([companyId])
+  @@index([companyId, decision])
+}
+
+/**
+ * Authoritative real-world outcome for a finalized tender decision.
+ * One row per tender — idempotent upsert; audit trail in TenderDecisionOutcomeAudit.
+ */
+model TenderDecisionOutcome {
+  id                 String         @id @default(cuid())
+  companyId          String
+  company            Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  tenderId           String         @unique
+  tender             Tender         @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  tenderDecisionId   String         @unique
+  tenderDecision     TenderDecision   @relation(fields: [tenderDecisionId], references: [id], onDelete: Cascade)
+  outcome            TenderOutcome
+  outcomeDate        DateTime?
+  reasonCode         String?
+  reasonDetail       String?        @db.Text
+  evidence           Json?
+  humanFinalDecision DecisionType?
+  recordedById       String?
+  idempotencyKey     String?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  audits TenderDecisionOutcomeAudit[]
+
+  @@unique([companyId, idempotencyKey])
+  @@index([companyId, outcome])
+  @@index([companyId, createdAt])
+}
+
+model TenderDecisionOutcomeAudit {
+  id        String                @id @default(cuid())
+  outcomeId String
+  outcome   TenderDecisionOutcome @relation(fields: [outcomeId], references: [id], onDelete: Cascade)
+  companyId String
+  userId    String?
+  action    String
+  snapshot  Json
+  createdAt DateTime              @default(now())
+
+  @@index([outcomeId])
+  @@index([companyId, createdAt])
+}
+
+/**
+ * Company-private Decision Memory — immutable analysis snapshot for prior tenders.
+ * Reference/context only: never invents data and never changes current tender scores.
+ * One record per tender (unique tenderId) prevents duplicates.
+ */
+model DecisionMemory {
+  id                   String          @id @default(cuid())
+  companyId            String
+  company              Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  tenderId             String          @unique
+  tender               Tender          @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  /** Engine decision: BID=GO, REVIEW=CONDITIONAL GO, NO_BID=NO-BID */
+  decision             DecisionType
+  title                String
+  client               String?
+  country              String?
+  industry             String?
+  fitScore             Int?
+  readinessScore       Int?
+  bidScore             Int?
+  confidence           ConfidenceLevel @default(MEDIUM)
+  reasoning            String
+  /** Requirement totals + short requirement lines from canonical analysis only */
+  requirementsSnapshot Json
+  /** Risk titles/severities copied from analysis — never fabricated */
+  risksSnapshot        Json
+  /** Fit / readiness / bid score display snapshot */
+  scoresSnapshot       Json
+  /** Privacy-safe learning features for relevance matching */
+  relevanceFeatures    Json
+  featureKey           String
+  analyzedAt           DateTime
+  /** Integrity hash of stored decision fields — blocks empty/corrupt overwrites */
+  contentHash          String
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+
+  @@unique([companyId, tenderId])
+  @@index([companyId, analyzedAt])
+  @@index([companyId, decision])
+  @@index([companyId, featureKey])
+
+  revisions DecisionMemoryRevision[]
+}
+
+/**
+ * Append-only Decision Memory history — never overwrites prior snapshots.
+ * Current DecisionMemory row remains the latest view for relevance matching.
+ */
+model DecisionMemoryRevision {
+  id                   String          @id @default(cuid())
+  companyId            String
+  company              Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  tenderId             String
+  tender               Tender          @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  memoryId             String?
+  memory               DecisionMemory? @relation(fields: [memoryId], references: [id], onDelete: SetNull)
+  decision             DecisionType
+  title                String
+  client               String?
+  country              String?
+  industry             String?
+  fitScore             Int?
+  readinessScore       Int?
+  bidScore             Int?
+  confidence           ConfidenceLevel @default(MEDIUM)
+  reasoning            String
+  requirementsSnapshot Json
+  risksSnapshot        Json
+  scoresSnapshot       Json
+  relevanceFeatures    Json
+  featureKey           String
+  analyzedAt           DateTime
+  contentHash          String
+  /** ANALYSIS | TEAM_VERIFIED_EVIDENCE */
+  source               String          @default("ANALYSIS")
+  triggerTaskId        String?
+  createdAt            DateTime        @default(now())
+
+  @@unique([companyId, tenderId, contentHash])
+  @@index([companyId, tenderId, createdAt])
+  @@index([memoryId])
+  @@index([triggerTaskId])
+}
+
+/**
+ * Idempotent record that a company's tender outcome contributed to learning.
+ * companyId is for ops/idempotency only — never returned in cross-company signals.
+ */
+model LearningContribution {
+  id          String        @id @default(cuid())
+  companyId   String
+  tenderId    String        @unique
+  tender      Tender        @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  featureKey  String
+  outcome     TenderOutcome
+  /** Coarse feature JSON after privacy filter — no titles, clients, docs, or company names. */
+  features    Json
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([companyId])
+  @@index([featureKey])
+  @@index([outcome])
+}
+
+/**
+ * Anonymized aggregated patterns. No company IDs, tender titles, documents, or identities.
+ * Only VERIFIED / ACTIVE lifecycle states may influence recommendations.
+ */
+model AggregatedLearningPattern {
+  id                   String                   @id @default(cuid())
+  featureKey           String                   @unique
+  industryBucket       String
+  countryBucket        String
+  sizeBand             String
+  fitBand              String
+  readinessBand        String
+  decisionAtAnalysis   DecisionType
+  mandatoryGapBand     String
+  valueBand            String
+  sampleCount          Int                      @default(0)
+  wonCount             Int                      @default(0)
+  lostCount            Int                      @default(0)
+  bidSubmittedCount    Int                      @default(0)
+  noBidCount           Int                      @default(0)
+  withdrawnCount       Int                      @default(0)
+  independentOrgCount  Int                      @default(0)
+  decisiveOutcomeCount Int                      @default(0)
+  /** 0–100 */
+  dataQualityScore     Int                      @default(0)
+  /** 0–100 */
+  consistencyScore     Int                      @default(0)
+  /** Max single-org contribution share in basis points (0–10000). */
+  maxOrgShareBps       Int                      @default(10000)
+  lifecycle            LearningPatternLifecycle @default(CANDIDATE)
+  /** Derived: true only when lifecycle is VERIFIED or ACTIVE. */
+  validated            Boolean                  @default(false)
+  createdAt            DateTime                 @default(now())
+  updatedAt            DateTime                 @updatedAt
+
+  @@index([lifecycle, validated])
+  @@index([validated, sampleCount])
+  @@index([industryBucket, countryBucket])
+}
+
+model Job {
+  id          String    @id @default(cuid())
+  companyId   String?
+  company     Company?  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  tenderId    String?
+  tender      Tender?   @relation(fields: [tenderId], references: [id], onDelete: SetNull)
+  type        JobType
+  status      JobStatus @default(PENDING)
+  payload     Json
+  attempts    Int       @default(0)
+  maxAttempts Int       @default(5)
+  availableAt DateTime  @default(now())
+  lockedAt    DateTime?
+  lockedBy    String?
+  lastError   String?
+  idempotencyKey String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  completedAt DateTime?
+
+  @@unique([type, idempotencyKey])
+  @@index([status, availableAt])
+  @@index([companyId])
+  @@index([tenderId])
+}
+
+model AuditLog {
+  id        String      @id @default(cuid())
+  companyId String?
+  company   Company?    @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    AuditAction
+  metadata  Json?
+  ipHash    String?
+  createdAt DateTime    @default(now())
+
+  @@index([companyId, createdAt])
+  @@index([action, createdAt])
+}
+
+model TrialRiskSignal {
+  id        String           @id @default(cuid())
+  companyId String?
+  company   Company?         @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  emailHash String?
+  domain    String?
+  ipHash    String?
+  deviceHash String?
+  /** Hashed Stripe payment-method fingerprint — never a raw PAN or secret. */
+  paymentFingerprintHash String?
+  score     Int              @default(0)
+  verdict   TrialRiskVerdict @default(ALLOW)
+  signals   Json
+  createdAt DateTime         @default(now())
+
+  @@index([emailHash])
+  @@index([ipHash])
+  @@index([deviceHash])
+  @@index([domain])
+  @@index([paymentFingerprintHash])
+}
+
+// ─── Super Admin platform control plane ───────────────────────────────────────
+
+model AdminUser {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String
+  passwordHash String
+  role         AdminRole @default(SUPER_ADMIN)
+  active       Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  sessions  AdminSession[]
+  auditLogs AdminAuditLog[]
+
+  @@index([email])
+  @@index([active])
+}
+
+model AdminSession {
+  id            String    @id @default(cuid())
+  adminUserId   String
+  adminUser     AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  tokenHash     String    @unique
+  expiresAt     DateTime
+  ipHash        String?
+  userAgentHash String?
+  createdAt     DateTime  @default(now())
+  lastSeenAt    DateTime  @default(now())
+  revokedAt     DateTime?
+
+  @@index([adminUserId])
+  @@index([expiresAt])
+}
+
+model AdminAuditLog {
+  id          String     @id @default(cuid())
+  adminUserId String?
+  adminUser   AdminUser? @relation(fields: [adminUserId], references: [id], onDelete: SetNull)
+  action      String
+  targetType  String?
+  targetId    String?
+  previousValue Json?
+  newValue    Json?
+  ipHash      String?
+  metadata    Json?
+  createdAt   DateTime   @default(now())
+
+  @@index([adminUserId, createdAt])
+  @@index([action, createdAt])
+  @@index([targetType, targetId])
+}
+
+model Plan {
+  id                String     @id @default(cuid())
+  slug              String     @unique
+  name              String
+  description       String?
+  monthlyPriceCents Int        @default(0)
+  annualPriceCents  Int?
+  /** Length of annual billing term in months (default 12) */
+  annualMonths      Int        @default(12)
+  monthlyEnabled    Boolean    @default(true)
+  annualEnabled     Boolean    @default(true)
+  currency          String     @default("usd")
+  analysesLimit     Int        @default(3)
+  /** When billingInterval=YEAR; null means use analysesLimit */
+  analysesLimitYearly Int?
+  aiTokensLimit     Int?
+  storageMbLimit    Int?
+  seatsLimit        Int        @default(1)
+  /** When billingInterval=YEAR; null means use seatsLimit */
+  seatsLimitYearly  Int?
+  trialEligible     Boolean    @default(false)
+  trialDays         Int?
+  /** Days of paid access after payment failure; null = use global billing.graceDays */
+  graceDays         Int?
+  isFree            Boolean    @default(false)
+  visibleToPublic   Boolean    @default(true)
+  status            PlanStatus @default(ACTIVE)
+  legacyEnum        SubscriptionPlan?
+  /** @deprecated prefer paypalPlanMonthly / stripePriceMonthly */
+  paypalPlanIdEnv   String?
+  stripePriceEnv    String?
+  stripeEnabled     Boolean    @default(true)
+  paypalEnabled     Boolean    @default(true)
+  stripePriceMonthly String?
+  stripePriceAnnual  String?
+  paypalPlanMonthly  String?
+  paypalPlanAnnual   String?
+  highlighted       Boolean    @default(false)
+  sortOrder         Int        @default(0)
+  /**
+   * Display-only marketing bullets (NOT backend entitlements).
+   * Prefer auto-generated labels from PlanFeature + numeric limits.
+   * Extra lines here are marked display-only in Admin.
+   */
+  featureList       String[]   @default([])
+  /** When true, public cards prefer entitlement-derived labels over featureList */
+  preferEntitlementLabels Boolean @default(true)
+  /**
+   * Per-locale marketing copy for Paywall / upgrade UI.
+   * Shape: { ar?: { name?, description?, features? }, es?, zh?, fr? }
+   * English stays in name / description / featureList (canonical).
+   */
+  translations      Json?
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  planFeatures PlanFeature[]
+  overrides    CompanyPlanOverride[]
+  subscriptions Subscription[]
+
+  @@index([status])
+  @@index([slug])
+  @@index([visibleToPublic, status])
+}
+
+model Feature {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  name        String
+  description String?
+  enabledGlobal Boolean @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  planFeatures     PlanFeature[]
+  companyOverrides CompanyFeatureOverride[]
+
+  @@index([key])
+}
+
+model PlanFeature {
+  id        String  @id @default(cuid())
+  planId    String
+  plan      Plan    @relation(fields: [planId], references: [id], onDelete: Cascade)
+  featureId String
+  feature   Feature @relation(fields: [featureId], references: [id], onDelete: Cascade)
+  enabled   Boolean @default(true)
+
+  @@unique([planId, featureId])
+  @@index([featureId])
+}
+
+model CompanyPlanOverride {
+  id                String    @id @default(cuid())
+  companyId         String    @unique
+  company           Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  planId            String?
+  plan              Plan?     @relation(fields: [planId], references: [id], onDelete: SetNull)
+  customName        String?
+  monthlyPriceCents Int?
+  analysesLimit     Int?
+  aiTokensLimit     Int?
+  storageMbLimit    Int?
+  seatsLimit        Int?
+  features          String[]  @default([])
+  expiresAt         DateTime?
+  notes             String?
+  active            Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([active])
+  @@index([expiresAt])
+}
+
+model CompanyFeatureOverride {
+  id        String  @id @default(cuid())
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  featureId String
+  feature   Feature @relation(fields: [featureId], references: [id], onDelete: Cascade)
+  enabled   Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([companyId, featureId])
+  @@index([featureId])
+}
+
+model AiProvider {
+  id           String   @id @default(cuid())
+  key          String   @unique
+  name         String
+  baseUrl      String?
+  /** Env var name holding the API key — never store the secret itself */
+  apiKeyEnvVar String?
+  active       Boolean  @default(true)
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  models AiModel[]
+
+  @@index([active])
+}
+
+model AiModel {
+  id              String     @id @default(cuid())
+  providerId      String
+  provider        AiProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  /** API model id sent to the provider (configurable, not hard-coded in app logic) */
+  name            String
+  version         String?
+  /** Catalog / announced latest version — Super Admin can update without redeploy */
+  latestVersion   String?
+  /** Previous active version for one-click rollback */
+  previousVersion String?
+  displayName     String
+  active          Boolean    @default(true)
+  isDefault       Boolean    @default(false)
+  maxTokens       Int?
+  temperature     Float?
+  inputCostPer1k  Float?
+  outputCostPer1k Float?
+  notes           String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  assignments      AiModelAssignment[]
+  fallbackFor      AiModelAssignment[] @relation("FallbackModel")
+  usageLogs        AiUsageLog[]
+  versionHistory   AiModelVersionHistory[]
+
+  @@unique([providerId, name, version])
+  @@index([active])
+  @@index([isDefault])
+}
+
+model AiModelVersionHistory {
+  id        String   @id @default(cuid())
+  modelId   String
+  model     AiModel  @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  version   String
+  note      String?
+  changedBy String?
+  createdAt DateTime @default(now())
+
+  @@index([modelId, createdAt])
+}
+
+model AiModelAssignment {
+  id              String     @id @default(cuid())
+  task            AiTaskType @unique
+  modelId         String
+  model           AiModel    @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  fallbackModelId String?
+  fallbackModel   AiModel?   @relation("FallbackModel", fields: [fallbackModelId], references: [id], onDelete: SetNull)
+  priority        Int        @default(100)
+  active          Boolean    @default(true)
+  updatedAt       DateTime   @updatedAt
+  createdAt       DateTime   @default(now())
+
+  @@index([modelId])
+  @@index([fallbackModelId])
+}
+
+model AiUsageLog {
+  id           String     @id @default(cuid())
+  companyId    String?
+  company      Company?   @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  tenderId     String?
+  modelId      String?
+  model        AiModel?   @relation(fields: [modelId], references: [id], onDelete: SetNull)
+  task         AiTaskType
+  providerKey  String
+  modelName    String
+  success      Boolean    @default(true)
+  tokensIn     Int        @default(0)
+  tokensOut    Int        @default(0)
+  costCentsEst Int        @default(0)
+  latencyMs    Int?
+  errorMessage String?
+  metadata     Json?
+  createdAt    DateTime   @default(now())
+
+  @@index([companyId, createdAt])
+  @@index([modelId, createdAt])
+  @@index([task, createdAt])
+  @@index([success, createdAt])
+}
+
+model SystemSetting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       Json
+  description String?
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+
+  @@index([key])
+}
+
+model BillingPayment {
+  id                 String               @id @default(cuid())
+  companyId          String
+  company            Company              @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  subscriptionId     String?
+  subscription       Subscription?        @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+  invoiceId          String?
+  invoice            BillingInvoice?      @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+  provider           BillingProvider
+  providerPaymentId  String
+  amountCents        Int
+  currency           String               @default("usd")
+  status             BillingPaymentStatus @default(PENDING)
+  billingInterval    BillingInterval?
+  planSlug           String?
+  failureCode        String?
+  failureMessage     String?
+  rawMeta            Json?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+
+  @@unique([provider, providerPaymentId])
+  @@index([companyId, createdAt])
+  @@index([subscriptionId])
+  @@index([status, createdAt])
+  @@index([invoiceId])
+}
+
+model BillingInvoice {
+  id                 String               @id @default(cuid())
+  companyId          String
+  company            Company              @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  subscriptionId     String?
+  subscription       Subscription?        @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+  number             String?
+  provider           BillingProvider
+  providerInvoiceId  String?
+  amountCents        Int
+  currency           String               @default("usd")
+  status             BillingInvoiceStatus @default(OPEN)
+  hostedInvoiceUrl   String?
+  pdfUrl             String?
+  periodStart        DateTime?
+  periodEnd          DateTime?
+  paidAt             DateTime?
+  rawMeta            Json?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+
+  payments BillingPayment[]
+
+  @@unique([provider, providerInvoiceId])
+  @@index([companyId, createdAt])
+  @@index([subscriptionId])
+  @@index([status, createdAt])
+}
+
+model WebhookEvent {
+  id           String               @id @default(cuid())
+  provider     BillingProvider
+  eventId      String
+  eventType    String
+  status       WebhookProcessStatus @default(RECEIVED)
+  payloadHash  String?
+  companyId    String?
+  errorMessage String?
+  attempts     Int                  @default(0)
+  processedAt  DateTime?
+  rawPayload   Json?
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+
+  @@unique([provider, eventId])
+  @@index([status, createdAt])
+  @@index([eventType, createdAt])
+  @@index([companyId])
+}
+
+/** Marketing product video — one row per locale (`en`, `ar`, …). */
+model LandingVideo {
+  id             String   @id @default(cuid())
+  /** Locale code (en, es, zh, ar, fr). Legacy key `default` is migrated to `en`. */
+  key            String   @unique @default("en")
+  enabled        Boolean  @default(false)
+  title          String   @default("See Bidvera in Action")
+  description    String?
+  youtubeUrl     String?
+  /** Public path e.g. /uploads/landing/demo.mp4 */
+  videoUrl       String?
+  /** Public path e.g. /uploads/landing/poster.jpg */
+  posterUrl      String?
+  updatedAt      DateTime @updatedAt
+  createdAt      DateTime @default(now())
+}
+
+/** Genuine customer testimonials only — never seed fakes. */
+model Testimonial {
+  id           String   @id @default(cuid())
+  customerName String
+  companyName  String
+  jobTitle     String?
+  quote        String
+  rating       Int      @default(5)
+  /** Public path or absolute URL for photo/logo */
+  avatarUrl    String?
+  verified     Boolean  @default(false)
+  enabled      Boolean  @default(true)
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([enabled, sortOrder])
+}
+
+/** Shared durable rate-limit counters (multi-instance safe). */
+model RateLimitBucket {
+  key       String   @id
+  count     Int      @default(0)
+  resetAt   DateTime
+  updatedAt DateTime @updatedAt
+
+  @@index([resetAt])
+}
+
+// ─── Document Compliance Manager ─────────────────────────────────────────────
+
+model ComplianceDocumentCategory {
+  id        String   @id @default(cuid())
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  key       String
+  label     String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  documents ComplianceDocument[]
+
+  @@unique([companyId, key])
+  @@index([companyId])
+}
+
+model ComplianceDocument {
+  id                   String           @id @default(cuid())
+  companyId            String
+  company              Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  categoryId           String
+  category             ComplianceDocumentCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  name                 String
+  issuingAuthority     String?
+  documentNumber       String?
+  /** Calendar date only — stored as UTC midnight of that date; never TZ-converted. */
+  issueDate            DateTime?        @db.Date
+  /** Calendar date only — stored as UTC midnight of that date; never TZ-converted. */
+  expiryDate           DateTime?        @db.Date
+  status               ComplianceStatus @default(UNKNOWN)
+  extractionConfidence Float?
+  /** Provenance of extracted fields (evidence snippets + confidence). */
+  extractionProvenance Json?
+  currentVersionId     String?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+
+  versions  ComplianceDocumentVersion[]
+  reminders ComplianceExpiryReminder[]
+  clientRequestItems ClientRequestItem[]
+
+  @@index([companyId, status])
+  @@index([companyId, categoryId])
+  @@index([companyId, expiryDate])
+  @@index([companyId, updatedAt])
+}
+
+model ComplianceDocumentVersion {
+  id              String   @id @default(cuid())
+  companyId       String
+  company         Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  documentId      String
+  document        ComplianceDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  versionNumber   Int
+  storageKey      String
+  fileName        String
+  mimeType        String
+  byteLength      Int
+  checksumSha256  String?
+  /** Truncated extracted text for diagnostics — never treated as actionable. */
+  extractedTextPreview String? @db.Text
+  createdAt       DateTime @default(now())
+
+  @@unique([documentId, versionNumber])
+  @@index([companyId, documentId])
+  @@index([companyId, checksumSha256])
+}
+
+model ComplianceExpiryReminder {
+  id           String                   @id @default(cuid())
+  companyId    String
+  company      Company                  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  documentId   String
+  document     ComplianceDocument       @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  kind         ComplianceReminderKind
+  /** Calendar fire date (date-only). */
+  fireOnDate   DateTime                 @db.Date
+  scheduledFor DateTime
+  status       ComplianceReminderStatus @default(SCHEDULED)
+  alertId      String?
+  dedupeKey    String                   @unique
+  createdAt    DateTime                 @default(now())
+  updatedAt    DateTime                 @updatedAt
+
+  @@index([companyId, status])
+  @@index([documentId, kind])
+  @@index([scheduledFor, status])
+}
+
+model ComplianceReminderSettings {
+  companyId      String  @id
+  company        Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  remind90d      Boolean @default(true)
+  remind30d      Boolean @default(true)
+  remind7d       Boolean @default(true)
+  remindExpired  Boolean @default(true)
+  /** Days until expiry that map to EXPIRING_SOON status. */
+  expiringSoonDays Int   @default(90)
+  updatedAt      DateTime @updatedAt
+}
+
+// ─── Supplier Qualification Profile ──────────────────────────────────────────
+
+model SupplierQualificationProfile {
+  id                 String   @id @default(cuid())
+  companyId          String   @unique
+  company            Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  legalCompanyName   String?
+  tradingName        String?
+  registrationNumber String?
+  taxVatNumber       String?
+  country            String?
+  addressLine1       String?
+  addressLine2       String?
+  city               String?
+  region             String?
+  postalCode         String?
+  contactName        String?
+  contactEmail       String?
+  contactPhone       String?
+  website            String?
+  companyType        String?
+  yearEstablished    Int?
+  employeeCount      Int?
+  annualTurnover     String?
+  currencies         String[] @default([])
+  businessSectors    String[] @default([])
+  servicesProducts   String[] @default([])
+  certifications     String[] @default([])
+  licenses           String[] @default([])
+  geographicCoverage String[] @default([])
+  languages          String[] @default([])
+  notes              String?  @db.Text
+  /** Cached deterministic completeness 0–100 (recomputed on write). */
+  completenessPercent Int     @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  evidence SupplierQualificationEvidence[]
+
+  @@index([companyId])
+  @@index([updatedAt])
+}
+
+model SupplierQualificationEvidence {
+  id          String   @id @default(cuid())
+  companyId   String
+  profileId   String
+  profile     SupplierQualificationProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title       String
+  kind        String   @default("OTHER")
+  description String?
+  /** Optional uploaded file (tenant-scoped storage key). */
+  storageKey  String?
+  fileName    String?
+  mimeType    String?
+  byteLength  Int?
+  checksumSha256 String?
+  /** Optional external reference URL — not treated as verified. */
+  externalUrl String?
+  /** Provenance of attachment (who/how); never implies verification. */
+  provenance  Json?
+  /** Explicit: profile text / uploads are not auto-verified evidence. */
+  verified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  clientRequestItems ClientRequestItem[]
+
+  @@index([companyId, profileId])
+  @@index([companyId, createdAt])
+}
+
+// ─── Tender Calendar & Notifications (isolated from analysis Tender) ─────────
+
+enum CalendarTenderStatus {
+  OPEN
+  WATCHING
+  SUBMITTED
+  CLOSED
+  CANCELLED
+}
+
+enum CalendarDeadlineType {
+  SUBMISSION
+  CLARIFICATION
+  OPENING
+  SITE_VISIT
+  MEETING
+  OTHER
+}
+
+enum CalendarMilestoneStatus {
+  SCHEDULED
+  DUE_TODAY
+  PAST
+  CANCELLED
+}
+
+enum CalendarReminderOffset {
+  DAYS_30
+  DAYS_14
+  DAYS_7
+  DAYS_3
+  DAYS_1
+  SAME_DAY
+}
+
+enum CalendarReminderStatus {
+  SCHEDULED
+  SENT
+  CANCELLED
+}
+
+/** Calendar-tracked tender — NOT the Tender Analysis pipeline model. */
+model CalendarTender {
+  id              String               @id @default(cuid())
+  companyId       String
+  company         Company              @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  title           String
+  referenceNumber String?
+  buyerAuthority  String?
+  country         String?
+  category        String?
+  description     String?              @db.Text
+  status          CalendarTenderStatus @default(OPEN)
+  sourceUrl       String?
+  notes           String?              @db.Text
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  deadlines CalendarTenderDeadline[]
+  events    CalendarTenderEvent[]
+  reminders CalendarTenderReminder[]
+
+  @@index([companyId, status])
+  @@index([companyId, country])
+  @@index([companyId, category])
+  @@index([companyId, updatedAt])
+}
+
+model CalendarTenderDeadline {
+  id         String                 @id @default(cuid())
+  companyId  String
+  company    Company                @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  tenderId   String
+  tender     CalendarTender         @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  type       CalendarDeadlineType   @default(SUBMISSION)
+  title      String
+  /** Instant when known; for date-only, UTC midnight of the calendar date. */
+  occursAt   DateTime
+  /** True when only a calendar date was provided — no time invented. */
+  dateOnly   Boolean                @default(false)
+  /** IANA timezone only when explicitly provided by the user — never invented. */
+  timezone   String?
+  source     String?
+  notes      String?
+  status     CalendarMilestoneStatus @default(SCHEDULED)
+  createdAt  DateTime               @default(now())
+  updatedAt  DateTime               @updatedAt
+
+  reminders CalendarTenderReminder[]
+
+  @@index([companyId, occursAt])
+  @@index([companyId, tenderId])
+  @@index([tenderId, type, occursAt])
+}
+
+model CalendarTenderEvent {
+  id         String                  @id @default(cuid())
+  companyId  String
+  company    Company                 @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  tenderId   String
+  tender     CalendarTender          @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  type       CalendarDeadlineType    @default(OTHER)
+  title      String
+  occursAt   DateTime
+  dateOnly   Boolean                 @default(false)
+  timezone   String?
+  source     String?
+  notes      String?
+  status     CalendarMilestoneStatus @default(SCHEDULED)
+  createdAt  DateTime                @default(now())
+  updatedAt  DateTime                @updatedAt
+
+  @@unique([companyId, tenderId, type, title, occursAt])
+  @@index([companyId, occursAt])
+  @@index([companyId, tenderId])
+}
+
+model CalendarTenderReminder {
+  id           String                 @id @default(cuid())
+  companyId    String
+  company      Company                @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  tenderId     String
+  tender       CalendarTender         @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  deadlineId   String
+  deadline     CalendarTenderDeadline @relation(fields: [deadlineId], references: [id], onDelete: Cascade)
+  offset       CalendarReminderOffset
+  fireAt       DateTime
+  status       CalendarReminderStatus @default(SCHEDULED)
+  alertId      String?
+  dedupeKey    String                 @unique
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
+
+  @@index([companyId, status])
+  @@index([deadlineId, offset])
+  @@index([fireAt, status])
+}
+
+model CalendarTenderReminderSettings {
+  companyId   String  @id
+  company     Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  remind30d   Boolean @default(true)
+  remind14d   Boolean @default(true)
+  remind7d    Boolean @default(true)
+  remind3d    Boolean @default(true)
+  remind1d    Boolean @default(true)
+  remindSameDay Boolean @default(true)
+  updatedAt   DateTime @updatedAt
+}
+
+// ─── Client Requests Portal ───────────────────────────────────────────────────
+
+enum ClientRequestStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  OVERDUE
+  CANCELLED
+}
+
+enum ClientRequestItemType {
+  INFORMATION
+  DOCUMENT
+}
+
+enum ClientRequestItemStatus {
+  PENDING
+  COMPLETED
+}
+
+enum ClientRequestLinkSource {
+  COMPLIANCE_DOCUMENT
+  SUPPLIER_EVIDENCE
+  COMPANY_PROFILE
+}
+
+enum ClientRequestActivityType {
+  CREATED
+  UPDATED
+  ITEM_ADDED
+  ITEM_COMPLETED
+  ITEM_REOPENED
+  DOCUMENT_ATTACHED
+  DOCUMENT_DETACHED
+  DEADLINE_CHANGED
+  SHARED
+  SHARE_REVOKED
+  COMPLETED
+  CANCELLED
+  STATUS_CHANGED
+}
+
+enum ClientRequestReminderOffset {
+  DAYS_14
+  DAYS_7
+  DAYS_3
+  DAYS_1
+  SAME_DAY
+}
+
+enum ClientRequestReminderStatus {
+  SCHEDULED
+  SENT
+  CANCELLED
+}
+
+/** Buyer/client request for company information or documents — not Tender Analysis. */
+model ClientRequest {
+  id               String              @id @default(cuid())
+  companyId        String
+  company          Company             @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  clientName       String
+  title            String
+  description      String?             @db.Text
+  /** Instant when known; for date-only, UTC midnight of the calendar date. */
+  deadline         DateTime
+  /** True when only a calendar date was provided — no time invented. */
+  deadlineDateOnly Boolean             @default(true)
+  status           ClientRequestStatus @default(PENDING)
+  progressPercent  Int                 @default(0)
+  completedAt      DateTime?
+  cancelledAt      DateTime?
+  createdByUserId  String?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  items      ClientRequestItem[]
+  activities ClientRequestActivity[]
+  shares     ClientRequestShare[]
+  reminders  ClientRequestReminder[]
+
+  @@index([companyId, status])
+  @@index([companyId, deadline])
+  @@index([companyId, clientName])
+  @@index([companyId, updatedAt])
+}
+
+model ClientRequestItem {
+  id                   String                   @id @default(cuid())
+  companyId            String
+  company              Company                  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  requestId            String
+  request              ClientRequest            @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  type                 ClientRequestItemType
+  label                String
+  description          String?
+  sortOrder            Int                      @default(0)
+  status               ClientRequestItemStatus  @default(PENDING)
+  /** Optional note / answer for INFORMATION items. */
+  informationValue     String?                  @db.Text
+  linkSource           ClientRequestLinkSource?
+  complianceDocumentId String?
+  complianceDocument   ComplianceDocument?      @relation(fields: [complianceDocumentId], references: [id], onDelete: SetNull)
+  supplierEvidenceId   String?
+  supplierEvidence     SupplierQualificationEvidence? @relation(fields: [supplierEvidenceId], references: [id], onDelete: SetNull)
+  completedAt          DateTime?
+  completedByUserId    String?
+  createdAt            DateTime                 @default(now())
+  updatedAt            DateTime                 @updatedAt
+
+  shareItems ClientRequestShareItem[]
+
+  @@index([companyId, requestId])
+  @@index([requestId, status])
+  @@index([complianceDocumentId])
+  @@index([supplierEvidenceId])
+}
+
+model ClientRequestActivity {
+  id          String                    @id @default(cuid())
+  companyId   String
+  company     Company                   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  requestId   String
+  request     ClientRequest             @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  actorUserId String?
+  eventType   ClientRequestActivityType
+  message     String?                   @db.Text
+  metadata    Json?
+  createdAt   DateTime                  @default(now())
+
+  @@index([requestId, createdAt])
+  @@index([companyId, createdAt])
+}
+
+/** Revocable share dossier — token stored hashed; plaintext never persisted. */
+model ClientRequestShare {
+  id              String    @id @default(cuid())
+  companyId       String
+  company         Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  requestId       String
+  request         ClientRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  tokenHash       String    @unique
+  tokenPrefix     String
+  expiresAt       DateTime?
+  revokedAt       DateTime?
+  createdByUserId String?
+  createdAt       DateTime  @default(now())
+
+  items ClientRequestShareItem[]
+
+  @@index([companyId, requestId])
+  @@index([requestId, revokedAt])
+}
+
+model ClientRequestShareItem {
+  id        String            @id @default(cuid())
+  shareId   String
+  share     ClientRequestShare @relation(fields: [shareId], references: [id], onDelete: Cascade)
+  itemId    String
+  item      ClientRequestItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  createdAt DateTime          @default(now())
+
+  @@unique([shareId, itemId])
+  @@index([itemId])
+}
+
+model ClientRequestReminder {
+  id        String                       @id @default(cuid())
+  companyId String
+  company   Company                      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  requestId String
+  request   ClientRequest                @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  offset    ClientRequestReminderOffset
+  fireAt    DateTime
+  status    ClientRequestReminderStatus  @default(SCHEDULED)
+  alertId   String?
+  dedupeKey String                       @unique
+  createdAt DateTime                     @default(now())
+  updatedAt DateTime                     @updatedAt
+
+  @@index([companyId, status])
+  @@index([requestId, offset])
+  @@index([fireAt, status])
+}
+
+// ─── AI Questionnaire Assistant (Feature 7A — intelligence & persistence) ─────
+
+enum QuestionnairePackStatus {
+  EXTRACTED
+  DRAFTING
+  READY
+  FAILED
+}
+
+enum QuestionnaireQuestionType {
+  TEXT
+  YES_NO
+  NUMERIC
+  DATE
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
+  ATTACHMENT
+  UNKNOWN
+}
+
+enum QuestionnaireMandatoryStatus {
+  MANDATORY
+  OPTIONAL
+  UNKNOWN
+}
+
+enum QuestionnaireDraftStatus {
+  /** Supported by company evidence — still not Decision Engine evidence. */
+  DRAFT_READY
+  /** Evidence missing, ambiguous, stale, or insufficient — human must verify. */
+  VERIFY
+  APPROVED
+  EDITED
+  REJECTED
+}
+
+/** Extracted questionnaire pack for a tender — separate from Tender Analysis pipeline. */
+model QuestionnairePack {
+  id                 String                  @id @default(cuid())
+  companyId          String
+  company            Company                 @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  tenderId           String
+  tender             Tender                  @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  title              String?
+  status             QuestionnairePackStatus @default(EXTRACTED)
+  /** Hash of source document texts — enables idempotent re-extract. */
+  contentHash        String
+  sourceDocumentIds  String[]                @default([])
+  questionCount      Int                     @default(0)
+  mandatoryCount     Int                     @default(0)
+  extractedAt        DateTime                @default(now())
+  lastDraftedAt      DateTime?
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+
+  sections  QuestionnaireSection[]
+  questions QuestionnaireQuestion[]
+
+  @@unique([companyId, tenderId, contentHash])
+  @@index([companyId, tenderId])
+  @@index([companyId, updatedAt])
+  @@index([tenderId, status])
+}
+
+model QuestionnaireSection {
+  id        String   @id @default(cuid())
+  companyId String
+  packId    String
+  pack      QuestionnairePack @relation(fields: [packId], references: [id], onDelete: Cascade)
+  title     String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  questions QuestionnaireQuestion[]
+
+  @@index([packId, sortOrder])
+  @@index([companyId])
+}
+
+model QuestionnaireQuestion {
+  id                   String                       @id @default(cuid())
+  companyId            String
+  company              Company                      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  packId               String
+  pack                 QuestionnairePack            @relation(fields: [packId], references: [id], onDelete: Cascade)
+  sectionId            String?
+  section              QuestionnaireSection?        @relation(fields: [sectionId], references: [id], onDelete: SetNull)
+  sortOrder            Int                          @default(0)
+  prompt               String                       @db.Text
+  originalText         String                       @db.Text
+  questionType         QuestionnaireQuestionType    @default(UNKNOWN)
+  mandatoryStatus      QuestionnaireMandatoryStatus @default(UNKNOWN)
+  /** Explicit answer options when present (choice questions). */
+  answerOptions        String[]                     @default([])
+  structuralContext    String?
+  sourceDocumentId     String?
+  sourceDocumentName   String
+  sourcePage           Int?
+  sourceSection        String?
+  sourceSheet          String?
+  sourceSlide          Int?
+  sourceCell           String?
+  /** Stable identity within a pack for idempotent upserts. */
+  questionKey          String
+  detectionConfidence  Float                        @default(0.5)
+  createdAt            DateTime                     @default(now())
+  updatedAt            DateTime                     @updatedAt
+
+  drafts QuestionnaireDraftAnswer[]
+
+  @@unique([packId, questionKey])
+  @@index([companyId, packId])
+  @@index([packId, sortOrder])
+  @@index([companyId, mandatoryStatus])
+}
+
+/** AI draft answer — NEVER treated as verified company evidence or Decision Engine state. */
+model QuestionnaireDraftAnswer {
+  id                String                   @id @default(cuid())
+  companyId         String
+  company           Company                  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  questionId        String
+  question          QuestionnaireQuestion    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  status            QuestionnaireDraftStatus @default(VERIFY)
+  draftText         String?                  @db.Text
+  editedText        String?                  @db.Text
+  /** Structured evidence cites — FactProvenance / SourceReference shaped JSON. */
+  evidenceRefs      Json?
+  confidence        Float?
+  rationale         String?                  @db.Text
+  generatedAt       DateTime                 @default(now())
+  reviewedAt        DateTime?
+  reviewedByUserId  String?
+  createdAt         DateTime                 @default(now())
+  updatedAt         DateTime                 @updatedAt
+
+  @@index([companyId, questionId])
+  @@index([questionId, status])
+  @@index([companyId, status])
+  @@index([companyId, updatedAt])
+}
+
+// ─── Matching Engine (Feature 8B/8D — isolated from Tender Analysis) ─────────
+
+enum MatchingOpportunityStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  EXPIRED
+  ARCHIVED
+}
+
+enum MatchRecommendationType {
+  ORGANIC
+  SPONSORED
+}
+
+enum MatchRecommendationStatus {
+  ACTIVE
+  READ
+  DISMISSED
+}
+
+enum MatchingBehaviorEventType {
+  IMPRESSION
+  VIEW
+  CLICK
+  INTEREST
+  DISMISS
+}
+
+enum MatchQualityState {
+  NONE
+  SEEN
+  ENGAGED
+  INTERESTED
+  DISMISSED
+}
+
+/** Future two-sided matching seam — not a marketplace. */
+enum MatchingIntentDirection {
+  UNSPECIFIED
+  LOOKING_FOR_SUPPLIER
+  LOOKING_FOR_CUSTOMER
+  LOOKING_FOR_PARTNER
+  OFFERING_SERVICE
+}
+
+/** Feature 8F — sponsorship lifecycle (never bypasses relevance). */
+enum MatchingSponsorshipStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  ENDED
+  EXPIRED
+}
+
+/** Sponsored Matching commercial pricing (SA-managed; not Matching Engine scoring). */
+enum MatchingSponsorshipPricingBillingPeriod {
+  ONE_TIME
+  THREE_DAYS
+  MONTHLY
+  QUARTERLY
+  YEARLY
+}
+
+enum MatchingSponsorshipPricingPlanStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum MatchingSponsorshipPricingRequestStatus {
+  REQUESTED
+  CANCELLED
+}
+
+/**
+ * Derived matching snapshot for a company — never a duplicate source of truth.
+ * Private company data stays in Company / SQ / DCM / QA; this holds match signals only.
+ */
+model CompanyMatchingProfile {
+  id             String   @id @default(cuid())
+  companyId      String   @unique
+  company        Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  /** Deterministic signal snapshot (trust-tiered dimensions). */
+  snapshotJson   Json
+  /** True when profile has enough trustworthy signals to enter the eligible pool. */
+  eligible       Boolean  @default(false)
+  completeness   Int      @default(0)
+  contentHash    String
+  version        Int      @default(1)
+  /** Counts by trust tier — diagnostic only. */
+  trustSummary   Json?
+  builtAt        DateTime @default(now())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([eligible, updatedAt])
+  @@index([contentHash])
+}
+
+/**
+ * Public opportunity corpus for matching only — no private company data.
+ */
+model MatchingOpportunity {
+  id              String                     @id @default(cuid())
+  title           String
+  summary         String?                    @db.Text
+  category        String?
+  industry        String?
+  services        String[]                   @default([])
+  industries      String[]                   @default([])
+  geographies     String[]                   @default([])
+  certifications  String[]                   @default([])
+  sizeBand        String?
+  experienceHint  String?
+  deadline        DateTime?
+  /** Source system key (e.g. INTERNAL) — algorithm-agnostic. */
+  source          String                     @default("INTERNAL")
+  externalRef     String?
+  status          MatchingOpportunityStatus  @default(DRAFT)
+  sponsored       Boolean                    @default(false)
+  /** Soft sponsorship metadata — never overrides relevance. */
+  sponsorshipMeta Json?
+  /** Optional structured matching vector for future sources. */
+  signalsJson     Json?
+  /** Optional two-sided intent seam (8E) — public-safe only. */
+  intentDirection MatchingIntentDirection    @default(UNSPECIFIED)
+  /** Hash of public matching fields — skip no-op updates / trigger refresh. */
+  contentHash     String?
+  publishedAt     DateTime?
+  pausedAt        DateTime?
+  expiredAt       DateTime?
+  createdAt       DateTime                   @default(now())
+  updatedAt       DateTime                   @updatedAt
+
+  recommendations MatchRecommendation[]
+  behaviorEvents  MatchingBehaviorEvent[]
+  dailyStats      MatchingOpportunityDailyStats[]
+  sponsorships    MatchingSponsorship[]
+
+  /**
+   * Dedup natural key when externalRef is present.
+   * PostgreSQL UNIQUE treats NULL as distinct — multiple null externalRefs allowed.
+   */
+  @@unique([source, externalRef])
+  @@index([status, deadline])
+  @@index([status, sponsored])
+  @@index([updatedAt])
+  @@index([contentHash])
+}
+
+/**
+ * Sponsored Matching campaign (Feature 8F).
+ * Relevance gate remains authoritative — sponsorship is secondary ranking only.
+ */
+model MatchingSponsorship {
+  id                 String                     @id @default(cuid())
+  opportunityId      String
+  opportunity        MatchingOpportunity        @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  sponsorCompanyId   String
+  sponsorCompany     Company                    @relation(fields: [sponsorCompanyId], references: [id], onDelete: Cascade)
+  status             MatchingSponsorshipStatus  @default(DRAFT)
+  startsAt           DateTime?
+  endsAt             DateTime?
+  /** Public-safe campaign fields only (name, budgetCents, currency). No private knowledge. */
+  campaignMeta       Json?
+  /** Billing seam — reserved; no real charges in 8F. */
+  billingRef         String?
+  billingStatus      String?
+  activatedAt        DateTime?
+  pausedAt           DateTime?
+  endedAt            DateTime?
+  createdByAdminId   String?
+  updatedByAdminId   String?
+  createdAt          DateTime                   @default(now())
+  updatedAt          DateTime                   @updatedAt
+
+  @@index([sponsorCompanyId, status])
+  @@index([opportunityId, status])
+  @@index([status, endsAt])
+  @@index([billingRef])
+}
+
+/**
+ * SA-managed Sponsored Matching price catalog.
+ * Prices are DB-driven — never hard-coded in company UI.
+ * Does not affect Matching Engine scoring / relevance / ranking.
+ */
+model MatchingSponsorshipPricingPlan {
+  id                   String                                   @id @default(cuid())
+  name                 String
+  description          String?                                  @db.Text
+  priceCents           Int
+  currency             String                                   @default("usd")
+  billingPeriod        MatchingSponsorshipPricingBillingPeriod  @default(ONE_TIME)
+  /** Campaign length for a purchased/requested sponsorship window. */
+  campaignDurationDays Int?
+  /** Soft commercial limits — never override relevance. */
+  maxCampaigns         Int?
+  maxImpressions       Int?
+  /**
+   * Optional segment key for future Starter/Growth/Professional/Enterprise
+   * catalogs. Null = available to all segments.
+   */
+  segment              String?
+  /**
+   * Optional company-specific custom price. Null = catalog plan for all
+   * companies (subject to segment).
+   */
+  companyId            String?
+  company              Company?                                 @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  status               MatchingSponsorshipPricingPlanStatus     @default(INACTIVE)
+  displayOrder         Int                                      @default(0)
+  /** Public-safe bullets describing what sponsorship provides. */
+  benefits             String[]                                 @default([])
+  createdAt            DateTime                                 @default(now())
+  updatedAt            DateTime                                 @updatedAt
+
+  requests MatchingSponsorshipPricingRequest[]
+
+  @@index([status, displayOrder])
+  @@index([companyId, status])
+  @@index([segment, status])
+}
+
+/**
+ * Company sponsorship pricing REQUEST / ORDER intent only.
+ * No real payment processing — reuses NoOp billing seam.
+ */
+model MatchingSponsorshipPricingRequest {
+  id            String                                   @id @default(cuid())
+  companyId     String
+  company       Company                                  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  planId        String
+  plan          MatchingSponsorshipPricingPlan           @relation(fields: [planId], references: [id], onDelete: Restrict)
+  status        MatchingSponsorshipPricingRequestStatus  @default(REQUESTED)
+  /** Snapshot of selected commercial terms at request time. */
+  planSnapshot  Json
+  billingRef    String?
+  billingStatus String?
+  notes         String?                                  @db.Text
+  createdAt     DateTime                                 @default(now())
+  updatedAt     DateTime                                 @updatedAt
+
+  @@index([companyId, status, createdAt])
+  @@index([planId, status])
+  @@index([billingRef])
+}
+
+model MatchRecommendation {
+  id                 String                    @id @default(cuid())
+  companyId          String
+  company            Company                   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  opportunityId      String
+  opportunity        MatchingOpportunity       @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  type               MatchRecommendationType   @default(ORGANIC)
+  score              Float
+  confidence         Float
+  matchedDimensions  Json
+  reasons            String[]                  @default([])
+  explanation        String?
+  status             MatchRecommendationStatus @default(ACTIVE)
+  /** Derived engagement quality from behavior events (8E). */
+  qualityState       MatchQualityState         @default(NONE)
+  /** Soft post-threshold ranking aids — never bypass relevance. */
+  preferenceBoost    Float                     @default(0)
+  geographyBoost     Float                     @default(0)
+  aiRefineBoost      Float                     @default(0)
+  finalRankScore     Float?
+  isNew              Boolean                   @default(true)
+  rankedAt           DateTime                  @default(now())
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime                  @updatedAt
+
+  behaviorEvents MatchingBehaviorEvent[]
+
+  @@unique([companyId, opportunityId])
+  @@index([companyId, status, score])
+  @@index([companyId, status, finalRankScore])
+  @@index([companyId, rankedAt])
+  @@index([opportunityId])
+  @@index([companyId, qualityState])
+}
+
+/**
+ * Soft behavioral preferences — NOT company capabilities (Feature 8E).
+ */
+model CompanyMatchingPreferenceSnapshot {
+  id          String   @id @default(cuid())
+  companyId   String   @unique
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  /** Weighted public dimensions only (services/categories/industries/geos + dismiss). */
+  weightsJson Json
+  contentHash String
+  version     Int      @default(1)
+  builtAt     DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([contentHash])
+  @@index([builtAt])
+}
+
+/** Per-opportunity daily rollup — avoid full event scans on dashboards. */
+model MatchingOpportunityDailyStats {
+  id                   String              @id @default(cuid())
+  opportunityId        String
+  opportunity          MatchingOpportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  /** UTC calendar day (midnight). */
+  day                  DateTime            @db.Date
+  impressions          Int                 @default(0)
+  views                Int                 @default(0)
+  clicks               Int                 @default(0)
+  interest             Int                 @default(0)
+  dismissals           Int                 @default(0)
+  organicImpressions   Int                 @default(0)
+  sponsoredImpressions Int                 @default(0)
+  organicInterest      Int                 @default(0)
+  sponsoredInterest    Int                 @default(0)
+  updatedAt            DateTime            @updatedAt
+
+  @@unique([opportunityId, day])
+  @@index([day])
+}
+
+model MatchingPlatformDailyStats {
+  id                   String   @id @default(cuid())
+  day                  DateTime @unique @db.Date
+  impressions          Int      @default(0)
+  views                Int      @default(0)
+  clicks               Int      @default(0)
+  interest             Int      @default(0)
+  dismissals           Int      @default(0)
+  organicImpressions   Int      @default(0)
+  sponsoredImpressions Int      @default(0)
+  organicInterest      Int      @default(0)
+  sponsoredInterest    Int      @default(0)
+  updatedAt            DateTime @updatedAt
+}
+
+/**
+ * Tenant-scoped matching behavior events — no private company profile payloads.
+ * Foundation for Feature 8E analytics; not a full dashboard.
+ */
+model MatchingBehaviorEvent {
+  id                 String                     @id @default(cuid())
+  companyId          String
+  company            Company                    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  opportunityId      String
+  opportunity        MatchingOpportunity        @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  recommendationId   String?
+  recommendation     MatchRecommendation?       @relation(fields: [recommendationId], references: [id], onDelete: SetNull)
+  eventType          MatchingBehaviorEventType
+  /** Denormalized for organic vs sponsored aggregates without joining recs. */
+  recommendationType MatchRecommendationType?
+  actorUserId        String?
+  /** Optional de-dupe key (e.g. impression:company:rec:day). */
+  idempotencyKey     String?
+  /** Non-PII metadata only (e.g. { target: "view_opportunity" }). */
+  metadata           Json?
+  createdAt          DateTime                   @default(now())
+
+  @@unique([companyId, idempotencyKey])
+  @@index([companyId, createdAt])
+  @@index([opportunityId, eventType, createdAt])
+  @@index([eventType, createdAt])
+  @@index([recommendationId])
+}

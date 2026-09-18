@@ -1,0 +1,49 @@
+warning: in the working copy of '.gitignore', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/.gitignore b/.gitignore[m
+[1mindex 5ef6a52..6ebede7 100644[m
+[1m--- a/.gitignore[m
+[1m+++ b/.gitignore[m
+[36m@@ -22,7 +22,23 @@[m
+ [m
+ # misc[m
+ .DS_Store[m
+[32m+[m[32mThumbs.db[m
+ *.pem[m
+[32m+[m[32m*.log[m
+[32m+[m[32m.data/[m
+[32m+[m[32m.local/[m
+[32m+[m
+[32m+[m[32m# local / generated uploads (never commit user content)[m
+[32m+[m[32m/public/uploads/[m
+[32m+[m
+[32m+[m[32m# editor / agent tooling (local only)[m
+[32m+[m[32m.agents/[m
+[32m+[m[32m.claude/[m
+[32m+[m[32m.cursor/[m
+[32m+[m[32m.devin/[m
+[32m+[m[32m.idea/[m
+[32m+[m[32m.vscode/[m
+[32m+[m[32m*.swp[m
+ [m
+ # debug[m
+ npm-debug.log*[m
+[36m@@ -30,8 +46,10 @@[m [myarn-debug.log*[m
+ yarn-error.log*[m
+ .pnpm-debug.log*[m
+ [m
+[31m-# env files (can opt-in for committing if needed)[m
+[31m-.env*[m
+[32m+[m[32m# env files — never commit secrets[m
+[32m+[m[32m.env[m
+[32m+[m[32m.env.*[m
+[32m+[m[32m!.env.example[m
+ [m
+ # vercel[m
+ .vercel[m
+[36m@@ -39,3 +57,6 @@[m [myarn-error.log*[m
+ # typescript[m
+ *.tsbuildinfo[m
+ next-env.d.ts[m
+[32m+[m
+[32m+[m[32m# OS[m
+[32m+[m[32mDesktop.ini[m

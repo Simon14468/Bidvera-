@@ -1,0 +1,99 @@
+# Bidvera dedicated load-test stack. NEVER point at production.
+# Usage: see load-test/README.md
+
+name: bidvera-load-test
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: bidvera
+      POSTGRES_PASSWORD: bidvera_load_test_only
+      POSTGRES_DB: bidvera_load
+    ports:
+      - "5433:5432"
+    volumes:
+      - bidvera_load_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bidvera -d bidvera_load"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  app:
+    build:
+      context: ..
+      dockerfile: load-test/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://bidvera:bidvera_load_test_only@postgres:5432/bidvera_load?schema=public
+      AUTH_SECRET: load-test-auth-secret-min-32-chars-xx
+      SUPER_ADMIN_PATH: bv-load-test-sa
+      SUPER_ADMIN_EMAIL: loadtest-sa@bidvera.test
+      SUPER_ADMIN_PASSWORD: LoadTestSuperAdmin1!
+      NEXT_PUBLIC_APP_URL: http://localhost:3100
+      NEXT_PUBLIC_APP_NAME: Bidvera-LoadTest
+      RATE_LIMIT_BACKEND: durable
+      PRISMA_CONNECTION_LIMIT: "40"
+      STORAGE_ROOT: /app/.data/uploads
+      BACKUP_ROOT: /app/.data/backups
+      LOAD_TEST_MODE: "1"
+      LOAD_TEST_USER_COUNT: ${LOAD_TEST_USER_COUNT:-1000}
+      LOAD_TEST_REPORT_PATH: /app/.data/load-test/latest-report.json
+      LOAD_TEST_USERS_OUT: /app/.data/load-test/users.json
+      # Fail closed for external side effects
+      TURNSTILE_SITE_KEY: ""
+      TURNSTILE_SECRET_KEY: ""
+      RESEND_API_KEY: ""
+      STRIPE_SECRET_KEY: ""
+      PAYPAL_CLIENT_ID: ""
+      PAYPAL_CLIENT_SECRET: ""
+      AI_API_KEY: ""
+    ports:
+      - "3100:3000"
+    volumes:
+      - bidvera_load_data:/app/.data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 1200s
+
+  k6:
+    image: grafana/k6:0.54.0
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      BASE_URL: http://app:3000
+      # Prefer shared volume from app seed; fixtures mount is fallback for host-only seed.
+      USERS_FILE: /app-data/load-test/users.json
+      REPORT_OUT: /results/k6-summary.json
+      APP_REPORT_OUT: /app-data/load-test/latest-report.json
+      MAX_VUS: ${MAX_VUS:-1000}
+      HOLD_SECONDS: ${HOLD_SECONDS:-180}
+      ERROR_RATE_THRESHOLD: ${ERROR_RATE_THRESHOLD:-0.01}
+      P95_MS: ${P95_MS:-2000}
+      P99_MS: ${P99_MS:-5000}
+    volumes:
+      - ./k6:/scripts:ro
+      - ./fixtures:/fixtures:ro
+      - ./results:/results
+      - bidvera_load_data:/app-data
+    entrypoint: ["k6"]
+    command: ["run", "--out", "json=/results/k6-raw.json", "/scripts/journeys.js"]
+    profiles: ["run-k6"]
+
+volumes:
+  bidvera_load_pg:
+  bidvera_load_data:

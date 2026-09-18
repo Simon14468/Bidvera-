@@ -1,0 +1,170 @@
+{
+  "tenderId": "cmtq0ld8209ryrk7o8thtfkn2",
+  "files": [
+    {
+      "fileName": "ITB Section II Schedule of Requirements.pdf",
+      "chars": 28931,
+      "role": "SCHEDULE_OF_REQUIREMENTS"
+    },
+    {
+      "fileName": "ITB Section III Returnable Bidding Forms.docx",
+      "chars": 13957,
+      "role": "RETURNABLE_FORMS"
+    },
+    {
+      "fileName": "Section I - Instruction to Offerors.pdf",
+      "chars": 50188,
+      "role": "INSTRUCTIONS"
+    },
+    {
+      "fileName": "Section VI - Contract Forms.pdf",
+      "chars": 15687,
+      "role": "CONTRACT_FORMS"
+    },
+    {
+      "fileName": "UNOPS eSourcing Vendor Guide v1.4 EN final.pdf",
+      "chars": 47373,
+      "role": "VENDOR_GUIDE"
+    },
+    {
+      "fileName": "UN Supplier Code of Conduct.pdf",
+      "chars": 16051,
+      "role": "POLICY_OR_CODE"
+    },
+    {
+      "fileName": "Amendment No. 1 Form C and D Requirements and Price List ITB 2026 62687.xlsx",
+      "chars": 96979,
+      "role": "TECHNICAL_SPECIFICATION"
+    }
+  ],
+  "heuristicDrafts": 222,
+  "admittedCandidates": 62,
+  "canonical": 62,
+  "rejected": 157,
+  "contextualIntelligence": 80,
+  "phaseCounts": {
+    "BID_SUBMISSION": 55,
+    "PRE_AWARD_COMMITMENT": 4,
+    "PRE_AWARD": 1,
+    "PRE_BID": 2
+  },
+  "commercialAdmitted": 2,
+  "vendorGuideAdmitted": 0,
+  "contractFormsAdmitted": 0,
+  "codeOfConductAdmitted": 0,
+  "contaminationCount": 0,
+  "poDeliveryAfterInterpret": [
+    {
+      "text": "Delivery time Bidder shall deliver the goods within maximum 30 days after receiving the PO for orders of up to 10 units.",
+      "phase": "DELIVERY",
+      "purpose": "POST_AWARD_OBLIGATION",
+      "admitted": false,
+      "source": null
+    },
+    {
+      "text": "A9=Delivery time B9=Bidder shall deliver the goods within maximum 30 days after receiving the PO for orders of up to 10 units. C9= D9=",
+      "phase": "DELIVERY",
+      "purpose": "POST_AWARD_OBLIGATION",
+      "admitted": false,
+      "source": null
+    }
+  ],
+  "vendorGuideSamples": [],
+  "codeOfConductSamples": [],
+  "sampleAdmitted": [
+    {
+      "text": "Kits, the UNOPS appointed focal person shall issue a release Purchase Order (PO) to the supplier. The PO will include details on the type and number of items to",
+      "actor": "SUPPLIER",
+      "phase": "BID_SUBMISSION",
+      "purpose": "BIDDER_OBLIGATION",
+      "source": "ITB Section II Schedule of Requirements.pdf"
+    },
+    {
+      "text": "Vendors shall provide relevant technical brochure to facilitate evaluation",
+      "actor": "BIDDER",
+      "phase": "BID_SUBMISSION",
+      "purpose": "TECHNICAL",
+      "source": "ITB Section II Schedule of Requirements.pdf"
+    },
+    {
+      "text": "– Important : Vendors shall provide relevant technical brochure to facilitate evaluation",
+      "actor": "BIDDER",
+      "phase": "BID_SUBMISSION",
+      "purpose": "TECHNICAL",
+      "source": "ITB Section II Schedule of Requirements.pdf"
+    },
+    {
+      "text": "UNOPS - Peace and Security Cluster is operating in the following countries. Bidders must be able to facilitate export to at least 20 out of 28 of the following ",
+      "actor": "BIDDER",
+      "phase": "BID_SUBMISSION",
+      "purpose": "BIDDER_OBLIGATION",
+      "source": "ITB Section II Schedule of Requirements.pdf"
+    },
+    {
+      "text": "The Bidder shall fill in this Form in accordance with the instructions indicated below.",
+      "actor": "BIDDER",
+      "phase": "BID_SUBMISSION",
+      "purpose": "BIDDER_OBLIGATION",
+      "source": "ITB Section III Returnable Bidding Forms.docx"
+    },
+    {
+      "text": "We hereby confirm that if the contract is awarded, all parties of the Joint Venture/Consortium/Association shall be jointly and severally liable to UNOPS for th",
+      "actor": "BIDDER",
+      "phase": "BID_SUBMISSION",
+      "purpose": "BIDDER_OBLIGATION",
+      "source": "ITB Section III Returnable Bidding Forms.docx"
+    },
+    {
+      "text": "Bidders shall fill in these Price Schedule Forms in accordance with the instructions indicated.",
+      "actor": "BIDDER",
+      "phase": "BID_SUBMISSION",
+      "purpose": "COMMERCIAL",
+      "source": "ITB Section III Returnable Bidding Forms.docx"
+    },
+    {
+      "text": "Bidders are required to complete the Comparative Data Tables included in Section II: Schedule of Requirements to demonstrate compliance with UNOPS requirements ",
+      "actor": "BIDDER",
+      "phase": "PRE_AWARD_COMMITMENT",
+      "purpose": "BIDDER_OBLIGATION",
+      "source": "ITB Section III Returnable Bidding Forms.docx"
+    }
+  ],
+  "sampleRejectedPostAward": [
+    {
+      "text": "● KPI 1: On-time delivery. Supplier shall deliver within maximum 30 working days after receipt of the release of the PO.",
+      "phase": "POST_AWARD",
+      "purpose": "POST_AWARD_OBLIGATION",
+      "source": "ITB Section II Schedule of Requirements.pdf"
+    },
+    {
+      "text": "● KPI 2: Completeness of the order, error free goods. Supplier shall deliver goods or services as per description/model included in the release order and at the",
+      "phase": "POST_AWARD",
+      "purpose": "POST_AWARD_OBLIGATION",
+      "source": "ITB Section II Schedule of Requirements.pdf"
+    },
+    {
+      "text": "● KPI 3: Price Compliance. Supplier shall supply goods as per unit prices identified in the LTA",
+      "phase": "POST_AWARD",
+      "purpose": "POST_AWARD_OBLIGATION",
+      "source": "ITB Section II Schedule of Requirements.pdf"
+    },
+    {
+      "text": "● KPI 4: Accuracy of payment documentation. Supplier shall provide complete payment documentation including accurate invoices with correct quantities, unit pric",
+      "phase": "POST_AWARD",
+      "purpose": "POST_AWARD_OBLIGATION",
+      "source": "ITB Section II Schedule of Requirements.pdf"
+    },
+    {
+      "text": "Delivery time Bidder shall deliver the goods 4-6 weeks after Contract signature. [Unit: No]",
+      "phase": "DELIVERY",
+      "purpose": "POST_AWARD_OBLIGATION",
+      "source": "ITB Section II Schedule of Requirements.pdf"
+    },
+    {
+      "text": "Bidder shall deliver the goods 4-6 weeks after Contract signature.",
+      "phase": "DELIVERY",
+      "purpose": "POST_AWARD_OBLIGATION",
+      "source": "ITB Section III Returnable Bidding Forms.docx"
+    }
+  ]
+}

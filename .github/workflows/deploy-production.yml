@@ -1,0 +1,116 @@
+# Production deploy — MANUAL ONLY (workflow_dispatch).
+# Does NOT run on push. Requires typed confirmation + GitHub Environment "production" approvals.
+#
+# Required secrets (environment: production):
+#   PRODUCTION_SSH_HOST, PRODUCTION_SSH_USER, PRODUCTION_SSH_KEY, PRODUCTION_REPO_URL
+# Optional: PRODUCTION_SSH_PORT, PRODUCTION_APP_PORTS
+#
+# Do NOT enable auto-push to production until staging deploy has been proven.
+name: Deploy production
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type exactly: deploy-production'
+        required: true
+        type: string
+      ref_sha:
+        description: 'Optional commit SHA to deploy (default: workflow SHA / selected branch tip)'
+        required: false
+        type: string
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  confirm:
+    name: Confirm intentional production deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check confirmation phrase
+        env:
+          CONFIRM: ${{ inputs.confirm }}
+        run: |
+          if [ "$CONFIRM" != "deploy-production" ]; then
+            echo "Confirmation mismatch — refusing production deploy."
+            exit 1
+          fi
+
+  gates:
+    name: Pre-deploy CI gates
+    needs: confirm
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref_sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npx tsx scripts/migration-safety-scan.ts
+      - run: npm run test:security
+      - run: npx tsc --noEmit
+      - run: npm run lint
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          NEXT_PUBLIC_APP_NAME: Bidvera-CI
+
+  deploy:
+    name: Production VPS rolling deploy
+    needs: gates
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 90
+    steps:
+      - name: Require production SSH secrets
+        env:
+          PRODUCTION_SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
+          PRODUCTION_SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
+          PRODUCTION_SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
+          PRODUCTION_REPO_URL: ${{ secrets.PRODUCTION_REPO_URL }}
+        run: |
+          missing=0
+          [ -n "$PRODUCTION_SSH_HOST" ] || { echo "Missing PRODUCTION_SSH_HOST"; missing=1; }
+          [ -n "$PRODUCTION_SSH_USER" ] || { echo "Missing PRODUCTION_SSH_USER"; missing=1; }
+          [ -n "$PRODUCTION_SSH_KEY" ] || { echo "Missing PRODUCTION_SSH_KEY"; missing=1; }
+          [ -n "$PRODUCTION_REPO_URL" ] || { echo "Missing PRODUCTION_REPO_URL"; missing=1; }
+          exit "$missing"
+
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.PRODUCTION_SSH_KEY }}
+
+      - name: Add host to known_hosts
+        env:
+          HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
+          PORT: ${{ secrets.PRODUCTION_SSH_PORT }}
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "${PORT:-22}" -H "$HOST" >> ~/.ssh/known_hosts
+
+      - name: Prepare release + rolling deploy
+        env:
+          HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
+          USER: ${{ secrets.PRODUCTION_SSH_USER }}
+          PORT: ${{ secrets.PRODUCTION_SSH_PORT }}
+          REPO_URL: ${{ secrets.PRODUCTION_REPO_URL }}
+          APP_PORTS: ${{ secrets.PRODUCTION_APP_PORTS }}
+          SHA: ${{ inputs.ref_sha || github.sha }}
+        run: |
+          set -euo pipefail
+          echo "$SHA" | grep -Eq '^[0-9a-f]{7,40}$' || { echo "Unexpected SHA"; exit 1; }
+          SSH=(ssh -p "${PORT:-22}" -o BatchMode=yes -o StrictHostKeyChecking=yes "${USER}@${HOST}")
+          PORTS="${APP_PORTS:-3000 3001 3002}"
+          "${SSH[@]}" env DEPLOY_SHA="$SHA" DEPLOY_ENV=production DEPLOY_ROOT=/opt/bidvera REPO_URL="$REPO_URL" APP_PORTS="$PORTS" \
+            bash -lc 'set -euo pipefail
+              SCRIPTS=/opt/bidvera/bootstrap/deploy/scripts
+              [ -f "$SCRIPTS/prepare-release.sh" ] || { echo "bootstrap scripts missing"; exit 1; }
+              bash "$SCRIPTS/prepare-release.sh"
+              bash "/opt/bidvera/releases/'"$SHA"'/deploy/scripts/remote-deploy.sh"
+            '

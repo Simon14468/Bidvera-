@@ -1,0 +1,260 @@
+{
+  "STATUS": "FAIL",
+  "defectCount": 1,
+  "criticalDefectCount": 0,
+  "analysisId": "fresh-t1-realistic-1788718171328",
+  "analysisTimestamp": "2026-09-06T18:09:34.626Z",
+  "sourceFile": "C:\\Users\\Lenovo\\Videos\\SaaS Bidvera AI\\.data\\uploads\\cmtfvf1vm0000rkgkqq291zux\\cmtk2zckd1owfrkrora54viv0\\1788352630388-Bidvera_Realistic_Tender_v2.pdf",
+  "sourceFileSha256": "66fc27bb4a4e496783ff99caa53901e3a3d9c92cacde19c2af34f3e7e8f05751",
+  "sourceTextSha256": "bbf2d21d5429dacdedb9d91cea863b76ab706cf53d1852465631c5a793008b8d",
+  "canonicalReleaseHash": "c4e071499",
+  "canonicalItemCount": 8,
+  "decision": "REVIEW",
+  "fit": 80,
+  "guardianOk": true,
+  "guardianDurationMs": 25,
+  "guardianBlocking": [],
+  "webPdfParity": {
+    "decision": true,
+    "fit": true,
+    "deadline": true,
+    "counts": true,
+    "ok": true
+  },
+  "staleResult": false,
+  "actionCount": 8,
+  "riskCount": 8,
+  "hardBlockers": [],
+  "reviewItems": [
+    "8 mandatory requirements require verification."
+  ],
+  "deadline": {
+    "iso": "2026-09-30T12:00:00",
+    "timezone": null,
+    "wallClock": "2026-09-30T12:00:00",
+    "sourceHasPhrase": true
+  },
+  "performance": {
+    "totalMs": 3298,
+    "extractMs": 2810,
+    "guardianMs": 25,
+    "reportMs": 14
+  },
+  "canonicalItems": [
+    {
+      "id": "T-01",
+      "semanticKind": "TECHNICAL_REQUIREMENT",
+      "obligationStrength": "MANDATORY",
+      "category": "MANDATORY_TECHNICAL",
+      "mandatory": true,
+      "description": "T-01 Supply and install the complete audiovisual system described in the technical specifications.",
+      "provenance": {
+        "section": "2. Mandatory Technical Requirements",
+        "page": 1
+      }
+    },
+    {
+      "id": "T-02",
+      "semanticKind": "TECHNICAL_REQUIREMENT",
+      "obligationStrength": "MANDATORY",
+      "category": "MANDATORY_TECHNICAL",
+      "mandatory": true,
+      "description": "T-02 All supplied equipment must be new, unused and current production models at delivery.",
+      "provenance": {
+        "section": "2. Mandatory Technical Requirements",
+        "page": 1
+      }
+    },
+    {
+      "id": "T-03",
+      "semanticKind": "TECHNICAL_REQUIREMENT",
+      "obligationStrength": "MANDATORY",
+      "category": "MANDATORY_TECHNICAL",
+      "mandatory": true,
+      "description": "T-03 Provide a minimum 24-month warranty covering supplied and installed audiovisual equipment.",
+      "provenance": {
+        "section": "2. Mandatory Technical Requirements",
+        "page": 1
+      }
+    },
+    {
+      "id": "T-05",
+      "semanticKind": "TECHNICAL_REQUIREMENT",
+      "obligationStrength": "MANDATORY",
+      "category": "CONTRACTUAL",
+      "mandatory": true,
+      "description": "T-05 Complete installation, configuration, testing and commissioning before final acceptance.",
+      "provenance": {
+        "section": "2. Mandatory Technical Requirements",
+        "page": 1
+      }
+    },
+    {
+      "id": "T-06",
+      "semanticKind": "TECHNICAL_REQUIREMENT",
+      "obligationStrength": "MANDATORY",
+      "category": "CONTRACTUAL",
+      "mandatory": true,
+      "description": "T-06 Provide administrator and operator training for the installed systems.",
+      "provenance": {
+        "section": "2. Mandatory Technical Requirements",
+        "page": 1
+      }
+    },
+    {
+      "semanticKind": "REQUIRED_DOCUMENT",
+      "obligationStrength": "MANDATORY",
+      "category": "MANDATORY_ADMINISTRATIVE",
+      "mandatory": true,
+      "description": "Bidders must submit a current tax clearance certificate and valid CNSS compliance certificate.",
+      "provenance": {
+        "section": "3. Eligibility and Administrative Conditions",
+        "page": 1
+      }
+    },
+    {
+      "semanticKind": "ELIGIBILITY_REQUIREMENT",
+      "obligationStrength": "MANDATORY",
+      "category": "MANDATORY_ELIGIBILITY",
+      "mandatory": true,
+      "description": "The bidder must demonstrate at least five (5) years of relevant experience delivering audiovisual systems to public-sector organizations.",
+      "provenance": {
+        "section": "3. Eligibility and Administrative Conditions",
+        "page": 1
+      }
+    },
+    {
+      "semanticKind": "GUARANTEE_SECURITY_REQUIREMENT",
+      "obligationStrength": "MANDATORY",
+      "category": "CONTRACTUAL",
+      "mandatory": true,
+      "description": "The bid shall include a provisional bid security of MAD 84,000. The original document must be included in the bid dossier in the required form.",
+      "provenance": {
+        "section": "3. Eligibility and Administrative Conditions",
+        "page": 1
+      }
+    }
+  ],
+  "excludedClasses": [
+    {
+      "class": "Subject / title metadata",
+      "reason": "Informational document identity — not a bidder obligation"
+    },
+    {
+      "class": "Evaluation weights (70/30)",
+      "reason": "Evaluation criterion"
+    },
+    {
+      "class": "Estimated contract value",
+      "reason": "Informational tender fact"
+    },
+    {
+      "class": "Tender Facts meta note",
+      "reason": "QA/meta instruction to analysis system"
+    },
+    {
+      "class": "Verification Test Cases",
+      "reason": "Reviewer/test scenario — not bidder obligation"
+    },
+    {
+      "class": "Publication date",
+      "reason": "Informational fact"
+    }
+  ],
+  "leaks": [
+    {
+      "id": "subject-line",
+      "reason": "Title/subject metadata — not bidder obligation",
+      "leaked": false,
+      "items": []
+    },
+    {
+      "id": "tender-facts-meta",
+      "reason": "QA/meta instruction",
+      "leaked": false,
+      "items": []
+    },
+    {
+      "id": "verification-scenario",
+      "reason": "Reviewer/test scenario",
+      "leaked": false,
+      "items": []
+    },
+    {
+      "id": "evaluation-weights",
+      "reason": "Evaluation criterion",
+      "leaked": false,
+      "items": []
+    },
+    {
+      "id": "estimated-value-as-req",
+      "reason": "Informational contract value fact",
+      "leaked": false,
+      "items": []
+    },
+    {
+      "id": "verification-heading",
+      "reason": "QA/test section heading",
+      "leaked": false,
+      "items": []
+    }
+  ],
+  "regressionTargets": {
+    "1_wrong_deadline_timezone": true,
+    "2_count_drift": true,
+    "3_truncated_requirement": true,
+    "4_lost_requirement_id": false,
+    "5_lost_conditional_clause": true,
+    "6_dropped_commercial": true,
+    "7_false_heading_requirement": true,
+    "8_evaluation_criteria_leak": true,
+    "9_reviewer_scenario_leak": true,
+    "10_qa_meta_leak": true,
+    "11_duplicate_semantic": true,
+    "12_unsupported_fit_claim": true,
+    "13_missing_evidence_as_gap": true,
+    "14_verification_as_hard_blocker": true,
+    "15_action_without_canonical_identity": true,
+    "16_web_pdf_mismatch": true,
+    "17_stale_result": true,
+    "guardian_pass": true,
+    "no_subject_leak": true,
+    "decision_valid": true
+  },
+  "defects": [
+    {
+      "id": "4_lost_requirement_id",
+      "detail": {
+        "uniqueSourceIds": [
+          "T-01",
+          "T-02",
+          "T-03",
+          "T-04",
+          "T-05",
+          "T-06"
+        ],
+        "missingSourceIds": [
+          "T-04"
+        ],
+        "canonicalIds": [
+          "T-01",
+          "T-02",
+          "T-03",
+          "T-05",
+          "T-06",
+          null,
+          null,
+          null
+        ]
+      }
+    }
+  ],
+  "criticalDefects": [],
+  "reusedPriorResult": false,
+  "proofFreshness": {
+    "analysisIdUnique": "fresh-t1-realistic-1788718171328",
+    "analyzedAt": "2026-09-06T18:09:34.607Z",
+    "contentHash": "c4e071499",
+    "note": "Offline pipeline from PDF bytes — no DB tender/decision row reused"
+  }
+}

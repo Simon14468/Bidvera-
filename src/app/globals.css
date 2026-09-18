@@ -1,26 +1,706 @@
 @import "tailwindcss";
 
+@custom-variant light (&:where(.light, .light *));
+
+/* Default = professional dark shell (#232B23)
+ * Brand greens sampled from official mark: #4bb23d → #38952b → #287e1d */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary: #3f9f32;
+  --primary-hover: #4bb23d;
+  --primary-muted: #2f3a2c;
+  --primary-glow: #4bb23d;
+  --primary-deep: #287e1d;
+  --white: #ffffff;
+  --foreground: #f2f3f3;
+  --muted: #a8aaab;
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --border: #3a423a;
+  --background: #232b23;
+  --card: #232b23;
+  --ink: #232b23;
+  --radius: 12px;
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.28), 0 4px 12px rgba(0, 0, 0, 0.18);
+  --shadow-lift: 0 4px 16px rgba(0, 0, 0, 0.32);
+  --ring: #3f9f32;
+  color-scheme: dark;
+  /* Modern pro scrollbars */
+  --scrollbar-size: 5px;
+  --scrollbar-track: transparent;
+  --scrollbar-thumb: color-mix(in srgb, var(--foreground) 22%, transparent);
+  --scrollbar-thumb-hover: color-mix(in srgb, var(--primary) 55%, var(--foreground) 20%);
+  --scrollbar-thumb-border: transparent;
+}
+
+html.light {
+  --primary: #3f9f32;
+  --primary-hover: #2f8624;
+  --primary-muted: #e7f6e4;
+  --primary-glow: #4bb23d;
+  --primary-deep: #287e1d;
+  --white: #ffffff;
+  --foreground: #1a1d1f;
+  --muted: #6b7280;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --border: #e5e7eb;
+  --background: #fafafa;
+  --card: #ffffff;
+  --ink: #232b23;
+  --shadow-soft: 0 1px 2px rgba(26, 29, 31, 0.04), 0 4px 12px rgba(26, 29, 31, 0.03);
+  --shadow-lift: 0 4px 16px rgba(26, 29, 31, 0.08);
+  --ring: #3f9f32;
+  color-scheme: light;
+  --scrollbar-track: transparent;
+  --scrollbar-thumb: #d1d5db;
+  --scrollbar-thumb-hover: #9ca3af;
+  --scrollbar-thumb-border: transparent;
 }
 
 @theme inline {
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-muted: var(--primary-muted);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-ring: var(--ring);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --radius-xl: var(--radius);
+  --shadow-soft: var(--shadow-soft);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--border);
+}
+
+/* Modern pro scrollbars — ultra-thin, no arrows, hover-refined */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: var(--scrollbar-size);
+  height: var(--scrollbar-size);
+}
+
+*::-webkit-scrollbar-button,
+*::-webkit-scrollbar-corner {
+  display: none;
+  width: 0;
+  height: 0;
+  background: transparent;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+  margin-block: 6px;
+  margin-inline: 2px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  min-height: 36px;
+  transition: background-color 0.18s ease;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background: var(--primary);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+/* Sidebar / panels: quieter until hover, then crisp pro thumb */
+.scrollbar-pro {
+  scrollbar-gutter: stable;
+  scrollbar-color: color-mix(in srgb, var(--scrollbar-thumb) 55%, transparent)
+    transparent;
+}
+
+.scrollbar-pro::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar-pro::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--scrollbar-thumb) 55%, transparent);
+}
+
+.scrollbar-pro:hover {
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
+.scrollbar-pro:hover::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+}
+
+.scrollbar-pro:hover::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+input,
+select,
+textarea {
+  color-scheme: inherit;
+}
+
+select option {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* —— Landing hero: deep green field + Bidvera mark stamp —— */
+.hero-atmosphere {
+  --hero-field: #232b23;
+  --hero-field-deep: #1a221a;
+  --hero-field-lift: #2c362c;
+  --hero-stamp: color-mix(in srgb, #3f9f32 42%, transparent);
+  background-color: var(--hero-field);
+  isolation: isolate;
+}
+
+html.light .hero-atmosphere {
+  --hero-field: #f4f7f4;
+  --hero-field-deep: #e8f0ea;
+  --hero-field-lift: #ffffff;
+  --hero-stamp: color-mix(in srgb, #3f9f32 18%, transparent);
+}
+
+.hero-atmosphere__glow,
+.hero-atmosphere__stamp,
+.hero-atmosphere__stamp--echo,
+.hero-atmosphere__glass,
+.hero-atmosphere__vignette {
+  pointer-events: none;
+  position: absolute;
+}
+
+.hero-atmosphere__glow {
+  inset: 0;
+  background:
+    radial-gradient(ellipse 95% 70% at 50% -10%, var(--hero-field-deep) 0%, transparent 58%),
+    radial-gradient(ellipse 70% 55% at 12% 18%, color-mix(in srgb, #3d5c45 35%, transparent) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 92% 78%, color-mix(in srgb, #3f9f32 12%, transparent) 0%, transparent 50%),
+    linear-gradient(165deg, var(--hero-field-deep) 0%, var(--hero-field) 42%, var(--hero-field-lift) 100%);
+  animation: hero-glow-drift 22s ease-in-out infinite;
+  will-change: transform;
+}
+
+html.light .hero-atmosphere__glow {
+  background:
+    radial-gradient(ellipse 80% 55% at 20% 0%, #e4f0e8 0%, transparent 55%),
+    radial-gradient(ellipse 55% 45% at 100% 20%, #eef5f0 0%, transparent 50%),
+    linear-gradient(180deg, #ffffff 0%, #f3f7f4 55%, #eef3ef 100%);
+}
+
+/* Oversized brand stamp — glass plaque + soft mark watermark */
+.hero-atmosphere__stamp {
+  inset-inline-start: -4%;
+  top: -6%;
+  z-index: 0;
+  width: min(52vw, 30rem);
+  height: min(52vw, 30rem);
+  border-radius: 32%;
+  transform: rotate(-9deg);
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, #fff 14%, transparent) 0%,
+      transparent 42%,
+      color-mix(in srgb, #3f9f32 6%, transparent) 100%
+    ),
+    color-mix(in srgb, var(--hero-field-lift) 16%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(1.15);
+  backdrop-filter: blur(18px) saturate(1.15);
+  border: 1px solid color-mix(in srgb, #fff 10%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #fff 16%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, #000 12%, transparent),
+    0 24px 64px color-mix(in srgb, #000 22%, transparent);
+  mask-image: radial-gradient(circle at 42% 38%, #000 42%, transparent 78%);
+  -webkit-mask-image: radial-gradient(circle at 42% 38%, #000 42%, transparent 78%);
+}
+
+.hero-atmosphere__stamp::after {
+  content: "";
+  position: absolute;
+  inset: 16%;
+  background-image: url("/brand-mark.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 0.28;
+  filter: drop-shadow(0 8px 24px color-mix(in srgb, #3f9f32 25%, transparent));
+}
+
+html.light .hero-atmosphere__stamp {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.55) 0%,
+      transparent 45%,
+      color-mix(in srgb, #3f9f32 8%, transparent) 100%
+    ),
+    rgba(255, 255, 255, 0.28);
+  border-color: color-mix(in srgb, #fff 70%, var(--border));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 20px 48px rgba(26, 34, 26, 0.08);
+}
+
+html.light .hero-atmosphere__stamp::after {
+  opacity: 0.16;
+}
+
+.hero-atmosphere__stamp--echo {
+  inset-inline-end: -8%;
+  bottom: -14%;
+  z-index: 0;
+  width: min(42vw, 22rem);
+  height: min(42vw, 22rem);
+  border-radius: 32%;
+  transform: rotate(12deg);
+  background: color-mix(in srgb, var(--hero-field-lift) 10%, transparent);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid color-mix(in srgb, #fff 6%, transparent);
+  opacity: 0.55;
+  mask-image: radial-gradient(circle at 50% 50%, #000 30%, transparent 74%);
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 30%, transparent 74%);
+}
+
+.hero-atmosphere__stamp--echo::after {
+  content: "";
+  position: absolute;
+  inset: 18%;
+  background-image: url("/brand-mark.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 0.18;
+}
+
+html.light .hero-atmosphere__stamp--echo {
+  background: rgba(255, 255, 255, 0.22);
+  opacity: 0.45;
+}
+
+html.light .hero-atmosphere__stamp--echo::after {
+  opacity: 0.1;
+}
+
+/* Soft glass wash: light frost from top → clears by the video */
+.hero-atmosphere__glass {
+  inset: 0 0 auto;
+  height: min(68%, 34rem);
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--hero-field-lift) 22%, transparent) 0%,
+    color-mix(in srgb, var(--hero-field) 10%, transparent) 38%,
+    transparent 100%
+  );
+  -webkit-backdrop-filter: blur(10px) saturate(1.08);
+  backdrop-filter: blur(10px) saturate(1.08);
+  mask-image: linear-gradient(
+    180deg,
+    #000 0%,
+    rgba(0, 0, 0, 0.45) 42%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    #000 0%,
+    rgba(0, 0, 0, 0.45) 42%,
+    transparent 100%
+  );
+  border-bottom: none;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 5%, transparent);
+}
+
+html.light .hero-atmosphere__glass {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.38) 0%,
+    rgba(244, 247, 244, 0.16) 40%,
+    transparent 100%
+  );
+  -webkit-backdrop-filter: blur(8px) saturate(1.05);
+  backdrop-filter: blur(8px) saturate(1.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.hero-atmosphere__vignette {
+  inset: 0;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse 80% 65% at 50% 42%, transparent 32%, color-mix(in srgb, var(--hero-field-deep) 75%, #000) 100%),
+    linear-gradient(180deg, transparent 55%, color-mix(in srgb, var(--hero-field) 55%, transparent) 100%);
+  opacity: 0.45;
+}
+
+html.light .hero-atmosphere__vignette {
+  background: radial-gradient(ellipse 90% 70% at 50% 30%, transparent 40%, rgba(244, 247, 244, 0.55) 100%);
+  opacity: 1;
+}
+
+@keyframes hero-glow-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(1.2%, -0.8%, 0) scale(1.025);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-atmosphere__glow {
+    animation: none;
+    will-change: auto;
+  }
+}
+
+html[lang="ar"] body {
+  font-family: var(--font-arabic), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--primary) 28%, transparent);
+}
+
+html.light ::selection {
+  background: color-mix(in srgb, var(--primary) 28%, white);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes score-fill {
+  from {
+    stroke-dashoffset: 100;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 320ms ease-out both;
+}
+
+.animate-fade-up {
+  animation: fade-up 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-scale-in {
+  animation: scale-in 280ms ease-out both;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 1.4s ease-in-out infinite;
+}
+
+@keyframes upload-indeterminate {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}
+
+.animate-upload-indeterminate {
+  animation: upload-indeterminate 1.15s ease-in-out infinite;
+}
+
+.stagger-1 {
+  animation-delay: 40ms;
+}
+.stagger-2 {
+  animation-delay: 80ms;
+}
+.stagger-3 {
+  animation-delay: 120ms;
+}
+.stagger-4 {
+  animation-delay: 160ms;
+}
+
+.hover-lift {
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lift);
+}
+
+/* —— Scroll reveal (Intersection Observer toggles .reveal-in) —— */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  transition:
+    opacity 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-fade {
+  transform: none;
+}
+
+.reveal-scale {
+  transform: scale(0.98) translate3d(0, 10px, 0);
+}
+
+.reveal-decision {
+  transform: translate3d(0, 14px, 0) scale(0.985);
+}
+
+.reveal-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Landing preview fit bar — fills on scroll into view */
+.fit-bar-fill {
+  transform: scaleX(0);
+  transform-origin: inline-start;
+  transition: transform 1.15s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+  background-image: linear-gradient(
+    90deg,
+    var(--color-primary) 0%,
+    color-mix(in srgb, var(--color-primary) 82%, white) 55%,
+    var(--color-primary) 100%
+  );
+  background-size: 200% 100%;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--color-primary) 35%, transparent);
+}
+
+.fit-bar-fill.is-on {
+  transform: scaleX(1);
+  animation: fit-bar-sheen 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fit-bar-sheen {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0% 0;
+  }
+}
+
+/* CTA micro-interactions + brand mark green gradient */
+.cta-press {
+  transition:
+    transform 160ms ease,
+    box-shadow 200ms ease,
+    background-color 200ms ease,
+    background-image 200ms ease,
+    filter 200ms ease,
+    border-color 200ms ease;
+}
+
+/* Filled primary CTAs — soft vertical gradient matching logo mark */
+.cta-press.bg-primary {
+  background-color: var(--primary);
+  background-image: linear-gradient(
+    165deg,
+    var(--primary-glow) 0%,
+    var(--primary) 48%,
+    var(--primary-deep) 100%
+  );
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 22%, transparent) inset,
+    0 8px 20px color-mix(in srgb, var(--primary-deep) 28%, transparent);
+}
+
+.cta-press.bg-primary:hover {
+  background-image: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--primary-glow) 88%, #fff) 0%,
+    var(--primary-glow) 42%,
+    var(--primary) 100%
+  );
+  filter: saturate(1.06);
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 28%, transparent) inset,
+    0 10px 24px color-mix(in srgb, var(--primary) 34%, transparent);
+}
+
+.cta-press:hover {
+  transform: translateY(-1px);
+}
+
+.cta-press:active {
+  transform: translateY(0) scale(0.98);
+  filter: none;
+}
+
+/* Bidvera assistant FAB — desktop-only soft brand mark motion */
+@keyframes assistant-fab-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 0%, transparent);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--primary) 16%, transparent);
+  }
+}
+
+@keyframes assistant-fab-icon-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1px);
+  }
+}
+
+@media (min-width: 768px) {
+  .assistant-fab-mark {
+    animation: assistant-fab-breathe 3.2s ease-in-out infinite;
+    will-change: transform, box-shadow;
+  }
+
+  .assistant-fab-mark__icon {
+    animation: assistant-fab-icon-float 3.2s ease-in-out infinite;
+    will-change: transform;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal,
+  .reveal-fade,
+  .reveal-scale,
+  .reveal-decision {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    will-change: auto;
+  }
+
+  .fit-bar-fill {
+    transition: none;
+    animation: none;
+    will-change: auto;
+    box-shadow: none;
+  }
+
+  .animate-fade-in,
+  .animate-fade-up,
+  .animate-scale-in,
+  .animate-pulse-soft,
+  .animate-upload-indeterminate,
+  .assistant-fab-mark,
+  .assistant-fab-mark__icon {
+    animation: none !important;
+  }
+
+  .hover-lift:hover,
+  .cta-press:hover,
+  .cta-press:active {
+    transform: none;
+  }
+}
+
+@media print {
+  .print\:hidden {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  a {
+    text-decoration: none !important;
+    color: inherit !important;
+  }
 }

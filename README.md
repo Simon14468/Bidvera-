@@ -1,36 +1,150 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bidvera
 
-## Getting Started
+**Verify Before You Bid.**
 
-First, run the development server:
+Multi-tenant tender intelligence SaaS: company workspaces, PDF/Word analysis, deterministic + AI go/no-go decisions, PayPal billing, and an isolated Super Admin console.
 
-```bash
+## Stack
+
+- Next.js App Router · React · TypeScript · Tailwind CSS
+- PostgreSQL · Prisma
+- Zod · Server Actions · Route Handlers
+- HttpOnly cookie sessions · bcrypt passwords
+- DB-backed job queue (`npm run worker`)
+- Local object storage (`.data/uploads` — S3/R2-swappable)
+
+Company is the tenant boundary. `companyId` always comes from the authenticated session — never from the client.
+
+## Windows / local setup
+
+Requirements: **Node.js 20+** (22/24 OK), **npm**, and a **PostgreSQL** database (local or Neon).
+
+```powershell
+# From the project root
+npm install
+copy .env.example .env
+# Edit .env — set DATABASE_URL and AUTH_SECRET (min 32 chars)
+
+npx prisma migrate deploy
+npm run db:seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Optional background worker (recommended for production; upload actions also drain a few jobs in-process for local DX):
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```powershell
+npm run worker
+```
 
-## Learn More
+### Production build (local smoke test)
 
-To learn more about Next.js, take a look at the following resources:
+```powershell
+npm run build
+npm run start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Test accounts (after seed)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Role | Email | Password |
+|------|--------|----------|
+| Meridian Owner (primary test org) | `owner@meridian-facilities.test` | `MeridianOwner1!` |
+| Meridian Admin | `admin@meridian-facilities.test` | `MeridianAdmin1!` |
+| Meridian Member | `analyst@meridian-facilities.test` | `MeridianMember1!` |
+| Trial sandbox | `trial@bidvera.com` | `BidveraTrial1!` |
 
-## Deploy on Vercel
+Meridian Integrated Facilities Ltd is a **fictional** production-compatible customer org (not a demo mode). Super Admin can change its plan and issue secure password resets.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Super Admin: set `SUPER_ADMIN_EMAIL`, `SUPER_ADMIN_PASSWORD`, and `SUPER_ADMIN_PATH` in the server env (never commit real values). Seed with `npm run db:seed` or rotate later with `npm run sa:sync`. Path is **not** linked from the public site. No demo Super Admin credentials.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Core product flow
+
+Signup → verify email (optional) → company profile → plan/trial → upload tender PDF → queue job → extract → match profile → rules + AI → evidence → **BID / REVIEW / NO-BID** → usage/alerts → PayPal upgrade when trial exhausted.
+
+## Scripts
+
+| Command | Purpose |
+|---------|---------|
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm run start` | Serve production build |
+| `npm run lint` | ESLint |
+| `npm run test:billing` | Billing unit tests |
+| `npm run db:migrate` | Prisma migrate (dev) |
+| `npx prisma migrate deploy` | Apply migrations (CI/prod) |
+| `npm run db:seed` | Seed plans, features, Meridian test org + SA |
+| `npm run sa:sync` | Sync Super Admin email/password from env (bcrypt) |
+| `npm run worker` | Process async tender jobs |
+
+## Environment variables
+
+Copy `.env.example` → `.env`. **Never commit `.env` or real secrets.**
+
+### Required
+
+| Variable | Notes |
+|----------|--------|
+| `DATABASE_URL` | PostgreSQL connection string |
+| `AUTH_SECRET` | ≥32 random chars (required in production) |
+| `NEXT_PUBLIC_APP_URL` | Public origin, e.g. `https://app.example.com` |
+
+### Strongly recommended
+
+| Variable | Notes |
+|----------|--------|
+| `SUPER_ADMIN_PATH` | Unguessable path segment (≥12) |
+| `SUPER_ADMIN_EMAIL` / `SUPER_ADMIN_PASSWORD` | Required for seed / `npm run sa:sync`; bcrypt hashed; no demo defaults |
+| `npm run sa:sync` | Rotate SA email/password from env without code changes |
+| `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` / `GOOGLE_AI_API_KEY` | Tender AI (or configure via Super Admin) |
+| `PAYPAL_CLIENT_ID` / `PAYPAL_CLIENT_SECRET` / `PAYPAL_WEBHOOK_ID` | Live/sandbox billing |
+| `PAYPAL_PLAN_*` | PayPal plan IDs per Bidvera plan |
+| `STORAGE_ROOT` | Default `.data/uploads` locally. **Production:** set an absolute persistent path (e.g. `/var/lib/bidvera/uploads`) that survives redeploys. Also persist `public/uploads/avatars` and `public/uploads/landing` (see `docs/production-deployment.md`). |
+| `TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | Cloudflare Turnstile. Required in production. Local: omit to skip, or use Cloudflare dummy keys. |
+
+Assistant voice keys are stored encrypted in Super Admin (AI Knowledge). Optional env fallbacks: `ELEVENLABS_*`, `GOOGLE_CLIENT_*`, `MICROSOFT_CLIENT_*`.
+
+See `.env.example` for the full list (Stripe optional).
+
+## Database
+
+```powershell
+npx prisma migrate deploy
+npm run db:seed
+```
+
+Migrations live under `prisma/migrations/`. Do not commit local DB dumps.
+
+## Deployment checklist
+
+See **[docs/production-deployment.md](docs/production-deployment.md)** for install → env → migrate → Nginx/HTTPS → systemd APP/WORKER → health → backup → rollback.
+
+See **[docs/production-readiness.md](docs/production-readiness.md)** for resources, processes, and security.
+
+1. Set production env vars (no defaults for `AUTH_SECRET` / SA password; `PAYPAL_ENVIRONMENT=production` for live billing).
+2. `npx prisma migrate deploy` against production Postgres.
+3. `npm run db:seed` once (or ensure plans/features exist).
+4. Build: `npm run build` · Start: `npm run start` (or host’s Node adapter).
+5. Run `npm run worker` as a separate supervised process for PDF/AI jobs and backups.
+6. Point PayPal webhook to `/api/billing/webhook` with `PAYPAL_WEBHOOK_ID`.
+7. Ensure `STORAGE_ROOT` and `BACKUP_ROOT` are persistent and not colocated; set `DATABASE_URL_DIRECT` for dumps.
+8. Confirm `GET /api/ready` returns READY and Super Admin → Production readiness.
+9. Rotate Super Admin path and password; keep SA routes out of sitemap/nav.
+
+## Security notes
+
+- Secrets are server-side only (`AUTH_SECRET`, provider keys, PayPal secret, vault ciphertext).
+- Super Admin uses a separate session cookie from company users.
+- PayPal activation verifies subscription server-side and requires `custom_id` company binding.
+- Landing assistant TTS/ask are rate-limited per IP + browser client id.
+
+## Architecture
+
+```
+UI → Application services → Domain (decision/rules) → Prisma → PostgreSQL
+External: AI · Storage · Email · Billing · Notifications · Jobs
+```
+
+## License
+
+Private / proprietary unless otherwise stated.

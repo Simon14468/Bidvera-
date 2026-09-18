@@ -1,0 +1,308 @@
+{
+  "mode": "controlled-live-ingest",
+  "label": "Controlled pilot: Morocco, France, Spain, Portugal (fresh + deadline)",
+  "wroteToDatabase": true,
+  "recommendationsCreated": false,
+  "matchingEngineEnabled": false,
+  "sponsorshipGlobalOn": false,
+  "matchingAiEnabled": false,
+  "tedSettingsPersistedEnabled": false,
+  "tedWorkerScheduleAllowed": false,
+  "configuration": {
+    "freshnessDays": 90,
+    "requireDeadline": true,
+    "cpvFilters": [
+      "72",
+      "71",
+      "79",
+      "45",
+      "48",
+      "32",
+      "33"
+    ],
+    "geographies": [
+      "Morocco",
+      "MAR",
+      "France",
+      "FRA",
+      "Spain",
+      "ESP",
+      "Portugal",
+      "PRT"
+    ],
+    "maxNoticesPerRun": 50,
+    "pageLimit": 25,
+    "maxPagesPerRun": 3,
+    "writeActiveOnly": true
+  },
+  "dryRun": {
+    "qualityVerdict": "READY_FOR_LIVE_INGEST",
+    "fetched": 50,
+    "acceptedCandidates": 45,
+    "activeCandidates": 45,
+    "filteredOut": 5,
+    "query": "form-type = competition AND buyer-country IN (MAR FRA ESP PRT) AND (classification-cpv = 72* OR classification-cpv = 71* OR classification-cpv = 79* OR classification-cpv = 45* OR classification-cpv = 48* OR classification-cpv = 32* OR classification-cpv = 33*) AND publication-date >= 20260613 AND deadline-receipt-tender-date-lot >= 20260911"
+  },
+  "ingest1": {
+    "fetched": 50,
+    "normalized": 50,
+    "accepted": 45,
+    "rejected": 5,
+    "filteredOut": 5,
+    "validationRejected": 0,
+    "malformed": 0,
+    "draftSkipped": 0,
+    "created": 45,
+    "updated": 0,
+    "upserted": 45,
+    "upsertErrors": [],
+    "rejectionReasons": {
+      "filter: deadline not in the future": 5
+    }
+  },
+  "ingest2Idempotency": {
+    "fetched": 50,
+    "accepted": 45,
+    "created": 0,
+    "updated": 45,
+    "upserted": 45,
+    "upsertErrors": [],
+    "rejectionReasons": {
+      "filter: deadline not in the future": 5
+    }
+  },
+  "database": {
+    "tedRowsBefore": 0,
+    "tedRowsAfter": 45,
+    "matchingOpportunityCreated": 45,
+    "matchingOpportunityUpdated": 0,
+    "rowsInBatchSampled": 45,
+    "statusCounts": {
+      "ACTIVE": 45
+    },
+    "countries": {
+      "France": 34,
+      "Portugal": 4,
+      "Spain": 7
+    },
+    "cpvDistribution": {
+      "Business services": 7,
+      "Construction work": 20,
+      "Architectural and engineering services": 15,
+      "IT services": 5,
+      "Repair and maintenance": 4,
+      "Medical equipment": 2,
+      "Leather and textiles": 2,
+      "Food and beverages": 1,
+      "Laboratory and precision equipment": 1,
+      "Chemical products": 2,
+      "Clothing and accessories": 2,
+      "Furniture and furnishings": 2,
+      "Software and systems": 1,
+      "Communication equipment": 1,
+      "Installation services": 1,
+      "Transport equipment": 2,
+      "Construction materials": 1,
+      "Industrial machinery": 1,
+      "Hotel and restaurant services": 1,
+      "Public utilities": 1,
+      "Petroleum and fuels": 1
+    },
+    "deadlineDistribution": {
+      "withDeadline": 45,
+      "withoutDeadline": 0,
+      "future": 45,
+      "past": 0
+    },
+    "publicationDateOldest": "2026-06-15T00:00:00.000Z",
+    "publicationDateNewest": "2026-06-30T00:00:00.000Z",
+    "deadlineOldest": "2026-09-14T00:00:00.000Z",
+    "deadlineNearestFuture": "2026-09-14T00:00:00.000Z",
+    "duplicateSourceExternalRefPairs": 0,
+    "privateDataHits": 0,
+    "malformedActive": 0,
+    "sample10": [
+      {
+        "id": "cmtwyh9f30018rk785gxlgjf5",
+        "externalRef": "448914-2026",
+        "title": "France – Advertising services – Mise à disposition, installation, entretien, maintenance et exploitation de mobiliers urbains publicitaires et d’affichage pour ",
+        "status": "ACTIVE",
+        "geographies": [
+          "France"
+        ],
+        "services": [
+          "Business services"
+        ],
+        "deadline": "2026-09-18T00:00:00.000Z",
+        "contentHash": "8abc2bf1e05b7cc0c816e1ebc8f78740",
+        "source": "TED",
+        "sponsored": false,
+        "hasTedAttribution": true
+      },
+      {
+        "id": "cmtwyh8r40017rk78m26smrch",
+        "externalRef": "447382-2026",
+        "title": "France – Construction work for electricity power lines – Travaux de dissimulation des réseaux de distribution publique d’énergie électrique, de génie civil des ",
+        "status": "ACTIVE",
+        "geographies": [
+          "France"
+        ],
+        "services": [
+          "Construction work"
+        ],
+        "deadline": "2026-09-14T00:00:00.000Z",
+        "contentHash": "e01db063d098b34d02dead0b634b53a1",
+        "source": "TED",
+        "sponsored": false,
+        "hasTedAttribution": true
+      },
+      {
+        "id": "cmtwyh7xb0016rk785towrywu",
+        "externalRef": "446650-2026",
+        "title": "France – Technical control services – Vérifications obligatoires des équipemements techniques du patrimoine immobilier de compétence régionale 2027 - 2030",
+        "status": "ACTIVE",
+        "geographies": [
+          "France"
+        ],
+        "services": [
+          "Architectural and engineering services"
+        ],
+        "deadline": "2026-09-16T00:00:00.000Z",
+        "contentHash": "5dcfd813aa12261286e570c2862142db",
+        "source": "TED",
+        "sponsored": false,
+        "hasTedAttribution": true
+      },
+      {
+        "id": "cmtwyh78y0015rk78h9a6fbbt",
+        "externalRef": "446572-2026",
+        "title": "France – Restoration work – Accord-cadre à bons de commande relatif à la réalisation de travaux d’entretien et de rénovation sur les emprises soutenues par la D",
+        "status": "ACTIVE",
+        "geographies": [
+          "France"
+        ],
+        "services": [
+          "Construction work"
+        ],
+        "deadline": "2026-09-15T00:00:00.000Z",
+        "contentHash": "fcea1c8c09445f65ee3203ba275eb78d",
+        "source": "TED",
+        "sponsored": false,
+        "hasTedAttribution": true
+      },
+      {
+        "id": "cmtwyh6ao0014rk78jaa1tg4u",
+        "externalRef": "445609-2026",
+        "title": "Portugal – Wastewater treatment plant construction work – Empreitada de Conceção-Construção da Reabilitação da ETAR de Setúbal - Fase 1 - Intervenções Urgentes",
+        "status": "ACTIVE",
+        "geographies": [
+          "Portugal"
+        ],
+        "services": [
+          "Construction work",
+          "Architectural and engineering services"
+        ],
+        "deadline": "2026-09-18T00:00:00.000Z",
+        "contentHash": "1b72c0aae26951bf57bc3e52e70361dd",
+        "source": "TED",
+        "sponsored": false,
+        "hasTedAttribution": true
+      },
+      {
+        "id": "cmtwyh5hd0013rk783k1r2mll",
+        "externalRef": "443603-2026",
+        "title": "France – Software programming and consultancy services – G5D0040ND - Maintenance applicative et corrective pour le service de la communication Internet de sites",
+        "status": "ACTIVE",
+        "geographies": [
+          "France"
+        ],
+        "services": [
+          "IT services"
+        ],
+        "deadline": "2026-09-14T00:00:00.000Z",
+        "contentHash": "9f9bd41b2603a8fbbcb43ac1f4f4ace9",
+        "source": "TED",
+        "sponsored": false,
+        "hasTedAttribution": true
+      },
+      {
+        "id": "cmtwyh4ql0012rk780ma2pwr3",
+        "externalRef": "443359-2026",
+        "title": "France – Environmental engineering consultancy services – Etude de faisabilité, modification du schéma directeur de l'alimentation en eau potable et mission de ",
+        "status": "ACTIVE",
+        "geographies": [
+          "France"
+        ],
+        "services": [
+          "Architectural and engineering services"
+        ],
+        "deadline": "2026-10-01T00:00:00.000Z",
+        "contentHash": "879dcf8a8e759851736332d5bca25f39",
+        "source": "TED",
+        "sponsored": false,
+        "hasTedAttribution": true
+      },
+      {
+        "id": "cmtwyh3tv0011rk78vu6yjjyn",
+        "externalRef": "443333-2026",
+        "title": "France – Software implementation services – FASO 2.0 terminal",
+        "status": "ACTIVE",
+        "geographies": [
+          "France"
+        ],
+        "services": [
+          "IT services"
+        ],
+        "deadline": "2026-09-14T00:00:00.000Z",
+        "contentHash": "2f85c25db5a6bbc93439a0969400f481",
+        "source": "TED",
+        "sponsored": false,
+        "hasTedAttribution": true
+      },
+      {
+        "id": "cmtwyh2qy0010rk78lj5a40e0",
+        "externalRef": "441953-2026",
+        "title": "France – Preventive maintenance services – PRESTATION D’EXPLOITATION ET DE MAINTENANCE DES INSTALLATIONS DE CHAUFFAGE, VENTILATION, CLIMATISATION ET DES MOYENS ",
+        "status": "ACTIVE",
+        "geographies": [
+          "France"
+        ],
+        "services": [
+          "Repair and maintenance",
+          "Construction work"
+        ],
+        "deadline": "2026-09-15T00:00:00.000Z",
+        "contentHash": "67d9bd2ba1fd4ebf01d3abcdbdae2220",
+        "source": "TED",
+        "sponsored": false,
+        "hasTedAttribution": true
+      },
+      {
+        "id": "cmtwyh22z000zrk786l7mtw5l",
+        "externalRef": "441807-2026",
+        "title": "Portugal – Overhaul and refurbishment work – REABILITAÇÃO, REQUALIFICAÇÃO E AMPLIAÇÃO DA ESCOLA SECUNDÁRIA ANTÓNIO INÁCIO DA CRUZ",
+        "status": "ACTIVE",
+        "geographies": [
+          "Portugal"
+        ],
+        "services": [
+          "Construction work"
+        ],
+        "deadline": "2026-09-22T00:00:00.000Z",
+        "contentHash": "700e02bf701f77dcaa1a74bb1fcef80c",
+        "source": "TED",
+        "sponsored": false,
+        "hasTedAttribution": true
+      }
+    ]
+  },
+  "runtimeErrors": {
+    "database": [],
+    "api": [],
+    "other": []
+  },
+  "dataQualityFailures": [],
+  "safetyFailures": [],
+  "verdict": "LIVE_INGEST_VALIDATED",
+  "failures": []
+}

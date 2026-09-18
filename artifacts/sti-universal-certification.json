@@ -1,0 +1,168 @@
+{
+  "status": "PASS",
+  "certifiedAt": "2026-09-05T14:01:09.413Z",
+  "architecture": {
+    "boundary": "STI interpret → entry gate → StiApprovedRequirementBatch → normalize → admission firewall",
+    "persistence": "canonicalSnapshot.stiAdmission (sti-admission/v2); TenderRequirement text-only"
+  },
+  "packages": [
+    {
+      "label": "Test2-IT-Admin",
+      "files": 1,
+      "formats": [
+        "pdf"
+      ],
+      "documentRoles": [
+        "ITB",
+        "TECHNICAL",
+        "COMMERCIAL"
+      ],
+      "drafts": 12,
+      "stiCandidates": 11,
+      "admitted": 11,
+      "buyerExcluded": 0,
+      "postAwardExcluded": 1,
+      "templateExcluded": 0,
+      "ambiguousMixed": 1,
+      "samplesAdmitted": [
+        {
+          "text": "• T-01 The bidder must be legally registered and authorized to operate in Morocco.",
+          "actor": "BIDDER",
+          "phase": "BID_SUBMISSION",
+          "purpose": "ELIGIBILITY"
+        },
+        {
+          "text": "• T-02 The bidder must submit valid tax-clearance and CNSS compliance certificates with the offer.",
+          "actor": "BIDDER",
+          "phase": "BID_SUBMISSION",
+          "purpose": "REQUIRED_DOCUMENT"
+        },
+        {
+          "text": "• T-03 The proposed firewall must support at least 2 Gbps throughput with active threat subscriptions.",
+          "actor": "BIDDER",
+          "phase": "BID_SUBMISSION",
+          "purpose": "TECHNICAL"
+        },
+        {
+          "text": "• T-04 The wireless solution must provide Wi-Fi 6 access points with centralized management.",
+          "actor": "BIDDER",
+          "phase": "BID_SUBMISSION",
+          "purpose": "BIDDER_OBLIGATION"
+        }
+      ],
+      "samplesExcluded": [
+        {
+          "text": "• A performance guarantee equal to 10% of the contract value shall be provided by the successful bidder.",
+          "purpose": "POST_AWARD_OBLIGATION",
+          "code": "EXCLUDED_POST_AWARD"
+        }
+      ],
+      "contaminationCount": 0,
+      "result": "PASS"
+    },
+    {
+      "label": "Audiovisual-Synthetic",
+      "files": 1,
+      "formats": [
+        "pdf"
+      ],
+      "documentRoles": [
+        "TECHNICAL",
+        "WARRANTY",
+        "ADMIN",
+        "ELIGIBILITY"
+      ],
+      "drafts": 7,
+      "stiCandidates": 6,
+      "admitted": 5,
+      "buyerExcluded": 0,
+      "postAwardExcluded": 0,
+      "templateExcluded": 0,
+      "ambiguousMixed": 0,
+      "samplesAdmitted": [
+        {
+          "text": "Bidders must submit a provisional bond (caution provisoire) together with the tender dossier.",
+          "actor": "BIDDER",
+          "phase": "BID_SUBMISSION",
+          "purpose": "COMMERCIAL"
+        },
+        {
+          "text": "The bidder shall supply, install, configure and commission a complete audiovisual system including projection equipment,",
+          "actor": "BIDDER",
+          "phase": "BID_SUBMISSION",
+          "purpose": "TECHNICAL"
+        },
+        {
+          "text": "The supplier must provide a minimum warranty period of 24 months on all installed AV equipment.",
+          "actor": "SUPPLIER",
+          "phase": "BID_SUBMISSION",
+          "purpose": "TECHNICAL"
+        },
+        {
+          "text": "Attestation CNSS and tax clearance certificate are mandatory.",
+          "actor": "BIDDER",
+          "phase": "UNKNOWN",
+          "purpose": "REQUIRED_DOCUMENT"
+        }
+      ],
+      "samplesExcluded": [],
+      "contaminationCount": 0,
+      "result": "PASS"
+    },
+    {
+      "label": "Stress-Network-Security",
+      "files": 1,
+      "formats": [
+        "pdf"
+      ],
+      "documentRoles": [
+        "ITB",
+        "TECHNICAL",
+        "PERFORMANCE",
+        "COMMERCIAL"
+      ],
+      "drafts": 15,
+      "stiCandidates": 14,
+      "admitted": 14,
+      "buyerExcluded": 0,
+      "postAwardExcluded": 1,
+      "templateExcluded": 0,
+      "ambiguousMixed": 1,
+      "samplesAdmitted": [
+        {
+          "text": "• R-01 The bidder must be legally registered and authorized to perform the contracted activities.",
+          "actor": "BIDDER",
+          "phase": "BID_SUBMISSION",
+          "purpose": "ELIGIBILITY"
+        },
+        {
+          "text": "• R-02 The bidder must provide a valid tax-clearance certificate and a valid social-security compliance certificate at t",
+          "actor": "BIDDER",
+          "phase": "BID_SUBMISSION",
+          "purpose": "REQUIRED_DOCUMENT"
+        },
+        {
+          "text": "• R-03 The bidder must submit a signed tender declaration using the form included in this tender dossier.",
+          "actor": "BIDDER",
+          "phase": "BID_SUBMISSION",
+          "purpose": "ELIGIBILITY"
+        },
+        {
+          "text": "• R-04 The bidder must provide a provisional bid security of MAD 12,000.",
+          "actor": "BIDDER",
+          "phase": "BID_SUBMISSION",
+          "purpose": "COMMERCIAL"
+        }
+      ],
+      "samplesExcluded": [
+        {
+          "text": "• A performance guarantee equal to 10% of the contract value shall be provided by the successful bidder.",
+          "purpose": "POST_AWARD_OBLIGATION",
+          "code": "EXCLUDED_POST_AWARD"
+        }
+      ],
+      "contaminationCount": 0,
+      "result": "PASS"
+    }
+  ]
+}

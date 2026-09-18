@@ -1,0 +1,59 @@
+# Bidvera Next.js application — systemd template for multiple instances on one host.
+# Install: copy to /etc/systemd/system/bidvera-app@.service
+#
+# Enable instances (ports must match deploy/nginx/bidvera.conf upstream):
+#   sudo systemctl enable --now bidvera-app@3000
+#   sudo systemctl enable --now bidvera-app@3001
+#   sudo systemctl enable --now bidvera-app@3002
+# Add more: enable bidvera-app@3003 and append matching upstream server — no app code change.
+#
+# Instance identity (%i) is the listen PORT. HOSTNAME stays loopback.
+# Single-instance hosts may keep using bidvera-app.service instead.
+# Do NOT enable both bidvera-app.service and bidvera-app@3000 (port conflict).
+#
+# Drain before restart:
+#   1) Remove/comment upstream for this port in Nginx → nginx -t && systemctl reload nginx
+#   2) sudo systemctl stop bidvera-app@PORT
+#   3) Restart unit, re-add upstream, reload Nginx
+
+[Unit]
+Description=Bidvera Next.js app (port %i)
+Documentation=file:///opt/bidvera/docs/production-deployment.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=bidvera
+Group=bidvera
+WorkingDirectory=/opt/bidvera/current
+Environment=NODE_ENV=production
+Environment=PORT=%i
+Environment=HOSTNAME=127.0.0.1
+Environment=INSTANCE_ID=app-%i
+EnvironmentFile=-/etc/bidvera/env
+# Prefer Node 22 LTS binary (nvm/fnm/system). Example paths — edit for the host:
+# Environment=PATH=/usr/local/bin:/usr/bin
+ExecStart=/usr/bin/npm run start
+Restart=always
+RestartSec=5
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=45
+LimitNOFILE=65535
+# Optional operator memory ceiling — leave unset unless measured OOM risk on a shared host.
+# MemoryMax=1536M
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=bidvera-app-%i
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/opt/bidvera /var/lib/bidvera
+ProtectHome=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictSUIDSGID=true
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target

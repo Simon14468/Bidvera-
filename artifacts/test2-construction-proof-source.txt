@@ -1,0 +1,108 @@
+--- Page 1 (pdf-parse) ---
+
+Bidvera Test 2 • Fictional construction tender Page 1
+INVITATION TO TENDER
+Renovation and Energy-Efficiency Upgrade of Municipal Office Building
+Tender Reference: MUN-BLD-2026-041
+Contracting authority: Coastal Municipal Development Agency (CMDA)
+Publication: 8 September 2026
+Submission deadline: 6 October 2026 at 10:30
+Contract period: 120 calendar days
+Estimated value: MAD 1,250,000 excluding VAT
+Procedure: Open competitive procedure
+1. Project Scope
+The authority intends to renovate a four-storey municipal office building and improve its energy performance. Works
+include roof insulation, selected window replacement, LED lighting, HVAC improvements, electrical adjustments,
+painting, commissioning, testing and handover.
+2. Eligibility and Administrative Requirements
+• E-01 The bidder must be legally registered to perform building renovation and related electrical/HVAC works.
+• E-02 The bidder must provide valid tax-clearance and social-security compliance certificates.
+• E-03 The bidder must submit a signed declaration of honour using the prescribed form.
+• E-04 The bidder must provide a provisional tender guarantee of MAD 25,000.
+• E-05 The bidder must demonstrate at least 4 comparable building renovation projects completed during the
+previous 6 years, including client references.
+
+--- Page 2 (pdf-parse) ---
+
+Bidvera Test 2 • Fictional construction tender Page 2
+3. Technical Requirements
+• T-01 Roof insulation must achieve a minimum thermal resistance of R = 5.0 m²K/W.
+• T-02 Replacement windows must use double glazing with a declared U-value not exceeding 1.6 W/m²K.
+• T-03 All replacement lighting fixtures must be LED with a minimum efficacy of 120 lm/W.
+• T-04 HVAC units must use refrigerant with a global-warming-potential value below 750 and include programmable
+controls.
+• T-05 The bidder must provide electrical installation test certificates after completion.
+• T-06 The contractor must complete commissioning and provide as-built drawings and maintenance documentation.
+• T-07 The works must be completed within 120 calendar days from contractual commencement.
+• T-08 The contractor must provide a minimum 24-month defects liability/warranty period.
+4. Commercial and Contractual Conditions
+• The contract price shall remain firm and non-revisable.
+• A performance guarantee equal to 10% of the awarded contract amount shall be provided by the successful
+contractor.
+• Payment will be made through monthly certified progress statements, subject to approval and contractual retention
+provisions.
+• Delay penalties may be applied at 1/1000 of the contract amount per calendar day, subject to the contractual cap.
+
+--- Page 3 (pdf-parse) ---
+
+Bidvera Test 2 • Fictional construction tender Page 3
+5. Evaluation Method
+• Technical quality: 45%
+• Price: 35%
+• Relevant experience: 10%
+• Work methodology and schedule: 10%
+Evaluation weights are assessment criteria, not additional bidder requirements.
+6. Submission Documents
+• Administrative certificates and declaration required by Section 2.
+• Technical proposal and methodology.
+• Detailed bill of quantities and financial offer.
+• Project schedule and work programme.
+• Product technical datasheets where applicable.
+7. Clarifications
+Requests for clarification may be submitted up to 8 calendar days before the tender deadline. The authority may request
+clarification but will not accept a material change to the offer.
+The deadline is procedural information and must not be interpreted as a bidder qualification requirement.
+
+--- Page 4 (pdf-parse) ---
+
+Bidvera Test 2 • Fictional construction tender Page 4
+8. Conditional Technical Requirement
+• T-09 (conditional) If the bidder proposes replacing HVAC equipment rather than repairing existing units, the proposed
+replacement units must include manufacturer documentation confirming the required refrigerant specification and
+programmable control capability.
+9. Repeated References and Cross-References
+The following statements repeat or summarize obligations already defined above. They do not create additional
+requirements:
+• The tender guarantee remains MAD 25,000; a second reference is the same guarantee obligation.
+• The four-project experience condition remains the same eligibility requirement even when referenced elsewhere.
+• The 24-month defects liability period remains one warranty obligation.
+• The 120-day completion period is one contractual performance obligation even when repeated in the schedule.
+10. Site and Project Facts — Informational
+• The building has approximately 180 employees.
+• The roof area is approximately 1,900 m².
+• The building was originally constructed in 1998.
+• The authority expects works while parts of the building remain occupied.
+
+--- Page 5 (pdf-parse) ---
+
+Bidvera Test 2 • Fictional construction tender Page 5
+11. Reviewer Verification Examples — Not Requirements
+The examples below describe checks that a procurement reviewer may perform. They are not additional bidder obligations.
+• Example A: verify that each experience reference is dated within the six-year period.
+• Example B: verify the declared U-value in the window manufacturer's datasheet.
+• Example C: verify the tender guarantee amount against the submitted bank instrument.
+• Example D: verify the HVAC refrigerant declaration when the conditional requirement applies.
+• Example E: verify commissioning documents before acceptance.
+12. Analysis-System Quality Note — Not a Tender Requirement
+This section exists only to test document understanding. An automated system should distinguish requirements from facts,
+deadlines, evaluation criteria, reviewer examples and explanatory notes. It should not treat the word 'must' inside this note
+as a bidder obligation.
+13. Additional Contract Details
+• The contractor is responsible for site safety, temporary protection and removal of construction waste generated by the
+works.
+• The contractor shall maintain appropriate insurance coverage required by applicable law and the contract.
+• Imported materials remain the contractor's responsibility until delivered and accepted at the project site.
+Final Tender Statement
+Only compliant offers satisfying applicable eligibility, technical, contractual and submission conditions will proceed to
+final evaluation. The authority may reject non-compliant offers in accordance with procurement rules.
+TEST DOCUMENT — Fictional tender created exclusively to test Bidvera. Not an official procurement notice.

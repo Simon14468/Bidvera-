@@ -1,0 +1,326 @@
+{
+  "status": 200,
+  "total": 14788,
+  "withDeadline": 10,
+  "sample": [
+    {
+      "pub": "406225-2026",
+      "pubDate": "2026-06-15+02:00",
+      "country": [
+        "ESP"
+      ],
+      "cpv": [
+        "03000000",
+        "15400000"
+      ],
+      "deadline": [
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00"
+      ],
+      "keys": [
+        "deadline-receipt-tender-date-lot",
+        "notice-type",
+        "publication-number",
+        "classification-cpv",
+        "publication-date",
+        "links",
+        "buyer-country",
+        "form-type"
+      ]
+    },
+    {
+      "pub": "406238-2026",
+      "pubDate": "2026-06-15+02:00",
+      "country": [
+        "FRA"
+      ],
+      "cpv": [
+        "90911200",
+        "90911200"
+      ],
+      "deadline": [
+        "2026-07-17+02:00",
+        "2026-07-17+02:00"
+      ],
+      "keys": [
+        "deadline-receipt-tender-date-lot",
+        "notice-type",
+        "publication-number",
+        "classification-cpv",
+        "publication-date",
+        "links",
+        "buyer-country",
+        "form-type"
+      ]
+    },
+    {
+      "pub": "406241-2026",
+      "pubDate": "2026-06-15+02:00",
+      "country": [
+        "ESP"
+      ],
+      "cpv": [
+        "15000000",
+        "03000000"
+      ],
+      "deadline": [
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00"
+      ],
+      "keys": [
+        "deadline-receipt-tender-date-lot",
+        "notice-type",
+        "publication-number",
+        "classification-cpv",
+        "publication-date",
+        "links",
+        "buyer-country",
+        "form-type"
+      ]
+    },
+    {
+      "pub": "406287-2026",
+      "pubDate": "2026-06-15+02:00",
+      "country": [
+        "ESP"
+      ],
+      "cpv": [
+        "85143000",
+        "85143000"
+      ],
+      "deadline": [
+        "2026-07-15+02:00"
+      ],
+      "keys": [
+        "deadline-receipt-tender-date-lot",
+        "notice-type",
+        "publication-number",
+        "classification-cpv",
+        "publication-date",
+        "links",
+        "buyer-country",
+        "form-type"
+      ]
+    },
+    {
+      "pub": "406288-2026",
+      "pubDate": "2026-06-15+02:00",
+      "country": [
+        "FRA"
+      ],
+      "cpv": [
+        "45233120",
+        "45233120"
+      ],
+      "deadline": [
+        "2026-07-13+02:00"
+      ],
+      "keys": [
+        "deadline-receipt-tender-date-lot",
+        "notice-type",
+        "publication-number",
+        "classification-cpv",
+        "publication-date",
+        "links",
+        "buyer-country",
+        "form-type"
+      ]
+    },
+    {
+      "pub": "406308-2026",
+      "pubDate": "2026-06-15+02:00",
+      "country": [
+        "ESP"
+      ],
+      "cpv": [
+        "15000000",
+        "03000000"
+      ],
+      "deadline": [
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00",
+        "2026-06-30+02:00"
+      ],
+      "keys": [
+        "deadline-receipt-tender-date-lot",
+        "notice-type",
+        "publication-number",
+        "classification-cpv",
+        "publication-date",
+        "links",
+        "buyer-country",
+        "form-type"
+      ]
+    },
+    {
+      "pub": "406309-2026",
+      "pubDate": "2026-06-15+02:00",
+      "country": [
+        "FRA"
+      ],
+      "cpv": [
+        "34100000",
+        "34100000"
+      ],
+      "deadline": [
+        "2026-07-16+01:00",
+        "2026-07-16+01:00",
+        "2026-07-16+01:00",
+        "2026-07-16+01:00",
+        "2026-07-16+01:00",
+        "2026-07-16+01:00",
+        "2026-07-16+01:00",
+        "2026-07-16+01:00",
+        "2026-07-16+01:00"
+      ],
+      "keys": [
+        "deadline-receipt-tender-date-lot",
+        "notice-type",
+        "publication-number",
+        "classification-cpv",
+        "publication-date",
+        "links",
+        "buyer-country",
+        "form-type"
+      ]
+    },
+    {
+      "pub": "406324-2026",
+      "pubDate": "2026-06-15+02:00",
+      "country": [
+        "FRA"
+      ],
+      "cpv": [
+        "34927100",
+        "34927100"
+      ],
+      "deadline": [
+        "2026-07-15+02:00"
+      ],
+      "keys": [
+        "deadline-receipt-tender-date-lot",
+        "notice-type",
+        "publication-number",
+        "classification-cpv",
+        "publication-date",
+        "links",
+        "buyer-country",
+        "form-type"
+      ]
+    },
+    {
+      "pub": "406330-2026",
+      "pubDate": "2026-06-15+02:00",
+      "country": [
+        "FRA"
+      ],
+      "cpv": [
+        "66510000",
+        "66510000"
+      ],
+      "deadline": [
+        "2026-07-24+02:00",
+        "2026-07-24+02:00",
+        "2026-07-24+02:00",
+        "2026-07-24+02:00",
+        "2026-07-24+02:00"
+      ],
+      "keys": [
+        "deadline-receipt-tender-date-lot",
+        "notice-type",
+        "publication-number",
+        "classification-cpv",
+        "publication-date",
+        "links",
+        "buyer-country",
+        "form-type"
+      ]
+    },
+    {
+      "pub": "406334-2026",
+      "pubDate": "2026-06-15+02:00",
+      "country": [
+        "FRA"
+      ],
+      "cpv": [
+        "34144700",
+        "34140000"
+      ],
+      "deadline": [
+        "2026-07-16+02:00"
+      ],
+      "keys": [
+        "deadline-receipt-tender-date-lot",
+        "notice-type",
+        "publication-number",
+        "classification-cpv",
+        "publication-date",
+        "links",
+        "buyer-country",
+        "form-type"
+      ]
+    }
+  ]
+}

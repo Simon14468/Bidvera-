@@ -1,0 +1,42 @@
+/** Paths crawlers must not index. Keep in sync with noindex layouts. */
+export const robotsDisallowPaths = [
+  "/dashboard",
+  "/tenders",
+  "/company",
+  "/alerts",
+  "/settings",
+  "/upgrade",
+  "/billing",
+  "/decision-memory",
+  "/document-compliance",
+  "/supplier-qualification",
+  "/client-requests",
+  "/questionnaire-assistant",
+  "/matched-opportunities",
+  "/team-workflow",
+  "/tender-calendar",
+  "/onboarding",
+  "/login",
+  "/signup",
+  "/forgot-password",
+  "/reset-password",
+  "/verify-email",
+  "/confirm-email-change",
+  "/share/",
+  "/api/",
+  "/offline",
+] as const;
+
+/** Public marketing prefixes allowed for crawl. */
+export const robotsAllowPaths = [
+  "/",
+  "/product",
+  "/pricing",
+  "/faq",
+  "/solutions",
+  "/use-cases",
+  "/compare",
+  "/resources",
+  "/guides",
+  "/glossary",
+] as const;

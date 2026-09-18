@@ -1,0 +1,102 @@
+{
+  "status": "PASS",
+  "packages": [
+    {
+      "label": "Bid for the supply of [Insert a brief description of goods/services] in [Name of",
+      "tenderId": "cmtodz18l0glxrk380moagr33",
+      "files": 10,
+      "formats": [
+        "docx",
+        "pdf",
+        "xlsx"
+      ],
+      "drafts": 73,
+      "stiCandidates": 65,
+      "admitted": 43,
+      "rejected": 8,
+      "contamination": [],
+      "samplesAdmitted": [
+        {
+          "text": "3 All tools, fittings, accessories, cables, adapters, connectors, mounting hardware, and consumables",
+          "actor": "SUPPLIER",
+          "phase": "BID_SUBMISSION"
+        },
+        {
+          "text": "A31=1 | B31=The supplier shall submit delivery notes, installation completion reports, and warranty ",
+          "actor": "SUPPLIER",
+          "phase": "BID_SUBMISSION"
+        },
+        {
+          "text": "K Coordination and Scheduling 1 The supplier shall coordinate delivery and installation schedules wi",
+          "actor": "SUPPLIER",
+          "phase": "BID_SUBMISSION"
+        }
+      ],
+      "result": "PASS"
+    },
+    {
+      "label": "5. RFP SectionV Contract Forms.pdf + 3. RFP 2026 64052 SOGREA WP4 Training Terms",
+      "tenderId": "cmtnm1umi0d52rk38ug10xpsm",
+      "files": 6,
+      "formats": [
+        "pdf",
+        "docx"
+      ],
+      "drafts": 62,
+      "stiCandidates": 48,
+      "admitted": 24,
+      "rejected": 14,
+      "contamination": [],
+      "samplesAdmitted": [
+        {
+          "text": "Compliance with the minimum qualification requirements is mandatory, while preferred qualifications ",
+          "actor": "BIDDER",
+          "phase": "EVALUATION"
+        },
+        {
+          "text": "Bidders may propose French-speaking trainers or supplementary French-language materials where benefi",
+          "actor": "BIDDER",
+          "phase": "BID_SUBMISSION"
+        },
+        {
+          "text": "To support value-for-money assessment, bidders shall provide separate pricing for the following impl",
+          "actor": "BIDDER",
+          "phase": "BID_SUBMISSION"
+        }
+      ],
+      "result": "PASS"
+    },
+    {
+      "label": "Proposal for the supply of [Insert a brief description of goods/services] in [Na",
+      "tenderId": "cmtnkhv580blxrk38sfayjw98",
+      "files": 6,
+      "formats": [
+        "pdf",
+        "docx"
+      ],
+      "drafts": 62,
+      "stiCandidates": 48,
+      "admitted": 24,
+      "rejected": 14,
+      "contamination": [],
+      "samplesAdmitted": [
+        {
+          "text": "1. The company must be a legally registered and incorporated company or a Joint venture of any natio",
+          "actor": "BIDDER",
+          "phase": "BID_SUBMISSION"
+        },
+        {
+          "text": "3. The bidder must demonstrate experience in energy, infrastructure, PPP, regulatory, environmental,",
+          "actor": "BIDDER",
+          "phase": "BID_SUBMISSION"
+        },
+        {
+          "text": "Compliance with the minimum qualification requirements is mandatory, while preferred qualifications ",
+          "actor": "BIDDER",
+          "phase": "EVALUATION"
+        }
+      ],
+      "result": "PASS"
+    }
+  ]
+}

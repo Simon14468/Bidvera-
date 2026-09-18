@@ -1,0 +1,395 @@
+{
+  "tenderId": "cmtq0ld8209ryrk7o8thtfkn2",
+  "files": [
+    {
+      "fileName": "Section VI - Contract Forms.pdf",
+      "chars": 15687,
+      "role": "CONTRACT_FORM"
+    },
+    {
+      "fileName": "UN Supplier Code of Conduct.pdf",
+      "chars": 16051,
+      "role": "POLICY_OR_CODE_OF_CONDUCT"
+    },
+    {
+      "fileName": "Amendment No. 1 Form C and D_Requirements and Price List_ITB_2026_62687.xlsx",
+      "chars": 96825,
+      "role": "AMENDMENT"
+    },
+    {
+      "fileName": "Section I - Instruction to Offerors.pdf",
+      "chars": 50188,
+      "role": "INSTRUCTIONS_TO_BIDDERS"
+    },
+    {
+      "fileName": "ITB_Section_II_Schedule of Requirements.pdf",
+      "chars": 28931,
+      "role": "SCHEDULE_OF_REQUIREMENTS"
+    },
+    {
+      "fileName": "ITB_Section_III_Returnable Bidding Forms.docx",
+      "chars": 13957,
+      "role": "RETURNABLE_BIDDING_FORMS"
+    },
+    {
+      "fileName": "UNOPS_eSourcing_Vendor Guide_v1.4_EN_final.pdf",
+      "chars": 47373,
+      "role": "VENDOR_GUIDE"
+    }
+  ],
+  "packageIdentity": {
+    "buyer": {
+      "value": null,
+      "status": "UNKNOWN",
+      "candidates": []
+    },
+    "title": {
+      "value": null,
+      "status": "UNKNOWN",
+      "candidates": []
+    },
+    "reference": {
+      "value": null,
+      "status": "UNKNOWN",
+      "candidates": []
+    },
+    "deadline": {
+      "deadlineIso": null,
+      "deadlineTimezone": null,
+      "localHour": null,
+      "localMinute": null,
+      "evidence": null,
+      "status": "INCOMPLETE",
+      "dateClass": null,
+      "reason": "Authoritative documents did not yield a parseable bid-submission deadline. Non-authoritative restatements (pre-bid, Q&A, forms) are not used as package truth.",
+      "sources": []
+    }
+  },
+  "heuristicDrafts": 222,
+  "interpreted": 222,
+  "admittedCandidates": 64,
+  "canonical": 60,
+  "rejected": 156,
+  "contextualIntelligence": 80,
+  "rejectionBuckets": {
+    "UNCERTAIN": 66,
+    "POST_AWARD": 15,
+    "TEMPLATE": 7,
+    "POLICY": 5,
+    "EVALUATION": 2,
+    "EXCLUDED_TABLE_HEADER": 1,
+    "PROCEDURAL": 54,
+    "EXCLUDED_ORPHAN_CONDITION": 6
+  },
+  "bySourceAdmitted": {
+    "Amendment No. 1 Form C and D_Requirements and Price List_ITB_2026_62687.xlsx": 18,
+    "Section I - Instruction to Offerors.pdf": 33,
+    "ITB_Section_II_Schedule of Requirements.pdf": 4,
+    "ITB_Section_III_Returnable Bidding Forms.docx": 9
+  },
+  "bySourceRejected": {
+    "Section VI - Contract Forms.pdf": 21,
+    "UN Supplier Code of Conduct.pdf": 5,
+    "Amendment No. 1 Form C and D_Requirements and Price List_ITB_2026_62687.xlsx": 20,
+    "Section I - Instruction to Offerors.pdf": 32,
+    "ITB_Section_II_Schedule of Requirements.pdf": 10,
+    "ITB_Section_III_Returnable Bidding Forms.docx": 8,
+    "UNOPS_eSourcing_Vendor Guide_v1.4_EN_final.pdf": 60
+  },
+  "contaminationCount": 0,
+  "contamination": [],
+  "sampleAdmitted": [
+    {
+      "text": "A4=Bidders MUST make sure that all specifiactions for the lots they are bidding for are duly filled out. Note that there are several Tabs in this file that need",
+      "actor": "BIDDER",
+      "phase": "BID_SUBMISSION",
+      "purpose": "BIDDER_OBLIGATION",
+      "documentPurpose": "CLARIFICATION_SOURCE",
+      "source": "Amendment No. 1 Form C and D_Requirements and Price List_ITB_2026_62687.xlsx"
+    },
+    {
+      "text": "A9=Delivery time B9=Bidder shall deliver the goods within maximum 30 days after receiving the PO for orders of up to 10 units. C9= D9=",
+      "actor": "BIDDER",
+      "phase": "PRE_AWARD",
+      "purpose": "BIDDER_OBLIGATION",
+      "documentPurpose": "CLARIFICATION_SOURCE",
+      "source": "Amendment No. 1 Form C and D_Requirements and Price List_ITB_2026_62687.xlsx"
+    },
+    {
+      "text": "Lot Contents minimum or equivalent to: Minimum Qty 1 Description Large Hook & Line kit for IEDD and EOD tasks. Set stored in a heavy duty case. Corrosion-Resist",
+      "actor": "BIDDER",
+      "phase": "BID_SUBMISSION",
+      "purpose": "TECHNICAL",
+      "documentPurpose": "CLARIFICATION_SOURCE",
+      "source": "Amendment No. 1 Form C and D_Requirements and Price List_ITB_2026_62687.xlsx"
+    },
+    {
+      "text": "A6=1 B6=Description Large Hook & Line kit for IEDD and EOD tasks. Set stored in a heavy duty case. Corrosion-Resistant D6= E6= levant technical brochure to faci",
+      "actor": "BIDDER",
+      "phase": "BID_SUBMISSION",
+      "purpose": "TECHNICAL",
+      "documentPurpose": "CLARIFICATION_SOURCE",
+      "source": "Amendment No. 1 Form C and D_Requirements and Price List_ITB_2026_62687.xlsx"
+    },
+    {
+      "text": "Lot Contents minimum or equivalent to: Minimum Qty 2 Description Lite Hook & Line kit for IEDD and EOD tasks. Set stored in a heavy duty case. Corrosion-Resista",
+      "actor": "BIDDER",
+      "phase": "BID_SUBMISSION",
+      "purpose": "TECHNICAL",
+      "documentPurpose": "CLARIFICATION_SOURCE",
+      "source": "Amendment No. 1 Form C and D_Requirements and Price List_ITB_2026_62687.xlsx"
+    },
+    {
+      "text": "A6=2 B6=Description Lite Hook & Line kit for IEDD and EOD tasks. Set stored in a heavy duty case. Corrosion-Resistant D6= E6= levant technical brochure to facil",
+      "actor": "BIDDER",
+      "phase": "BID_SUBMISSION",
+      "purpose": "TECHNICAL",
+      "documentPurpose": "CLARIFICATION_SOURCE",
+      "source": "Amendment No. 1 Form C and D_Requirements and Price List_ITB_2026_62687.xlsx"
+    },
+    {
+      "text": "Lot Contents minimum or equivalent to: Minimum Qty 3 Description Hook & Line for IEDD and EOD tasks. Set stored in a heavy duty backpack. Corrosion-Resistant \" ",
+      "actor": "BIDDER",
+      "phase": "BID_SUBMISSION",
+      "purpose": "TECHNICAL",
+      "documentPurpose": "CLARIFICATION_SOURCE",
+      "source": "Amendment No. 1 Form C and D_Requirements and Price List_ITB_2026_62687.xlsx"
+    },
+    {
+      "text": "A6=3 B6=Description Hook & Line for IEDD and EOD tasks. Set stored in a heavy duty backpack. Corrosion-Resistant D6= E6= levant technical brochure to facilitate",
+      "actor": "BIDDER",
+      "phase": "BID_SUBMISSION",
+      "purpose": "TECHNICAL",
+      "documentPurpose": "CLARIFICATION_SOURCE",
+      "source": "Amendment No. 1 Form C and D_Requirements and Price List_ITB_2026_62687.xlsx"
+    },
+    {
+      "text": "Lot Contents minimum or equivalent to: Minimum Qty 4 Description Lightweight Hook & Line for IEDD and EOD tactical tasks. Set stored in modular leg pouches. Cor",
+      "actor": "BIDDER",
+      "phase": "BID_SUBMISSION",
+      "purpose": "TECHNICAL",
+      "documentPurpose": "CLARIFICATION_SOURCE",
+      "source": "Amendment No. 1 Form C and D_Requirements and Price List_ITB_2026_62687.xlsx"
+    },
+    {
+      "text": "A6=4 B6=Description Lightweight Hook & Line for IEDD and EOD tactical tasks. Set stored in modular leg pouches. Corrosion-Resistant D6= E6= levant technical bro",
+      "actor": "BIDDER",
+      "phase": "BID_SUBMISSION",
+      "purpose": "TECHNICAL",
+      "documentPurpose": "CLARIFICATION_SOURCE",
+      "source": "Amendment No. 1 Form C and D_Requirements and Price List_ITB_2026_62687.xlsx"
+    }
+  ],
+  "sampleRejected": [
+    {
+      "text": "In the event of a Contract, the following General Conditions of Contract will apply:",
+      "actor": "UNKNOWN",
+      "phase": "UNKNOWN",
+      "purpose": "UNKNOWN",
+      "documentPurpose": "CONTRACT_EXECUTION_SOURCE",
+      "exclusion": "AMBIGUOUS_ACTOR",
+      "source": "Section VI - Contract Forms.pdf"
+    },
+    {
+      "text": "○ UNOPS intends to retain the Contractor for the [Note to be deleted: choose as applicable [supply goods and/or perform services]] regarding [insert summary des",
+      "actor": "UNKNOWN",
+      "phase": "UNKNOWN",
+      "purpose": "TEMPLATE",
+      "documentPurpose": "CONTRACT_EXECUTION_SOURCE",
+      "exclusion": "AMBIGUOUS_PHASE",
+      "source": "Section VI - Contract Forms.pdf"
+    },
+    {
+      "text": "○ The Contractor must accept and honour Purchase Orders issued by UNOPS from any of its offices in any country, worldwide.",
+      "actor": "CONTRACTOR",
+      "phase": "UNKNOWN",
+      "purpose": "UNKNOWN",
+      "documentPurpose": "CONTRACT_EXECUTION_SOURCE",
+      "exclusion": "EXCLUDED_POST_AWARD",
+      "source": "Section VI - Contract Forms.pdf"
+    },
+    {
+      "text": "In the event of any model, technical or other changes affecting the Goods as specified in Annex 3, the Contractor shall offer equivalent or better specification",
+      "actor": "CONTRACTOR",
+      "phase": "UNKNOWN",
+      "purpose": "UNKNOWN",
+      "documentPurpose": "CONTRACT_EXECUTION_SOURCE",
+      "exclusion": "EXCLUDED_POST_AWARD",
+      "source": "Section VI - Contract Forms.pdf"
+    },
+    {
+      "text": "■ Set out the actual quantities required and other terms and conditions for the delivery of Note to be deleted: choose as applicable [“Goods” and/or “Services”]",
+      "actor": "UNKNOWN",
+      "phase": "UNKNOWN",
+      "purpose": "TEMPLATE",
+      "documentPurpose": "CONTRACT_EXECUTION_SOURCE",
+      "exclusion": "EXCLUDED_TEMPLATE",
+      "source": "Section VI - Contract Forms.pdf"
+    },
+    {
+      "text": "○ Each Purchase Order shall be deemed to be a separate contract between the Parties. In the event of a conflict between the provisions of this Agreement and the",
+      "actor": "UNKNOWN",
+      "phase": "UNKNOWN",
+      "purpose": "UNKNOWN",
+      "documentPurpose": "CONTRACT_EXECUTION_SOURCE",
+      "exclusion": "AMBIGUOUS_ACTOR",
+      "source": "Section VI - Contract Forms.pdf"
+    },
+    {
+      "text": "Agreement shall take precedence. Termination or variation of the terms of a Purchase Order shall not, in and of itself, affect any other Purchase Orders or this",
+      "actor": "UNKNOWN",
+      "phase": "UNKNOWN",
+      "purpose": "UNKNOWN",
+      "documentPurpose": "CONTRACT_EXECUTION_SOURCE",
+      "exclusion": "AMBIGUOUS_ACTOR",
+      "source": "Section VI - Contract Forms.pdf"
+    },
+    {
+      "text": "Maintain following paragraph if agreement should be open for sharing within the UN system, otherwise delete the following paragraph",
+      "actor": "UNKNOWN",
+      "phase": "UNKNOWN",
+      "purpose": "UNKNOWN",
+      "documentPurpose": "CONTRACT_EXECUTION_SOURCE",
+      "exclusion": "AMBIGUOUS_PHASE",
+      "source": "Section VI - Contract Forms.pdf"
+    },
+    {
+      "text": "○ The Contractor shall accord the same terms and conditions as stipulated in this Agreement to any other organization within the United Nations system that wish",
+      "actor": "CONTRACTOR",
+      "phase": "UNKNOWN",
+      "purpose": "UNKNOWN",
+      "documentPurpose": "CONTRACT_EXECUTION_SOURCE",
+      "exclusion": "EXCLUDED_POST_AWARD",
+      "source": "Section VI - Contract Forms.pdf"
+    },
+    {
+      "text": "○ All purchase orders issued at any time during the period of validity of the LTA, including when their delivery dates extend beyond the LTA's end date, shall b",
+      "actor": "UNKNOWN",
+      "phase": "UNKNOWN",
+      "purpose": "UNKNOWN",
+      "documentPurpose": "CONTRACT_EXECUTION_SOURCE",
+      "exclusion": "AMBIGUOUS_ACTOR",
+      "source": "Section VI - Contract Forms.pdf"
+    },
+    {
+      "text": "○ All time limits contained in this Contract shall be deemed to be of the essence in respect of the performance of the Services.",
+      "actor": "UNKNOWN",
+      "phase": "UNKNOWN",
+      "purpose": "UNKNOWN",
+      "documentPurpose": "CONTRACT_EXECUTION_SOURCE",
+      "exclusion": "AMBIGUOUS_ACTOR",
+      "source": "Section VI - Contract Forms.pdf"
+    },
+    {
+      "text": "o The Contractor shall, when and if requested by UNOPS, Note to be deleted: choose as applicable",
+      "actor": "CONTRACTOR",
+      "phase": "UNKNOWN",
+      "purpose": "TEMPLATE",
+      "documentPurpose": "CONTRACT_EXECUTION_SOURCE",
+      "exclusion": "EXCLUDED_TEMPLATE",
+      "source": "Section VI - Contract Forms.pdf"
+    }
+  ],
+  "vendorGuideAdmitted": [],
+  "vendorGuideRejected": [
+    {
+      "text": "UNOPS by handling on-line sourcing, solicitation, bid opening, evaluation and award. These functions are currently done offline, so the new eSourcing system wil",
+      "purpose": "PROCEDURAL_RULE",
+      "actor": "BIDDER",
+      "phase": "EVALUATION",
+      "documentPurpose": "VENDOR_GUIDE",
+      "exclusion": "EXCLUDED_PROCEDURAL"
+    },
+    {
+      "text": "In order to access the full UNOPS tender details and respond to a tender in the UNOPS eSourcing system, you must first register as a UNOPS vendor on UNGM.",
+      "purpose": "PROCEDURAL_RULE",
+      "actor": "SUPPLIER",
+      "phase": "BID_SUBMISSION",
+      "documentPurpose": "VENDOR_GUIDE",
+      "exclusion": "EXCLUDED_PROCEDURAL"
+    },
+    {
+      "text": "Enter the required information and tick the relevant box to acknowledge the UN Supplier Code of Conduct, and click on the Send the activation link button.",
+      "purpose": "PROCEDURAL_RULE",
+      "actor": "SUPPLIER",
+      "phase": "BID_SUBMISSION",
+      "documentPurpose": "VENDOR_GUIDE",
+      "exclusion": "EXCLUDED_PROCEDURAL"
+    },
+    {
+      "text": "Click on the link included in the activation email. You will then see the following Account Activation screen confirming you successfully created a UNGM account",
+      "purpose": "PROCEDURAL_RULE",
+      "actor": "UNKNOWN",
+      "phase": "UNKNOWN",
+      "documentPurpose": "VENDOR_GUIDE",
+      "exclusion": "EXCLUDED_PROCEDURAL"
+    },
+    {
+      "text": "2.3 Complete your registration",
+      "purpose": "PROCEDURAL_RULE",
+      "actor": "UNKNOWN",
+      "phase": "UNKNOWN",
+      "documentPurpose": "VENDOR_GUIDE",
+      "exclusion": "EXCLUDED_PROCEDURAL"
+    },
+    {
+      "text": "You will need your username which is the email address you registered with, and your password. If you do not remember your password, please click the Forgotten ",
+      "purpose": "PROCEDURAL_RULE",
+      "actor": "UNKNOWN",
+      "phase": "UNKNOWN",
+      "documentPurpose": "VENDOR_GUIDE",
+      "exclusion": "EXCLUDED_PROCEDURAL"
+    },
+    {
+      "text": "From the Registration link in the left-hand menu you can complete your registration form. It only takes about 5-8 minutes to complete your Basic registration.",
+      "purpose": "PROCEDURAL_RULE",
+      "actor": "UNKNOWN",
+      "phase": "UNKNOWN",
+      "documentPurpose": "VENDOR_GUIDE",
+      "exclusion": "EXCLUDED_PROCEDURAL"
+    },
+    {
+      "text": "Please enter the required information in the fields provided and click the Save button. The asterisk (*) indicates information that is mandatory. Your registrat",
+      "purpose": "PROCEDURAL_RULE",
+      "actor": "UNKNOWN",
+      "phase": "BID_SUBMISSION",
+      "documentPurpose": "VENDOR_GUIDE",
+      "exclusion": "EXCLUDED_PROCEDURAL"
+    }
+  ],
+  "policyAdmitted": [],
+  "policyRejected": [
+    {
+      "text": "It is the UN’s expectation that any supplier providing products or services to the UN will, in addition to the values of the UN Charter, adhere to the principle",
+      "purpose": "INFORMATIONAL_FACT",
+      "documentPurpose": "POLICY_OR_CODE",
+      "exclusion": "EXCLUDED_POLICY_CONTEXT"
+    },
+    {
+      "text": "1 In this Code of Conduct, “UN” shall refer to the UN Secretariat, Programmes and Funds of the UN, Specialised Agencies of the UN and all other entities belongi",
+      "purpose": "INFORMATIONAL_FACT",
+      "documentPurpose": "POLICY_OR_CODE",
+      "exclusion": "EXCLUDED_POLICY_CONTEXT"
+    },
+    {
+      "text": "15. Wastewater and Solid Waste: Wastewater and solid waste generated from operations, industrial processes and sanitation facilities are to be monitored, contro",
+      "purpose": "INFORMATIONAL_FACT",
+      "documentPurpose": "POLICY_OR_CODE",
+      "exclusion": "EXCLUDED_POLICY_CONTEXT"
+    },
+    {
+      "text": "16. Air Emissions: Air emissions of volatile organic chemicals, aerosols, corrosives, particulates, ozone depleting chemicals and combustion by-products generat",
+      "purpose": "INFORMATIONAL_FACT",
+      "documentPurpose": "POLICY_OR_CODE",
+      "exclusion": "EXCLUDED_POLICY_CONTEXT"
+    },
+    {
+      "text": "21. Post employment restrictions: Post-employment restrictions may apply to UN staff in service and former UN staff members who participated in the procurement ",
+      "purpose": "INFORMATIONAL_FACT",
+      "documentPurpose": "POLICY_OR_CODE",
+      "exclusion": "EXCLUDED_POLICY_CONTEXT"
+    }
+  ],
+  "impersonalAdmitted": 0,
+  "unknownAdmitted": 0
+}

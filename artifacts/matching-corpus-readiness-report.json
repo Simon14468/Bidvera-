@@ -1,0 +1,1034 @@
+{
+  "mode": "corpus-readiness-audit",
+  "wroteToDatabase": false,
+  "matchingEngineEnabled": false,
+  "sponsorshipEnabled": false,
+  "matchingAiEnabled": false,
+  "tedWorkerAllowed": false,
+  "matchingEngineCodeChangesRequired": false,
+  "summary": {
+    "totalCompanies": 8,
+    "realProductionCompanies": 2,
+    "testFixtures": 6,
+    "incompleteCompanies": 1,
+    "eligibleRealCompanies": 1,
+    "eligibleFixtures": 6,
+    "ineligibleRealCompanies": 1,
+    "storedEligibleAll": 6,
+    "activationThreshold": 45,
+    "thresholdMetIfFixturesExcluded": false,
+    "tedLiveOpportunities": 45,
+    "tedServiceLabels": [
+      "Business services",
+      "Architectural and engineering services",
+      "Construction work",
+      "Public utilities",
+      "Petroleum and fuels",
+      "Medical equipment",
+      "Leather and textiles",
+      "Food and beverages",
+      "Laboratory and precision equipment",
+      "Chemical products",
+      "Clothing and accessories",
+      "Furniture and furnishings",
+      "Software and systems",
+      "IT services",
+      "Repair and maintenance",
+      "Transport equipment",
+      "Hotel and restaurant services",
+      "Communication equipment",
+      "Installation services",
+      "Construction materials",
+      "Industrial machinery"
+    ],
+    "propagationStaleOrMissing": 2,
+    "companiesWithLostSignalsVsStored": 0,
+    "potentiallyMatchableAgainstTed": 1,
+    "needingUserAction": 1
+  },
+  "mostCommonMissingSignals": [
+    {
+      "signal": "certifications_or_dcm",
+      "count": 7
+    },
+    {
+      "signal": "services",
+      "count": 1
+    },
+    {
+      "signal": "industry",
+      "count": 1
+    },
+    {
+      "signal": "geography",
+      "count": 1
+    },
+    {
+      "signal": "size",
+      "count": 1
+    },
+    {
+      "signal": "experience",
+      "count": 1
+    }
+  ],
+  "companies": [
+    {
+      "id": "cmtozosbe0000rkxc38a99c4w",
+      "name": "Meridian Integrated Facilities Ltd",
+      "slug": "meridian-integrated-facilities",
+      "status": "ACTIVE",
+      "classification": "production_real",
+      "isTestFixture": false,
+      "isIncomplete": false,
+      "derivedEligible": true,
+      "storedEligible": true,
+      "derivedCompleteness": 100,
+      "storedCompleteness": 100,
+      "eligibilityReasons": [
+        "hard_services:Soft facilities management|Hard facilities management|Planned preventive maintenance (PPM)|Reactive building maintenance|Specialist cleaning|Grounds maintenance|Helpdesk / CAFM coordination|TUPE mobilisation support",
+        "hard_certs:ISO 9001:2015 (quality management — self-declared test record)|ISO 14001:2015 (environmental — self-declared test record)|ISO 45001:2018 (OH&S — self-declared test record)|SSIP / SafeContractor (test record)|Cyber Essentials (test record)",
+        "geography:Greater London|South East England|Thames Valley|East of England|South West England (selected lots)|United Kingdom|Maroc"
+      ],
+      "eligibilityBlockers": [],
+      "missingDimensions": [],
+      "snapshotPublic": {
+        "services": [
+          {
+            "value": "Soft facilities management",
+            "trust": "normal",
+            "source": "company_profile.services"
+          },
+          {
+            "value": "Hard facilities management",
+            "trust": "normal",
+            "source": "company_profile.services"
+          },
+          {
+            "value": "Planned preventive maintenance (PPM)",
+            "trust": "normal",
+            "source": "company_profile.services"
+          },
+          {
+            "value": "Reactive building maintenance",
+            "trust": "normal",
+            "source": "company_profile.services"
+          },
+          {
+            "value": "Specialist cleaning",
+            "trust": "normal",
+            "source": "company_profile.services"
+          },
+          {
+            "value": "Grounds maintenance",
+            "trust": "normal",
+            "source": "company_profile.services"
+          },
+          {
+            "value": "Helpdesk / CAFM coordination",
+            "trust": "normal",
+            "source": "company_profile.services"
+          },
+          {
+            "value": "TUPE mobilisation support",
+            "trust": "normal",
+            "source": "company_profile.services"
+          }
+        ],
+        "industries": [
+          {
+            "value": "Security & Facilities",
+            "trust": "normal",
+            "source": "company_profile.industry"
+          }
+        ],
+        "geographies": [
+          {
+            "value": "Greater London",
+            "trust": "normal",
+            "source": "company_profile.geographicCoverage"
+          },
+          {
+            "value": "South East England",
+            "trust": "normal",
+            "source": "company_profile.geographicCoverage"
+          },
+          {
+            "value": "Thames Valley",
+            "trust": "normal",
+            "source": "company_profile.geographicCoverage"
+          },
+          {
+            "value": "East of England",
+            "trust": "normal",
+            "source": "company_profile.geographicCoverage"
+          },
+          {
+            "value": "South West England (selected lots)",
+            "trust": "normal",
+            "source": "company_profile.geographicCoverage"
+          },
+          {
+            "value": "United Kingdom",
+            "trust": "normal",
+            "source": "company_profile.country"
+          },
+          {
+            "value": "Maroc",
+            "trust": "normal",
+            "source": "sq.country"
+          }
+        ],
+        "certifications": [
+          {
+            "value": "ISO 9001:2015 (quality management — self-declared test record)",
+            "trust": "normal",
+            "source": "company_profile.certifications"
+          },
+          {
+            "value": "ISO 14001:2015 (environmental — self-declared test record)",
+            "trust": "normal",
+            "source": "company_profile.certifications"
+          },
+          {
+            "value": "ISO 45001:2018 (OH&S — self-declared test record)",
+            "trust": "normal",
+            "source": "company_profile.certifications"
+          },
+          {
+            "value": "SSIP / SafeContractor (test record)",
+            "trust": "normal",
+            "source": "company_profile.certifications"
+          },
+          {
+            "value": "Cyber Essentials (test record)",
+            "trust": "normal",
+            "source": "company_profile.certifications"
+          }
+        ],
+        "dcmCategories": [],
+        "size": {
+          "value": "Medium",
+          "trust": "normal",
+          "source": "company_profile.companySize"
+        },
+        "experienceYears": {
+          "value": 14,
+          "trust": "normal",
+          "source": "company_profile.experienceYears"
+        }
+      },
+      "sourcePresence": {
+        "hasCompanyProfile": true,
+        "hasSqProfile": true,
+        "complianceDocumentCount": 1,
+        "profileServices": [
+          "Soft facilities management",
+          "Hard facilities management",
+          "Planned preventive maintenance (PPM)",
+          "Reactive building maintenance",
+          "Specialist cleaning",
+          "Grounds maintenance",
+          "Helpdesk / CAFM coordination",
+          "TUPE mobilisation support"
+        ],
+        "profileCountry": "United Kingdom",
+        "profileCoverage": [
+          "Greater London",
+          "South East England",
+          "Thames Valley",
+          "East of England",
+          "South West England (selected lots)"
+        ],
+        "profileCerts": [
+          "ISO 9001:2015 (quality management — self-declared test record)",
+          "ISO 14001:2015 (environmental — self-declared test record)",
+          "ISO 45001:2018 (OH&S — self-declared test record)",
+          "SSIP / SafeContractor (test record)",
+          "Cyber Essentials (test record)"
+        ],
+        "sqServices": []
+      },
+      "propagation": {
+        "hasStoredMatchingProfile": true,
+        "stale": false,
+        "lostSignals": [],
+        "derivedHash": "7a9e81aa33e046cedcb1f40cd56a421d",
+        "storedHash": "7a9e81aa33e046cedcb1f40cd56a421d"
+      },
+      "tedOverlap": {
+        "serviceOverlapScore": 50,
+        "industryOverlapScore": 0,
+        "potentiallyMatchableAgainstTedCorpus": true
+      },
+      "userActionsNeeded": [],
+      "users": 3,
+      "tenders": 18
+    },
+    {
+      "id": "cmtozpkmt0032rkxc7c5rayiu",
+      "name": "Trial Sandbox Ltd",
+      "slug": "trial-sandbox",
+      "status": "ACTIVE",
+      "classification": "incomplete_real",
+      "isTestFixture": false,
+      "isIncomplete": true,
+      "derivedEligible": false,
+      "storedEligible": null,
+      "derivedCompleteness": 0,
+      "storedCompleteness": null,
+      "eligibilityReasons": [],
+      "eligibilityBlockers": [
+        "no hard capability (need non-soft services OR certifications OR strong DCM)",
+        "no geography (HQ country or geographic coverage)"
+      ],
+      "missingDimensions": [
+        "services",
+        "industry",
+        "geography",
+        "certifications_or_dcm",
+        "size",
+        "experience"
+      ],
+      "snapshotPublic": {
+        "services": [],
+        "industries": [],
+        "geographies": [],
+        "certifications": [],
+        "dcmCategories": [],
+        "size": null,
+        "experienceYears": null
+      },
+      "sourcePresence": {
+        "hasCompanyProfile": true,
+        "hasSqProfile": false,
+        "complianceDocumentCount": 0,
+        "profileServices": [],
+        "profileCountry": null,
+        "profileCoverage": [],
+        "profileCerts": [],
+        "sqServices": []
+      },
+      "propagation": {
+        "hasStoredMatchingProfile": false,
+        "stale": true,
+        "lostSignals": [],
+        "derivedHash": "81c5418fa4b4c2ed254b9798d6abf4b9",
+        "storedHash": null
+      },
+      "tedOverlap": {
+        "serviceOverlapScore": 0,
+        "industryOverlapScore": 0,
+        "potentiallyMatchableAgainstTedCorpus": false
+      },
+      "userActionsNeeded": [
+        "add services/capabilities on Company Profile (or SQ)",
+        "set HQ country and/or geographic coverage",
+        "set industry",
+        "add certifications and/or upload valid DCM evidence",
+        "set company size",
+        "set experience level or years",
+        "save Company Profile (or SQ/DCM) to refresh Matching Profile — or SA rebuild"
+      ],
+      "users": 1,
+      "tenders": 0
+    },
+    {
+      "id": "cmtvyapsd0002rkh8zfgt3p72",
+      "name": "ME8D expire",
+      "slug": "me8d-mtvyambw-expire",
+      "status": "ACTIVE",
+      "classification": "test_fixture",
+      "isTestFixture": true,
+      "isIncomplete": false,
+      "derivedEligible": true,
+      "storedEligible": true,
+      "derivedCompleteness": 83,
+      "storedCompleteness": 83,
+      "eligibilityReasons": [
+        "hard_services:Cybersecurity|Cloud",
+        "geography:Morocco"
+      ],
+      "eligibilityBlockers": [],
+      "missingDimensions": [
+        "certifications_or_dcm"
+      ],
+      "snapshotPublic": {
+        "services": [
+          {
+            "value": "Cybersecurity",
+            "trust": "normal",
+            "source": "company_profile.services"
+          },
+          {
+            "value": "Cloud",
+            "trust": "normal",
+            "source": "company_profile.services"
+          }
+        ],
+        "industries": [
+          {
+            "value": "Technology",
+            "trust": "normal",
+            "source": "company_profile.industry"
+          }
+        ],
+        "geographies": [
+          {
+            "value": "Morocco",
+            "trust": "normal",
+            "source": "company_profile.geographicCoverage"
+          }
+        ],
+        "certifications": [],
+        "dcmCategories": [],
+        "size": {
+          "value": "Medium",
+          "trust": "normal",
+          "source": "company_profile.companySize"
+        },
+        "experienceYears": {
+          "value": 8,
+          "trust": "normal",
+          "source": "company_profile.experienceYears"
+        }
+      },
+      "sourcePresence": {
+        "hasCompanyProfile": true,
+        "hasSqProfile": false,
+        "complianceDocumentCount": 0,
+        "profileServices": [
+          "Cybersecurity",
+          "Cloud"
+        ],
+        "profileCountry": "Morocco",
+        "profileCoverage": [
+          "Morocco"
+        ],
+        "profileCerts": [],
+        "sqServices": []
+      },
+      "propagation": {
+        "hasStoredMatchingProfile": true,
+        "stale": false,
+        "lostSignals": [],
+        "derivedHash": "26f76cd980cc4c2611a05e07347c67c5",
+        "storedHash": "26f76cd980cc4c2611a05e07347c67c5"
+      },
+      "tedOverlap": {
+        "serviceOverlapScore": 0,
+        "industryOverlapScore": 100,
+        "potentiallyMatchableAgainstTedCorpus": false
+      },
+      "userActionsNeeded": [],
+      "users": 0,
+      "tenders": 0
+    },
+    {
+      "id": "cmtvyb2wo000arkh8nkuqdsm8",
+      "name": "ME8D pause",
+      "slug": "me8d-mtvyambw-pause",
+      "status": "ACTIVE",
+      "classification": "test_fixture",
+      "isTestFixture": true,
+      "isIncomplete": false,
+      "derivedEligible": true,
+      "storedEligible": true,
+      "derivedCompleteness": 83,
+      "storedCompleteness": 83,
+      "eligibilityReasons": [
+        "hard_services:Cybersecurity|Cloud",
+        "geography:Morocco"
+      ],
+      "eligibilityBlockers": [],
+      "missingDimensions": [
+        "certifications_or_dcm"
+      ],
+      "snapshotPublic": {
+        "services": [
+          {
+            "value": "Cybersecurity",
+            "trust": "normal",
+            "source": "company_profile.services"
+          },
+          {
+            "value": "Cloud",
+            "trust": "normal",
+            "source": "company_profile.services"
+          }
+        ],
+        "industries": [
+          {
+            "value": "Technology",
+            "trust": "normal",
+            "source": "company_profile.industry"
+          }
+        ],
+        "geographies": [
+          {
+            "value": "Morocco",
+            "trust": "normal",
+            "source": "company_profile.geographicCoverage"
+          }
+        ],
+        "certifications": [],
+        "dcmCategories": [],
+        "size": {
+          "value": "Medium",
+          "trust": "normal",
+          "source": "company_profile.companySize"
+        },
+        "experienceYears": {
+          "value": 8,
+          "trust": "normal",
+          "source": "company_profile.experienceYears"
+        }
+      },
+      "sourcePresence": {
+        "hasCompanyProfile": true,
+        "hasSqProfile": false,
+        "complianceDocumentCount": 0,
+        "profileServices": [
+          "Cybersecurity",
+          "Cloud"
+        ],
+        "profileCountry": "Morocco",
+        "profileCoverage": [
+          "Morocco"
+        ],
+        "profileCerts": [],
+        "sqServices": []
+      },
+      "propagation": {
+        "hasStoredMatchingProfile": true,
+        "stale": false,
+        "lostSignals": [],
+        "derivedHash": "26f76cd980cc4c2611a05e07347c67c5",
+        "storedHash": "26f76cd980cc4c2611a05e07347c67c5"
+      },
+      "tedOverlap": {
+        "serviceOverlapScore": 0,
+        "industryOverlapScore": 100,
+        "potentiallyMatchableAgainstTedCorpus": false
+      },
+      "userActionsNeeded": [],
+      "users": 0,
+      "tenders": 0
+    },
+    {
+      "id": "cmtvybdpn000mrkh80nne5h0q",
+      "name": "ME8D state",
+      "slug": "me8d-mtvyambw-state",
+      "status": "ACTIVE",
+      "classification": "test_fixture",
+      "isTestFixture": true,
+      "isIncomplete": false,
+      "derivedEligible": true,
+      "storedEligible": true,
+      "derivedCompleteness": 83,
+      "storedCompleteness": 83,
+      "eligibilityReasons": [
+        "hard_services:Cybersecurity|Cloud",
+        "geography:Morocco"
+      ],
+      "eligibilityBlockers": [],
+      "missingDimensions": [
+        "certifications_or_dcm"
+      ],
+      "snapshotPublic": {
+        "services": [
+          {
+            "value": "Cybersecurity",
+            "trust": "normal",
+            "source": "company_profile.services"
+          },
+          {
+            "value": "Cloud",
+            "trust": "normal",
+            "source": "company_profile.services"
+          }
+        ],
+        "industries": [
+          {
+            "value": "Technology",
+            "trust": "normal",
+            "source": "company_profile.industry"
+          }
+        ],
+        "geographies": [
+          {
+            "value": "Morocco",
+            "trust": "normal",
+            "source": "company_profile.geographicCoverage"
+          }
+        ],
+        "certifications": [],
+        "dcmCategories": [],
+        "size": {
+          "value": "Medium",
+          "trust": "normal",
+          "source": "company_profile.companySize"
+        },
+        "experienceYears": {
+          "value": 8,
+          "trust": "normal",
+          "source": "company_profile.experienceYears"
+        }
+      },
+      "sourcePresence": {
+        "hasCompanyProfile": true,
+        "hasSqProfile": false,
+        "complianceDocumentCount": 0,
+        "profileServices": [
+          "Cybersecurity",
+          "Cloud"
+        ],
+        "profileCountry": "Morocco",
+        "profileCoverage": [
+          "Morocco"
+        ],
+        "profileCerts": [],
+        "sqServices": []
+      },
+      "propagation": {
+        "hasStoredMatchingProfile": true,
+        "stale": false,
+        "lostSignals": [],
+        "derivedHash": "26f76cd980cc4c2611a05e07347c67c5",
+        "storedHash": "26f76cd980cc4c2611a05e07347c67c5"
+      },
+      "tedOverlap": {
+        "serviceOverlapScore": 0,
+        "industryOverlapScore": 100,
+        "potentiallyMatchableAgainstTedCorpus": false
+      },
+      "userActionsNeeded": [],
+      "users": 0,
+      "tenders": 0
+    },
+    {
+      "id": "cmtvybwxh001arkh8i0n98n58",
+      "name": "ME8D events",
+      "slug": "me8d-mtvyambw-events",
+      "status": "ACTIVE",
+      "classification": "test_fixture",
+      "isTestFixture": true,
+      "isIncomplete": false,
+      "derivedEligible": true,
+      "storedEligible": true,
+      "derivedCompleteness": 83,
+      "storedCompleteness": 83,
+      "eligibilityReasons": [
+        "hard_services:Cybersecurity|Cloud",
+        "geography:Morocco"
+      ],
+      "eligibilityBlockers": [],
+      "missingDimensions": [
+        "certifications_or_dcm"
+      ],
+      "snapshotPublic": {
+        "services": [
+          {
+            "value": "Cybersecurity",
+            "trust": "normal",
+            "source": "company_profile.services"
+          },
+          {
+            "value": "Cloud",
+            "trust": "normal",
+            "source": "company_profile.services"
+          }
+        ],
+        "industries": [
+          {
+            "value": "Technology",
+            "trust": "normal",
+            "source": "company_profile.industry"
+          }
+        ],
+        "geographies": [
+          {
+            "value": "Morocco",
+            "trust": "normal",
+            "source": "company_profile.geographicCoverage"
+          }
+        ],
+        "certifications": [],
+        "dcmCategories": [],
+        "size": {
+          "value": "Medium",
+          "trust": "normal",
+          "source": "company_profile.companySize"
+        },
+        "experienceYears": {
+          "value": 8,
+          "trust": "normal",
+          "source": "company_profile.experienceYears"
+        }
+      },
+      "sourcePresence": {
+        "hasCompanyProfile": true,
+        "hasSqProfile": false,
+        "complianceDocumentCount": 0,
+        "profileServices": [
+          "Cybersecurity",
+          "Cloud"
+        ],
+        "profileCountry": "Morocco",
+        "profileCoverage": [
+          "Morocco"
+        ],
+        "profileCerts": [],
+        "sqServices": []
+      },
+      "propagation": {
+        "hasStoredMatchingProfile": true,
+        "stale": false,
+        "lostSignals": [],
+        "derivedHash": "26f76cd980cc4c2611a05e07347c67c5",
+        "storedHash": "26f76cd980cc4c2611a05e07347c67c5"
+      },
+      "tedOverlap": {
+        "serviceOverlapScore": 0,
+        "industryOverlapScore": 100,
+        "potentiallyMatchableAgainstTedCorpus": false
+      },
+      "userActionsNeeded": [],
+      "users": 0,
+      "tenders": 0
+    },
+    {
+      "id": "cmtvybxw2001crkh84oxupkeu",
+      "name": "ME8D events-b",
+      "slug": "me8d-mtvyambw-events-b",
+      "status": "ACTIVE",
+      "classification": "test_fixture",
+      "isTestFixture": true,
+      "isIncomplete": false,
+      "derivedEligible": true,
+      "storedEligible": null,
+      "derivedCompleteness": 83,
+      "storedCompleteness": null,
+      "eligibilityReasons": [
+        "hard_services:Cybersecurity|Cloud",
+        "geography:Morocco"
+      ],
+      "eligibilityBlockers": [],
+      "missingDimensions": [
+        "certifications_or_dcm"
+      ],
+      "snapshotPublic": {
+        "services": [
+          {
+            "value": "Cybersecurity",
+            "trust": "normal",
+            "source": "company_profile.services"
+          },
+          {
+            "value": "Cloud",
+            "trust": "normal",
+            "source": "company_profile.services"
+          }
+        ],
+        "industries": [
+          {
+            "value": "Technology",
+            "trust": "normal",
+            "source": "company_profile.industry"
+          }
+        ],
+        "geographies": [
+          {
+            "value": "Morocco",
+            "trust": "normal",
+            "source": "company_profile.geographicCoverage"
+          }
+        ],
+        "certifications": [],
+        "dcmCategories": [],
+        "size": {
+          "value": "Medium",
+          "trust": "normal",
+          "source": "company_profile.companySize"
+        },
+        "experienceYears": {
+          "value": 8,
+          "trust": "normal",
+          "source": "company_profile.experienceYears"
+        }
+      },
+      "sourcePresence": {
+        "hasCompanyProfile": true,
+        "hasSqProfile": false,
+        "complianceDocumentCount": 0,
+        "profileServices": [
+          "Cybersecurity",
+          "Cloud"
+        ],
+        "profileCountry": "Morocco",
+        "profileCoverage": [
+          "Morocco"
+        ],
+        "profileCerts": [],
+        "sqServices": []
+      },
+      "propagation": {
+        "hasStoredMatchingProfile": false,
+        "stale": true,
+        "lostSignals": [],
+        "derivedHash": "26f76cd980cc4c2611a05e07347c67c5",
+        "storedHash": null
+      },
+      "tedOverlap": {
+        "serviceOverlapScore": 0,
+        "industryOverlapScore": 100,
+        "potentiallyMatchableAgainstTedCorpus": false
+      },
+      "userActionsNeeded": [],
+      "users": 0,
+      "tenders": 0
+    },
+    {
+      "id": "cmtvyc8hf0026rkh8igv78ne4",
+      "name": "ME8D batch",
+      "slug": "me8d-mtvyambw-batch",
+      "status": "ACTIVE",
+      "classification": "test_fixture",
+      "isTestFixture": true,
+      "isIncomplete": false,
+      "derivedEligible": true,
+      "storedEligible": true,
+      "derivedCompleteness": 83,
+      "storedCompleteness": 83,
+      "eligibilityReasons": [
+        "hard_services:Cybersecurity|Cloud",
+        "geography:Morocco"
+      ],
+      "eligibilityBlockers": [],
+      "missingDimensions": [
+        "certifications_or_dcm"
+      ],
+      "snapshotPublic": {
+        "services": [
+          {
+            "value": "Cybersecurity",
+            "trust": "normal",
+            "source": "company_profile.services"
+          },
+          {
+            "value": "Cloud",
+            "trust": "normal",
+            "source": "company_profile.services"
+          }
+        ],
+        "industries": [
+          {
+            "value": "Technology",
+            "trust": "normal",
+            "source": "company_profile.industry"
+          }
+        ],
+        "geographies": [
+          {
+            "value": "Morocco",
+            "trust": "normal",
+            "source": "company_profile.geographicCoverage"
+          }
+        ],
+        "certifications": [],
+        "dcmCategories": [],
+        "size": {
+          "value": "Medium",
+          "trust": "normal",
+          "source": "company_profile.companySize"
+        },
+        "experienceYears": {
+          "value": 8,
+          "trust": "normal",
+          "source": "company_profile.experienceYears"
+        }
+      },
+      "sourcePresence": {
+        "hasCompanyProfile": true,
+        "hasSqProfile": false,
+        "complianceDocumentCount": 0,
+        "profileServices": [
+          "Cybersecurity",
+          "Cloud"
+        ],
+        "profileCountry": "Morocco",
+        "profileCoverage": [
+          "Morocco"
+        ],
+        "profileCerts": [],
+        "sqServices": []
+      },
+      "propagation": {
+        "hasStoredMatchingProfile": true,
+        "stale": false,
+        "lostSignals": [],
+        "derivedHash": "26f76cd980cc4c2611a05e07347c67c5",
+        "storedHash": "26f76cd980cc4c2611a05e07347c67c5"
+      },
+      "tedOverlap": {
+        "serviceOverlapScore": 0,
+        "industryOverlapScore": 100,
+        "potentiallyMatchableAgainstTedCorpus": false
+      },
+      "userActionsNeeded": [],
+      "users": 0,
+      "tenders": 0
+    }
+  ],
+  "potentiallyMatchableAgainstTedCorpus": [
+    {
+      "id": "cmtozosbe0000rkxc38a99c4w",
+      "name": "Meridian Integrated Facilities Ltd",
+      "services": [
+        "Soft facilities management",
+        "Hard facilities management",
+        "Planned preventive maintenance (PPM)",
+        "Reactive building maintenance",
+        "Specialist cleaning",
+        "Grounds maintenance",
+        "Helpdesk / CAFM coordination",
+        "TUPE mobilisation support"
+      ],
+      "geographies": [
+        "Greater London",
+        "South East England",
+        "Thames Valley",
+        "East of England",
+        "South West England (selected lots)",
+        "United Kingdom",
+        "Maroc"
+      ],
+      "serviceOverlap": 50,
+      "industryOverlap": 0
+    }
+  ],
+  "companiesNeedingUserAction": [
+    {
+      "id": "cmtozpkmt0032rkxc7c5rayiu",
+      "name": "Trial Sandbox Ltd",
+      "actions": [
+        "add services/capabilities on Company Profile (or SQ)",
+        "set HQ country and/or geographic coverage",
+        "set industry",
+        "add certifications and/or upload valid DCM evidence",
+        "set company size",
+        "set experience level or years",
+        "save Company Profile (or SQ/DCM) to refresh Matching Profile — or SA rebuild"
+      ],
+      "eligible": false
+    }
+  ],
+  "testFixturesNeverCountTowardActivation": [
+    {
+      "id": "cmtvyapsd0002rkh8zfgt3p72",
+      "name": "ME8D expire",
+      "slug": "me8d-mtvyambw-expire",
+      "storedEligible": true,
+      "derivedEligible": true,
+      "note": "Exclude from activation eligible count"
+    },
+    {
+      "id": "cmtvyb2wo000arkh8nkuqdsm8",
+      "name": "ME8D pause",
+      "slug": "me8d-mtvyambw-pause",
+      "storedEligible": true,
+      "derivedEligible": true,
+      "note": "Exclude from activation eligible count"
+    },
+    {
+      "id": "cmtvybdpn000mrkh80nne5h0q",
+      "name": "ME8D state",
+      "slug": "me8d-mtvyambw-state",
+      "storedEligible": true,
+      "derivedEligible": true,
+      "note": "Exclude from activation eligible count"
+    },
+    {
+      "id": "cmtvybwxh001arkh8i0n98n58",
+      "name": "ME8D events",
+      "slug": "me8d-mtvyambw-events",
+      "storedEligible": true,
+      "derivedEligible": true,
+      "note": "Exclude from activation eligible count"
+    },
+    {
+      "id": "cmtvybxw2001crkh84oxupkeu",
+      "name": "ME8D events-b",
+      "slug": "me8d-mtvyambw-events-b",
+      "storedEligible": null,
+      "derivedEligible": true,
+      "note": "Exclude from activation eligible count"
+    },
+    {
+      "id": "cmtvyc8hf0026rkh8igv78ne4",
+      "name": "ME8D batch",
+      "slug": "me8d-mtvyambw-batch",
+      "storedEligible": true,
+      "derivedEligible": true,
+      "note": "Exclude from activation eligible count"
+    }
+  ],
+  "onboardingDataGaps": {
+    "capturesToday": [
+      "services (tags)",
+      "industry",
+      "company size",
+      "HQ country",
+      "optional experience level"
+    ],
+    "missingFromOnboarding": [
+      "certifications",
+      "geographicCoverage (beyond HQ country)",
+      "experienceYears (numeric)",
+      "employeeRange",
+      "Supplier Qualification / DCM (separate modules)"
+    ],
+    "matchingEligibilityMinimum": "non-soft services|certs|DCM + any geography (HQ country alone is enough for geo)",
+    "completenessNeedsAlso": [
+      "industry OR strong service",
+      "certs OR DCM",
+      "size",
+      "experienceYears"
+    ],
+    "knownPipelineGaps": [
+      "completeCompanyOnboardingAction / skipCompanyOnboardingAction do not schedule Matching Profile rebuild",
+      "profile edit / SQ / DCM / questionnaire DO schedule rebuild",
+      "soft questionnaire hints alone never create eligibility"
+    ]
+  },
+  "proposedAdminUiExtension": {
+    "surface": "Super Admin → Companies → [company] detail",
+    "existing": "Shows CompanyProfile fields but not CompanyMatchingProfile eligibility",
+    "proposedExtension": [
+      "Matching readiness card: eligible yes/no, completeness %, builtAt",
+      "Eligibility reason + blockers (capability / geography)",
+      "Missing signals checklist (services, industry, geo, certs/DCM, size, experience)",
+      "Propagation status: stored vs derived contentHash (stale banner)",
+      "Optional: TED corpus overlap score (services) — diagnostic only",
+      "Exclude ME8* fixtures from activation health eligible count (label as fixture)"
+    ],
+    "safety": "Read-only; no enable Matching Engine; no private questionnaire text dump"
+  },
+  "blockers": [
+    "Eligible real companies (1) below threshold 45 (do not lower threshold; grow real corpus)",
+    "6 ME/test fixtures currently count in raw eligible tally — exclude from activation metrics",
+    "2 companies have stale/missing Matching Profile vs live sources (refresh via profile save — do not auto-write in audit)"
+  ],
+  "smallestNextProductActions": [
+    "Exclude ME8* fixtures from activation eligible counts in SA Matching health",
+    "Add SA company-detail Matching readiness card (read-only previewMatchingProfileForCompany)",
+    "Ensure onboarding completion schedules Matching Profile rebuild (no capability invention)",
+    "Have 1–N real tenants complete Company Profile: services + country (+ industry/size/experience for quality)",
+    "Re-run matching:real-validation once ≥1 eligible real company exists with TED-overlapping services"
+  ],
+  "exactBlockersForRealMatchingValidation": [
+    "Eligible real companies (1) below threshold 45 (do not lower threshold; grow real corpus)",
+    "6 ME/test fixtures currently count in raw eligible tally — exclude from activation metrics",
+    "2 companies have stale/missing Matching Profile vs live sources (refresh via profile save — do not auto-write in audit)"
+  ]
+}

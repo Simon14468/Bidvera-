@@ -1,0 +1,121 @@
+--- Page 1 (pdf-parse) ---
+
+Bidvera Stress Test Tender • Fictional test document Page 1
+REQUEST FOR TENDER
+Supply, Installation and Maintenance of a Network & Access-Control System
+Tender Reference: RFT-SEC-2026-027
+Procuring entity North Atlas Business Center (NABC)
+Publication date 4 September 2026
+Submission deadline 28 September 2026 at 11:00
+Contract duration 90 calendar days
+Estimated value MAD 420,000 excluding VAT
+Method Open competitive tender
+1. Scope
+The contracting authority seeks a qualified supplier to supply, install, configure, test and maintain a network
+infrastructure and electronic access-control system for a three-floor business facility. The scope includes switches,
+wireless access points, firewall equipment, access-control readers, controllers, cabling, configuration, commissioning,
+documentation and staff handover.
+2. Mandatory Administrative and Eligibility Requirements
+• R-01 The bidder must be legally registered and authorized to perform the contracted activities.
+• R-02 The bidder must provide a valid tax-clearance certificate and a valid social-security compliance certificate at the
+time of submission.
+• R-03 The bidder must submit a signed tender declaration using the form included in this tender dossier.
+• R-04 The bidder must provide a provisional bid security of MAD 12,000.
+• R-05 The bidder must demonstrate at least 3 completed comparable projects during the last 5 years, with
+documentary references.
+
+--- Page 2 (pdf-parse) ---
+
+Bidvera Stress Test Tender • Fictional test document Page 2
+3. Technical Requirements
+• R-06 The proposed firewall must support at least 1 Gbps stateful throughput and include active security subscriptions
+for the first 12 months.
+• R-07 The wireless solution must provide Wi-Fi 6 access points with centralized management and support a minimum
+of 120 concurrent clients per access point.
+• R-08 The access-control system must support at least 16 controlled doors, RFID credentials, event logging and a
+central administration console.
+• R-09 The bidder must supply and install Category 6A structured cabling and provide certification test results for all
+installed links.
+• R-10 The bidder must provide a minimum 24-month warranty covering supplied hardware and installation
+workmanship.
+• R-11 The bidder must provide on-site corrective support within 24 hours after a covered critical incident is reported.
+• R-12 The bidder must submit a detailed implementation schedule and commissioning plan before contract award.
+4. Commercial and Contractual Conditions
+• Prices shall remain firm and non-revisable throughout the contract.
+• Payment will be made after delivery, installation, successful commissioning, provisional acceptance and compliant
+invoices.
+• A performance guarantee equal to 10% of the contract value shall be provided by the successful bidder.
+• The supplier remains responsible for imported equipment, freight, customs and delivery until acceptance at the site.
+• Late-delivery penalties may apply at 1/1000 of the contract amount per calendar day, capped at 8%.
+
+--- Page 3 (pdf-parse) ---
+
+Bidvera Stress Test Tender • Fictional test document Page 3
+5. Clarifications and Submission Procedure
+Questions must be submitted no later than 7 calendar days before the submission deadline. The authority may request
+clarification, but a clarification may not materially change the substance of the bid.
+The submission deadline is 28 September 2026 at 11:00. This is a procedural deadline and is not itself a bidder
+qualification requirement.
+6. Evaluation Criteria
+• Technical compliance: 40%
+• Price: 35%
+• Relevant experience: 15%
+• Implementation methodology: 10%
+These percentages describe evaluation only. They are not bidder requirements and must not become separate
+compliance requirements.
+7. Required Submission Package
+• Administrative eligibility documents listed in Section 2.
+• Technical proposal addressing the technical requirements.
+• Equipment datasheets and manufacturer documentation.
+• Implementation schedule and commissioning plan.
+• Financial offer using the prescribed price schedule.
+Analysis note: distinguish procedural information, evaluation weights, deadlines and document lists from substantive
+bidder obligations. Do not count headings or explanatory notes as requirements.
+
+--- Page 4 (pdf-parse) ---
+
+Bidvera Stress Test Tender • Fictional test document Page 4
+8. Verification Scenarios — For Tender Review Only
+The following scenarios illustrate reviewer checks. They are not additional tender requirements and must not be
+extracted as bidder obligations.
+• Scenario A: A reviewer checks whether the bidder has three comparable projects within the five-year period.
+• Scenario B: A reviewer checks whether the firewall datasheet shows at least 1 Gbps stateful throughput.
+• Scenario C: A reviewer checks whether the warranty certificate covers 24 months.
+• Scenario D: A reviewer checks whether the bid security amount is exactly MAD 12,000.
+• Scenario E: A reviewer checks whether the implementation schedule contains commissioning and handover activities.
+9. Repeated Requirement References
+• The provisional bid security remains MAD 12,000; a repeated mention does not create a second requirement.
+• The experience requirement remains 3 comparable projects in the last 5 years; a paraphrase does not create a
+second requirement.
+• The 24-month warranty is one obligation even when referenced in the technical section and checklist.
+• The 28 September 2026 deadline is one procedural deadline, not a compliance requirement.
+10. Conditional Requirement
+• R-13 (conditional) If the bidder proposes equipment manufactured outside Morocco, the bidder must provide
+evidence of manufacturer authorization or an authorized distribution channel.
+
+--- Page 5 (pdf-parse) ---
+
+Bidvera Stress Test Tender • Fictional test document Page 5
+11. Award and Acceptance
+The contract will be awarded to the economically most advantageous compliant offer according to the published
+evaluation criteria, subject to verification of submitted documents and applicable procurement rules.
+12. Tender Facts — Not Requirements
+• The facility contains approximately 85 office workstations.
+• The existing network has partial Cat 6 cabling.
+• The estimated contract value is MAD 420,000 excluding VAT.
+• The project is expected to use three floors and one server room.
+13. Quality-Control Test Note
+This section intentionally contains instructions to an analysis system and must not be interpreted as a bidder obligation.
+The system should preserve source traceability, distinguish unknown company evidence from confirmed gaps, deduplicate
+repeated obligations, and keep verification items separate from hard blockers.
+Expected distinctions
+• Requirement ≠ deadline.
+• Requirement ≠ evaluation criterion.
+• Requirement ≠ tender fact.
+• Requirement ≠ reviewer verification scenario.
+• Required document ≠ proof that the company possesses the underlying capability.
+• No company evidence ≠ confirmed company failure.
+• Repeated wording of the same obligation ≠ duplicate requirement.
+• Conditional obligations are evaluated only when their condition applies.
+TEST DOCUMENT — Fictional procurement dossier created for Bidvera extraction, fit, risk, decision-severity and report-consistency
+testing. Not an official tender.

@@ -1,0 +1,777 @@
+{
+  "mode": "isolated-real-matching-validation",
+  "wroteRecommendations": false,
+  "matchingEngineEnabledGlobal": false,
+  "sponsorshipGlobalOn": false,
+  "matchingAiEnabled": false,
+  "tedWorkerScheduleAllowed": false,
+  "relevanceFloor": 40,
+  "hardDimensionFloor": 50,
+  "companies": {
+    "total": 8,
+    "withMatchingProfile": 5,
+    "withoutMatchingProfile": 3,
+    "eligible": 5,
+    "ineligible": 3,
+    "ineligibleWithProfile": 0
+  },
+  "activation": {
+    "eligibleThreshold": 45,
+    "thresholdMet": false,
+    "canEnableMatching": true,
+    "activationGateWouldPass": false,
+    "blockers": [
+      "Corpus advisory: eligible companies (5) below recommended threshold (45). Super Admin may still enable Matching Engine freely."
+    ],
+    "liveOpportunities": 45,
+    "activeOpportunities": 45
+  },
+  "corpus": {
+    "tedLiveActiveOpportunities": 45,
+    "source": "TED"
+  },
+  "sample": {
+    "eligibleCompaniesScored": 5,
+    "maxSample": 25,
+    "appearToBeTestFixtures": true,
+    "companyIds": [
+      {
+        "id": "cmtvyc8hf0026rkh8igv78ne4",
+        "name": "ME8D batch",
+        "completeness": 83,
+        "services": [
+          "Cybersecurity",
+          "Cloud"
+        ],
+        "geographies": [
+          "Morocco"
+        ],
+        "bestNearMiss": {
+          "score": 26,
+          "title": "France – Systems consultancy services – Accord-cadre de prestations de conception, développement et accompagnement de pr",
+          "externalRef": "435885-2026",
+          "dims": "service:scored:0|industry:scored:92|geography:scored:0|qualifications:not_applicable:-|experience:not_applicable:-|size:not_applicable:-"
+        }
+      },
+      {
+        "id": "cmtvybwxh001arkh8i0n98n58",
+        "name": "ME8D events",
+        "completeness": 83,
+        "services": [
+          "Cybersecurity",
+          "Cloud"
+        ],
+        "geographies": [
+          "Morocco"
+        ],
+        "bestNearMiss": {
+          "score": 26,
+          "title": "France – Systems consultancy services – Accord-cadre de prestations de conception, développement et accompagnement de pr",
+          "externalRef": "435885-2026",
+          "dims": "service:scored:0|industry:scored:92|geography:scored:0|qualifications:not_applicable:-|experience:not_applicable:-|size:not_applicable:-"
+        }
+      },
+      {
+        "id": "cmtvybdpn000mrkh80nne5h0q",
+        "name": "ME8D state",
+        "completeness": 83,
+        "services": [
+          "Cybersecurity",
+          "Cloud"
+        ],
+        "geographies": [
+          "Morocco"
+        ],
+        "bestNearMiss": {
+          "score": 26,
+          "title": "France – Systems consultancy services – Accord-cadre de prestations de conception, développement et accompagnement de pr",
+          "externalRef": "435885-2026",
+          "dims": "service:scored:0|industry:scored:92|geography:scored:0|qualifications:not_applicable:-|experience:not_applicable:-|size:not_applicable:-"
+        }
+      },
+      {
+        "id": "cmtvyb2wo000arkh8nkuqdsm8",
+        "name": "ME8D pause",
+        "completeness": 83,
+        "services": [
+          "Cybersecurity",
+          "Cloud"
+        ],
+        "geographies": [
+          "Morocco"
+        ],
+        "bestNearMiss": {
+          "score": 26,
+          "title": "France – Systems consultancy services – Accord-cadre de prestations de conception, développement et accompagnement de pr",
+          "externalRef": "435885-2026",
+          "dims": "service:scored:0|industry:scored:92|geography:scored:0|qualifications:not_applicable:-|experience:not_applicable:-|size:not_applicable:-"
+        }
+      },
+      {
+        "id": "cmtvyapsd0002rkh8zfgt3p72",
+        "name": "ME8D expire",
+        "completeness": 83,
+        "services": [
+          "Cybersecurity",
+          "Cloud"
+        ],
+        "geographies": [
+          "Morocco"
+        ],
+        "bestNearMiss": {
+          "score": 26,
+          "title": "France – Systems consultancy services – Accord-cadre de prestations de conception, développement et accompagnement de pr",
+          "externalRef": "435885-2026",
+          "dims": "service:scored:0|industry:scored:92|geography:scored:0|qualifications:not_applicable:-|experience:not_applicable:-|size:not_applicable:-"
+        }
+      }
+    ]
+  },
+  "recommendations": {
+    "total": 0,
+    "perEligibleCompanyAvg": 0,
+    "perCompanyCounts": {
+      "ME8D batch": 0,
+      "ME8D events": 0,
+      "ME8D state": 0,
+      "ME8D pause": 0,
+      "ME8D expire": 0
+    },
+    "organic": 0,
+    "sponsored": 0
+  },
+  "qualityMetrics": {
+    "scoreDistribution": {
+      "40-49": 0,
+      "50-59": 0,
+      "60-69": 0,
+      "70-79": 0,
+      "80-89": 0,
+      "90-100": 0
+    },
+    "scoreStats": {
+      "min": null,
+      "p50": null,
+      "p90": null,
+      "max": null
+    },
+    "confidenceDistribution": {
+      "0-19": 0,
+      "20-39": 0,
+      "40-59": 0,
+      "60-79": 0,
+      "80-100": 0
+    },
+    "confidenceStats": {
+      "min": null,
+      "p50": null,
+      "max": null
+    },
+    "serviceMatchDistribution": {
+      "matched": 0,
+      "notMatched": 0
+    },
+    "industryMatchDistribution": {
+      "matched": 0,
+      "notMatched": 0
+    },
+    "geographyMatchDistribution": {
+      "matched": 0,
+      "notMatched": 0
+    },
+    "zeroMatchCompanies": [
+      {
+        "companyId": "cmtvyc8hf0026rkh8igv78ne4",
+        "companyName": "ME8D batch",
+        "scoredPairs": 45,
+        "bestNearMissScore": 26
+      },
+      {
+        "companyId": "cmtvybwxh001arkh8i0n98n58",
+        "companyName": "ME8D events",
+        "scoredPairs": 45,
+        "bestNearMissScore": 26
+      },
+      {
+        "companyId": "cmtvybdpn000mrkh80nne5h0q",
+        "companyName": "ME8D state",
+        "scoredPairs": 45,
+        "bestNearMissScore": 26
+      },
+      {
+        "companyId": "cmtvyb2wo000arkh8nkuqdsm8",
+        "companyName": "ME8D pause",
+        "scoredPairs": 45,
+        "bestNearMissScore": 26
+      },
+      {
+        "companyId": "cmtvyapsd0002rkh8zfgt3p72",
+        "companyName": "ME8D expire",
+        "scoredPairs": 45,
+        "bestNearMissScore": 26
+      }
+    ],
+    "suspiciousWeakCount": 0
+  },
+  "verification": {
+    "belowFloorPassed": 0,
+    "geoOnlyWouldPass": 0,
+    "privateLeakInOutput": 0,
+    "sponsoredType": 0,
+    "nonTedOpportunity": 0,
+    "capabilityFabricationSuspect": 0,
+    "crossTenantImpossible": true,
+    "geographyIsSoftSignal": "confirmed — geography alone cannot pass 8C gate",
+    "missingQualificationsExperienceNeutral": {
+      "qualificationsUnknownOrNA": 0,
+      "experienceUnknownOrNA": 0
+    },
+    "noPersistedWrites": true,
+    "crossTenantLeakage": "n/a — isolated in-memory scoring per company (no shared recommendation store writes)"
+  },
+  "strongest10": [],
+  "weakestSuspicious10": [],
+  "topNearMisses10": [
+    {
+      "company": {
+        "id": "cmtvyc8hf0026rkh8igv78ne4",
+        "name": "ME8D batch",
+        "slug": "me8d-mtvyambw-batch"
+      },
+      "opportunity": {
+        "id": "cmtwygwid000rrk785j33rs1j",
+        "title": "France – Systems consultancy services – Accord-cadre de prestations de conception, développement et accompagnement de produits numériques mature",
+        "externalRef": "435885-2026",
+        "source": "TED",
+        "services": [
+          "IT services"
+        ],
+        "geographies": [
+          "France"
+        ],
+        "category": "IT services",
+        "industry": "Technology"
+      },
+      "relevanceScore": 26,
+      "confidence": 70,
+      "matchedDimensions": [
+        {
+          "key": "service",
+          "label": "Service",
+          "score": 0,
+          "status": "scored",
+          "trustUsed": "normal",
+          "note": "Limited service overlap."
+        },
+        {
+          "key": "industry",
+          "label": "Industry",
+          "score": 92,
+          "status": "scored",
+          "trustUsed": "normal",
+          "note": "Industry alignment (normal)."
+        },
+        {
+          "key": "geography",
+          "label": "Geography",
+          "score": 0,
+          "status": "scored",
+          "trustUsed": "normal",
+          "note": "Weak geography alignment."
+        },
+        {
+          "key": "qualifications",
+          "label": "Qualifications",
+          "score": null,
+          "status": "not_applicable",
+          "trustUsed": "none",
+          "note": "Opportunity has no qualification signals."
+        },
+        {
+          "key": "experience",
+          "label": "Experience",
+          "score": null,
+          "status": "not_applicable",
+          "trustUsed": "none",
+          "note": "Opportunity has no experience requirement."
+        },
+        {
+          "key": "size",
+          "label": "Company size",
+          "score": null,
+          "status": "not_applicable",
+          "trustUsed": "none",
+          "note": "Opportunity has no size band."
+        }
+      ],
+      "reasons": [
+        "Industry alignment (normal)."
+      ],
+      "explanation": "Industry alignment (normal).",
+      "geography": {
+        "company": [
+          "Morocco"
+        ],
+        "opportunity": [
+          "France"
+        ],
+        "matched": false
+      },
+      "cpvServiceRelationship": {
+        "companyServices": [
+          "Cybersecurity",
+          "Cloud"
+        ],
+        "opportunityServices": [
+          "IT services"
+        ],
+        "serviceMatched": false,
+        "industryMatched": true
+      },
+      "type": "ORGANIC",
+      "whyPassed8CGate": "score 26 >= 40 AND hard capability [industry:92] >= 50",
+      "suspiciousFlags": [
+        "near_miss_below_gate"
+      ],
+      "passed8CGate": false,
+      "failReason": "score 26 < floor 40 (hard capability present)"
+    },
+    {
+      "company": {
+        "id": "cmtvybwxh001arkh8i0n98n58",
+        "name": "ME8D events",
+        "slug": "me8d-mtvyambw-events"
+      },
+      "opportunity": {
+        "id": "cmtwygwid000rrk785j33rs1j",
+        "title": "France – Systems consultancy services – Accord-cadre de prestations de conception, développement et accompagnement de produits numériques mature",
+        "externalRef": "435885-2026",
+        "source": "TED",
+        "services": [
+          "IT services"
+        ],
+        "geographies": [
+          "France"
+        ],
+        "category": "IT services",
+        "industry": "Technology"
+      },
+      "relevanceScore": 26,
+      "confidence": 70,
+      "matchedDimensions": [
+        {
+          "key": "service",
+          "label": "Service",
+          "score": 0,
+          "status": "scored",
+          "trustUsed": "normal",
+          "note": "Limited service overlap."
+        },
+        {
+          "key": "industry",
+          "label": "Industry",
+          "score": 92,
+          "status": "scored",
+          "trustUsed": "normal",
+          "note": "Industry alignment (normal)."
+        },
+        {
+          "key": "geography",
+          "label": "Geography",
+          "score": 0,
+          "status": "scored",
+          "trustUsed": "normal",
+          "note": "Weak geography alignment."
+        },
+        {
+          "key": "qualifications",
+          "label": "Qualifications",
+          "score": null,
+          "status": "not_applicable",
+          "trustUsed": "none",
+          "note": "Opportunity has no qualification signals."
+        },
+        {
+          "key": "experience",
+          "label": "Experience",
+          "score": null,
+          "status": "not_applicable",
+          "trustUsed": "none",
+          "note": "Opportunity has no experience requirement."
+        },
+        {
+          "key": "size",
+          "label": "Company size",
+          "score": null,
+          "status": "not_applicable",
+          "trustUsed": "none",
+          "note": "Opportunity has no size band."
+        }
+      ],
+      "reasons": [
+        "Industry alignment (normal)."
+      ],
+      "explanation": "Industry alignment (normal).",
+      "geography": {
+        "company": [
+          "Morocco"
+        ],
+        "opportunity": [
+          "France"
+        ],
+        "matched": false
+      },
+      "cpvServiceRelationship": {
+        "companyServices": [
+          "Cybersecurity",
+          "Cloud"
+        ],
+        "opportunityServices": [
+          "IT services"
+        ],
+        "serviceMatched": false,
+        "industryMatched": true
+      },
+      "type": "ORGANIC",
+      "whyPassed8CGate": "score 26 >= 40 AND hard capability [industry:92] >= 50",
+      "suspiciousFlags": [
+        "near_miss_below_gate"
+      ],
+      "passed8CGate": false,
+      "failReason": "score 26 < floor 40 (hard capability present)"
+    },
+    {
+      "company": {
+        "id": "cmtvybdpn000mrkh80nne5h0q",
+        "name": "ME8D state",
+        "slug": "me8d-mtvyambw-state"
+      },
+      "opportunity": {
+        "id": "cmtwygwid000rrk785j33rs1j",
+        "title": "France – Systems consultancy services – Accord-cadre de prestations de conception, développement et accompagnement de produits numériques mature",
+        "externalRef": "435885-2026",
+        "source": "TED",
+        "services": [
+          "IT services"
+        ],
+        "geographies": [
+          "France"
+        ],
+        "category": "IT services",
+        "industry": "Technology"
+      },
+      "relevanceScore": 26,
+      "confidence": 70,
+      "matchedDimensions": [
+        {
+          "key": "service",
+          "label": "Service",
+          "score": 0,
+          "status": "scored",
+          "trustUsed": "normal",
+          "note": "Limited service overlap."
+        },
+        {
+          "key": "industry",
+          "label": "Industry",
+          "score": 92,
+          "status": "scored",
+          "trustUsed": "normal",
+          "note": "Industry alignment (normal)."
+        },
+        {
+          "key": "geography",
+          "label": "Geography",
+          "score": 0,
+          "status": "scored",
+          "trustUsed": "normal",
+          "note": "Weak geography alignment."
+        },
+        {
+          "key": "qualifications",
+          "label": "Qualifications",
+          "score": null,
+          "status": "not_applicable",
+          "trustUsed": "none",
+          "note": "Opportunity has no qualification signals."
+        },
+        {
+          "key": "experience",
+          "label": "Experience",
+          "score": null,
+          "status": "not_applicable",
+          "trustUsed": "none",
+          "note": "Opportunity has no experience requirement."
+        },
+        {
+          "key": "size",
+          "label": "Company size",
+          "score": null,
+          "status": "not_applicable",
+          "trustUsed": "none",
+          "note": "Opportunity has no size band."
+        }
+      ],
+      "reasons": [
+        "Industry alignment (normal)."
+      ],
+      "explanation": "Industry alignment (normal).",
+      "geography": {
+        "company": [
+          "Morocco"
+        ],
+        "opportunity": [
+          "France"
+        ],
+        "matched": false
+      },
+      "cpvServiceRelationship": {
+        "companyServices": [
+          "Cybersecurity",
+          "Cloud"
+        ],
+        "opportunityServices": [
+          "IT services"
+        ],
+        "serviceMatched": false,
+        "industryMatched": true
+      },
+      "type": "ORGANIC",
+      "whyPassed8CGate": "score 26 >= 40 AND hard capability [industry:92] >= 50",
+      "suspiciousFlags": [
+        "near_miss_below_gate"
+      ],
+      "passed8CGate": false,
+      "failReason": "score 26 < floor 40 (hard capability present)"
+    },
+    {
+      "company": {
+        "id": "cmtvyb2wo000arkh8nkuqdsm8",
+        "name": "ME8D pause",
+        "slug": "me8d-mtvyambw-pause"
+      },
+      "opportunity": {
+        "id": "cmtwygwid000rrk785j33rs1j",
+        "title": "France – Systems consultancy services – Accord-cadre de prestations de conception, développement et accompagnement de produits numériques mature",
+        "externalRef": "435885-2026",
+        "source": "TED",
+        "services": [
+          "IT services"
+        ],
+        "geographies": [
+          "France"
+        ],
+        "category": "IT services",
+        "industry": "Technology"
+      },
+      "relevanceScore": 26,
+      "confidence": 70,
+      "matchedDimensions": [
+        {
+          "key": "service",
+          "label": "Service",
+          "score": 0,
+          "status": "scored",
+          "trustUsed": "normal",
+          "note": "Limited service overlap."
+        },
+        {
+          "key": "industry",
+          "label": "Industry",
+          "score": 92,
+          "status": "scored",
+          "trustUsed": "normal",
+          "note": "Industry alignment (normal)."
+        },
+        {
+          "key": "geography",
+          "label": "Geography",
+          "score": 0,
+          "status": "scored",
+          "trustUsed": "normal",
+          "note": "Weak geography alignment."
+        },
+        {
+          "key": "qualifications",
+          "label": "Qualifications",
+          "score": null,
+          "status": "not_applicable",
+          "trustUsed": "none",
+          "note": "Opportunity has no qualification signals."
+        },
+        {
+          "key": "experience",
+          "label": "Experience",
+          "score": null,
+          "status": "not_applicable",
+          "trustUsed": "none",
+          "note": "Opportunity has no experience requirement."
+        },
+        {
+          "key": "size",
+          "label": "Company size",
+          "score": null,
+          "status": "not_applicable",
+          "trustUsed": "none",
+          "note": "Opportunity has no size band."
+        }
+      ],
+      "reasons": [
+        "Industry alignment (normal)."
+      ],
+      "explanation": "Industry alignment (normal).",
+      "geography": {
+        "company": [
+          "Morocco"
+        ],
+        "opportunity": [
+          "France"
+        ],
+        "matched": false
+      },
+      "cpvServiceRelationship": {
+        "companyServices": [
+          "Cybersecurity",
+          "Cloud"
+        ],
+        "opportunityServices": [
+          "IT services"
+        ],
+        "serviceMatched": false,
+        "industryMatched": true
+      },
+      "type": "ORGANIC",
+      "whyPassed8CGate": "score 26 >= 40 AND hard capability [industry:92] >= 50",
+      "suspiciousFlags": [
+        "near_miss_below_gate"
+      ],
+      "passed8CGate": false,
+      "failReason": "score 26 < floor 40 (hard capability present)"
+    },
+    {
+      "company": {
+        "id": "cmtvyapsd0002rkh8zfgt3p72",
+        "name": "ME8D expire",
+        "slug": "me8d-mtvyambw-expire"
+      },
+      "opportunity": {
+        "id": "cmtwygwid000rrk785j33rs1j",
+        "title": "France – Systems consultancy services – Accord-cadre de prestations de conception, développement et accompagnement de produits numériques mature",
+        "externalRef": "435885-2026",
+        "source": "TED",
+        "services": [
+          "IT services"
+        ],
+        "geographies": [
+          "France"
+        ],
+        "category": "IT services",
+        "industry": "Technology"
+      },
+      "relevanceScore": 26,
+      "confidence": 70,
+      "matchedDimensions": [
+        {
+          "key": "service",
+          "label": "Service",
+          "score": 0,
+          "status": "scored",
+          "trustUsed": "normal",
+          "note": "Limited service overlap."
+        },
+        {
+          "key": "industry",
+          "label": "Industry",
+          "score": 92,
+          "status": "scored",
+          "trustUsed": "normal",
+          "note": "Industry alignment (normal)."
+        },
+        {
+          "key": "geography",
+          "label": "Geography",
+          "score": 0,
+          "status": "scored",
+          "trustUsed": "normal",
+          "note": "Weak geography alignment."
+        },
+        {
+          "key": "qualifications",
+          "label": "Qualifications",
+          "score": null,
+          "status": "not_applicable",
+          "trustUsed": "none",
+          "note": "Opportunity has no qualification signals."
+        },
+        {
+          "key": "experience",
+          "label": "Experience",
+          "score": null,
+          "status": "not_applicable",
+          "trustUsed": "none",
+          "note": "Opportunity has no experience requirement."
+        },
+        {
+          "key": "size",
+          "label": "Company size",
+          "score": null,
+          "status": "not_applicable",
+          "trustUsed": "none",
+          "note": "Opportunity has no size band."
+        }
+      ],
+      "reasons": [
+        "Industry alignment (normal)."
+      ],
+      "explanation": "Industry alignment (normal).",
+      "geography": {
+        "company": [
+          "Morocco"
+        ],
+        "opportunity": [
+          "France"
+        ],
+        "matched": false
+      },
+      "cpvServiceRelationship": {
+        "companyServices": [
+          "Cybersecurity",
+          "Cloud"
+        ],
+        "opportunityServices": [
+          "IT services"
+        ],
+        "serviceMatched": false,
+        "industryMatched": true
+      },
+      "type": "ORGANIC",
+      "whyPassed8CGate": "score 26 >= 40 AND hard capability [industry:92] >= 50",
+      "suspiciousFlags": [
+        "near_miss_below_gate"
+      ],
+      "passed8CGate": false,
+      "failReason": "score 26 < floor 40 (hard capability present)"
+    }
+  ],
+  "allRecommendations": [],
+  "blockersBeforeEnablingMatchingEngine": [
+    "eligible companies 5 < threshold 45 (advisory)",
+    "all sampled eligible companies got zero TED matches",
+    "seed/rebuild profiles for real production companies with Bidvera-relevant services before go-live",
+    "activation-readiness: Corpus advisory: eligible companies (5) below recommended threshold (45). Super Admin may still enable Matching Engine freely."
+  ],
+  "runtimeErrors": {
+    "database": [],
+    "other": []
+  },
+  "dataQualityFailures": [
+    "all eligible companies appear to be Matching Engine test fixtures (ME8*), not production tenants",
+    "zero recommendations for entire eligible sample against TED corpus — needs review"
+  ],
+  "safetyFailures": [],
+  "verdict": "REAL_MATCHING_NEEDS_REVIEW",
+  "failures": [
+    "all eligible companies appear to be Matching Engine test fixtures (ME8*), not production tenants",
+    "zero recommendations for entire eligible sample against TED corpus — needs review"
+  ]
+}

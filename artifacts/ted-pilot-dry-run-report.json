@@ -1,0 +1,339 @@
+{
+  "mode": "dry-run",
+  "wroteToDatabase": false,
+  "matchingEngineTouched": false,
+  "query": "form-type = competition AND buyer-country IN (MAR FRA ESP PRT) AND (classification-cpv = 72* OR classification-cpv = 71* OR classification-cpv = 79* OR classification-cpv = 45* OR classification-cpv = 48* OR classification-cpv = 32* OR classification-cpv = 33*) AND publication-date >= 20260613 AND deadline-receipt-tender-date-lot >= 20260911",
+  "pagesFetched": 2,
+  "fetched": 50,
+  "normalized": 50,
+  "malformed": 0,
+  "filteredOut": 5,
+  "validationRejected": 0,
+  "activeCandidates": 45,
+  "draftCandidates": 0,
+  "acceptedCandidates": 45,
+  "rejectionReasons": {
+    "filter: deadline not in the future": 5
+  },
+  "cpvDistribution": {
+    "Construction work": 20,
+    "Architectural and engineering services": 15,
+    "Business services": 7,
+    "Public utilities": 1,
+    "Petroleum and fuels": 1,
+    "Repair and maintenance": 4,
+    "Transport equipment": 2,
+    "Hotel and restaurant services": 1,
+    "Furniture and furnishings": 2,
+    "Construction materials": 1,
+    "Chemical products": 2,
+    "Medical equipment": 2,
+    "Leather and textiles": 2,
+    "Industrial machinery": 1,
+    "Clothing and accessories": 2,
+    "IT services": 5,
+    "Communication equipment": 1,
+    "Installation services": 1,
+    "Food and beverages": 1,
+    "Laboratory and precision equipment": 1,
+    "Software and systems": 1
+  },
+  "geographyDistribution": {
+    "France": 34,
+    "Spain": 7,
+    "Portugal": 4
+  },
+  "deadlineDistribution": {
+    "withDeadline": 45,
+    "withoutDeadline": 0,
+    "future": 45,
+    "past": 0
+  },
+  "duplicatesInBatch": 0,
+  "quality": {
+    "freshnessDays": 90,
+    "freshnessCutoffYmd": "20260613",
+    "publicationDateMin": "20260615",
+    "publicationDateMax": "20260630",
+    "freshnessCompliancePct": 100,
+    "deadlineCoveragePct": 100,
+    "missingCriticalFields": {
+      "missingTitle": 0,
+      "missingPublicationNumber": 0,
+      "missingCpv": 0,
+      "missingGeography": 0,
+      "missingDeadline": 0,
+      "missingPublicationDate": 0
+    },
+    "countryCounts": {
+      "France": 34,
+      "Spain": 7,
+      "Portugal": 4
+    },
+    "zeroResultCountries": [
+      "Morocco"
+    ],
+    "countriesWithHits": [
+      "France",
+      "Portugal",
+      "Spain"
+    ]
+  },
+  "qualityVerdict": "READY_FOR_LIVE_INGEST",
+  "qualityEvaluation": {
+    "verdict": "READY_FOR_LIVE_INGEST",
+    "criteria": {
+      "minActiveCandidates": 5,
+      "minDeadlineCoveragePct": 95,
+      "minFreshnessCompliancePct": 95,
+      "requireAtLeastOneConfiguredCountryHit": true
+    },
+    "failures": []
+  },
+  "preview": [
+    {
+      "externalRef": "406386-2026",
+      "title": "France – Road-repair works – Accord-cadre à bons de commande - Travaux de traitement de fissures sur les chaussées des réseaux APRR, AREA, ADELAC, ALIAE et A'LIENOR.",
+      "summary": "Travaux de traitement des fissures et joints sur les chaussées par pontage et garnissage, sur enrobés ou béton et sur l'ensemble du périmètre autoroutier (sections courantes, échangeurs, aires...) A titre indicatif, entre 20 et 50 chantiers pourront être réalisés sur la durée maximum de l’accord-cadre, toutes périodes confondues.\n\nBuyer (public TED): APRR.\n\nSource: TED notice 406386-2026 — https://ted.europa.eu/en/notice/-/detail/406386-2026",
+      "status": "ACTIVE",
+      "services": [
+        "Construction work"
+      ],
+      "category": "Construction work",
+      "industry": "Construction",
+      "geographies": [
+        "France"
+      ],
+      "certifications": [],
+      "sizeBand": null,
+      "experienceHint": null,
+      "deadline": "2026-09-24T00:00:00.000Z",
+      "publicationDate": "2026-06-15+02:00",
+      "source": "TED",
+      "sourceUrl": "https://ted.europa.eu/en/notice/-/detail/406386-2026",
+      "contentHash": "ea406c02d81f7e883e73708b736e21a7",
+      "formType": "competition",
+      "noticeType": "cn-standard"
+    },
+    {
+      "externalRef": "411516-2026",
+      "title": "France – Engineering services – Mission de maîtrise d’œuvre pour la rénovation énergétique du patrimoine bâti",
+      "summary": "Mission de maîtrise d’œuvre pour la rénovation énergétique du patrimoine bâti\n\nBuyer (public TED): SYNDICAT INTERCOMMUNAL DE LA PERIPHERIE DE PARIS POUR LES ENERGIES ET LES RESEAUX DE COMMUNICATION (Sipperec)\n\nSource: TED notice 411516-2026 — https://ted.europa.eu/en/notice/-/detail/411516-2026",
+      "status": "ACTIVE",
+      "services": [
+        "Architectural and engineering services"
+      ],
+      "category": "Architectural and engineering services",
+      "industry": "Professional Services",
+      "geographies": [
+        "France"
+      ],
+      "certifications": [],
+      "sizeBand": null,
+      "experienceHint": null,
+      "deadline": "2026-09-17T00:00:00.000Z",
+      "publicationDate": "2026-06-16+02:00",
+      "source": "TED",
+      "sourceUrl": "https://ted.europa.eu/en/notice/-/detail/411516-2026",
+      "contentHash": "78b7fd64f046355463740119c1ba321f",
+      "formType": "competition",
+      "noticeType": "cn-standard"
+    },
+    {
+      "externalRef": "414088-2026",
+      "title": "Spain – Railway engineering services – Servicios para la redacción del proyecto de construcción de remodelación de la terminal de transporte de mercancías de Córdoba. Vía, electrificación, urbanización y accesos.",
+      "summary": "Servicios para la redacción del proyecto de construcción de remodelación de la terminal de transporte de mercancías de Córdoba. Vía, electrificación, urbanización y accesos.\n\nBuyer (public TED): Administrador de Infraestructuras Ferroviarias\n\nSource: TED notice 414088-2026 — https://ted.europa.eu/en/notice/-/detail/414088-2026",
+      "status": "ACTIVE",
+      "services": [
+        "Architectural and engineering services"
+      ],
+      "category": "Architectural and engineering services",
+      "industry": "Professional Services",
+      "geographies": [
+        "Spain"
+      ],
+      "certifications": [],
+      "sizeBand": null,
+      "experienceHint": null,
+      "deadline": "2026-09-18T00:00:00.000Z",
+      "publicationDate": "2026-06-17+02:00",
+      "source": "TED",
+      "sourceUrl": "https://ted.europa.eu/en/notice/-/detail/414088-2026",
+      "contentHash": "8efa83f2bdc6fd8d59335695b84525cd",
+      "formType": "competition",
+      "noticeType": "cn-standard"
+    },
+    {
+      "externalRef": "418747-2026",
+      "title": "France – Feasibility study, advisory service, analysis – Assistance à Maitrise d'Ouvrage Générale relative à la définition d'un Plan de développement du réseau de tramway de Bordeaux Métropole à l'horizon 2040",
+      "summary": "Assistance à Maitrise d'Ouvrage Générale relative à la définition d'un Plan de développement du réseau de tramway de Bordeaux Métropole à l'horizon 2040 L'accord-cadre sera exécuté par l'émission de bons de commande. Le détail du phasage de l'opération figure au cahier des charges. Les prestations sont réglées par des prix unitaires\n\nBuyer (public TED): Bordeaux Métropole\n\nSource: TED notice 418747-2026 — https://ted.europa.eu/en/notice/-/detail/418747-2026",
+      "status": "ACTIVE",
+      "services": [
+        "Architectural and engineering services"
+      ],
+      "category": "Architectural and engineering services",
+      "industry": "Professional Services",
+      "geographies": [
+        "France"
+      ],
+      "certifications": [],
+      "sizeBand": null,
+      "experienceHint": null,
+      "deadline": "2026-09-18T00:00:00.000Z",
+      "publicationDate": "2026-06-18+02:00",
+      "source": "TED",
+      "sourceUrl": "https://ted.europa.eu/en/notice/-/detail/418747-2026",
+      "contentHash": "416a4582215bcc1ceaec35b20e91e37a",
+      "formType": "competition",
+      "noticeType": "cn-standard"
+    },
+    {
+      "externalRef": "419121-2026",
+      "title": "France – Advisory architectural services – Mission de maîtrise d'oeuvre pour les travaux de réaménagement du bâtiment A4 en Lithothèque au BRGM d'Orléans",
+      "summary": "Le projet comporte trois volets?: - Réalisation d'un désamiantage complet, RDC et sous-sol?; - Réaménagement intérieur des 860 m² du bâtiment - Réalisation travaux extérieurs\n\nBuyer (public TED): Bureau de Recherche en Géologie Minière (BRGM)\n\nSource: TED notice 419121-2026 — https://ted.europa.eu/en/notice/-/detail/419121-2026",
+      "status": "ACTIVE",
+      "services": [
+        "Architectural and engineering services"
+      ],
+      "category": "Architectural and engineering services",
+      "industry": "Professional Services",
+      "geographies": [
+        "France"
+      ],
+      "certifications": [],
+      "sizeBand": null,
+      "experienceHint": null,
+      "deadline": "2026-09-18T00:00:00.000Z",
+      "publicationDate": "2026-06-18+02:00",
+      "source": "TED",
+      "sourceUrl": "https://ted.europa.eu/en/notice/-/detail/419121-2026",
+      "contentHash": "245de04d99a95e0ca96d8619ad31ffab",
+      "formType": "competition",
+      "noticeType": "cn-standard"
+    },
+    {
+      "externalRef": "420005-2026",
+      "title": "France – Accounting, auditing and fiscal services – Prestations d’Assistance et de Conseil en Comptabilité, Finances, Paye et Administration du Personnel",
+      "summary": "Prestations d’Assistance et de Conseil en Comptabilité, Finances, Paye et Administration du Personnel\n\nBuyer (public TED): GEIE GECOTTI-PE\n\nSource: TED notice 420005-2026 — https://ted.europa.eu/en/notice/-/detail/420005-2026",
+      "status": "ACTIVE",
+      "services": [
+        "Business services"
+      ],
+      "category": "Business services",
+      "industry": "Business Services",
+      "geographies": [
+        "France"
+      ],
+      "certifications": [],
+      "sizeBand": null,
+      "experienceHint": null,
+      "deadline": "2026-09-17T00:00:00.000Z",
+      "publicationDate": "2026-06-18+02:00",
+      "source": "TED",
+      "sourceUrl": "https://ted.europa.eu/en/notice/-/detail/420005-2026",
+      "contentHash": "11508a3370d5d1133eb1a125fef95b62",
+      "formType": "competition",
+      "noticeType": "cn-standard"
+    },
+    {
+      "externalRef": "420356-2026",
+      "title": "France – Geothermal power station construction work – Délégation de service public pour la création d’un réseau de géothermie, la gestion et l’exploitation des réseaux de production, de distribution et de livraison d’énergie calorifique sur le territoire de la commune du Kremlin-Bicêtre",
+      "summary": "Délégation de service public pour la création d’un réseau de géothermie, la gestion et l’exploitation des réseaux de production, de distribution et de livraison d’énergie calorifique sur le territoire de la commune du Kremlin-Bicêtre\n\nBuyer (public TED): Sipperec\n\nSource: TED notice 420356-2026 — https://ted.europa.eu/en/notice/-/detail/420356-2026",
+      "status": "ACTIVE",
+      "services": [
+        "Construction work",
+        "Public utilities",
+        "Petroleum and fuels"
+      ],
+      "category": "Construction work",
+      "industry": "Construction",
+      "geographies": [
+        "France"
+      ],
+      "certifications": [],
+      "sizeBand": null,
+      "experienceHint": null,
+      "deadline": "2026-10-01T00:00:00.000Z",
+      "publicationDate": "2026-06-18+02:00",
+      "source": "TED",
+      "sourceUrl": "https://ted.europa.eu/en/notice/-/detail/420356-2026",
+      "contentHash": "e295095e281e5e434f1457a3b18f9023",
+      "formType": "competition",
+      "noticeType": "cn-standard"
+    },
+    {
+      "externalRef": "421439-2026",
+      "title": "France – Construction work for highways – RN12 Déviation d'Ernée – Travaux de Terrassement, Assainissement, Chaussée, Equipement et Signalisation",
+      "summary": "RN12 Déviation d'Ernée – Travaux de Terrassement, Assainissement, Chaussée, Equipement et Signalisation\n\nBuyer (public TED): DREAL Pays de la Loire\n\nSource: TED notice 421439-2026 — https://ted.europa.eu/en/notice/-/detail/421439-2026",
+      "status": "ACTIVE",
+      "services": [
+        "Construction work"
+      ],
+      "category": "Construction work",
+      "industry": "Construction",
+      "geographies": [
+        "France"
+      ],
+      "certifications": [],
+      "sizeBand": null,
+      "experienceHint": null,
+      "deadline": "2026-09-18T00:00:00.000Z",
+      "publicationDate": "2026-06-19+02:00",
+      "source": "TED",
+      "sourceUrl": "https://ted.europa.eu/en/notice/-/detail/421439-2026",
+      "contentHash": "5a0f56377cb27276a5622822a559e5ca",
+      "formType": "competition",
+      "noticeType": "cn-standard"
+    },
+    {
+      "externalRef": "421677-2026",
+      "title": "Spain – Engineering services – Asistencia técnica para la redacción del III Plan Director de Saneamiento, Depuración y Reutilización de la Comunitat Valenciana.",
+      "summary": "Redacción del III Plan Director de Saneamiento, Depuración y Reutilización de la Comunitat Valenciana (PDSDRCV), siendo su contenido las determinaciones en cuanto a diagnóstico (análisis territorial y ambiental), criterios, priorización, programas de actuación, planificación, seguimiento del plan y marco presupuestario plurianual para las infraestructuras de saneamiento, depuración y reutilización relacionadas con la calidad del agua.\n\nBuyer (public TED): Vicepresidencia del Consejo de Administración de la Entidad Pública de Saneamiento de Aguas Residuales de la Comunidad Valenciana\n\nSource: TED notice 421677-2026 — https://ted.europa.eu/en/notice/-/detail/421677-2026",
+      "status": "ACTIVE",
+      "services": [
+        "Architectural and engineering services"
+      ],
+      "category": "Architectural and engineering services",
+      "industry": "Professional Services",
+      "geographies": [
+        "Spain"
+      ],
+      "certifications": [],
+      "sizeBand": null,
+      "experienceHint": null,
+      "deadline": "2026-09-21T00:00:00.000Z",
+      "publicationDate": "2026-06-19+02:00",
+      "source": "TED",
+      "sourceUrl": "https://ted.europa.eu/en/notice/-/detail/421677-2026",
+      "contentHash": "9172a5105d9d722ab8fac8d6b06b2b46",
+      "formType": "competition",
+      "noticeType": "cn-standard"
+    },
+    {
+      "externalRef": "422444-2026",
+      "title": "France – Repair and maintenance services of electrical and mechanical building installations – CONDUITE, MAINTENANCE ET TRAVAUX SUR LES INSTALLATIONS DE CHAUFFAGE, VENTILATION, CLIMATISATION, DESENFUMAGE, PLOMBERIE SANITAIRE ET PLOMBERIE INCENDIE",
+      "summary": "CONDUITE, MAINTENANCE ET TRAVAUX SUR LES INSTALLATIONS DE CHAUFFAGE, VENTILATION, CLIMATISATION, DESENFUMAGE, PLOMBERIE SANITAIRE ET PLOMBERIE INCENDIE\n\nBuyer (public TED): ETBT du Château de Versailles\n\nSource: TED notice 422444-2026 — https://ted.europa.eu/en/notice/-/detail/422444-2026",
+      "status": "ACTIVE",
+      "services": [
+        "Repair and maintenance",
+        "Construction work"
+      ],
+      "category": "Repair and maintenance",
+      "industry": "Services",
+      "geographies": [
+        "France"
+      ],
+      "certifications": [],
+      "sizeBand": null,
+      "experienceHint": null,
+      "deadline": "2026-09-14T00:00:00.000Z",
+      "publicationDate": "2026-06-19+02:00",
+      "source": "TED",
+      "sourceUrl": "https://ted.europa.eu/en/notice/-/detail/422444-2026",
+      "contentHash": "d394de16183a37f6bbc228543acd929e",
+      "formType": "competition",
+      "noticeType": "cn-standard"
+    }
+  ],
+  "durationMs": 3773
+}

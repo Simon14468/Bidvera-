@@ -1,0 +1,933 @@
+{
+  "primaryFinding": {
+    "summary": "SUPPLIER actor is correct; lifecycle is wrongly BID_SUBMISSION inside classifyProcurementPhase before entry gate. Firewall never sees POST_AWARD so cannot exclude.",
+    "mechanism": [
+      "1) Bare 'submit' cue (lines ~198-204 phase.ts) forces BID_SUBMISSION for ANY actor including SUPPLIER.",
+      "2) EXECUTION_VERB lacks: submit (non-monthly), coordinate, store/storage, offload, placement, transportation (only transport), delivery notes (only delivery reports).",
+      "3) SUPPLIER without matching EXECUTION_VERB defaults to BID_SUBMISSION (phase.ts ~229-231).",
+      "4) Admission firewall only blocks POST_AWARD/CONTRACT_EXECUTION/DELIVERY_IMPLEMENTATION — not SUPPLIER+BID_SUBMISSION execution-shaped duties."
+    ]
+  },
+  "results": [
+    {
+      "id": "A",
+      "label": "transportation/offloading/placement",
+      "traces": [
+        {
+          "text": "The supplier shall be responsible for transportation, offloading and placement of the equipment at the Site.",
+          "cueProbe": {
+            "matchesExecutionVerb": false,
+            "matchesContractExecutionCue": false,
+            "matchesSubmitCue": false,
+            "matchesPreAwardFrame": false,
+            "executionVerbDetail": {
+              "install": false,
+              "installation": false,
+              "repair": false,
+              "replace": false,
+              "transport": false,
+              "transportation": true,
+              "submit": false,
+              "submitMonthly": false,
+              "deliveryReports": false,
+              "deliveryNotes": false
+            }
+          },
+          "actor": "SUPPLIER",
+          "recipient": "SUPPLIER",
+          "documentRole": "SCHEDULE_OF_REQUIREMENTS",
+          "sectionRole": "UNKNOWN",
+          "phaseFromClassifier": "BID_SUBMISSION",
+          "purposeFromClassifier": "TECHNICAL",
+          "interpret": {
+            "admit": true,
+            "actor": "SUPPLIER",
+            "phase": "BID_SUBMISSION",
+            "purpose": "TECHNICAL",
+            "role": "TECHNICAL_REQUIREMENT",
+            "kind": "TECHNICAL_REQUIREMENT",
+            "strength": "MANDATORY",
+            "bidderRelevant": true,
+            "excl": null,
+            "reason": null
+          },
+          "entryRejected": [],
+          "sealedSize": 1,
+          "finalGateRejected": [],
+          "canonicalCount": 1,
+          "firewall": [
+            {
+              "hit": null,
+              "stiPhase": "BID_SUBMISSION",
+              "stiActor": "SUPPLIER",
+              "stiPurpose": "TECHNICAL"
+            }
+          ],
+          "firstWrongStage": "STI_LIFECYCLE_CLASSIFICATION (classifyProcurementPhase)"
+        },
+        {
+          "text": "A12=1 | B12=The supplier shall provide transportation, offloading and placement of all goods. | C12=☐ Yes ☐ No",
+          "cueProbe": {
+            "matchesExecutionVerb": false,
+            "matchesContractExecutionCue": false,
+            "matchesSubmitCue": false,
+            "matchesPreAwardFrame": false,
+            "executionVerbDetail": {
+              "install": false,
+              "installation": false,
+              "repair": false,
+              "replace": false,
+              "transport": false,
+              "transportation": true,
+              "submit": false,
+              "submitMonthly": false,
+              "deliveryReports": false,
+              "deliveryNotes": false
+            }
+          },
+          "actor": "SUPPLIER",
+          "recipient": "SUPPLIER",
+          "documentRole": "SCHEDULE_OF_REQUIREMENTS",
+          "sectionRole": "UNKNOWN",
+          "phaseFromClassifier": "BID_SUBMISSION",
+          "purposeFromClassifier": "BIDDER_OBLIGATION",
+          "interpret": {
+            "admit": true,
+            "actor": "SUPPLIER",
+            "phase": "BID_SUBMISSION",
+            "purpose": "BIDDER_OBLIGATION",
+            "role": "BIDDER_REQUIREMENT",
+            "kind": "REQUIRED_DOCUMENT",
+            "strength": "MANDATORY",
+            "bidderRelevant": true,
+            "excl": null,
+            "reason": null
+          },
+          "entryRejected": [],
+          "sealedSize": 1,
+          "finalGateRejected": [],
+          "canonicalCount": 1,
+          "firewall": [
+            {
+              "hit": null,
+              "stiPhase": "BID_SUBMISSION",
+              "stiActor": "SUPPLIER",
+              "stiPurpose": "BIDDER_OBLIGATION"
+            }
+          ],
+          "firstWrongStage": "STI_LIFECYCLE_CLASSIFICATION (classifyProcurementPhase)"
+        },
+        {
+          "text": "Transportation and offloading of equipment shall be arranged by the supplier.",
+          "cueProbe": {
+            "matchesExecutionVerb": false,
+            "matchesContractExecutionCue": false,
+            "matchesSubmitCue": false,
+            "matchesPreAwardFrame": false,
+            "executionVerbDetail": {
+              "install": false,
+              "installation": false,
+              "repair": false,
+              "replace": false,
+              "transport": false,
+              "transportation": true,
+              "submit": false,
+              "submitMonthly": false,
+              "deliveryReports": false,
+              "deliveryNotes": false
+            }
+          },
+          "actor": "SUPPLIER",
+          "recipient": "SUPPLIER",
+          "documentRole": "SCHEDULE_OF_REQUIREMENTS",
+          "sectionRole": "UNKNOWN",
+          "phaseFromClassifier": "BID_SUBMISSION",
+          "purposeFromClassifier": "TECHNICAL",
+          "interpret": {
+            "admit": true,
+            "actor": "SUPPLIER",
+            "phase": "BID_SUBMISSION",
+            "purpose": "TECHNICAL",
+            "role": "TECHNICAL_REQUIREMENT",
+            "kind": "TECHNICAL_REQUIREMENT",
+            "strength": "MANDATORY",
+            "bidderRelevant": true,
+            "excl": null,
+            "reason": null
+          },
+          "entryRejected": [],
+          "sealedSize": 1,
+          "finalGateRejected": [],
+          "canonicalCount": 1,
+          "firewall": [
+            {
+              "hit": null,
+              "stiPhase": "BID_SUBMISSION",
+              "stiActor": "SUPPLIER",
+              "stiPurpose": "TECHNICAL"
+            }
+          ],
+          "firstWrongStage": "STI_LIFECYCLE_CLASSIFICATION (classifyProcurementPhase)"
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "label": "repair/replacement defective",
+      "traces": [
+        {
+          "text": "Any non-compliant or defective items shall be repaired or replaced at supplier expense.",
+          "cueProbe": {
+            "matchesExecutionVerb": false,
+            "matchesContractExecutionCue": false,
+            "matchesSubmitCue": false,
+            "matchesPreAwardFrame": false,
+            "executionVerbDetail": {
+              "install": false,
+              "installation": false,
+              "repair": false,
+              "replace": false,
+              "transport": false,
+              "transportation": false,
+              "submit": false,
+              "submitMonthly": false,
+              "deliveryReports": false,
+              "deliveryNotes": false
+            }
+          },
+          "actor": "SUPPLIER",
+          "recipient": "SUPPLIER",
+          "documentRole": "SCHEDULE_OF_REQUIREMENTS",
+          "sectionRole": "UNKNOWN",
+          "phaseFromClassifier": "BID_SUBMISSION",
+          "purposeFromClassifier": "BIDDER_OBLIGATION",
+          "interpret": {
+            "admit": true,
+            "actor": "SUPPLIER",
+            "phase": "BID_SUBMISSION",
+            "purpose": "BIDDER_OBLIGATION",
+            "role": "BIDDER_REQUIREMENT",
+            "kind": "UNKNOWN",
+            "strength": "INFORMATIONAL",
+            "bidderRelevant": true,
+            "excl": null,
+            "reason": null
+          },
+          "entryRejected": [],
+          "sealedSize": 0,
+          "finalGateRejected": [
+            {
+              "excl": "NOT_ADMITTED",
+              "phase": "BID_SUBMISSION",
+              "failed": [
+                "obligationStrengthPreserved"
+              ]
+            }
+          ],
+          "canonicalCount": 0,
+          "firewall": [],
+          "firstWrongStage": "STI_LIFECYCLE_CLASSIFICATION (classifyProcurementPhase)"
+        },
+        {
+          "text": "A23=1 | B23=Where applicable, the supplier shall repair or replace defective items at its own expense. | C23=☐ Yes ☐ No",
+          "cueProbe": {
+            "matchesExecutionVerb": true,
+            "matchesContractExecutionCue": true,
+            "matchesSubmitCue": false,
+            "matchesPreAwardFrame": false,
+            "executionVerbDetail": {
+              "install": false,
+              "installation": false,
+              "repair": true,
+              "replace": true,
+              "transport": false,
+              "transportation": false,
+              "submit": false,
+              "submitMonthly": false,
+              "deliveryReports": false,
+              "deliveryNotes": false
+            }
+          },
+          "actor": "SUPPLIER",
+          "recipient": "SUPPLIER",
+          "documentRole": "SCHEDULE_OF_REQUIREMENTS",
+          "sectionRole": "UNKNOWN",
+          "phaseFromClassifier": "CONTRACT_EXECUTION",
+          "purposeFromClassifier": "POST_AWARD_OBLIGATION",
+          "interpret": {
+            "admit": false,
+            "actor": "SUPPLIER",
+            "phase": "CONTRACT_EXECUTION",
+            "purpose": "POST_AWARD_OBLIGATION",
+            "role": "POST_AWARD_CONTRACTUAL_OBLIGATION",
+            "kind": "CONTRACTUAL_OBLIGATION",
+            "strength": "CONDITIONAL",
+            "bidderRelevant": false,
+            "excl": "EXCLUDED_POST_AWARD",
+            "reason": "excluded_content_kind:POST_AWARD_CONTRACTUAL_OBLIGATION"
+          },
+          "entryRejected": [
+            {
+              "excl": "EXCLUDED_POST_AWARD",
+              "phase": "CONTRACT_EXECUTION",
+              "purpose": "POST_AWARD_OBLIGATION"
+            }
+          ],
+          "sealedSize": 0,
+          "finalGateRejected": [],
+          "canonicalCount": 0,
+          "firewall": [],
+          "firstWrongStage": "none_or_correctly_excluded"
+        },
+        {
+          "text": "If repair is not possible, the supplier must replace the item with a new one.",
+          "cueProbe": {
+            "matchesExecutionVerb": true,
+            "matchesContractExecutionCue": false,
+            "matchesSubmitCue": false,
+            "matchesPreAwardFrame": false,
+            "executionVerbDetail": {
+              "install": false,
+              "installation": false,
+              "repair": true,
+              "replace": true,
+              "transport": false,
+              "transportation": false,
+              "submit": false,
+              "submitMonthly": false,
+              "deliveryReports": false,
+              "deliveryNotes": false
+            }
+          },
+          "actor": "SUPPLIER",
+          "recipient": "SUPPLIER",
+          "documentRole": "SCHEDULE_OF_REQUIREMENTS",
+          "sectionRole": "UNKNOWN",
+          "phaseFromClassifier": "CONTRACT_EXECUTION",
+          "purposeFromClassifier": "POST_AWARD_OBLIGATION",
+          "interpret": {
+            "admit": false,
+            "actor": "SUPPLIER",
+            "phase": "CONTRACT_EXECUTION",
+            "purpose": "POST_AWARD_OBLIGATION",
+            "role": "POST_AWARD_CONTRACTUAL_OBLIGATION",
+            "kind": "CONTRACTUAL_OBLIGATION",
+            "strength": "CONDITIONAL",
+            "bidderRelevant": false,
+            "excl": "EXCLUDED_POST_AWARD",
+            "reason": "excluded_content_kind:POST_AWARD_CONTRACTUAL_OBLIGATION"
+          },
+          "entryRejected": [
+            {
+              "excl": "EXCLUDED_POST_AWARD",
+              "phase": "CONTRACT_EXECUTION",
+              "purpose": "POST_AWARD_OBLIGATION"
+            }
+          ],
+          "sealedSize": 0,
+          "finalGateRejected": [],
+          "canonicalCount": 0,
+          "firewall": [],
+          "firstWrongStage": "none_or_correctly_excluded"
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "label": "delivery notes / installation completion / warranty certificates",
+      "traces": [
+        {
+          "text": "The supplier shall submit delivery notes, installation completion reports, and warranty certificates.",
+          "cueProbe": {
+            "matchesExecutionVerb": false,
+            "matchesContractExecutionCue": false,
+            "matchesSubmitCue": true,
+            "matchesPreAwardFrame": false,
+            "executionVerbDetail": {
+              "install": false,
+              "installation": true,
+              "repair": false,
+              "replace": false,
+              "transport": false,
+              "transportation": false,
+              "submit": true,
+              "submitMonthly": false,
+              "deliveryReports": false,
+              "deliveryNotes": true
+            }
+          },
+          "actor": "SUPPLIER",
+          "recipient": "SUPPLIER",
+          "documentRole": "SCHEDULE_OF_REQUIREMENTS",
+          "sectionRole": "UNKNOWN",
+          "phaseFromClassifier": "BID_SUBMISSION",
+          "purposeFromClassifier": "REQUIRED_DOCUMENT",
+          "interpret": {
+            "admit": true,
+            "actor": "SUPPLIER",
+            "phase": "BID_SUBMISSION",
+            "purpose": "REQUIRED_DOCUMENT",
+            "role": "REQUIRED_SUBMISSION_DOCUMENT",
+            "kind": "REQUIRED_DOCUMENT",
+            "strength": "MANDATORY",
+            "bidderRelevant": true,
+            "excl": null,
+            "reason": null
+          },
+          "entryRejected": [],
+          "sealedSize": 1,
+          "finalGateRejected": [],
+          "canonicalCount": 1,
+          "firewall": [
+            {
+              "hit": null,
+              "stiPhase": "BID_SUBMISSION",
+              "stiActor": "SUPPLIER",
+              "stiPurpose": "REQUIRED_DOCUMENT"
+            }
+          ],
+          "firstWrongStage": "STI_LIFECYCLE_CLASSIFICATION (classifyProcurementPhase)"
+        },
+        {
+          "text": "A31=1 | B31=The supplier shall submit delivery notes, installation completion reports, and warranty certificates. | C31=☐ Yes ☐ No",
+          "cueProbe": {
+            "matchesExecutionVerb": false,
+            "matchesContractExecutionCue": false,
+            "matchesSubmitCue": true,
+            "matchesPreAwardFrame": false,
+            "executionVerbDetail": {
+              "install": false,
+              "installation": true,
+              "repair": false,
+              "replace": false,
+              "transport": false,
+              "transportation": false,
+              "submit": true,
+              "submitMonthly": false,
+              "deliveryReports": false,
+              "deliveryNotes": true
+            }
+          },
+          "actor": "SUPPLIER",
+          "recipient": "SUPPLIER",
+          "documentRole": "SCHEDULE_OF_REQUIREMENTS",
+          "sectionRole": "UNKNOWN",
+          "phaseFromClassifier": "BID_SUBMISSION",
+          "purposeFromClassifier": "REQUIRED_DOCUMENT",
+          "interpret": {
+            "admit": true,
+            "actor": "SUPPLIER",
+            "phase": "BID_SUBMISSION",
+            "purpose": "REQUIRED_DOCUMENT",
+            "role": "REQUIRED_SUBMISSION_DOCUMENT",
+            "kind": "REQUIRED_DOCUMENT",
+            "strength": "MANDATORY",
+            "bidderRelevant": true,
+            "excl": null,
+            "reason": null
+          },
+          "entryRejected": [],
+          "sealedSize": 1,
+          "finalGateRejected": [],
+          "canonicalCount": 1,
+          "firewall": [
+            {
+              "hit": null,
+              "stiPhase": "BID_SUBMISSION",
+              "stiActor": "SUPPLIER",
+              "stiPurpose": "REQUIRED_DOCUMENT"
+            }
+          ],
+          "firstWrongStage": "STI_LIFECYCLE_CLASSIFICATION (classifyProcurementPhase)"
+        },
+        {
+          "text": "The supplier shall submit delivery and installation reports after delivery.",
+          "cueProbe": {
+            "matchesExecutionVerb": false,
+            "matchesContractExecutionCue": true,
+            "matchesSubmitCue": true,
+            "matchesPreAwardFrame": false,
+            "executionVerbDetail": {
+              "install": false,
+              "installation": true,
+              "repair": false,
+              "replace": false,
+              "transport": false,
+              "transportation": false,
+              "submit": true,
+              "submitMonthly": false,
+              "deliveryReports": true,
+              "deliveryNotes": false
+            }
+          },
+          "actor": "SUPPLIER",
+          "recipient": "SUPPLIER",
+          "documentRole": "SCHEDULE_OF_REQUIREMENTS",
+          "sectionRole": "UNKNOWN",
+          "phaseFromClassifier": "DELIVERY_IMPLEMENTATION",
+          "purposeFromClassifier": "POST_AWARD_OBLIGATION",
+          "interpret": {
+            "admit": false,
+            "actor": "SUPPLIER",
+            "phase": "DELIVERY_IMPLEMENTATION",
+            "purpose": "POST_AWARD_OBLIGATION",
+            "role": "POST_AWARD_CONTRACTUAL_OBLIGATION",
+            "kind": "CONTRACTUAL_OBLIGATION",
+            "strength": "UNKNOWN",
+            "bidderRelevant": false,
+            "excl": "EXCLUDED_POST_AWARD",
+            "reason": "excluded_content_kind:POST_AWARD_CONTRACTUAL_OBLIGATION"
+          },
+          "entryRejected": [
+            {
+              "excl": "EXCLUDED_POST_AWARD",
+              "phase": "DELIVERY_IMPLEMENTATION",
+              "purpose": "POST_AWARD_OBLIGATION"
+            }
+          ],
+          "sealedSize": 0,
+          "finalGateRejected": [],
+          "canonicalCount": 0,
+          "firewall": [],
+          "firstWrongStage": "none_or_correctly_excluded"
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "label": "coordinate delivery/installation schedules",
+      "traces": [
+        {
+          "text": "The supplier shall coordinate delivery and installation schedules with the Purchaser.",
+          "cueProbe": {
+            "matchesExecutionVerb": false,
+            "matchesContractExecutionCue": false,
+            "matchesSubmitCue": false,
+            "matchesPreAwardFrame": false,
+            "executionVerbDetail": {
+              "install": false,
+              "installation": true,
+              "repair": false,
+              "replace": false,
+              "transport": false,
+              "transportation": false,
+              "submit": false,
+              "submitMonthly": false,
+              "deliveryReports": false,
+              "deliveryNotes": false
+            }
+          },
+          "actor": "SUPPLIER",
+          "recipient": "SUPPLIER",
+          "documentRole": "SCHEDULE_OF_REQUIREMENTS",
+          "sectionRole": "UNKNOWN",
+          "phaseFromClassifier": "BID_SUBMISSION",
+          "purposeFromClassifier": "BIDDER_OBLIGATION",
+          "interpret": {
+            "admit": true,
+            "actor": "SUPPLIER",
+            "phase": "BID_SUBMISSION",
+            "purpose": "BIDDER_OBLIGATION",
+            "role": "BIDDER_REQUIREMENT",
+            "kind": "TECHNICAL_REQUIREMENT",
+            "strength": "MANDATORY",
+            "bidderRelevant": true,
+            "excl": null,
+            "reason": null
+          },
+          "entryRejected": [],
+          "sealedSize": 1,
+          "finalGateRejected": [],
+          "canonicalCount": 1,
+          "firewall": [
+            {
+              "hit": null,
+              "stiPhase": "BID_SUBMISSION",
+              "stiActor": "SUPPLIER",
+              "stiPurpose": "BIDDER_OBLIGATION"
+            }
+          ],
+          "firstWrongStage": "STI_LIFECYCLE_CLASSIFICATION (classifyProcurementPhase)"
+        },
+        {
+          "text": "K Coordination and Scheduling 1 The supplier shall coordinate delivery and installation schedules with the site.",
+          "cueProbe": {
+            "matchesExecutionVerb": false,
+            "matchesContractExecutionCue": false,
+            "matchesSubmitCue": false,
+            "matchesPreAwardFrame": false,
+            "executionVerbDetail": {
+              "install": false,
+              "installation": true,
+              "repair": false,
+              "replace": false,
+              "transport": false,
+              "transportation": false,
+              "submit": false,
+              "submitMonthly": false,
+              "deliveryReports": false,
+              "deliveryNotes": false
+            }
+          },
+          "actor": "SUPPLIER",
+          "recipient": "SUPPLIER",
+          "documentRole": "SCHEDULE_OF_REQUIREMENTS",
+          "sectionRole": "UNKNOWN",
+          "phaseFromClassifier": "BID_SUBMISSION",
+          "purposeFromClassifier": "BIDDER_OBLIGATION",
+          "interpret": {
+            "admit": true,
+            "actor": "SUPPLIER",
+            "phase": "BID_SUBMISSION",
+            "purpose": "BIDDER_OBLIGATION",
+            "role": "BIDDER_REQUIREMENT",
+            "kind": "TECHNICAL_REQUIREMENT",
+            "strength": "MANDATORY",
+            "bidderRelevant": true,
+            "excl": null,
+            "reason": null
+          },
+          "entryRejected": [],
+          "sealedSize": 1,
+          "finalGateRejected": [],
+          "canonicalCount": 1,
+          "firewall": [
+            {
+              "hit": null,
+              "stiPhase": "BID_SUBMISSION",
+              "stiActor": "SUPPLIER",
+              "stiPurpose": "BIDDER_OBLIGATION"
+            }
+          ],
+          "firstWrongStage": "STI_LIFECYCLE_CLASSIFICATION (classifyProcurementPhase)"
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "label": "storage before installation",
+      "traces": [
+        {
+          "text": "The supplier shall provide storage of the equipment before installation.",
+          "cueProbe": {
+            "matchesExecutionVerb": false,
+            "matchesContractExecutionCue": false,
+            "matchesSubmitCue": false,
+            "matchesPreAwardFrame": false,
+            "executionVerbDetail": {
+              "install": false,
+              "installation": true,
+              "repair": false,
+              "replace": false,
+              "transport": false,
+              "transportation": false,
+              "submit": false,
+              "submitMonthly": false,
+              "deliveryReports": false,
+              "deliveryNotes": false
+            }
+          },
+          "actor": "SUPPLIER",
+          "recipient": "SUPPLIER",
+          "documentRole": "SCHEDULE_OF_REQUIREMENTS",
+          "sectionRole": "UNKNOWN",
+          "phaseFromClassifier": "BID_SUBMISSION",
+          "purposeFromClassifier": "TECHNICAL",
+          "interpret": {
+            "admit": true,
+            "actor": "SUPPLIER",
+            "phase": "BID_SUBMISSION",
+            "purpose": "TECHNICAL",
+            "role": "TECHNICAL_REQUIREMENT",
+            "kind": "TECHNICAL_REQUIREMENT",
+            "strength": "MANDATORY",
+            "bidderRelevant": true,
+            "excl": null,
+            "reason": null
+          },
+          "entryRejected": [],
+          "sealedSize": 1,
+          "finalGateRejected": [],
+          "canonicalCount": 1,
+          "firewall": [
+            {
+              "hit": null,
+              "stiPhase": "BID_SUBMISSION",
+              "stiActor": "SUPPLIER",
+              "stiPurpose": "TECHNICAL"
+            }
+          ],
+          "firstWrongStage": "STI_LIFECYCLE_CLASSIFICATION (classifyProcurementPhase)"
+        },
+        {
+          "text": "The supplier shall store the goods on site before installation if required.",
+          "cueProbe": {
+            "matchesExecutionVerb": false,
+            "matchesContractExecutionCue": false,
+            "matchesSubmitCue": false,
+            "matchesPreAwardFrame": false,
+            "executionVerbDetail": {
+              "install": false,
+              "installation": true,
+              "repair": false,
+              "replace": false,
+              "transport": false,
+              "transportation": false,
+              "submit": false,
+              "submitMonthly": false,
+              "deliveryReports": false,
+              "deliveryNotes": false
+            }
+          },
+          "actor": "SUPPLIER",
+          "recipient": "SUPPLIER",
+          "documentRole": "SCHEDULE_OF_REQUIREMENTS",
+          "sectionRole": "UNKNOWN",
+          "phaseFromClassifier": "BID_SUBMISSION",
+          "purposeFromClassifier": "BIDDER_OBLIGATION",
+          "interpret": {
+            "admit": true,
+            "actor": "SUPPLIER",
+            "phase": "BID_SUBMISSION",
+            "purpose": "BIDDER_OBLIGATION",
+            "role": "BIDDER_REQUIREMENT",
+            "kind": "TECHNICAL_REQUIREMENT",
+            "strength": "CONDITIONAL",
+            "bidderRelevant": true,
+            "excl": null,
+            "reason": null
+          },
+          "entryRejected": [],
+          "sealedSize": 1,
+          "finalGateRejected": [],
+          "canonicalCount": 1,
+          "firewall": [
+            {
+              "hit": null,
+              "stiPhase": "BID_SUBMISSION",
+              "stiActor": "SUPPLIER",
+              "stiPurpose": "BIDDER_OBLIGATION"
+            }
+          ],
+          "firstWrongStage": "STI_LIFECYCLE_CLASSIFICATION (classifyProcurementPhase)"
+        }
+      ]
+    },
+    {
+      "id": "COMPARE",
+      "label": "correct bidder pre-award",
+      "traces": [
+        {
+          "text": "The Bidder shall possess a valid Commercial Registration Certificate issued by the competent authority.",
+          "cueProbe": {
+            "matchesExecutionVerb": false,
+            "matchesContractExecutionCue": false,
+            "matchesSubmitCue": false,
+            "matchesPreAwardFrame": false,
+            "executionVerbDetail": {
+              "install": false,
+              "installation": false,
+              "repair": false,
+              "replace": false,
+              "transport": false,
+              "transportation": false,
+              "submit": false,
+              "submitMonthly": false,
+              "deliveryReports": false,
+              "deliveryNotes": false
+            }
+          },
+          "actor": "BIDDER",
+          "recipient": "BIDDER",
+          "documentRole": "SCHEDULE_OF_REQUIREMENTS",
+          "sectionRole": "UNKNOWN",
+          "phaseFromClassifier": "BID_SUBMISSION",
+          "purposeFromClassifier": "REQUIRED_DOCUMENT",
+          "interpret": {
+            "admit": true,
+            "actor": "BIDDER",
+            "phase": "BID_SUBMISSION",
+            "purpose": "REQUIRED_DOCUMENT",
+            "role": "REQUIRED_SUBMISSION_DOCUMENT",
+            "kind": "REQUIRED_DOCUMENT",
+            "strength": "MANDATORY",
+            "bidderRelevant": true,
+            "excl": null,
+            "reason": null
+          },
+          "entryRejected": [],
+          "sealedSize": 1,
+          "finalGateRejected": [],
+          "canonicalCount": 1,
+          "firewall": [
+            {
+              "hit": null,
+              "stiPhase": "BID_SUBMISSION",
+              "stiActor": "BIDDER",
+              "stiPurpose": "REQUIRED_DOCUMENT"
+            }
+          ],
+          "firstWrongStage": "STI_LIFECYCLE_CLASSIFICATION (classifyProcurementPhase)"
+        },
+        {
+          "text": "The Bidder shall submit a valid Commercial Registration Certificate with the proposal.",
+          "cueProbe": {
+            "matchesExecutionVerb": false,
+            "matchesContractExecutionCue": false,
+            "matchesSubmitCue": true,
+            "matchesPreAwardFrame": true,
+            "executionVerbDetail": {
+              "install": false,
+              "installation": false,
+              "repair": false,
+              "replace": false,
+              "transport": false,
+              "transportation": false,
+              "submit": true,
+              "submitMonthly": false,
+              "deliveryReports": false,
+              "deliveryNotes": false
+            }
+          },
+          "actor": "BIDDER",
+          "recipient": "BIDDER",
+          "documentRole": "SCHEDULE_OF_REQUIREMENTS",
+          "sectionRole": "UNKNOWN",
+          "phaseFromClassifier": "BID_SUBMISSION",
+          "purposeFromClassifier": "REQUIRED_DOCUMENT",
+          "interpret": {
+            "admit": true,
+            "actor": "BIDDER",
+            "phase": "BID_SUBMISSION",
+            "purpose": "REQUIRED_DOCUMENT",
+            "role": "REQUIRED_SUBMISSION_DOCUMENT",
+            "kind": "REQUIRED_DOCUMENT",
+            "strength": "MANDATORY",
+            "bidderRelevant": true,
+            "excl": null,
+            "reason": null
+          },
+          "entryRejected": [],
+          "sealedSize": 1,
+          "finalGateRejected": [],
+          "canonicalCount": 1,
+          "firewall": [
+            {
+              "hit": null,
+              "stiPhase": "BID_SUBMISSION",
+              "stiActor": "BIDDER",
+              "stiPurpose": "REQUIRED_DOCUMENT"
+            }
+          ],
+          "firstWrongStage": "STI_LIFECYCLE_CLASSIFICATION (classifyProcurementPhase)"
+        }
+      ]
+    }
+  ],
+  "divergence": {
+    "bidderSubmitCert": {
+      "text": "The Bidder shall submit a valid Commercial Registration Certificate with the proposal.",
+      "cueProbe": {
+        "matchesExecutionVerb": false,
+        "matchesContractExecutionCue": false,
+        "matchesSubmitCue": true,
+        "matchesPreAwardFrame": true,
+        "executionVerbDetail": {
+          "install": false,
+          "installation": false,
+          "repair": false,
+          "replace": false,
+          "transport": false,
+          "transportation": false,
+          "submit": true,
+          "submitMonthly": false,
+          "deliveryReports": false,
+          "deliveryNotes": false
+        }
+      },
+      "actor": "BIDDER",
+      "recipient": "BIDDER",
+      "documentRole": "SCHEDULE_OF_REQUIREMENTS",
+      "sectionRole": "UNKNOWN",
+      "phaseFromClassifier": "BID_SUBMISSION",
+      "purposeFromClassifier": "REQUIRED_DOCUMENT",
+      "interpret": {
+        "admit": true,
+        "actor": "BIDDER",
+        "phase": "BID_SUBMISSION",
+        "purpose": "REQUIRED_DOCUMENT",
+        "role": "REQUIRED_SUBMISSION_DOCUMENT",
+        "kind": "REQUIRED_DOCUMENT",
+        "strength": "MANDATORY",
+        "bidderRelevant": true,
+        "excl": null,
+        "reason": null
+      },
+      "entryRejected": [],
+      "sealedSize": 1,
+      "finalGateRejected": [],
+      "canonicalCount": 1,
+      "firewall": [
+        {
+          "hit": null,
+          "stiPhase": "BID_SUBMISSION",
+          "stiActor": "BIDDER",
+          "stiPurpose": "REQUIRED_DOCUMENT"
+        }
+      ],
+      "firstWrongStage": "STI_LIFECYCLE_CLASSIFICATION (classifyProcurementPhase)"
+    },
+    "supplierSubmitDeliveryNotes": {
+      "text": "The supplier shall submit delivery notes, installation completion reports, and warranty certificates.",
+      "cueProbe": {
+        "matchesExecutionVerb": false,
+        "matchesContractExecutionCue": false,
+        "matchesSubmitCue": true,
+        "matchesPreAwardFrame": false,
+        "executionVerbDetail": {
+          "install": false,
+          "installation": true,
+          "repair": false,
+          "replace": false,
+          "transport": false,
+          "transportation": false,
+          "submit": true,
+          "submitMonthly": false,
+          "deliveryReports": false,
+          "deliveryNotes": true
+        }
+      },
+      "actor": "SUPPLIER",
+      "recipient": "SUPPLIER",
+      "documentRole": "SCHEDULE_OF_REQUIREMENTS",
+      "sectionRole": "UNKNOWN",
+      "phaseFromClassifier": "BID_SUBMISSION",
+      "purposeFromClassifier": "REQUIRED_DOCUMENT",
+      "interpret": {
+        "admit": true,
+        "actor": "SUPPLIER",
+        "phase": "BID_SUBMISSION",
+        "purpose": "REQUIRED_DOCUMENT",
+        "role": "REQUIRED_SUBMISSION_DOCUMENT",
+        "kind": "REQUIRED_DOCUMENT",
+        "strength": "MANDATORY",
+        "bidderRelevant": true,
+        "excl": null,
+        "reason": null
+      },
+      "entryRejected": [],
+      "sealedSize": 1,
+      "finalGateRejected": [],
+      "canonicalCount": 1,
+      "firewall": [
+        {
+          "hit": null,
+          "stiPhase": "BID_SUBMISSION",
+          "stiActor": "SUPPLIER",
+          "stiPurpose": "REQUIRED_DOCUMENT"
+        }
+      ],
+      "firstWrongStage": "STI_LIFECYCLE_CLASSIFICATION (classifyProcurementPhase)"
+    }
+  }
+}
