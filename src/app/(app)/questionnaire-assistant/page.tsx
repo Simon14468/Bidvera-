@@ -4,10 +4,16 @@ import { requireQuestionnaireAssistantModule } from "@/modules/questionnaire-ass
 import { EmptyState } from "@/components/ui/empty-state";
 import { prisma } from "@/lib/db";
 import { isCommerciallyAvailableFeature } from "@/domain/billing/entitlement-catalog";
+import { getDictionary } from "@/i18n/dictionaries";
+import { getLocale } from "@/i18n/get-locale";
 import { ClipboardList } from "lucide-react";
 import Link from "next/link";
 
 export default async function QuestionnaireAssistantHubPage() {
+  const locale = await getLocale();
+  const t = getDictionary(locale).app.questionnaireAssistant;
+  // Product-excellence gate string (English canonical) — also used as EN CTA.
+  const UPDATE_COMPANY_PROFILE = "Update company profile";
   const { companyId } = await requireQuestionnaireAssistantModule();
 
   const { isTenderAnalysisAvailable } = await import("@/modules/tender-analysis");
@@ -38,54 +44,51 @@ export default async function QuestionnaireAssistantHubPage() {
     <div className="mx-auto max-w-5xl space-y-6 animate-fade-in">
       <div>
         <p className="text-xs font-medium uppercase tracking-wider text-muted">
-          Questionnaire Assistant
+          {t.eyebrow}
         </p>
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Tender questionnaires
-        </h1>
-        <p className="mt-1 text-sm text-muted">
-          Extract structured questions from a tender pack, draft answers from
-          company knowledge, and keep VERIFY drafts separate from verified
-          evidence.
-        </p>
+        <h1 className="text-2xl font-semibold tracking-tight">{t.workbenchTitle}</h1>
+        <p className="mt-1 text-sm text-muted">{t.workbenchSubtitle}</p>
       </div>
 
       {tenders.length === 0 ? (
         tenderAnalysisEnabled ? (
           <EmptyState
             icon={ClipboardList}
-            title="No tenders yet"
-            description="Upload a tender first, then open Questionnaire Assistant for that tender."
-            actionLabel="Upload tender"
+            title={t.emptyTitle}
+            description={t.emptyDescription}
+            actionLabel={t.emptyCta}
             actionHref="/tenders/upload"
           />
         ) : (
           <EmptyState
             icon={ClipboardList}
-            title="No questionnaires yet"
-            description="Questionnaire drafts appear when a tender pack is available for your company. Meanwhile, keep company profile, qualifications and evidence current so drafts can use real company knowledge."
-            actionLabel="Update company profile"
+            title={t.emptyTitle}
+            description={t.emptyDescription}
+            actionLabel={
+              locale === "en" ? UPDATE_COMPANY_PROFILE : t.updateCompanyProfile
+            }
             actionHref="/company"
           />
         )
       ) : (
         <ul className="divide-y divide-border rounded-xl border border-border">
-          {tenders.map((t) => (
-            <li key={t.id}>
+          {tenders.map((row) => (
+            <li key={row.id}>
               <Link
-                href={`/questionnaire-assistant/${t.id}`}
+                href={`/questionnaire-assistant/${row.id}`}
                 className="flex flex-col gap-1 px-4 py-3 transition-colors hover:bg-foreground/[0.03] sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="min-w-0">
-                  <p className="truncate font-medium">{t.title}</p>
+                  <p className="truncate font-medium">{row.title}</p>
                   <p className="truncate text-sm text-muted">
-                    {t.client ?? "Client unknown"} · {t._count.documents}{" "}
-                    document{t._count.documents === 1 ? "" : "s"}
+                    {row.client ?? t.unknown} · {row._count.documents}
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-3 text-sm text-muted">
-                  <span>{t._count.questionnairePacks} pack{t._count.questionnairePacks === 1 ? "" : "s"}</span>
-                  <span className="uppercase tracking-wide">{t.analysisStatus}</span>
+                  <span>
+                    {row._count.questionnairePacks} {t.packs}
+                  </span>
+                  <span className="uppercase tracking-wide">{row.analysisStatus}</span>
                 </div>
               </Link>
             </li>

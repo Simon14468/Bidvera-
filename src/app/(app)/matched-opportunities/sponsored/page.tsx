@@ -7,6 +7,8 @@ import {
   requireMatchingEngineModule,
 } from "@/modules/matching-engine";
 import { SponsoredMatchingRequestClient } from "@/modules/matching-engine/ui/sponsored-matching-request-client";
+import { getDictionary } from "@/i18n/dictionaries";
+import { getLocale } from "@/i18n/get-locale";
 
 /**
  * Explicit Sponsored Matching request flow.
@@ -14,6 +16,8 @@ import { SponsoredMatchingRequestClient } from "@/modules/matching-engine/ui/spo
  * Hidden when Sponsored Matching is globally OFF.
  */
 export default async function SponsoredMatchingRequestPage() {
+  const locale = await getLocale();
+  const t = getDictionary(locale).app.matchedOpportunities;
   const { companyId } = await requireMatchingEngineModule();
   const sponsorshipEnabled = await isMatchingSponsorshipGloballyEnabled();
 
@@ -22,21 +26,15 @@ export default async function SponsoredMatchingRequestPage() {
       <div className="mx-auto max-w-3xl space-y-8 animate-fade-in">
         <header>
           <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-primary">
-            SPONSORED MATCHING
+            {t.sponsoredEyebrow}
           </p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">
-            Sponsored Matching
-          </h1>
-          <p className="mt-1 max-w-2xl text-sm text-muted">
-            Sponsored Matching is not available right now. Organic matched
-            opportunities remain available when Matching Engine is enabled for
-            your workspace.
-          </p>
+          <h1 className="mt-1 text-2xl font-semibold tracking-tight">{t.sponsoredTitle}</h1>
+          <p className="mt-1 max-w-2xl text-sm text-muted">{t.sponsoredUnavailableSubtitle}</p>
           <Link
             href="/matched-opportunities"
             className="mt-3 inline-flex text-sm font-medium text-primary hover:underline"
           >
-            ← Back to matched opportunities
+            ← {t.backToMatched}
           </Link>
         </header>
       </div>
@@ -49,21 +47,15 @@ export default async function SponsoredMatchingRequestPage() {
     <div className="mx-auto max-w-3xl space-y-8 animate-fade-in">
       <header>
         <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-primary">
-          SPONSORED MATCHING
+          {t.sponsoredEyebrow}
         </p>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight">
-          Request Sponsored Matching
-        </h1>
-        <p className="mt-1 max-w-2xl text-sm text-muted">
-          Choose an active plan to request sponsorship. This is a request /
-          order intent only — payment is not processed here, and sponsorship
-          never bypasses relevance.
-        </p>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight">{t.sponsoredRequestTitle}</h1>
+        <p className="mt-1 max-w-2xl text-sm text-muted">{t.sponsoredRequestSubtitle}</p>
         <Link
           href="/matched-opportunities"
           className="mt-3 inline-flex text-sm font-medium text-primary hover:underline"
         >
-          ← Back to matched opportunities
+          ← {t.backToMatched}
         </Link>
       </header>
 

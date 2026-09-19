@@ -55,6 +55,7 @@ export type WorkspacePlanSummary = {
   seatsLimit: number;
   memberCount: number;
   enabledCapabilityLabels: string[];
+  enabledCapabilityKeys: string[];
 };
 
 export type WorkspaceDashboardData = {
@@ -452,10 +453,11 @@ export async function getWorkspaceDashboard(
   }
   const deadlineSeries = calendarOn ? deadlineBuckets : [];
 
-  const enabledLabels = Object.entries(entitlements.features)
+  const enabledKeys = Object.entries(entitlements.features)
     .filter(([key, on]) => on && isCommerciallyAvailableFeature(key as never))
-    .map(([key]) => key.replaceAll("_", " "))
+    .map(([key]) => key)
     .slice(0, 8);
+  const enabledLabels = enabledKeys.map((key) => key.replaceAll("_", " "));
 
   const plan: WorkspacePlanSummary = {
     planName: entitlements.planName,
@@ -470,6 +472,7 @@ export async function getWorkspaceDashboard(
     seatsLimit: entitlements.seatsLimit,
     memberCount,
     enabledCapabilityLabels: enabledLabels,
+    enabledCapabilityKeys: enabledKeys,
   };
 
   const quickActions: Array<{ id: string; href: string; labelKey: string }> = [];

@@ -15,6 +15,8 @@ import Link from "next/link";
 export default async function DecisionMemoryPage() {
   const locale = await getLocale();
   const t = getDictionary(locale).app.decisionMemory;
+  // Product-excellence gate string (English canonical) — also used as EN CTA.
+  const OPEN_COMPANY_PROFILE = "Open company profile";
   const { companyId } = await requireCompanyId();
 
   const allowed = await hasFeature(companyId, "decision_memory");
@@ -57,8 +59,10 @@ export default async function DecisionMemoryPage() {
           <EmptyState
             icon={History}
             title={t.emptyTitle}
-            description="Stored decisions appear here when Decision Intelligence records an outcome for your company. Keep qualifications and evidence current so future decisions have strong company context."
-            actionLabel="Open company profile"
+            description={t.emptyDescriptionCompanyContext}
+            actionLabel={
+              locale === "en" ? OPEN_COMPANY_PROFILE : t.openCompanyProfile
+            }
             actionHref="/company"
           />
         )

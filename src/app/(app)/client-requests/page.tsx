@@ -7,15 +7,22 @@ import {
 import { ClientRequestStatusBadge } from "@/modules/client-requests/ui/status-badge";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import type { AppModuleBundle } from "@/i18n/app-modules";
+import { getDictionary } from "@/i18n/dictionaries";
+import { getLocale } from "@/i18n/get-locale";
 import { Inbox } from "lucide-react";
 import Link from "next/link";
 import { ClientRequestsFilters } from "./filters";
+
+type ClientRequestsCopy = AppModuleBundle["clientRequests"];
 
 export default async function ClientRequestsPage({
   searchParams,
 }: {
   searchParams: Promise<{ status?: string; client?: string; sort?: string }>;
 }) {
+  const locale = await getLocale();
+  const t = getDictionary(locale).app.clientRequests;
   const { companyId } = await requireClientRequestsModule();
   const sp = await searchParams;
   const dash = await getClientRequestsDashboard(companyId);
@@ -46,12 +53,12 @@ export default async function ClientRequestsPage({
   if (dash.total === 0) {
     return (
       <div className="mx-auto max-w-5xl space-y-6 animate-fade-in">
-        <Header />
+        <ClientRequestsHeader t={t} />
         <EmptyState
           icon={Inbox}
-          title="No client requests yet"
-          description="Track buyer requests for company information and documents, link existing Bidvera evidence, and share a secure dossier."
-          actionLabel="Create request"
+          title={t.emptyTitle}
+          description={t.emptyDescription}
+          actionLabel={t.emptyCta}
           actionHref="/client-requests/new"
         />
       </div>
@@ -61,23 +68,23 @@ export default async function ClientRequestsPage({
   return (
     <div className="mx-auto max-w-5xl space-y-6 animate-fade-in">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <Header />
+        <ClientRequestsHeader t={t} />
         <Link
           href="/client-requests/new"
           className="inline-flex h-10 items-center rounded-xl bg-primary px-4 text-sm font-medium text-white hover:bg-primary-hover"
         >
-          Create request
+          {t.createRequest}
         </Link>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         {(
           [
-            ["All", dash.total],
-            ["Pending", dash.byStatus.PENDING],
-            ["In progress", dash.byStatus.IN_PROGRESS],
-            ["Completed", dash.byStatus.COMPLETED],
-            ["Overdue", dash.byStatus.OVERDUE],
+            [t.all, dash.total],
+            [t.pending, dash.byStatus.PENDING],
+            [t.inProgress, dash.byStatus.IN_PROGRESS],
+            [t.completed, dash.byStatus.COMPLETED],
+            [t.overdue, dash.byStatus.OVERDUE],
           ] as const
         ).map(([label, value]) => (
           <Card key={label}>
@@ -97,9 +104,7 @@ export default async function ClientRequestsPage({
 
       <ul className="divide-y divide-border rounded-xl border border-border">
         {sorted.length === 0 ? (
-          <li className="px-4 py-8 text-center text-sm text-muted">
-            No requests match these filters.
-          </li>
+          <li className="px-4 py-8 text-center text-sm text-muted">{t.noMatch}</li>
         ) : (
           sorted.map((r) => (
             <li key={r.id}>
@@ -117,10 +122,10 @@ export default async function ClientRequestsPage({
                     {r.progressPercent}% · {r.completedItemCount}/{r.itemCount}
                   </span>
                   <span className="text-muted">
-                    Due {r.deadline.slice(0, 10)}
+                    {t.deadline} {r.deadline.slice(0, 10)}
                   </span>
                   <span className="text-muted">
-                    Updated {r.updatedAt.slice(0, 10)}
+                    {t.updated} {r.updatedAt.slice(0, 10)}
                   </span>
                 </div>
               </Link>
@@ -132,17 +137,14 @@ export default async function ClientRequestsPage({
   );
 }
 
-function Header() {
+function ClientRequestsHeader({ t }: { t: ClientRequestsCopy }) {
   return (
     <div>
       <p className="text-xs font-medium uppercase tracking-wider text-muted">
-        Client Requests
+        {t.eyebrow}
       </p>
-      <h1 className="text-2xl font-semibold tracking-tight">Requests portal</h1>
-      <p className="mt-1 text-sm text-muted">
-        Centralize buyer requests for information and documents — link existing
-        Bidvera evidence, track completion, and share securely.
-      </p>
+      <h1 className="text-2xl font-semibold tracking-tight">{t.title}</h1>
+      <p className="mt-1 text-sm text-muted">{t.subtitle}</p>
     </div>
   );
 }

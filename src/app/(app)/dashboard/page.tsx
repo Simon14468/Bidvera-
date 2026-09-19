@@ -18,6 +18,7 @@ import Link from "next/link";
 export default async function DashboardPage() {
   const locale = await getLocale();
   const dict = getDictionary(locale);
+  const common = dict.app.common;
   const { requireCompanyId } = await import("@/auth/session");
   const { companyId } = await requireCompanyId();
 
@@ -36,19 +37,20 @@ export default async function DashboardPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
-            Your Bidvera workspace
+            {common.yourWorkspace}
           </p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">Dashboard</h1>
+          <h1 className="mt-1 text-2xl font-semibold tracking-tight">
+            {common.dashboardTitle}
+          </h1>
           <p className="mt-1 max-w-2xl text-sm text-muted">
-            Compliance, qualification, client requests, questionnaires, evidence,
-            decisions, and deadlines — in one company workspace.
+            {common.dashboardSubtitle}
           </p>
         </div>
         <Link
           href="/billing"
           className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-border px-5 text-sm font-medium transition hover:bg-background"
         >
-          View plan
+          {common.viewPlan}
           <ArrowRight className="size-4" aria-hidden />
         </Link>
       </div>
@@ -57,12 +59,19 @@ export default async function DashboardPage() {
 
       <section className="space-y-3">
         <div>
-          <h2 className="text-base font-semibold tracking-tight">Workspace overview</h2>
+          <h2 className="text-base font-semibold tracking-tight">
+            {common.workspaceOverview}
+          </h2>
           <p className="mt-0.5 text-sm text-muted">
-            Live company metrics. Empty modules show zero — never estimated values.
+            {common.workspaceOverviewHint}
           </p>
         </div>
-        <WorkspaceKpiGrid kpis={data.kpis} lockedLabel="Not on your current plan" />
+        <WorkspaceKpiGrid
+          kpis={data.kpis}
+          lockedLabel={common.lockedPlan}
+          kpiLabels={dict.app.kpi}
+          emptyDataLabel={common.noDataYet}
+        />
       </section>
 
       {matchingOverview && matchingOverview.state !== "unavailable" ? (
@@ -71,38 +80,50 @@ export default async function DashboardPage() {
 
       <section className="grid gap-4 xl:grid-cols-3">
         <WorkspaceBarChart
-          title="Compliance status"
+          title={common.complianceStatus}
           description={
             data.hasComplianceHistory
-              ? "Current document status mix for your company."
-              : "Status mix from your documents. Historical trend appears when updates accumulate."
+              ? common.complianceStatusHint
+              : common.complianceStatusHintEmpty
           }
           series={data.complianceStatusSeries}
-          emptyLabel="No compliance documents yet."
+          emptyLabel={common.complianceEmpty}
         />
         <WorkspaceBarChart
-          title="Workspace activity"
-          description="Client request and questionnaire activity in the last 30 days."
+          title={common.workspaceActivity}
+          description={common.workspaceActivityHint}
           series={data.activitySeries}
           emptyLabel={
             data.hasActivityHistory
-              ? "No activity in this period."
-              : "No recent activity recorded yet."
+              ? common.activityEmptyPeriod
+              : common.activityEmpty
           }
         />
         <WorkspaceBarChart
-          title="Deadline overview"
-          description="Upcoming Tender Calendar deadlines by time window."
+          title={common.deadlineOverview}
+          description={common.deadlineOverviewHint}
           series={data.deadlineSeries}
-          emptyLabel="No upcoming calendar deadlines."
+          emptyLabel={common.deadlineEmpty}
         />
       </section>
 
       <div className="grid gap-4 xl:grid-cols-[1.2fr_1fr]">
-        <WorkspaceRecentActivity items={data.recentActivity} locale={locale} />
+        <WorkspaceRecentActivity
+          items={data.recentActivity}
+          locale={locale}
+          labels={common}
+        />
         <div className="space-y-4">
-          <WorkspacePlanCard plan={data.plan} locale={locale} />
-          <WorkspaceQuickActions actions={data.quickActions} />
+          <WorkspacePlanCard
+            plan={data.plan}
+            locale={locale}
+            labels={common}
+            featureLabels={dict.pricing.features as unknown as Record<string, string>}
+          />
+          <WorkspaceQuickActions
+            actions={data.quickActions}
+            labels={common}
+          />
         </div>
       </div>
     </div>

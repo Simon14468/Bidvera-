@@ -8,6 +8,9 @@ import {
 import { canManageCompanySettings } from "@/auth/company-settings-access";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { getDictionary } from "@/i18n/dictionaries";
+import { formatMessage } from "@/i18n/format";
+import { getLocale } from "@/i18n/get-locale";
 import { CalendarDays } from "lucide-react";
 import Link from "next/link";
 
@@ -16,6 +19,9 @@ export default async function TenderCalendarHomePage({
 }: {
   searchParams: Promise<{ year?: string; month?: string }>;
 }) {
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  const t = dict.app.tenderCalendar;
   const { auth, companyId } = await requireTenderCalendarModule();
   const canManage = canManageCompanySettings(auth.user.role);
   const sp = await searchParams;
@@ -29,7 +35,7 @@ export default async function TenderCalendarHomePage({
 
   const prev = month === 1 ? { year: year - 1, month: 12 } : { year, month: month - 1 };
   const next = month === 12 ? { year: year + 1, month: 1 } : { year, month: month + 1 };
-  const monthLabel = new Date(Date.UTC(year, month - 1, 1)).toLocaleString("en", {
+  const monthLabel = new Date(Date.UTC(year, month - 1, 1)).toLocaleString(locale, {
     month: "long",
     year: "numeric",
     timeZone: "UTC",
@@ -40,32 +46,30 @@ export default async function TenderCalendarHomePage({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-xs font-medium uppercase tracking-wider text-muted">
-            Tender Calendar
+            {t.eyebrow}
           </p>
-          <h1 className="text-2xl font-semibold tracking-tight">Deadlines & reminders</h1>
-          <p className="mt-1 text-sm text-muted">
-            Track submission dates and get reminder alerts for opportunities you follow.
-          </p>
+          <h1 className="text-2xl font-semibold tracking-tight">{t.deadlinesTitle}</h1>
+          <p className="mt-1 text-sm text-muted">{t.deadlinesSubtitle}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Link
             href="/tender-calendar/tenders"
             className="inline-flex h-10 items-center rounded-xl border border-border px-4 text-sm font-medium"
           >
-            Tracked opportunities
+            {t.trackedOpportunities}
           </Link>
           <Link
             href="/tender-calendar/settings"
             className="inline-flex h-10 items-center rounded-xl border border-border px-4 text-sm font-medium"
           >
-            Reminders
+            {t.reminders}
           </Link>
           {canManage ? (
             <Link
               href="/tender-calendar/new"
               className="inline-flex h-10 items-center rounded-xl bg-primary px-4 text-sm font-medium text-white hover:bg-primary-hover"
             >
-              Add tender
+              {t.addTender}
             </Link>
           ) : null}
         </div>
@@ -74,19 +78,19 @@ export default async function TenderCalendarHomePage({
       <div className="grid gap-3 sm:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardDescription>Tracked tenders</CardDescription>
+            <CardDescription>{t.trackedTenders}</CardDescription>
             <CardTitle className="text-2xl">{dash.tenderCount}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader>
-            <CardDescription>Upcoming deadlines</CardDescription>
+            <CardDescription>{t.upcomingDeadlines}</CardDescription>
             <CardTitle className="text-2xl">{dash.upcoming.length}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader>
-            <CardDescription>Past deadlines</CardDescription>
+            <CardDescription>{t.pastDeadlines}</CardDescription>
             <CardTitle className="text-2xl">{dash.past.length}</CardTitle>
           </CardHeader>
         </Card>
@@ -94,19 +98,21 @@ export default async function TenderCalendarHomePage({
 
       <section className="space-y-3">
         <div className="flex items-center justify-between gap-2">
-          <h2 className="text-base font-semibold">Calendar · {monthLabel}</h2>
+          <h2 className="text-base font-semibold">
+            {formatMessage(t.calendarHeading, { month: monthLabel })}
+          </h2>
           <div className="flex gap-2 text-sm">
             <Link
               href={`/tender-calendar?year=${prev.year}&month=${prev.month}`}
               className="rounded-lg border border-border px-2 py-1"
             >
-              Prev
+              {t.previous}
             </Link>
             <Link
               href={`/tender-calendar?year=${next.year}&month=${next.month}`}
               className="rounded-lg border border-border px-2 py-1"
             >
-              Next
+              {t.next}
             </Link>
           </div>
         </div>
@@ -114,13 +120,13 @@ export default async function TenderCalendarHomePage({
           dash.tenderCount === 0 ? (
             <EmptyState
               icon={CalendarDays}
-              title="No opportunities on your calendar yet"
-              description="Add a tender opportunity with a submission deadline to start tracking reminders."
-              actionLabel={canManage ? "Add opportunity" : undefined}
+              title={t.emptyTitle}
+              description={t.emptyDescription}
+              actionLabel={canManage ? t.emptyCta : undefined}
               actionHref={canManage ? "/tender-calendar/new" : undefined}
             />
           ) : (
-            <p className="text-sm text-muted">No deadlines or events this month.</p>
+            <p className="text-sm text-muted">{t.noItemsMonth}</p>
           )
         ) : (
           <ul className="divide-y divide-border rounded-xl border border-border">
@@ -133,7 +139,10 @@ export default async function TenderCalendarHomePage({
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium">{item.title}</p>
                     <p className="text-xs text-muted">
-                      {item.tenderTitle} · {item.kind === "deadline" ? "Deadline" : "Event"}
+                      {item.tenderTitle} ·{" "}
+                      {item.kind === "deadline"
+                        ? dict.app.common.deadlineLabel
+                        : dict.app.common.eventLabel}
                       {item.timezone ? ` · ${item.timezone}` : ""}
                     </p>
                   </div>
@@ -148,9 +157,9 @@ export default async function TenderCalendarHomePage({
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-base font-semibold">Upcoming deadlines</h2>
+        <h2 className="text-base font-semibold">{t.upcomingDeadlines}</h2>
         {dash.upcoming.length === 0 ? (
-          <p className="text-sm text-muted">No upcoming deadlines.</p>
+          <p className="text-sm text-muted">{dict.app.common.deadlineEmpty}</p>
         ) : (
           <ul className="divide-y divide-border rounded-xl border border-border">
             {dash.upcoming.map((d) => (

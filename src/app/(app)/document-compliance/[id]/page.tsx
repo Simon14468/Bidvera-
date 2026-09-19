@@ -7,6 +7,8 @@ import {
 } from "@/modules/document-compliance";
 import { ComplianceStatusBadge } from "@/modules/document-compliance/ui/status-badge";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getDictionary } from "@/i18n/dictionaries";
+import { getLocale } from "@/i18n/get-locale";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ComplianceVersionUpload } from "./version-upload";
@@ -16,6 +18,8 @@ export default async function DocumentComplianceDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const locale = await getLocale();
+  const t = getDictionary(locale).app.documentCompliance;
   const { companyId } = await requireDocumentComplianceModule();
   const { id } = await params;
   const document = await getDocument(companyId, id);
@@ -29,7 +33,7 @@ export default async function DocumentComplianceDetailPage({
           href="/document-compliance/documents"
           className="text-sm text-primary hover:underline"
         >
-          ← Documents
+          ← {t.documentsLink}
         </Link>
         <div className="mt-2 flex flex-wrap items-center gap-3">
           <h1 className="text-2xl font-semibold tracking-tight">{document.name}</h1>
@@ -40,28 +44,28 @@ export default async function DocumentComplianceDetailPage({
 
       <Card>
         <CardHeader>
-          <CardTitle>Details</CardTitle>
-          <CardDescription>Tenant-scoped compliance record</CardDescription>
+          <CardTitle>{t.details}</CardTitle>
+          <CardDescription>{t.detailRecordHint}</CardDescription>
         </CardHeader>
         <dl className="grid gap-3 px-5 pb-5 text-sm sm:grid-cols-2">
           <div>
-            <dt className="text-muted">Document number</dt>
+            <dt className="text-muted">{t.documentNumberLabel}</dt>
             <dd className="font-medium">{document.documentNumber ?? "—"}</dd>
           </div>
           <div>
-            <dt className="text-muted">Issuing authority</dt>
+            <dt className="text-muted">{t.issuingAuthorityLabel}</dt>
             <dd className="font-medium">{document.issuingAuthority ?? "—"}</dd>
           </div>
           <div>
-            <dt className="text-muted">Issue date</dt>
+            <dt className="text-muted">{t.issueDateLabel}</dt>
             <dd className="font-medium">{document.issueDate ?? "—"}</dd>
           </div>
           <div>
-            <dt className="text-muted">Expiry date</dt>
+            <dt className="text-muted">{t.expiryDateLabel}</dt>
             <dd className="font-medium">{document.expiryDate ?? "—"}</dd>
           </div>
           <div>
-            <dt className="text-muted">Extraction confidence</dt>
+            <dt className="text-muted">{t.extractionConfidenceLabel}</dt>
             <dd className="font-medium">
               {document.extractionConfidence != null
                 ? `${Math.round(document.extractionConfidence * 100)}%`
@@ -74,10 +78,8 @@ export default async function DocumentComplianceDetailPage({
       {document.extractionProvenance && document.extractionProvenance.length > 0 ? (
         <Card>
           <CardHeader>
-            <CardTitle>Extraction provenance</CardTitle>
-            <CardDescription>
-              Evidence supporting extracted fields — never auto-actions.
-            </CardDescription>
+            <CardTitle>{t.extractionProvenanceTitle}</CardTitle>
+            <CardDescription>{t.extractionProvenanceSubtitle}</CardDescription>
           </CardHeader>
           <ul className="space-y-2 px-5 pb-5 text-sm">
             {document.extractionProvenance.map((p, i) => (
@@ -95,7 +97,7 @@ export default async function DocumentComplianceDetailPage({
       ) : null}
 
       <section className="space-y-3">
-        <h2 className="text-base font-semibold">Versions</h2>
+        <h2 className="text-base font-semibold">{t.versionsTitle}</h2>
         <ul className="divide-y divide-border rounded-xl border border-border">
           {versions.map((v) => (
             <li
@@ -115,7 +117,7 @@ export default async function DocumentComplianceDetailPage({
                 href={`/api/document-compliance/files/${v.id}`}
                 className="text-primary hover:underline"
               >
-                Download
+                {t.download}
               </a>
             </li>
           ))}

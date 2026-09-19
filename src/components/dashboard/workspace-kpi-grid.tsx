@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/cn";
 import type { WorkspaceKpi } from "@/application/workspace-dashboard";
+import type { AppModuleBundle } from "@/i18n/app-modules";
 import {
   CalendarClock,
   ClipboardCheck,
@@ -15,71 +16,35 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-const KPI_META: Record<
-  WorkspaceKpi["id"],
-  { title: string; hint: string; secondaryLabel?: string; Icon: typeof FileCheck2 }
-> = {
-  document_compliance: {
-    title: "Document compliance",
-    hint: "Valid documents",
-    secondaryLabel: "total docs",
-    Icon: FileCheck2,
-  },
-  expiring_documents: {
-    title: "Expiring documents",
-    hint: "Approaching expiry",
-    secondaryLabel: "expired",
-    Icon: FileWarning,
-  },
-  supplier_qualification: {
-    title: "Supplier qualification",
-    hint: "Profile completeness",
-    secondaryLabel: "evidence items",
-    Icon: ClipboardCheck,
-  },
-  client_requests: {
-    title: "Client requests",
-    hint: "Open requests",
-    secondaryLabel: "completed",
-    Icon: FolderOpen,
-  },
-  questionnaires: {
-    title: "Questionnaires",
-    hint: "Pending drafts",
-    secondaryLabel: "done / packs",
-    Icon: ClipboardList,
-  },
-  evidence_intelligence: {
-    title: "Supplier evidence",
-    hint: "Verified evidence",
-    secondaryLabel: "missing / open",
-    Icon: ShieldCheck,
-  },
-  decision_activity: {
-    title: "Decision activity",
-    hint: "Stored decisions",
-    secondaryLabel: "updated (30d)",
-    Icon: Scale,
-  },
-  upcoming_deadlines: {
-    title: "Upcoming deadlines",
-    hint: "Calendar deadlines",
-    Icon: CalendarClock,
-  },
+const KPI_ICONS: Record<WorkspaceKpi["id"], typeof FileCheck2> = {
+  document_compliance: FileCheck2,
+  expiring_documents: FileWarning,
+  supplier_qualification: ClipboardCheck,
+  client_requests: FolderOpen,
+  questionnaires: ClipboardList,
+  evidence_intelligence: ShieldCheck,
+  decision_activity: Scale,
+  upcoming_deadlines: CalendarClock,
 };
+
+export type WorkspaceKpiLabels = AppModuleBundle["kpi"];
 
 export function WorkspaceKpiGrid({
   kpis,
   lockedLabel,
+  kpiLabels,
+  emptyDataLabel,
 }: {
   kpis: WorkspaceKpi[];
   lockedLabel: string;
+  kpiLabels: WorkspaceKpiLabels;
+  emptyDataLabel: string;
 }) {
   return (
     <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
       {kpis.map((kpi, i) => {
-        const meta = KPI_META[kpi.id];
-        const Icon = meta.Icon;
+        const meta = kpiLabels[kpi.id];
+        const Icon = KPI_ICONS[kpi.id];
         const href = kpi.enabled ? kpi.href : "/upgrade";
         const display =
           kpi.unit === "percent" ? `${kpi.value}%` : String(kpi.value);
@@ -115,7 +80,7 @@ export function WorkspaceKpiGrid({
                   </p>
                   <p className="mt-1 text-xs text-muted">
                     {kpi.empty
-                      ? "No data yet"
+                      ? emptyDataLabel
                       : meta.secondaryLabel && kpi.secondary != null
                         ? `${meta.hint} · ${kpi.secondary} ${meta.secondaryLabel}`
                         : meta.hint}

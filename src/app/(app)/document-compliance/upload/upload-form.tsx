@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { FileChooseField } from "@/components/ui/file-choose-field";
+import type { AppModuleBundle } from "@/i18n/app-modules";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
@@ -18,7 +19,11 @@ const CATEGORIES = [
   "OTHER",
 ] as const;
 
-export function ComplianceUploadForm() {
+export function ComplianceUploadForm({
+  labels,
+}: {
+  labels: AppModuleBundle["documentCompliance"];
+}) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +33,7 @@ export function ComplianceUploadForm() {
     e.preventDefault();
     setError(null);
     if (!hasFile) {
-      setError("Choose a file to upload.");
+      setError(labels.chooseFileError);
       return;
     }
     const form = e.currentTarget;
@@ -43,7 +48,7 @@ export function ComplianceUploadForm() {
         document?: { id: string };
       };
       if (!res.ok) {
-        setError(json.error ?? "Upload failed.");
+        setError(json.error ?? labels.uploadFailed);
         return;
       }
       if (json.document?.id) {
@@ -59,11 +64,11 @@ export function ComplianceUploadForm() {
         name="file"
         required
         uploading={pending}
-        label="File"
-        title="Drag & drop your document here"
-        hint="PDF, Word, images, and common office files"
-        chooseLabel="Choose file"
-        uploadingLabel="Uploading & extracting metadata"
+        label={labels.fileLabel}
+        title={labels.dragDropTitle}
+        hint={labels.fileHint}
+        chooseLabel={labels.chooseFile}
+        uploadingLabel={labels.uploadingMetadata}
         onFilesChange={(files) => {
           setHasFile(files.length > 0);
           setError(null);
@@ -71,7 +76,7 @@ export function ComplianceUploadForm() {
       />
 
       <div>
-        <label className="text-sm font-medium">Name (optional)</label>
+        <label className="text-sm font-medium">{labels.nameOptional}</label>
         <input
           name="name"
           disabled={pending}
@@ -79,7 +84,7 @@ export function ComplianceUploadForm() {
         />
       </div>
       <div>
-        <label className="text-sm font-medium">Category</label>
+        <label className="text-sm font-medium">{labels.category}</label>
         <select
           name="categoryKey"
           defaultValue="OTHER"
@@ -95,7 +100,7 @@ export function ComplianceUploadForm() {
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
         <div>
-          <label className="text-sm font-medium">Issue date</label>
+          <label className="text-sm font-medium">{labels.issueDateLabel}</label>
           <input
             type="date"
             name="issueDate"
@@ -104,7 +109,7 @@ export function ComplianceUploadForm() {
           />
         </div>
         <div>
-          <label className="text-sm font-medium">Expiry date</label>
+          <label className="text-sm font-medium">{labels.expiryDateLabel}</label>
           <input
             type="date"
             name="expiryDate"
@@ -115,10 +120,10 @@ export function ComplianceUploadForm() {
       </div>
       <label className="flex items-center gap-2 text-sm">
         <input type="checkbox" name="noExpiry" value="true" disabled={pending} />
-        This document has no expiry
+        {labels.noExpiryCheckbox}
       </label>
       <div>
-        <label className="text-sm font-medium">Issuing authority</label>
+        <label className="text-sm font-medium">{labels.issuingAuthorityLabel}</label>
         <input
           name="issuingAuthority"
           disabled={pending}
@@ -126,7 +131,7 @@ export function ComplianceUploadForm() {
         />
       </div>
       <div>
-        <label className="text-sm font-medium">Document number</label>
+        <label className="text-sm font-medium">{labels.documentNumberLabel}</label>
         <input
           name="documentNumber"
           disabled={pending}
@@ -134,8 +139,13 @@ export function ComplianceUploadForm() {
         />
       </div>
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
-      <Button type="submit" loading={pending} disabled={!hasFile || pending} className="w-full sm:w-auto">
-        {pending ? "Uploading…" : "Upload & extract"}
+      <Button
+        type="submit"
+        loading={pending}
+        disabled={!hasFile || pending}
+        className="w-full sm:w-auto"
+      >
+        {pending ? labels.uploading : labels.uploadExtract}
       </Button>
     </form>
   );

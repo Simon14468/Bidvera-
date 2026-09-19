@@ -43,12 +43,12 @@ export default async function CompanyPage() {
         <h1 className="text-2xl font-semibold tracking-tight">{copy.title}</h1>
         <p className="mt-1 text-sm text-muted">{copy.subtitle}</p>
         <p className="mt-2 text-xs text-muted">
-          Need bid-ready registration details and evidence? Use{" "}
+          {copy.supplierQualificationHint}{" "}
           <Link
             href="/supplier-qualification"
             className="font-medium text-primary hover:underline"
           >
-            Supplier Qualification
+            {copy.supplierQualificationLink}
           </Link>
           .
         </p>

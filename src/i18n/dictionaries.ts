@@ -1,4 +1,8 @@
 import type { Locale } from "./config";
+import {
+  appModulesByLocale,
+  type AppModuleBundle,
+} from "./app-modules";
 
 export type Dictionary = {
   nav: {
@@ -361,6 +365,9 @@ export type Dictionary = {
       title: string;
       subtitle: string;
       headerHint: string;
+      /** Text before the Supplier Qualification link on the company page. */
+      supplierQualificationHint: string;
+      supplierQualificationLink: string;
       companyName: string;
       completeness: string;
       savedTitle: string;
@@ -891,7 +898,9 @@ export type Dictionary = {
       subtitle: string;
       emptyTitle: string;
       emptyDescription: string;
+      emptyDescriptionCompanyContext: string;
       viewTender: string;
+      openCompanyProfile: string;
       analyzed: string;
       scores: string;
       requirements: string;
@@ -1427,6 +1436,9 @@ const en: Dictionary = {
         "Workspace company information used for tender-fit analysis. Separate from Supplier Qualification (bid readiness & evidence).",
       headerHint:
         "Improve match quality over time. Changes apply to future tender analyses only — not the Supplier Qualification profile.",
+      supplierQualificationHint:
+        "Need bid-ready registration details and evidence? Use",
+      supplierQualificationLink: "Supplier Qualification",
       companyName: "Company name",
       completeness: "Completeness",
       savedTitle: "Saved",
@@ -2004,7 +2016,10 @@ const en: Dictionary = {
       emptyTitle: "No decisions stored yet",
       emptyDescription:
         "Completed tender analyses appear here automatically. Open a tender to see Current Analysis vs Historical Decision.",
+      emptyDescriptionCompanyContext:
+        "Stored decisions appear here when Decision Intelligence records an outcome for your company. Keep qualifications and evidence current so future decisions have strong company context.",
       viewTender: "Open tender",
+      openCompanyProfile: "Open company profile",
       analyzed: "Analyzed",
       scores: "Scores",
       requirements: "Requirements",
@@ -2426,9 +2441,9 @@ const es: Dictionary = {
       settings: "Ajustes",
       decisionMemory: "Memoria de decisión",
       teamWorkflow: "Flujo del equipo",
-      sectionCapabilities: "Capabilities",
-      sectionWorkspace: "Workspace",
-      sectionAccount: "Account",
+      sectionCapabilities: "Capacidades",
+      sectionWorkspace: "Espacio de trabajo",
+      sectionAccount: "Cuenta",
     },
     shell: {
       tagline: "Verifica antes de ofertar.",
@@ -2457,11 +2472,11 @@ const es: Dictionary = {
       skipEffort: "Evitar el esfuerzo",
       upcomingDeadlines: "Próximos plazos",
       upcomingEmpty: "No hay plazos en las próximas dos semanas.",
-      upcomingCalendarDeadlines: "Upcoming deadlines",
+      upcomingCalendarDeadlines: "Próximos plazos",
       upcomingCalendarHint:
         "From Tender Calendar — same deadlines shown in the calendar module",
-      upcomingCalendarEmpty: "No upcoming calendar deadlines yet.",
-      addCalendarTender: "Add a calendar tender",
+      upcomingCalendarEmpty: "Aún no hay plazos próximos en el calendario.",
+      addCalendarTender: "Añadir una licitación al calendario",
       highRisk: "Licitaciones de alto riesgo",
       highRiskEmpty: "No hay licitaciones de riesgo alto o crítico ahora.",
       recentAnalyses: "Análisis recientes",
@@ -2477,22 +2492,22 @@ const es: Dictionary = {
       riskOverview: "Resumen de riesgos",
       riskOverviewHint: "Exposición crítica o alta a descalificación",
       recentHint: "Últimos resultados de seguir / no seguir",
-      platformTitle: "What you can do in Bidvera",
+      platformTitle: "Qué puedes hacer en Bidvera",
       platformHint: "Four capabilities in one product — open any module to continue.",
-      capabilityAnalysisDesc: "Upload packages and get go / no-go decisions.",
-      capabilityComplianceDesc: "Track business documents and expiry reminders.",
+      capabilityAnalysisDesc: "Sube paquetes y obtén decisiones go / no-go.",
+      capabilityComplianceDesc: "Controla documentos empresariales y recordatorios de caducidad.",
       capabilityQualificationDesc:
         "Supplier readiness for bids and questionnaires — not your workspace Company Profile.",
-      capabilityCalendarDesc: "Track opportunity deadlines and reminders.",
-      capabilityOpen: "Open",
-      capabilityGetStarted: "Get started",
-      capabilityUpgrade: "Upgrade to unlock",
-      statusAnalyses: "{count} analyses",
-      statusDocuments: "{count} documents",
-      statusCompleteness: "{percent}% complete",
-      statusDeadlines: "{count} upcoming",
-      statusLocked: "Not on your current plan",
-      gettingStartedTitle: "Suggested next steps",
+      capabilityCalendarDesc: "Sigue plazos de oportunidades y recordatorios.",
+      capabilityOpen: "Abrir",
+      capabilityGetStarted: "Empezar",
+      capabilityUpgrade: "Mejora el plan para desbloquear",
+      statusAnalyses: "{count} análisis",
+      statusDocuments: "{count} documentos",
+      statusCompleteness: "{percent}% completo",
+      statusDeadlines: "{count} próximos",
+      statusLocked: "No incluido en tu plan actual",
+      gettingStartedTitle: "Próximos pasos sugeridos",
       gettingStartedHint: "Pick any path — you can come back anytime.",
     },
     onboarding: {
@@ -2544,6 +2559,9 @@ const es: Dictionary = {
         "Se usa para el encaje empresa–licitación en análisis futuros. Privado para tu organización: no se requieren datos personales o financieros sensibles.",
       headerHint:
         "Mejora la calidad del encaje con el tiempo. Los cambios se aplican solo a análisis futuros.",
+      supplierQualificationHint:
+        "¿Necesitas datos de registro y evidencias listos para ofertar? Usa",
+      supplierQualificationLink: "Calificación de proveedor",
       companyName: "Nombre de la empresa",
       completeness: "Completitud",
       savedTitle: "Guardado",
@@ -2762,10 +2780,10 @@ const es: Dictionary = {
       notificationsTitle: "Notificaciones",
       notificationsBody:
         "Alertas de plazos y análisis — en la app y por correo. WhatsApp / SMS / push se podrán conectar más adelante.",
-      moduleRemindersTitle: "Module reminder schedules",
-      moduleRemindersBody: "Document Compliance and Tender Calendar have their own reminder offsets.",
-      complianceRemindersLink: "Document Compliance reminders",
-      calendarRemindersLink: "Tender Calendar reminders",
+      moduleRemindersTitle: "Programas de recordatorios por módulo",
+      moduleRemindersBody: "Cumplimiento documental y Calendario tienen sus propios plazos de recordatorio.",
+      complianceRemindersLink: "Recordatorios de cumplimiento documental",
+      calendarRemindersLink: "Recordatorios del calendario",
       planTitle: "Plan",
       planUnlimited: "Business · Ilimitado · {used} usados",
       planLimited: "{used}/{limit} análisis usados",
@@ -3124,7 +3142,10 @@ const es: Dictionary = {
       emptyTitle: "Aún no hay decisiones guardadas",
       emptyDescription:
         "Los análisis completados aparecen aquí automáticamente. Abre una licitación para ver Análisis actual frente a Decisión histórica.",
+      emptyDescriptionCompanyContext:
+        "Las decisiones almacenadas aparecen aquí cuando Decision Intelligence registra un resultado para tu empresa. Mantén cualificaciones y evidencia al día para dar contexto sólido a futuras decisiones.",
       viewTender: "Abrir licitación",
+      openCompanyProfile: "Abrir perfil de empresa",
       analyzed: "Analizado",
       scores: "Puntuaciones",
       requirements: "Requisitos",
@@ -3528,9 +3549,9 @@ const zh: Dictionary = {
       settings: "设置",
       decisionMemory: "决策记忆",
       teamWorkflow: "团队流程",
-      sectionCapabilities: "Capabilities",
-      sectionWorkspace: "Workspace",
-      sectionAccount: "Account",
+      sectionCapabilities: "能力",
+      sectionWorkspace: "工作区",
+      sectionAccount: "账户",
     },
     shell: {
       tagline: "先验证，再投标。",
@@ -3558,11 +3579,11 @@ const zh: Dictionary = {
       skipEffort: "跳过投入",
       upcomingDeadlines: "即将到期",
       upcomingEmpty: "未来两周内没有即将到期的截止日期。",
-      upcomingCalendarDeadlines: "Upcoming deadlines",
+      upcomingCalendarDeadlines: "即将到来的截止日期",
       upcomingCalendarHint:
         "From Tender Calendar — same deadlines shown in the calendar module",
-      upcomingCalendarEmpty: "No upcoming calendar deadlines yet.",
-      addCalendarTender: "Add a calendar tender",
+      upcomingCalendarEmpty: "暂无即将到来的日历截止日期。",
+      addCalendarTender: "添加日历招标",
       highRisk: "高风险招标",
       highRiskEmpty: "当前没有高风险或关键风险招标。",
       recentAnalyses: "最近分析",
@@ -3577,22 +3598,22 @@ const zh: Dictionary = {
       riskOverview: "风险概览",
       riskOverviewHint: "严重或高取消资格风险",
       recentHint: "最新的投标 / 不投标结果",
-      platformTitle: "What you can do in Bidvera",
+      platformTitle: "您可以在 Bidvera 中做什么",
       platformHint: "Four capabilities in one product — open any module to continue.",
-      capabilityAnalysisDesc: "Upload packages and get go / no-go decisions.",
-      capabilityComplianceDesc: "Track business documents and expiry reminders.",
+      capabilityAnalysisDesc: "上传标书包并获得继续/不继续的决策。",
+      capabilityComplianceDesc: "跟踪业务文档与到期提醒。",
       capabilityQualificationDesc:
         "Supplier readiness for bids and questionnaires — not your workspace Company Profile.",
-      capabilityCalendarDesc: "Track opportunity deadlines and reminders.",
-      capabilityOpen: "Open",
-      capabilityGetStarted: "Get started",
-      capabilityUpgrade: "Upgrade to unlock",
-      statusAnalyses: "{count} analyses",
-      statusDocuments: "{count} documents",
-      statusCompleteness: "{percent}% complete",
-      statusDeadlines: "{count} upcoming",
-      statusLocked: "Not on your current plan",
-      gettingStartedTitle: "Suggested next steps",
+      capabilityCalendarDesc: "跟踪机会截止日期与提醒。",
+      capabilityOpen: "打开",
+      capabilityGetStarted: "开始",
+      capabilityUpgrade: "升级以解锁",
+      statusAnalyses: "{count} 次分析",
+      statusDocuments: "{count} 份文档",
+      statusCompleteness: "完整度 {percent}%",
+      statusDeadlines: "{count} 个即将到来",
+      statusLocked: "不在当前套餐内",
+      gettingStartedTitle: "建议的下一步",
       gettingStartedHint: "Pick any path — you can come back anytime.",
     },
     onboarding: {
@@ -3642,6 +3663,8 @@ const zh: Dictionary = {
       subtitle:
         "用于后续分析中的公司与标书匹配。仅限贵组织可见 — 无需敏感个人或财务信息。",
       headerHint: "逐步提高匹配质量。更改仅应用于未来的标书分析。",
+      supplierQualificationHint: "需要投标就绪的注册详情与证据？请使用",
+      supplierQualificationLink: "供应商资质",
       companyName: "公司名称",
       completeness: "完整度",
       savedTitle: "已保存",
@@ -3845,10 +3868,10 @@ const zh: Dictionary = {
       notificationsTitle: "通知",
       notificationsBody:
         "截止日期与分析提醒 — 应用内与邮件。WhatsApp / 短信 / 推送可稍后接入。",
-      moduleRemindersTitle: "Module reminder schedules",
-      moduleRemindersBody: "Document Compliance and Tender Calendar have their own reminder offsets.",
-      complianceRemindersLink: "Document Compliance reminders",
-      calendarRemindersLink: "Tender Calendar reminders",
+      moduleRemindersTitle: "模块提醒计划",
+      moduleRemindersBody: "文档合规与招标日历各自有提醒提前量。",
+      complianceRemindersLink: "文档合规提醒",
+      calendarRemindersLink: "招标日历提醒",
       planTitle: "套餐",
       planUnlimited: "Business · 无限 · 已用 {used}",
       planLimited: "已用 {used}/{limit} 次分析",
@@ -4186,7 +4209,10 @@ const zh: Dictionary = {
       subtitle: "贵司既往招标决策 — 仅供参考，绝不改变当前分析。",
       emptyTitle: "尚无已存储决策",
       emptyDescription: "完成的招标分析会自动出现在此。打开招标可对比当前分析与历史决策。",
+      emptyDescriptionCompanyContext:
+        "当决策智能为贵司记录结果时，已存决策会出现在此。请保持资质与证据最新，以便未来决策有充分的公司背景。",
       viewTender: "打开招标",
+      openCompanyProfile: "打开公司资料",
       analyzed: "已分析",
       scores: "评分",
       requirements: "要求",
@@ -4605,9 +4631,9 @@ const ar: Dictionary = {
       settings: "الإعدادات",
       decisionMemory: "ذاكرة القرار",
       teamWorkflow: "سير عمل الفريق",
-      sectionCapabilities: "Capabilities",
-      sectionWorkspace: "Workspace",
-      sectionAccount: "Account",
+      sectionCapabilities: "القدرات",
+      sectionWorkspace: "مساحة العمل",
+      sectionAccount: "الحساب",
     },
     shell: {
       tagline: "تحقّق قبل أن تقدّم.",
@@ -4636,11 +4662,11 @@ const ar: Dictionary = {
       skipEffort: "تجنّب الجهد",
       upcomingDeadlines: "المواعيد القادمة",
       upcomingEmpty: "لا مواعيد نهائية خلال الأسبوعين القادمين.",
-      upcomingCalendarDeadlines: "Upcoming deadlines",
+      upcomingCalendarDeadlines: "المواعيد القادمة",
       upcomingCalendarHint:
         "From Tender Calendar — same deadlines shown in the calendar module",
-      upcomingCalendarEmpty: "No upcoming calendar deadlines yet.",
-      addCalendarTender: "Add a calendar tender",
+      upcomingCalendarEmpty: "لا مواعيد تقويم قادمة بعد.",
+      addCalendarTender: "إضافة مناقصة إلى التقويم",
       highRisk: "مناقصات عالية المخاطر",
       highRiskEmpty: "لا توجد مناقصات بمخاطر عالية أو حرجة حاليًا.",
       recentAnalyses: "التحليلات الأخيرة",
@@ -4656,22 +4682,22 @@ const ar: Dictionary = {
       riskOverview: "نظرة على المخاطر",
       riskOverviewHint: "تعرض حرج أو عالٍ للاستبعاد",
       recentHint: "أحدث نتائج متوافق / يحتاج تحقق / غير متوافق",
-      platformTitle: "What you can do in Bidvera",
+      platformTitle: "ما يمكنك فعله في بيدفراء",
       platformHint: "Four capabilities in one product — open any module to continue.",
-      capabilityAnalysisDesc: "Upload packages and get go / no-go decisions.",
-      capabilityComplianceDesc: "Track business documents and expiry reminders.",
+      capabilityAnalysisDesc: "ارفع الحزم واحصل على قرارات متابعة / عدم متابعة.",
+      capabilityComplianceDesc: "تتبّع مستندات العمل وتذكيرات انتهاء الصلاحية.",
       capabilityQualificationDesc:
         "Supplier readiness for bids and questionnaires — not your workspace Company Profile.",
-      capabilityCalendarDesc: "Track opportunity deadlines and reminders.",
-      capabilityOpen: "Open",
-      capabilityGetStarted: "Get started",
-      capabilityUpgrade: "Upgrade to unlock",
-      statusAnalyses: "{count} analyses",
-      statusDocuments: "{count} documents",
-      statusCompleteness: "{percent}% complete",
-      statusDeadlines: "{count} upcoming",
-      statusLocked: "Not on your current plan",
-      gettingStartedTitle: "Suggested next steps",
+      capabilityCalendarDesc: "تتبّع مواعيد الفرص والتذكيرات.",
+      capabilityOpen: "فتح",
+      capabilityGetStarted: "ابدأ",
+      capabilityUpgrade: "رقِّ الخطة لإلغاء القفل",
+      statusAnalyses: "{count} تحليلات",
+      statusDocuments: "{count} مستندات",
+      statusCompleteness: "مكتمل بنسبة {percent}%",
+      statusDeadlines: "{count} قادمة",
+      statusLocked: "غير مدرج في خطتك الحالية",
+      gettingStartedTitle: "الخطوات التالية المقترحة",
       gettingStartedHint: "Pick any path — you can come back anytime.",
     },
     onboarding: {
@@ -4722,6 +4748,9 @@ const ar: Dictionary = {
         "يُستخدم لمطابقة الشركة والمناقصة في التحليلات القادمة. خاص بمؤسستك — لا نطلب بيانات شخصية أو مالية حساسة.",
       headerHint:
         "حسّن جودة المطابقة مع الوقت. تُطبَّق التغييرات على تحليلات المناقصات المستقبلية فقط.",
+      supplierQualificationHint:
+        "هل تحتاج تفاصيل تسجيل وأدلة جاهزة للمناقصة؟ استخدم",
+      supplierQualificationLink: "تأهيل المورد",
       companyName: "اسم الشركة",
       completeness: "اكتمال الملف",
       savedTitle: "تم الحفظ",
@@ -4934,10 +4963,10 @@ const ar: Dictionary = {
       notificationsTitle: "الإشعارات",
       notificationsBody:
         "تنبيهات المواعيد والتحليل — داخل التطبيق والبريد. يمكن ربط واتساب / SMS / الدفع لاحقًا.",
-      moduleRemindersTitle: "Module reminder schedules",
-      moduleRemindersBody: "Document Compliance and Tender Calendar have their own reminder offsets.",
-      complianceRemindersLink: "Document Compliance reminders",
-      calendarRemindersLink: "Tender Calendar reminders",
+      moduleRemindersTitle: "جداول تذكير الوحدات",
+      moduleRemindersBody: "امتثال المستندات وتقويم المناقصات لهما إزاحات تذكير خاصة.",
+      complianceRemindersLink: "تذكيرات امتثال المستندات",
+      calendarRemindersLink: "تذكيرات تقويم المناقصات",
       planTitle: "الخطة",
       planUnlimited: "Business · غير محدود · {used} مستخدم",
       planLimited: "{used}/{limit} تحليلات مستخدمة",
@@ -5293,7 +5322,10 @@ const ar: Dictionary = {
       emptyTitle: "لا قرارات مخزّنة بعد",
       emptyDescription:
         "تظهر التحليلات المكتملة هنا تلقائيًا. افتح مناقصة لمقارنة التحليل الحالي بالقرار التاريخي.",
+      emptyDescriptionCompanyContext:
+        "تظهر القرارات المخزّنة هنا عندما يسجّل ذكاء القرار نتيجة لشركتك. أبقِ المؤهلات والأدلة محدّثة حتى تحظى القرارات المستقبلية بسياق شركة قوي.",
       viewTender: "فتح المناقصة",
+      openCompanyProfile: "فتح ملف الشركة",
       analyzed: "تم التحليل",
       scores: "الدرجات",
       requirements: "المتطلبات",
@@ -5715,9 +5747,9 @@ const fr: Dictionary = {
       settings: "Paramètres",
       decisionMemory: "Mémoire de décision",
       teamWorkflow: "Flux d’équipe",
-      sectionCapabilities: "Capabilities",
-      sectionWorkspace: "Workspace",
-      sectionAccount: "Account",
+      sectionCapabilities: "Capacités",
+      sectionWorkspace: "Espace de travail",
+      sectionAccount: "Compte",
     },
     shell: {
       tagline: "Vérifiez avant de soumissionner.",
@@ -5746,11 +5778,11 @@ const fr: Dictionary = {
       skipEffort: "Éviter l’effort",
       upcomingDeadlines: "Échéances à venir",
       upcomingEmpty: "Aucune échéance dans les deux prochaines semaines.",
-      upcomingCalendarDeadlines: "Upcoming deadlines",
+      upcomingCalendarDeadlines: "Échéances à venir",
       upcomingCalendarHint:
         "From Tender Calendar — same deadlines shown in the calendar module",
-      upcomingCalendarEmpty: "No upcoming calendar deadlines yet.",
-      addCalendarTender: "Add a calendar tender",
+      upcomingCalendarEmpty: "Aucune échéance calendrier à venir pour le moment.",
+      addCalendarTender: "Ajouter un appel d’offres au calendrier",
       highRisk: "AO à haut risque",
       highRiskEmpty: "Aucun AO à risque élevé ou critique pour le moment.",
       recentAnalyses: "Analyses récentes",
@@ -5766,22 +5798,22 @@ const fr: Dictionary = {
       riskOverview: "Vue des risques",
       riskOverviewHint: "Exposition critique ou élevée à la disqualification",
       recentHint: "Derniers résultats go / no-go",
-      platformTitle: "What you can do in Bidvera",
+      platformTitle: "Ce que vous pouvez faire dans Bidvera",
       platformHint: "Four capabilities in one product — open any module to continue.",
-      capabilityAnalysisDesc: "Upload packages and get go / no-go decisions.",
-      capabilityComplianceDesc: "Track business documents and expiry reminders.",
+      capabilityAnalysisDesc: "Téléversez des dossiers et obtenez des décisions go / no-go.",
+      capabilityComplianceDesc: "Suivez les documents métier et les rappels d’expiration.",
       capabilityQualificationDesc:
         "Supplier readiness for bids and questionnaires — not your workspace Company Profile.",
-      capabilityCalendarDesc: "Track opportunity deadlines and reminders.",
-      capabilityOpen: "Open",
-      capabilityGetStarted: "Get started",
-      capabilityUpgrade: "Upgrade to unlock",
+      capabilityCalendarDesc: "Suivez les échéances d’opportunités et les rappels.",
+      capabilityOpen: "Ouvrir",
+      capabilityGetStarted: "Commencer",
+      capabilityUpgrade: "Passez à une offre supérieure pour débloquer",
       statusAnalyses: "{count} analyses",
       statusDocuments: "{count} documents",
-      statusCompleteness: "{percent}% complete",
-      statusDeadlines: "{count} upcoming",
-      statusLocked: "Not on your current plan",
-      gettingStartedTitle: "Suggested next steps",
+      statusCompleteness: "{percent}% complété",
+      statusDeadlines: "{count} à venir",
+      statusLocked: "Non inclus dans votre offre actuelle",
+      gettingStartedTitle: "Prochaines étapes suggérées",
       gettingStartedHint: "Pick any path — you can come back anytime.",
     },
     onboarding: {
@@ -5833,6 +5865,9 @@ const fr: Dictionary = {
         "Utilisé pour l’adéquation entreprise–appel d’offres dans les analyses futures. Privé à votre organisation — aucune donnée personnelle ou financière sensible n’est requise.",
       headerHint:
         "Améliorez la qualité d’adéquation au fil du temps. Les changements s’appliquent uniquement aux analyses futures.",
+      supplierQualificationHint:
+        "Besoin de détails d’enregistrement et de preuves prêts à soumissionner ? Utilisez",
+      supplierQualificationLink: "Qualification fournisseur",
       companyName: "Nom de l’entreprise",
       completeness: "Complétude",
       savedTitle: "Enregistré",
@@ -6052,10 +6087,10 @@ const fr: Dictionary = {
       notificationsTitle: "Notifications",
       notificationsBody:
         "Alertes d’échéances et d’analyse — dans l’app et par e-mail. WhatsApp / SMS / push pourront être branchés plus tard.",
-      moduleRemindersTitle: "Module reminder schedules",
-      moduleRemindersBody: "Document Compliance and Tender Calendar have their own reminder offsets.",
-      complianceRemindersLink: "Document Compliance reminders",
-      calendarRemindersLink: "Tender Calendar reminders",
+      moduleRemindersTitle: "Planifications de rappels par module",
+      moduleRemindersBody: "La conformité documentaire et le calendrier ont leurs propres décalages de rappel.",
+      complianceRemindersLink: "Rappels de conformité documentaire",
+      calendarRemindersLink: "Rappels du calendrier",
       planTitle: "Offre",
       planUnlimited: "Business · Illimité · {used} utilisés",
       planLimited: "{used}/{limit} analyses utilisées",
@@ -6418,7 +6453,10 @@ const fr: Dictionary = {
       emptyTitle: "Aucune décision enregistrée",
       emptyDescription:
         "Les analyses terminées apparaissent ici automatiquement. Ouvrez un appel d’offres pour comparer Analyse actuelle et Décision historique.",
+      emptyDescriptionCompanyContext:
+        "Les décisions enregistrées apparaissent ici lorsque Decision Intelligence consigne un résultat pour votre entreprise. Maintenez qualifications et preuves à jour pour donner un contexte solide aux décisions futures.",
       viewTender: "Ouvrir l’appel d’offres",
+      openCompanyProfile: "Ouvrir le profil entreprise",
       analyzed: "Analysé",
       scores: "Scores",
       requirements: "Exigences",
@@ -6479,6 +6517,23 @@ const fr: Dictionary = {
 
 const dictionaries: Record<Locale, Dictionary> = { en, es, zh, ar, fr };
 
-export function getDictionary(locale: Locale): Dictionary {
+export type LocalizedDictionary = Omit<Dictionary, "app"> & {
+  app: Dictionary["app"] & AppModuleBundle;
+};
+
+export function getDictionary(locale: Locale): LocalizedDictionary {
+  const base = dictionaries[locale] ?? dictionaries.en;
+  const modules = appModulesByLocale[locale] ?? appModulesByLocale.en;
+  return {
+    ...base,
+    app: {
+      ...base.app,
+      ...modules,
+    },
+  };
+}
+
+/** @deprecated use getDictionary — exposed for structural tests */
+export function getCoreDictionary(locale: Locale): Dictionary {
   return dictionaries[locale] ?? dictionaries.en;
 }
