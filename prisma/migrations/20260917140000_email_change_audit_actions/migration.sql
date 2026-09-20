@@ -1,4 +1,4 @@
-﻿-- AlterEnum: email-change audit actions
+-- AlterEnum: email-change audit actions
 ALTER TYPE "AuditAction" ADD VALUE IF NOT EXISTS 'EMAIL_CHANGE_REQUESTED';
 ALTER TYPE "AuditAction" ADD VALUE IF NOT EXISTS 'EMAIL_CHANGE_CANCELLED';
 ALTER TYPE "AuditAction" ADD VALUE IF NOT EXISTS 'EMAIL_CHANGE_CONFIRMED';

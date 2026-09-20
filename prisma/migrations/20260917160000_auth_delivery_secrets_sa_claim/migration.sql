@@ -1,4 +1,4 @@
-﻿-- AlterTable
+-- AlterTable
 ALTER TABLE "EmailVerificationToken" ADD COLUMN IF NOT EXISTS "deliverySecretEnc" TEXT;
 ALTER TABLE "EmailChangeToken" ADD COLUMN IF NOT EXISTS "deliverySecretEnc" TEXT;
 ALTER TABLE "PasswordResetToken" ADD COLUMN IF NOT EXISTS "deliverySecretEnc" TEXT;

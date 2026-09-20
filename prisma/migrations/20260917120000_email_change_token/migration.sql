@@ -1,4 +1,4 @@
-﻿-- CreateTable
+-- CreateTable
 CREATE TABLE "EmailChangeToken" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
