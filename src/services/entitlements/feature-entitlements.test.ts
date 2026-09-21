@@ -166,18 +166,18 @@ test("super admin plan editor keys include all premium capabilities", () => {
   }
 });
 
-test("backward compat fills missing PlanFeature rows from slug defaults", () => {
-  const proDefaults = planDefaultFeatureKeys("pro");
-  const mappedKeys = new Set(["tender_analysis", "pdf_export"]);
-  const features = buildFeatureMapFromEnabledKeys(
-    [...mappedKeys].filter((k) => proDefaults.includes(k as typeof proDefaults[number])),
+test("PlanFeature rows are authoritative — no slug-default backfill of unchecked keys", () => {
+  // Mirrors runtime: only explicitly enabled PlanFeature keys grant access.
+  const mappedEnabled = ["company_profile", "pdf_export"];
+  const features = buildFeatureMapFromEnabledKeys(mappedEnabled);
+  assert.equal(isFeatureEnabledInMap(features, "company_profile"), true);
+  assert.equal(isFeatureEnabledInMap(features, "pdf_export"), true);
+  assert.equal(
+    isFeatureEnabledInMap(features, "client_requests"),
+    false,
+    "unchecked plan modules must stay off even if slug defaults include them",
   );
-  for (const key of proDefaults) {
-    if (!mappedKeys.has(key)) {
-      features[canonicalFeatureKey(key)] = true;
-    }
-  }
-  assert.equal(isFeatureEnabledInMap(features, "decision_simulator"), true);
+  assert.equal(isFeatureEnabledInMap(features, "decision_simulator"), false);
 });
 
 test("seed script uses canonical planDefaultFeatureKeys (single source of truth)", () => {

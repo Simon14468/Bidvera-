@@ -6,8 +6,10 @@ import {
   listPublicTestimonials,
 } from "@/application/admin/landing-service";
 import { BidveraVoiceAssistantHost } from "@/components/assistant/voice-assistant-host";
+import { LandingCapabilityDiscovery } from "@/components/marketing/landing-capability-discovery";
 import { ProductVideoSection } from "@/components/marketing/product-video-section";
 import { Reveal, ScrollFitBar, ScrollVideoFrame } from "@/components/marketing/reveal";
+import { SmartMatchTeaser } from "@/components/marketing/smart-match-teaser";
 import {
   LANDING_COMPLIANCE_IMAGE,
   LANDING_COMPLIANCE_IMAGE_SIZE,
@@ -159,6 +161,47 @@ export default async function LandingPage() {
         </div>
       </section>
 
+      <SmartMatchTeaser copy={l.smartMatch} />
+
+      {/* Customer value */}
+      <section className="border-b border-border bg-background">
+        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 md:py-20">
+          <Reveal>
+            <h2 className="text-xl font-semibold tracking-tight sm:text-2xl md:text-3xl">
+              {l.sectionTitle}
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm text-muted sm:text-base">{l.sectionBody}</p>
+          </Reveal>
+          <div className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+            {[
+              { title: l.feature1Title, body: l.feature1Body },
+              { title: l.feature2Title, body: l.feature2Body },
+              { title: l.feature3Title, body: l.feature3Body },
+            ].map((item, i) => (
+              <Reveal
+                key={item.title}
+                as="article"
+                delay={i * 70}
+                className={`hover-lift rounded-xl border border-border bg-card p-4 sm:p-5 ${i === 2 ? "sm:col-span-2 lg:col-span-1" : ""}`}
+              >
+                <div className="flex size-9 items-center justify-center rounded-lg bg-primary-muted text-sm font-semibold text-primary">
+                  {String(i + 1).padStart(2, "0")}
+                </div>
+                <h3 className="mt-3 font-semibold text-foreground sm:mt-4">{item.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted">{item.body}</p>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <LandingCapabilityDiscovery
+        title={l.capabilitiesTitle}
+        learnMore={l.capabilitiesLearnMore}
+        showLess={l.capabilitiesShowLess}
+        cards={l.capabilities}
+      />
+
       <TestimonialsSection
         testimonials={testimonials}
         copy={{
@@ -171,7 +214,7 @@ export default async function LandingPage() {
       />
 
       {/* Workflow */}
-      <section id="how-it-works" className="border-b border-border bg-background">
+      <section id="how-it-works" className="border-b border-border bg-card">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 md:py-20">
           <Reveal className="max-w-2xl">
             <h2 className="text-xl font-semibold tracking-tight sm:text-2xl md:text-3xl">
@@ -182,7 +225,7 @@ export default async function LandingPage() {
           <ol className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
             {workflow.map((item, i) => (
               <Reveal key={item.step} as="li" delay={i * 70} className="relative">
-                <div className="hover-lift h-full rounded-xl border border-border bg-card p-4 shadow-[var(--shadow-soft)] sm:p-5">
+                <div className="hover-lift h-full rounded-xl border border-border bg-background p-4 shadow-[var(--shadow-soft)] sm:p-5">
                   <span className="text-xs font-semibold tracking-[0.14em] text-primary">
                     {item.step}
                   </span>
@@ -204,7 +247,7 @@ export default async function LandingPage() {
       </section>
 
       {/* Before / After */}
-      <section className="border-b border-border bg-card">
+      <section className="border-b border-border bg-background">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 md:py-20">
           <Reveal className="max-w-2xl">
             <h2 className="text-xl font-semibold tracking-tight sm:text-2xl md:text-3xl">
@@ -216,7 +259,7 @@ export default async function LandingPage() {
             <Reveal
               as="article"
               delay={40}
-              className="rounded-xl border border-border bg-background p-4 sm:p-6"
+              className="rounded-xl border border-border bg-card p-4 sm:p-6"
             >
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">
                 {l.beforeLabel}
@@ -246,7 +289,7 @@ export default async function LandingPage() {
       </section>
 
       {/* Document Compliance */}
-      <section className="border-b border-border bg-background">
+      <section className="border-b border-border bg-card">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 md:py-20">
           <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.05fr] lg:gap-14">
             <Reveal className="max-w-xl">
@@ -265,7 +308,7 @@ export default async function LandingPage() {
                 ].map((item) => (
                   <li
                     key={item.title}
-                    className="rounded-xl border border-border bg-card p-4 shadow-[var(--shadow-soft)]"
+                    className="rounded-xl border border-border bg-background p-4 shadow-[var(--shadow-soft)]"
                   >
                     <h3 className="text-sm font-semibold text-foreground">{item.title}</h3>
                     <p className="mt-1.5 text-xs leading-relaxed text-muted">{item.body}</p>
@@ -287,64 +330,8 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* Benefits */}
-      <section className="border-b border-border bg-card">
-        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 md:py-20">
-          <Reveal>
-            <h2 className="text-xl font-semibold tracking-tight sm:text-2xl md:text-3xl">
-              {l.sectionTitle}
-            </h2>
-            <p className="mt-2 max-w-2xl text-sm text-muted sm:text-base">{l.sectionBody}</p>
-          </Reveal>
-          <div className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
-            {[
-              { title: l.feature1Title, body: l.feature1Body },
-              { title: l.feature2Title, body: l.feature2Body },
-              { title: l.feature3Title, body: l.feature3Body },
-            ].map((item, i) => (
-              <Reveal
-                key={item.title}
-                as="article"
-                delay={i * 70}
-                className={`hover-lift rounded-xl border border-border bg-background p-4 sm:p-5 ${i === 2 ? "sm:col-span-2 lg:col-span-1" : ""}`}
-              >
-                <div className="flex size-9 items-center justify-center rounded-lg bg-primary-muted text-sm font-semibold text-primary">
-                  {String(i + 1).padStart(2, "0")}
-                </div>
-                <h3 className="mt-3 font-semibold text-foreground sm:mt-4">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">{item.body}</p>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Capability highlights */}
-      <section className="border-b border-border bg-background">
-        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 md:py-20">
-          <Reveal className="max-w-2xl">
-            <h2 className="text-xl font-semibold tracking-tight sm:text-2xl md:text-3xl">
-              {l.capabilitiesTitle}
-            </h2>
-          </Reveal>
-          <div className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
-            {l.capabilities.map((item, i) => (
-              <Reveal
-                key={item.title}
-                as="article"
-                delay={Math.min(i * 40, 280)}
-                className="hover-lift rounded-xl border border-border bg-card p-4 shadow-[var(--shadow-soft)] sm:p-5"
-              >
-                <h3 className="font-semibold text-foreground">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">{item.body}</p>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Pricing teaser */}
-      <section className="border-b border-border bg-card">
+      <section className="border-b border-border bg-background">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 md:py-20">
           <Reveal className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
             <div className="max-w-xl">
@@ -366,7 +353,7 @@ export default async function LandingPage() {
             </div>
             <Link
               href="/pricing"
-              className="cta-press inline-flex h-12 w-full shrink-0 items-center justify-center rounded-xl border border-border bg-background px-5 text-sm font-medium hover:shadow-[var(--shadow-soft)] sm:h-11 sm:w-auto"
+              className="cta-press inline-flex h-12 w-full shrink-0 items-center justify-center rounded-xl border border-border bg-card px-5 text-sm font-medium hover:shadow-[var(--shadow-soft)] sm:h-11 sm:w-auto"
             >
               {l.pricingTeaserCta}
             </Link>
@@ -383,10 +370,10 @@ export default async function LandingPage() {
           <Reveal delay={60} className="mt-6 divide-y divide-border border-y border-border sm:mt-8">
             {t.faq.items.slice(0, 3).map((item) => (
               <details key={item.q} className="group py-4 sm:py-5">
-                <summary className="cursor-pointer list-none text-sm font-semibold text-foreground marker:content-none [&::-webkit-details-marker]:hidden">
+                <summary className="cursor-pointer list-none text-sm font-semibold text-foreground marker:content-none focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card [&::-webkit-details-marker]:hidden">
                   <span className="flex items-start justify-between gap-3 sm:items-center sm:gap-4">
                     <span className="min-w-0 flex-1 leading-snug">{item.q}</span>
-                    <span className="mt-0.5 shrink-0 text-muted transition group-open:rotate-45 sm:mt-0">
+                    <span className="mt-0.5 shrink-0 text-muted transition group-open:rotate-45 motion-reduce:transition-none sm:mt-0">
                       +
                     </span>
                   </span>

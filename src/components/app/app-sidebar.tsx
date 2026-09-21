@@ -68,7 +68,7 @@ const navSections: NavSection[] = [
         icon: FileSearch,
         key: "tenders",
         entitlement: "tenderAnalysis",
-        /** Internal/admin-only — never show locked upgrade affordance in company nav. */
+        /** Plan / commercial gate — omit when not entitled (no Lock tease). */
         hideWhenDisabled: true,
       },
       {
@@ -76,30 +76,35 @@ const navSections: NavSection[] = [
         icon: FileCheck2,
         key: "documentCompliance",
         entitlement: "documentCompliance",
+        hideWhenDisabled: true,
       },
       {
         href: "/supplier-qualification",
         icon: ClipboardCheck,
         key: "supplierQualification",
         entitlement: "supplierQualification",
+        hideWhenDisabled: true,
       },
       {
         href: "/tender-calendar",
         icon: CalendarDays,
         key: "tenderCalendar",
         entitlement: "tenderCalendar",
+        hideWhenDisabled: true,
       },
       {
         href: "/client-requests",
         icon: Inbox,
         key: "clientRequests",
         entitlement: "clientRequests",
+        hideWhenDisabled: true,
       },
       {
         href: "/questionnaire-assistant",
         icon: ClipboardList,
         key: "questionnaireAssistant",
         entitlement: "questionnaireAssistant",
+        hideWhenDisabled: true,
       },
       {
         href: "/matched-opportunities",
@@ -118,25 +123,34 @@ const navSections: NavSection[] = [
         icon: History,
         key: "decisionMemory",
         entitlement: "decisionMemory",
+        hideWhenDisabled: true,
       },
       {
         href: "/team-workflow",
         icon: Users,
         key: "teamWorkflow",
         entitlement: "teamWorkflow",
+        hideWhenDisabled: true,
       },
     ],
   },
   {
     labelKey: "sectionAccount",
     items: [
-      { href: "/company", icon: Building2, key: "company", entitlement: "companyProfile" },
+      {
+        href: "/company",
+        icon: Building2,
+        key: "company",
+        entitlement: "companyProfile",
+        hideWhenDisabled: true,
+      },
       { href: "/billing", icon: CreditCard, key: "billing" },
       {
         href: "/alerts",
         icon: Bell,
         key: "alerts",
         entitlement: "smartAlerts",
+        hideWhenDisabled: true,
       },
       { href: "/settings", icon: Settings, key: "settings" },
     ],
@@ -160,16 +174,16 @@ export function AppSidebar({
   copy,
   unreadAlerts = 0,
   tenderAnalysisEnabled = false,
-  documentComplianceEnabled = true,
-  supplierQualificationEnabled = true,
-  tenderCalendarEnabled = true,
-  clientRequestsEnabled = true,
-  questionnaireAssistantEnabled = true,
+  documentComplianceEnabled = false,
+  supplierQualificationEnabled = false,
+  tenderCalendarEnabled = false,
+  clientRequestsEnabled = false,
+  questionnaireAssistantEnabled = false,
   matchingEngineEnabled = false,
-  decisionMemoryEnabled = true,
-  teamWorkflowEnabled = true,
-  smartAlertsEnabled = true,
-  companyProfileEnabled = true,
+  decisionMemoryEnabled = false,
+  teamWorkflowEnabled = false,
+  smartAlertsEnabled = false,
+  companyProfileEnabled = false,
   showUpgrade = true,
 }: {
   copy: Dictionary["app"];
@@ -208,53 +222,61 @@ export function AppSidebar({
 
   const navEl = (
     <nav className="flex flex-1 flex-col gap-4 p-3" aria-label="Application">
-      {navSections.map((section) => (
-        <div key={section.labelKey} className="space-y-1">
-          <p className="px-3 pb-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
-            {nav[section.labelKey]}
-          </p>
-          {section.items.map((item) => {
-            const Icon = item.icon;
-            const enabled = item.entitlement
-              ? entitlementEnabled[item.entitlement]
-              : true;
-            if (item.hideWhenDisabled && !enabled) return null;
-            const href = enabled ? item.href : "/upgrade";
-            const active =
-              enabled &&
-              (pathname === item.href || pathname.startsWith(`${item.href}/`));
-            const showBadge =
-              item.href === "/alerts" && enabled && unreadAlerts > 0;
-            return (
-              <Link
-                key={item.href}
-                href={href}
-                onClick={() => setOpen(false)}
-                className={cn(
-                  "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-                  active
-                    ? "bg-primary-muted text-primary"
-                    : enabled
-                      ? "text-muted hover:bg-foreground/[0.06] hover:text-foreground"
-                      : "text-muted/80 hover:bg-foreground/[0.04] hover:text-muted",
-                )}
-                title={enabled ? undefined : shell.upgrade}
-              >
-                <Icon className="size-4 shrink-0" aria-hidden />
-                <span className="min-w-0 flex-1 truncate">{nav[item.key]}</span>
-                {!enabled ? (
-                  <Lock className="size-3.5 shrink-0 opacity-70" aria-hidden />
-                ) : null}
-                {showBadge ? (
-                  <span className="rounded-md bg-primary-muted px-1.5 py-0.5 text-[10px] font-semibold text-primary">
-                    {unreadAlerts > 99 ? "99+" : unreadAlerts}
-                  </span>
-                ) : null}
-              </Link>
-            );
-          })}
-        </div>
-      ))}
+      {navSections.map((section) => {
+        const visibleItems = section.items.filter((item) => {
+          if (!item.entitlement) return true;
+          const enabled = entitlementEnabled[item.entitlement];
+          if (item.hideWhenDisabled && !enabled) return false;
+          return true;
+        });
+        if (visibleItems.length === 0) return null;
+        return (
+          <div key={section.labelKey} className="space-y-1">
+            <p className="px-3 pb-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
+              {nav[section.labelKey]}
+            </p>
+            {visibleItems.map((item) => {
+              const Icon = item.icon;
+              const enabled = item.entitlement
+                ? entitlementEnabled[item.entitlement]
+                : true;
+              const href = enabled ? item.href : "/upgrade";
+              const active =
+                enabled &&
+                (pathname === item.href || pathname.startsWith(`${item.href}/`));
+              const showBadge =
+                item.href === "/alerts" && enabled && unreadAlerts > 0;
+              return (
+                <Link
+                  key={item.href}
+                  href={href}
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                    active
+                      ? "bg-primary-muted text-primary"
+                      : enabled
+                        ? "text-muted hover:bg-foreground/[0.06] hover:text-foreground"
+                        : "text-muted/80 hover:bg-foreground/[0.04] hover:text-muted",
+                  )}
+                  title={enabled ? undefined : shell.upgrade}
+                >
+                  <Icon className="size-4 shrink-0" aria-hidden />
+                  <span className="min-w-0 flex-1 truncate">{nav[item.key]}</span>
+                  {!enabled ? (
+                    <Lock className="size-3.5 shrink-0 opacity-70" aria-hidden />
+                  ) : null}
+                  {showBadge ? (
+                    <span className="rounded-md bg-primary-muted px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                      {unreadAlerts > 99 ? "99+" : unreadAlerts}
+                    </span>
+                  ) : null}
+                </Link>
+              );
+            })}
+          </div>
+        );
+      })}
     </nav>
   );
 

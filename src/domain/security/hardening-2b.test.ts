@@ -191,13 +191,17 @@ describe("Public marketing does not advertise Tender Discovery", () => {
   });
 });
 
-describe("OAuth login buttons stay Coming Soon without callbacks", () => {
-  it("AuthForm always renders disabled Coming Soon OAuth buttons", () => {
+describe("OAuth login buttons respect Super Admin auth flags", () => {
+  it("AuthForm only renders OAuth when googleEnabled / microsoftEnabled", () => {
     const src = readSrc("src/components/auth/auth-form.tsx");
+    assert.match(src, /googleEnabled/);
+    assert.match(src, /microsoftEnabled/);
+    assert.match(src, /\{googleEnabled \?/);
+    assert.match(src, /\{microsoftEnabled \?/);
+    assert.match(src, /registrationEnabled/);
+    // Still never advertise live OAuth callbacks — Coming Soon while disabled interaction.
     assert.match(src, /googleComingSoon/);
     assert.match(src, /microsoftComingSoon/);
-    assert.doesNotMatch(src, /\{googleEnabled \?/);
-    assert.doesNotMatch(src, /\{microsoftEnabled \?/);
   });
 });
 

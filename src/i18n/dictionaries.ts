@@ -46,7 +46,22 @@ export type Dictionary = {
     feature3Title: string;
     feature3Body: string;
     capabilitiesTitle: string;
-    capabilities: Array<{ title: string; body: string }>;
+    capabilitiesLearnMore: string;
+    capabilitiesShowLess: string;
+    capabilities: Array<{ title: string; body: string; detail: string }>;
+    smartMatch: {
+      eyebrow: string;
+      title: string;
+      body: string;
+      benefit1: string;
+      benefit2: string;
+      benefit3: string;
+      dimensionsLabel: string;
+      dimensions: [string, string, string, string, string, string];
+      note: string;
+      ctaPrimary: string;
+      ctaSecondary: string;
+    };
     bottomTitle: string;
     bottomBody: string;
     bottomCta: string;
@@ -193,6 +208,10 @@ export type Dictionary = {
     /** Desktop split panel (Facebook-style left column) */
     sideHeadline: string;
     sideBody: string;
+    /** Illustration status pills (opportunity-fit messaging on auth screens) */
+    sidePillMatched: string;
+    sidePillReview: string;
+    sidePillNotAMatch: string;
     name: string;
     companyName: string;
     email: string;
@@ -954,30 +973,55 @@ export type Dictionary = {
   };
 };
 
-const LANDING_CAPABILITIES: Array<{ title: string; body: string }> = [
+/** Eight verified commercially marketed customer-facing capabilities (no Tender Analysis / Matching as sold modules). */
+const LANDING_CAPABILITIES: Array<{ title: string; body: string; detail: string }> = [
   {
-    title: "Company foundation",
-    body: "Company Profile, Document Compliance and Supplier Qualification keep what you have — and what you are ready for — in one place.",
+    title: "Company Profile",
+    body: "Keep company identity, services and readiness information organized in one workspace.",
+    detail:
+      "Capture industry, services, geography and size so the team shares one current view of what the company offers. This foundation supports qualification, evidence and opportunity review — without hunting across spreadsheets and folders.",
   },
   {
-    title: "Opportunity intelligence",
-    body: "Client Requests and Tender Calendar keep incoming work and key dates organized.",
+    title: "Document Compliance",
+    body: "Track critical company documents and expiry dates before they become blockers.",
+    detail:
+      "Store licences, certificates and insurance in a secure workspace, monitor validity, and see what needs attention before it lapses. Useful when buyers ask for proof and your team needs a single source of truth.",
   },
   {
-    title: "Evidence you can defend",
-    body: "Evidence Intelligence and Explainable Decision connect requirements to proof. Advanced AI Trust & Security keeps that rationale accountable.",
+    title: "Supplier Qualification",
+    body: "Show what your company is qualified to deliver — and where gaps remain.",
+    detail:
+      "Maintain qualifications, coverage and supporting evidence so readiness is visible before you commit time to a request. Helps teams avoid pursuing work they cannot substantiate.",
   },
   {
-    title: "Decision intelligence",
-    body: "The Decision Engine produces BID, REVIEW or NO-BID from readiness, qualification and evidence. Tender Analysis, Decision Memory and Decision Simulator support that judgment — they are not the whole product.",
+    title: "Client Requests",
+    body: "Centralize buyer document and information requests into a clear dossier.",
+    detail:
+      "Capture incoming requests, link existing evidence where available, track completion and share a secure package. Reduces email-thread chaos when multiple stakeholders respond to the same buyer.",
   },
   {
-    title: "Act with the team",
-    body: "Tender Action Plan, Team Decision Workflow and Smart Alerts turn a decision into assigned next steps.",
+    title: "Tender Calendar",
+    body: "Keep deadlines, milestones and reminders visible for the opportunities you track.",
+    detail:
+      "Organize key dates and reminder settings so important submissions are less likely to be missed. Complements Client Requests by giving the team a shared timeline — not a private spreadsheet.",
   },
   {
-    title: "Respond and record",
-    body: "Questionnaire Assistant helps complete structured responses. PDF Export gives your team a portable record.",
+    title: "Questionnaire Assistant",
+    body: "Structure questionnaire questions and draft evidence-backed answers with clear verify steps.",
+    detail:
+      "Detect and organize questionnaire content, draft responses grounded in available evidence, and flag items that still need human verification. Speeds structured responses without inventing unsupported claims.",
+  },
+  {
+    title: "Decision Engine",
+    body: "Reach explainable BID, REVIEW or NO-BID outcomes from readiness, qualification and evidence.",
+    detail:
+      "Combine company readiness signals with requirement and evidence context to produce a decision you can explain. Evidence Intelligence and Explainable Decision keep the rationale traceable. Decision Memory and Decision Simulator support judgment — they do not replace human ownership.",
+  },
+  {
+    title: "Team Decision Workflow",
+    body: "Turn a decision into assigned next steps, verification and alerts the team can execute.",
+    detail:
+      "Create workflow tasks, attach evidence, verify closed-loop updates, and use Smart Alerts plus Tender Action Plan where entitled. Keeps follow-through visible after the recommendation is made.",
   },
 ];
 
@@ -1001,7 +1045,7 @@ const en: Dictionary = {
   landing: {
     headline: "Know What to Pursue. Know What You’re Ready For.",
     subhead:
-      "Understand company readiness, manage compliance and qualifications, organize evidence, evaluate relevant opportunities, and turn explainable decisions into team action.",
+      "Bidvera helps business teams understand company readiness, manage compliance and qualifications, organize evidence, evaluate relevant work, and turn explainable decisions into clear next actions.",
     ctaPrimary: "Explore Bidvera",
     ctaSecondary: "See how it works",
     trialNote: "Readiness · Opportunities · Evidence · Decisions · Action",
@@ -1017,20 +1061,42 @@ const en: Dictionary = {
     previewNextValue: "Confirm outstanding evidence",
     previewWhy:
       "Qualification looks strong. One item still needs verification before your team commits.",
-    sectionTitle: "From company intelligence to confident action",
+    sectionTitle: "Why companies use Bidvera",
     sectionBody:
-      "Bidvera connects company profile, documents, qualifications, evidence and opportunities so your team knows what matters — and what to do next.",
+      "Instead of reconstructing readiness from folders, email and spreadsheets, Bidvera gives your team a structured workspace for company information, proof, decisions and follow-through.",
     feature1Title: "Know your readiness",
     feature1Body:
       "Keep company information, qualifications and compliance evidence organized and current.",
-    feature2Title: "Understand opportunities",
+    feature2Title: "Organize relevant work",
     feature2Body:
-      "Organize client requests and calendar deadlines, then evaluate requirements against what you can actually deliver.",
+      "Capture client requests and calendar deadlines, then evaluate requirements against what you can actually deliver.",
     feature3Title: "Act with confidence",
     feature3Body:
       "Make explainable decisions, assign next actions and keep the team aligned.",
-    capabilitiesTitle: "One workspace for readiness, evidence and action",
+    capabilitiesTitle: "Eight capabilities for readiness, opportunities and action",
+    capabilitiesLearnMore: "Learn more",
+    capabilitiesShowLess: "Show less",
     capabilities: LANDING_CAPABILITIES,
+    smartMatch: {
+      eyebrow: "Smart Match Engine",
+      title: "See which opportunities fit your company profile",
+      body: "Smart Match Engine compares opportunity signals with your company profile so teams can prioritize further review — instead of scanning every lead the same way.",
+      benefit1: "Surface opportunities aligned with services, industry and geography.",
+      benefit2: "Use qualifications, experience and company size as structured match dimensions.",
+      benefit3: "Review match explanations before committing team time.",
+      dimensionsLabel: "Matching dimensions",
+      dimensions: [
+        "Services",
+        "Industry",
+        "Geography",
+        "Qualifications",
+        "Experience",
+        "Company size",
+      ],
+      note: "Match scores guide exploration and review. They do not guarantee eligibility, coverage of every market, or contract awards. Access depends on workspace configuration.",
+      ctaPrimary: "Create your company profile",
+      ctaSecondary: "Learn how Bidvera works",
+    },
     bottomTitle: "Bring readiness, opportunities and decisions into one workspace",
     bottomBody:
       "Organize what the company has, verify what can be proven, evaluate what is relevant, and decide what to pursue — with the team.",
@@ -1052,17 +1118,17 @@ const en: Dictionary = {
     beforeAfterTitle: "From scattered information to confident action",
     beforeAfterBody:
       "Stop piecing together documents, qualifications and opportunities from different places. Bidvera brings readiness, evidence and decisions into one workspace.",
-    beforeLabel: "Before",
-    afterLabel: "After",
+    beforeLabel: "Without a structured Bidvera workflow",
+    afterLabel: "With Bidvera",
     beforeItems: [
       "Documents, qualifications and evidence scattered across folders and inboxes",
-      "Unclear which opportunities and requests you are actually ready for",
+      "Unclear which requests you are actually ready for",
       "Manual review without a shared evidence trail",
-      "Decisions made without a clear next-action plan",
+      "Decisions made without clear ownership of next actions",
     ],
     afterItems: [
       "One workspace for company intelligence, readiness and verified evidence",
-      "Relevant opportunities evaluated against real capability",
+      "Incoming work organized against real capability",
       "Explainable BID / REVIEW / NO-BID with the rationale behind them",
       "Assigned next actions, alerts and a plan the team can execute",
     ],
@@ -1255,6 +1321,9 @@ const en: Dictionary = {
     sideHeadline: "Know what to pursue. Know what you’re ready for.",
     sideBody:
       "Bidvera helps your team organize readiness, verify evidence, evaluate opportunities and decide with confidence.",
+    sidePillMatched: "MATCHED — A suitable opportunity was found for the company.",
+    sidePillReview: "REVIEW — Review the opportunity details and its relevance.",
+    sidePillNotAMatch: "NOT A MATCH — The opportunity does not match the company's profile.",
     signupTitle: "Create your Bidvera account",
     signupBody: "Email and password first. Company setup comes next.",
     name: "Your name",
@@ -2095,7 +2164,7 @@ const es: Dictionary = {
   landing: {
     headline: "Sabe qué perseguir. Sabe para qué estás listo.",
     subhead:
-      "Entiende la preparación de tu empresa, gestiona cumplimiento y cualificación, organiza evidencias, evalúa oportunidades relevantes y convierte decisiones explicables en acción de equipo.",
+      "Bidvera ayuda a equipos empresariales a entender la preparación de la empresa, gestionar cumplimiento y cualificación, organizar evidencias, evaluar trabajo relevante y convertir decisiones explicables en siguientes pasos claros.",
     ctaPrimary: "Explorar Bidvera",
     ctaSecondary: "Cómo funciona",
     trialNote: "Preparación · Oportunidades · Evidencias · Decisiones · Acción",
@@ -2111,45 +2180,91 @@ const es: Dictionary = {
     previewNextValue: "Confirmar evidencia pendiente",
     previewWhy:
       "La cualificación parece sólida. Un elemento aún necesita verificación antes de comprometer al equipo.",
-    sectionTitle: "De la inteligencia de empresa a la acción con confianza",
+    sectionTitle: "Por qué las empresas usan Bidvera",
     sectionBody:
-      "Bidvera conecta perfil, documentos, cualificaciones, evidencias y oportunidades para que el equipo sepa qué importa — y qué hacer después.",
+      "En lugar de reconstruir la preparación desde carpetas, correo y hojas de cálculo, Bidvera ofrece un espacio estructurado para información de empresa, pruebas, decisiones y seguimiento.",
     feature1Title: "Conoce tu preparación",
     feature1Body:
       "Mantén organizada y actualizada la información de empresa, cualificaciones y evidencia de cumplimiento.",
-    feature2Title: "Comprende las oportunidades",
+    feature2Title: "Organiza el trabajo relevante",
     feature2Body:
-      "Descubre oportunidades y solicitudes de clientes relevantes, y evalúa requisitos frente a lo que puedes entregar.",
+      "Captura solicitudes de clientes y fechas del calendario, y evalúa requisitos frente a lo que puedes entregar.",
     feature3Title: "Actúa con confianza",
     feature3Body:
       "Toma decisiones explicables, asigna siguientes pasos y mantén al equipo alineado.",
-    capabilitiesTitle: "Un espacio para preparación, evidencias y acción",
+    capabilitiesTitle: "Ocho capacidades para preparación, oportunidades y acción",
+    capabilitiesLearnMore: "Saber más",
+    capabilitiesShowLess: "Mostrar menos",
     capabilities: [
       {
-        title: "Base de la empresa",
-        body: "Perfil de empresa, cumplimiento documental y cualificación de proveedor muestran lo que tienes y para qué estás listo.",
+        title: "Perfil de empresa",
+        body: "Mantén identidad, servicios y preparación de la empresa en un solo espacio.",
+        detail:
+          "Captura sector, servicios, geografía y tamaño para que el equipo comparta una vista actual de lo que ofrece la empresa. Esta base apoya cualificación, evidencias y revisión de oportunidades.",
       },
       {
-        title: "Inteligencia de oportunidades",
-        body: "Las solicitudes de clientes y el calendario organizan el trabajo entrante y las fechas clave.",
+        title: "Cumplimiento documental",
+        body: "Controla documentos críticos y fechas de caducidad antes de que bloqueen el trabajo.",
+        detail:
+          "Guarda licencias, certificados y seguros en un espacio seguro, supervisa la vigencia y ve qué necesita atención antes de vencer.",
       },
       {
-        title: "Evidencia defendible",
-        body: "La inteligencia de evidencia y la decisión explicable conectan requisitos con pruebas. La confianza y seguridad de IA mantienen el criterio responsable.",
+        title: "Cualificación de proveedor",
+        body: "Muestra para qué está cualificada tu empresa — y dónde hay huecos.",
+        detail:
+          "Mantén cualificaciones, cobertura y evidencias de apoyo para ver la preparación antes de invertir tiempo en una solicitud.",
       },
       {
-        title: "Inteligencia de decisión",
-        body: "El motor de decisión produce BID, REVIEW o NO-BID a partir de preparación, cualificación y evidencias. El análisis de licitaciones, la memoria y el simulador apoyan ese juicio — no son el producto entero.",
+        title: "Solicitudes de clientes",
+        body: "Centraliza peticiones de documentos e información del comprador en un dossier claro.",
+        detail:
+          "Captura solicitudes entrantes, vincula evidencias existentes, sigue el avance y comparte un paquete seguro. Reduce el caos de hilos de correo.",
       },
       {
-        title: "Actúa con el equipo",
-        body: "El plan de acción, el flujo de decisión de equipo y las alertas inteligentes convierten la decisión en pasos asignados.",
+        title: "Calendario de licitaciones",
+        body: "Mantén visibles plazos, hitos y recordatorios de las oportunidades que sigues.",
+        detail:
+          "Organiza fechas clave y recordatorios para que los envíos importantes sean menos fáciles de olvidar. Complementa las solicitudes de clientes con una línea de tiempo compartida.",
       },
       {
-        title: "Responder y registrar",
-        body: "El asistente de cuestionarios acelera respuestas estructuradas. La exportación PDF deja un registro portable.",
+        title: "Asistente de cuestionarios",
+        body: "Estructura preguntas y redacta respuestas con evidencias y pasos de verificación claros.",
+        detail:
+          "Detecta y organiza el contenido del cuestionario, redacta borradores basados en evidencias disponibles y marca lo que aún requiere verificación humana.",
+      },
+      {
+        title: "Motor de decisión",
+        body: "Llega a BID, REVIEW o NO-BID explicables a partir de preparación, cualificación y evidencias.",
+        detail:
+          "Combina señales de preparación con requisitos y evidencias para producir una decisión que puedes explicar. La memoria y el simulador de decisión apoyan el juicio — no sustituyen la responsabilidad del equipo.",
+      },
+      {
+        title: "Flujo de decisión de equipo",
+        body: "Convierte una decisión en pasos asignados, verificación y alertas ejecutables.",
+        detail:
+          "Crea tareas, adjunta evidencias, cierra el bucle de verificación y usa alertas inteligentes y el plan de acción cuando estén disponibles en el plan.",
       },
     ],
+    smartMatch: {
+      eyebrow: "Smart Match Engine",
+      title: "Ve qué oportunidades encajan con el perfil de tu empresa",
+      body: "Smart Match Engine compara señales de oportunidad con el perfil de tu empresa para priorizar la revisión — en lugar de tratar cada lead igual.",
+      benefit1: "Destaca oportunidades alineadas con servicios, sector y geografía.",
+      benefit2: "Usa cualificaciones, experiencia y tamaño como dimensiones de encaje.",
+      benefit3: "Revisa explicaciones de encaje antes de comprometer tiempo del equipo.",
+      dimensionsLabel: "Dimensiones de coincidencia",
+      dimensions: [
+        "Servicios",
+        "Sector",
+        "Geografía",
+        "Cualificaciones",
+        "Experiencia",
+        "Tamaño de empresa",
+      ],
+      note: "Las puntuaciones orientan la exploración y la revisión. No garantizan elegibilidad, cobertura de todo el mercado ni adjudicaciones. El acceso depende de la configuración del espacio de trabajo.",
+      ctaPrimary: "Crea el perfil de tu empresa",
+      ctaSecondary: "Cómo funciona Bidvera",
+    },
     bottomTitle: "Reúne preparación, oportunidades y decisiones en un solo espacio",
     bottomBody:
       "Organiza lo que la empresa tiene, verifica lo que se puede demostrar, evalúa lo relevante y decide qué perseguir — con el equipo.",
@@ -2171,17 +2286,17 @@ const es: Dictionary = {
     beforeAfterTitle: "De información dispersa a acción con confianza",
     beforeAfterBody:
       "Deja de reconstruir documentos, cualificaciones y oportunidades desde sitios distintos. Bidvera reúne preparación, evidencias y decisiones.",
-    beforeLabel: "Antes",
-    afterLabel: "Después",
+    beforeLabel: "Sin un flujo estructurado Bidvera",
+    afterLabel: "Con Bidvera",
     beforeItems: [
       "Documentos, cualificaciones y evidencias dispersos en carpetas e inboxes",
-      "Poco claro qué oportunidades y solicitudes puedes perseguir de verdad",
+      "Poco claro qué solicitudes puedes perseguir de verdad",
       "Revisión manual sin un rastro de evidencia compartido",
-      "Decisiones sin un plan de siguientes acciones",
+      "Decisiones sin ownership claro de siguientes acciones",
     ],
     afterItems: [
       "Un espacio para inteligencia de empresa, preparación y evidencias verificadas",
-      "Oportunidades relevantes evaluadas frente a capacidad real",
+      "Trabajo entrante organizado frente a capacidad real",
       "BID / REVIEW / NO-BID explicable, con la justificación detrás",
       "Acciones asignadas, alertas y un plan que el equipo puede ejecutar",
     ],
@@ -2376,6 +2491,9 @@ const es: Dictionary = {
     sideHeadline: "Sabe qué perseguir. Sabe para qué estás listo.",
     sideBody:
       "Bidvera ayuda a tu equipo a organizar la preparación, verificar evidencias, evaluar oportunidades y decidir con confianza.",
+    sidePillMatched: "COINCIDENCIA — Se encontró una oportunidad adecuada para la empresa.",
+    sidePillReview: "REVISIÓN — Revisa los detalles de la oportunidad y su relevancia.",
+    sidePillNotAMatch: "SIN COINCIDENCIA — La oportunidad no encaja con el perfil de la empresa.",
     signupTitle: "Crea tu cuenta Bidvera",
     signupBody: "Email y contraseña primero. La empresa viene después.",
     name: "Tu nombre",
@@ -3221,7 +3339,7 @@ const zh: Dictionary = {
   landing: {
     headline: "知道该追求什么。知道自己准备好了什么。",
     subhead:
-      "理解企业就绪度，管理合规与资质，整理证据，发现相关机会，并将可解释的决策转化为团队行动。",
+      "Bidvera 帮助业务团队理解企业就绪度，管理合规与资质，整理证据，评估相关工作，并将可解释的决策转化为清晰的下一步。",
     ctaPrimary: "探索 Bidvera",
     ctaSecondary: "了解运作方式",
     trialNote: "就绪度 · 机会 · 证据 · 决策 · 行动",
@@ -3236,45 +3354,83 @@ const zh: Dictionary = {
     previewNext: "下一步",
     previewNextValue: "确认尚未齐备的证据",
     previewWhy: "资质看起来充分。团队承诺前仍有一项需要核验。",
-    sectionTitle: "从企业情报到有把握的行动",
+    sectionTitle: "企业为什么使用 Bidvera",
     sectionBody:
-      "Bidvera 连接公司资料、文件、资质、证据与机会，让团队知道什么重要——以及下一步做什么。",
+      "不必再从文件夹、邮件和表格拼凑就绪度。Bidvera 为公司信息、证据、决策与跟进提供结构化工作区。",
     feature1Title: "了解就绪度",
     feature1Body: "持续整理公司信息、资质与合规证据。",
-    feature2Title: "理解机会",
-    feature2Body: "发现相关机会与客户请求，并对照真实交付能力评估要求。",
+    feature2Title: "整理相关工作",
+    feature2Body: "记录客户请求与日历截止日期，并对照真实交付能力评估要求。",
     feature3Title: "自信行动",
     feature3Body: "做出可解释的决策，分配下一步，并保持团队一致。",
-    capabilitiesTitle: "一个工作区，覆盖就绪度、证据与行动",
+    capabilitiesTitle: "八项能力：就绪度、机会与行动",
+    capabilitiesLearnMore: "了解更多",
+    capabilitiesShowLess: "收起",
     capabilities: [
       {
-        title: "企业基础",
-        body: "公司资料、文件合规与供应商资质，让你清楚拥有什么、准备好了什么。",
+        title: "公司资料",
+        body: "在一个工作区整理企业身份、服务与就绪信息。",
+        detail:
+          "记录行业、服务、地理与规模，让团队共享公司现状。该基础支撑资质、证据与机会评审。",
       },
       {
-        title: "机会情报",
-        body: "客户请求与招标日历整理进项工作与关键日期。",
+        title: "文件合规",
+        body: "跟踪关键公司文件与到期日，避免成为卡点。",
+        detail:
+          "在安全工作区存放证照与保险，监控有效期，并在过期前看到待办事项。",
       },
       {
-        title: "可辩护的证据",
-        body: "证据情报与可解释决策将要求连接到证明。高级 AI 信任与安全让依据可问责。",
+        title: "供应商资质",
+        body: "展示公司有资格交付什么——以及缺口在哪里。",
+        detail: "维护资质、覆盖范围与支撑证据，在投入时间前看清就绪度。",
       },
       {
-        title: "决策情报",
-        body: "决策引擎根据就绪度、资质与证据给出 投标 / 复核 / 不投标。招标分析、决策记忆与模拟器支持判断——它们不是全部产品。",
+        title: "客户请求",
+        body: "把买方文件与信息请求集中到清晰案卷。",
+        detail:
+          "捕获进项请求、关联已有证据、跟踪完成度并安全共享，减少邮件线程混乱。",
       },
       {
-        title: "与团队一起行动",
-        body: "招标行动计划、团队决策流程与智能提醒，把决策变成已分配的下一步。",
+        title: "招标日历",
+        body: "让你跟踪的机会截止日期、里程碑与提醒可见。",
+        detail:
+          "整理关键日期与提醒，降低错过提交的风险，并与客户请求形成共享时间线。",
       },
       {
-        title: "响应与留存",
-        body: "问卷助手加快结构化答复。PDF 导出为团队提供可携带记录。",
+        title: "问卷助手",
+        body: "结构化问题，并基于证据起草需人工核验的答案。",
+        detail:
+          "检测并整理问卷内容，基于可用证据起草答复，并标出仍需人工核验的项。",
+      },
+      {
+        title: "决策引擎",
+        body: "根据就绪度、资质与证据给出可解释的 投标 / 复核 / 不投标。",
+        detail:
+          "结合公司就绪信号与要求、证据上下文生成可解释决策。决策记忆与模拟器支持判断——不能替代团队责任。",
+      },
+      {
+        title: "团队决策流程",
+        body: "把决策变成可执行的已分配步骤、核验与提醒。",
+        detail:
+          "创建任务、附上证据、闭环核验，并在权限允许时使用智能提醒与行动计划。",
       },
     ],
+    smartMatch: {
+      eyebrow: "Smart Match Engine",
+      title: "看清哪些机会更符合公司资料",
+      body: "Smart Match Engine 将机会信号与公司资料对比，帮助团队优先安排进一步评审——而不是用同一方式扫过每条线索。",
+      benefit1: "按服务、行业与地理突出相关机会。",
+      benefit2: "用资质、经验与公司规模作为结构化匹配维度。",
+      benefit3: "在投入团队时间前查看匹配说明。",
+      dimensionsLabel: "匹配维度",
+      dimensions: ["服务", "行业", "地理", "资质", "经验", "公司规模"],
+      note: "匹配分数用于探索与评审，不保证资格、全市场覆盖或中标。访问取决于工作区配置。",
+      ctaPrimary: "创建公司资料",
+      ctaSecondary: "了解 Bidvera 如何运作",
+    },
     bottomTitle: "把就绪度、机会与决策放进同一个工作区",
     bottomBody:
-      "整理企业已有能力，核验可证明事项，发现相关机会，并与团队决定跟进什么。",
+      "整理企业已有能力，核验可证明事项，评估相关工作，并与团队决定跟进什么。",
     bottomCta: "探索 Bidvera",
     howTitle: "如何运作",
     howBody: "从企业就绪度到有把握的行动。",
@@ -3289,17 +3445,17 @@ const zh: Dictionary = {
     beforeAfterTitle: "从分散信息到有把握的行动",
     beforeAfterBody:
       "不必再从不同地方拼凑文件、资质与机会。Bidvera 把就绪度、证据与决策放在同一工作区。",
-    beforeLabel: "之前",
-    afterLabel: "之后",
+    beforeLabel: "没有结构化 Bidvera 流程时",
+    afterLabel: "使用 Bidvera",
     beforeItems: [
       "文件、资质与证据散落在文件夹和收件箱中",
-      "不清楚哪些机会和请求你真正准备好了",
+      "不清楚哪些请求你真正准备好了",
       "人工审阅缺少共享的证据轨迹",
-      "做了决策却没有清晰的下一步计划",
+      "做了决策却没有清晰的下一步责任人",
     ],
     afterItems: [
       "一个工作区覆盖企业情报、就绪度与已核验证据",
-      "对照真实能力评估相关机会",
+      "进项工作对照真实能力整理",
       "可解释的 投标 / 复核 / 不投标，并附带依据",
       "已分配的下一步、提醒和团队可执行的计划",
     ],
@@ -3331,14 +3487,15 @@ const zh: Dictionary = {
     complianceDateQuality: "有效期至 2027年8月1日",
     complianceDateFinancial: "有效期至 2027年2月10日",
     pricingTeaserTitle: "适合成长团队的简明定价",
-    pricingTeaserBody: "免费开始。当 Bidvera 真正节省团队时间后再升级 — Pro 每月 {price} 起。",
-    pricingTeaserCta: "比较套餐",
+    pricingTeaserBody:
+      "免费开始。当 Bidvera 真正节省团队时间后再升级——Pro 起 {price}/月。",
+    pricingTeaserCta: "比较方案",
     viewAllFaq: "查看全部常见问题 →",
     testimonialsTitle: "团队怎么说",
     testimonialsBody: "来自使用 Bidvera 保持就绪并自信决策的团队的真实反馈。",
     testimonialsEmptyTitle: "早期客户反馈",
     testimonialsEmptyBody:
-      "我们只发布真实客户评价。成为第一批把就绪度、证据与决策放进同一工作区的团队，然后告诉我们效果。",
+      "我们只发布真实客户评价。成为首批把就绪度、证据与决策放进同一工作区的团队——然后告诉我们效果。",
     testimonialsEmptyCta: "探索 Bidvera",
   },
   product: {
@@ -3484,6 +3641,9 @@ const zh: Dictionary = {
     emailChangedNotice: "邮箱已更新。请使用新地址登录。其他会话已退出。",
     sideHeadline: "知道该追求什么。知道自己准备好了什么。",
     sideBody: "Bidvera 帮助团队整理就绪度、核验证据、评估机会，并自信决策。",
+    sidePillMatched: "匹配 — 已为公司找到合适的机会。",
+    sidePillReview: "复核 — 请审阅该机会的详情及其相关性。",
+    sidePillNotAMatch: "不匹配 — 该机会与公司资料不符。",
     signupTitle: "创建 Bidvera 账户",
     signupBody: "先设置邮箱和密码，随后完善公司信息。",
     name: "您的姓名",
@@ -4286,7 +4446,7 @@ const ar: Dictionary = {
   landing: {
     headline: "اعرف ما يستحق المتابعة. اعرف ما أنت جاهز له.",
     subhead:
-      "افهم جاهزية الشركة، وأدر الامتثال والتأهيل، ونظّم الأدلة، واكتشف الفرص ذات الصلة، وحوّل القرارات القابلة للتفسير إلى عمل جماعي.",
+      "تساعد بيدفراء فرق الأعمال على فهم جاهزية الشركة، وإدارة الامتثال والتأهيل، وتنظيم الأدلة، وتقييم العمل ذي الصلة، وتحويل القرارات القابلة للتفسير إلى خطوات تالية واضحة.",
     ctaPrimary: "استكشف بيدفراء",
     ctaSecondary: "كيف يعمل",
     trialNote: "الجاهزية · الفرص · الأدلة · القرارات · التنفيذ",
@@ -4302,118 +4462,155 @@ const ar: Dictionary = {
     previewNextValue: "تأكيد الأدلة المتبقية",
     previewWhy:
       "التأهيل يبدو قويًا. ما يزال بند واحد يحتاج تحققًا قبل التزام الفريق.",
-    sectionTitle: "من ذكاء الشركة إلى تنفيذ واثق",
+    sectionTitle: "لماذا تستخدم الشركات بيدفراء",
     sectionBody:
-      "تربط بيدفراء ملف الشركة والمستندات والتأهيل والأدلة والفرص حتى يعرف الفريق ما يهم — وما يجب فعله بعد ذلك.",
+      "بدلًا من إعادة بناء الجاهزية من المجلدات والبريد وجداول البيانات، توفّر بيدفراء مساحة منظمة لمعلومات الشركة والإثبات والقرارات والمتابعة.",
     feature1Title: "اعرف جاهزيتك",
     feature1Body:
       "أبقِ معلومات الشركة والتأهيل وأدلة الامتثال منظمة ومحدّثة.",
-    feature2Title: "افهم الفرص",
+    feature2Title: "نظّم العمل ذا الصلة",
     feature2Body:
-      "اكتشف الفرص وطلبات العملاء ذات الصلة، ثم قيّم المتطلبات مقابل ما تستطيع تسليمه فعليًا.",
+      "التقط طلبات العملاء ومواعيد التقويم، ثم قيّم المتطلبات مقابل ما تستطيع تسليمه فعليًا.",
     feature3Title: "نفّذ بثقة",
     feature3Body:
-      "اتخذ قرارات قابلة للتفسير، وعيّن الخطوات التالية، وحافظ على توافق الفريق.",
-    capabilitiesTitle: "مساحة واحدة للجاهزية والأدلة والتنفيذ",
+      "اتخذ قرارات قابلة للتفسير، وعيّن الخطوات التالية، وأبقِ الفريق متوافقًا.",
+    capabilitiesTitle: "ثماني قدرات للجاهزية والفرص والتنفيذ",
+    capabilitiesLearnMore: "اعرف المزيد",
+    capabilitiesShowLess: "عرض أقل",
     capabilities: [
       {
-        title: "أساس الشركة",
-        body: "ملف الشركة وامتثال المستندات وتأهيل المورد يوضّحان ما لديك وما أنت جاهز له.",
+        title: "ملف الشركة",
+        body: "أبقِ هوية الشركة وخدماتها ومعلومات الجاهزية منظمة في مساحة واحدة.",
+        detail:
+          "سجّل القطاع والخدمات والجغرافيا والحجم ليتشارك الفريق صورة حديثة عما تقدّمه الشركة. يدعم هذا الأساس التأهيل والأدلة ومراجعة الفرص.",
       },
       {
-        title: "ذكاء الفرص",
-        body: "طلبات العملاء وتقويم المناقصات ينظّمان العمل الوارد والمواعيد الرئيسية.",
+        title: "امتثال المستندات",
+        body: "تتبّع مستندات الشركة الحرجة وتواريخ الانتهاء قبل أن تصبح عوائق.",
+        detail:
+          "احفظ التراخيص والشهادات والتأمين في مساحة آمنة، وراقب الصلاحية، واعرف ما يحتاج انتباهًا قبل انتهاء المدة.",
       },
       {
-        title: "أدلة يمكن الدفاع عنها",
-        body: "ذكاء الأدلة والقرار القابل للتفسير يربطان المتطلبات بالإثبات. ثقة وأمان الذكاء الاصطناعي يُبقيان المبرر قابلاً للمساءلة.",
+        title: "تأهيل المورّد",
+        body: "أظهر ما أنت مؤهّل لتقديمه — وأين توجد الفجوات.",
+        detail:
+          "حافظ على التأهيلات والتغطية والأدلة الداعمة لترى الجاهزية قبل استثمار الوقت في طلب.",
       },
       {
-        title: "ذكاء القرار",
-        body: "ينتج محرك القرار متوافق / يحتاج تحقق / غير متوافق من الجاهزية والتأهيل والأدلة. تحليل المناقصات وذاكرة القرار والمحاكي تدعم ذلك الحكم — وليست المنتج بأكمله.",
+        title: "طلبات العملاء",
+        body: "مركز طلبات المشتري للمستندات والمعلومات في ملف واضح.",
+        detail:
+          "التقط الطلبات الواردة، واربط الأدلة الموجودة، وتتبّع الإنجاز، وشارك حزمة آمنة — لتقليل فوضى سلاسل البريد.",
       },
       {
-        title: "نفّذ مع الفريق",
-        body: "خطة عمل المناقصة وسير قرار الفريق والتنبيهات الذكية تحوّل القرار إلى خطوات معيّنة.",
+        title: "تقويم المناقصات",
+        body: "أبقِ المواعيد النهائية والمعالم والتذكيرات مرئية للفرص التي تتابعها.",
+        detail:
+          "نظّم التواريخ الرئيسية وإعدادات التذكير لتقليل احتمال تفويت التسليمات المهمة، مع خط زمني مشترك للفريق.",
       },
       {
-        title: "الرد والتوثيق",
-        body: "مساعد الاستبيانات يسرّع الردود المنظّمة. تصدير PDF يمنح الفريق سجلًا قابلاً للنقل.",
+        title: "مساعد الاستبيانات",
+        body: "هيكل الأسئلة واصنع مسودات إجابات مدعومة بالأدلة مع خطوات تحقق واضحة.",
+        detail:
+          "اكتشف محتوى الاستبيان ونظّمه، وصغ إجابات مبنية على الأدلة المتاحة، وميّز ما يزال يحتاج تحققًا بشريًا.",
+      },
+      {
+        title: "محرك القرار",
+        body: "صل إلى BID أو REVIEW أو NO-BID قابلة للتفسير من الجاهزية والتأهيل والأدلة.",
+        detail:
+          "ادمج إشارات جاهزية الشركة مع سياق المتطلبات والأدلة لإنتاج قرار يمكن شرحه. تدعم ذاكرة القرار والمحاكي الحكم — ولا تحل محل مسؤولية الفريق.",
+      },
+      {
+        title: "سير عمل قرار الفريق",
+        body: "حوّل القرار إلى خطوات معيّنة وتحقق وتنبيهات يمكن تنفيذها.",
+        detail:
+          "أنشئ مهام سير العمل، وأرفق الأدلة، وأغلق حلقة التحقق، واستخدم التنبيهات الذكية وخطة العمل عند توفرها في الخطة.",
       },
     ],
+    smartMatch: {
+      eyebrow: "Smart Match Engine",
+      title: "اعرف أي الفرص تناسب ملف شركتك",
+      body: "يقارن Smart Match Engine إشارات الفرصة مع ملف شركتك لمساعدة الفرق على ترتيب أولوية المراجعة — بدل معاملة كل فرصة بنفس الطريقة.",
+      benefit1: "أبرز الفرص المتوافقة مع الخدمات والقطاع والجغرافيا.",
+      benefit2: "استخدم التأهيل والخبرة وحجم الشركة كأبعاد مطابقة منظمة.",
+      benefit3: "راجع تفسيرات المطابقة قبل تخصيص وقت الفريق.",
+      dimensionsLabel: "أبعاد المطابقة",
+      dimensions: ["الخدمات", "القطاع", "الجغرافيا", "التأهيل", "الخبرة", "حجم الشركة"],
+      note: "درجات المطابقة توجّه الاستكشاف والمراجعة. لا تضمن الأهلية أو تغطية كل الأسواق أو ترسية العقود. يعتمد الوصول على إعداد مساحة العمل.",
+      ctaPrimary: "أنشئ ملف شركتك",
+      ctaSecondary: "تعرّف كيف تعمل بيدفراء",
+    },
     bottomTitle: "اجمع الجاهزية والفرص والقرارات في مساحة واحدة",
     bottomBody:
-      "نظّم ما لدى الشركة، وتحقق مما يمكن إثباته، واكتشف ما هو ملائم، وقرّر ما يستحق المتابعة — مع الفريق.",
+      "نظّم ما تملكه الشركة، وتحقق مما يمكن إثباته، وقيّم ما هو ذو صلة، وقرر ما يستحق المتابعة — مع الفريق.",
     bottomCta: "استكشف بيدفراء",
     howTitle: "كيف يعمل",
     howBody: "من جاهزية الشركة إلى تنفيذ واثق.",
     step1Title: "افهم",
-    step1Body:
-      "ابنِ صورة واضحة للشركة والمستندات والتأهيل والجاهزية.",
-    step2Title: "اكتشف",
+    step1Body: "ابنِ صورة واضحة لشركتك ومستنداتها وتأهيلها وجاهزيتها.",
+    step2Title: "نظّم",
     step2Body:
-      "استخدم طلبات العملاء لالتقاط العمل الوارد، ثم احتفظ بالمواعيد المهمة في تقويم المناقصات.",
+      "استخدم طلبات العملاء لالتقاط العمل الوارد، وأبقِ التواريخ الرئيسية في تقويم المناقصات.",
     step3Title: "تحقق",
-    step3Body:
-      "قابل المتطلبات مع الملف والمستندات والتأهيل والأدلة.",
-    step4Title: "قرّر ونفّذ",
+    step3Body: "قابل المتطلبات بالملف والمستندات والتأهيل والأدلة.",
+    step4Title: "قرر ونفّذ",
     step4Body:
-      "اتخذ قرارًا قابلًا للتفسير ثم حرّكه عبر سير الفريق والتنبيهات وخطة عمل واضحة.",
-    beforeAfterTitle: "من معلومات متفرقة إلى تنفيذ واثق",
+      "صل إلى قرار قابل للتفسير ثم ادفعه عبر سير عمل الفريق والتنبيهات وخطة عمل واضحة.",
+    beforeAfterTitle: "من معلومات مشتتة إلى تنفيذ واثق",
     beforeAfterBody:
-      "توقف عن تجميع المستندات والتأهيل والفرص من أماكن مختلفة. تجمع بيدفراء الجاهزية والأدلة والقرارات في مساحة واحدة.",
-    beforeLabel: "قبل",
-    afterLabel: "بعد",
+      "توقف عن تجميع المستندات والتأهيل والفرص من أماكن مختلفة. تجمع بيدفراء الجاهزية والأدلة والقرارات.",
+    beforeLabel: "بدون سير عمل منظم في بيدفراء",
+    afterLabel: "مع بيدفراء",
     beforeItems: [
-      "مستندات وتأهيل وأدلة متناثرة بين المجلدات وصناديق البريد",
-      "غير واضح أي الفرص والطلبات أنت جاهز لها فعليًا",
+      "مستندات وتأهيل وأدلة مشتتة عبر المجلدات وصناديق الوارد",
+      "غير واضح أي الطلبات أنت جاهز لها فعليًا",
       "مراجعة يدوية بلا مسار أدلة مشترك",
-      "قرارات بلا خطة خطوات تالية واضحة",
+      "قرارات بلا ملكية واضحة للخطوات التالية",
     ],
     afterItems: [
-      "مساحة واحدة لذكاء الشركة والجاهزية والأدلة المُتحقَّق منها",
-      "فرص ملائمة مُقيَّمة مقابل القدرة الحقيقية",
-      "متوافق / يحتاج تحقق / غير متوافق مع المبرر خلف كل نتيجة",
-      "خطوات معيّنة وتنبيهات وخطة يستطيع الفريق تنفيذها",
+      "مساحة واحدة لذكاء الشركة والجاهزية والأدلة المتحققة",
+      "عمل وارد منظم مقابل القدرة الحقيقية",
+      "BID / REVIEW / NO-BID قابلة للتفسير مع المبرر",
+      "خطوات تالية معيّنة وتنبيهات وخطة يمكن للفريق تنفيذها",
     ],
     complianceEyebrow: "امتثال المستندات",
-    complianceHeadline: "أبقِ شركتك جاهزة في كل وقت.",
+    complianceHeadline: "أبقِ شركتك جاهزة في كل حين.",
     complianceBody:
-      "نظّم مستندات الشركة الحرجة، وتتبع تواريخ الانتهاء، وتابع متطلبات الامتثال من مساحة عمل آمنة واحدة.",
-    complianceBenefit1Title: "حافظ على التنظيم",
+      "نظّم مستندات الشركة الحرجة، وتتبع تواريخ الانتهاء، وتابع متطلبات الامتثال من مساحة آمنة واحدة.",
+    complianceBenefit1Title: "ابقَ منظمًا",
     complianceBenefit1Body: "كل مستندات الشركة في مساحة آمنة واحدة.",
-    complianceBenefit2Title: "تتبع تواريخ الانتهاء",
-    complianceBenefit2Body: "اعرف ما هو ساري وما يحتاج انتباهًا قبل انتهاء صلاحيته.",
+    complianceBenefit2Title: "تتبّع الانتهاء",
+    complianceBenefit2Body: "اعرف ما هو ساري وما يحتاج انتباهًا قبل انتهاء المدة.",
     complianceBenefit3Title: "جاهز للمتطلبات",
-    complianceBenefit3Body: "اعرف أي المستندات تدعم المتطلب التالي.",
+    complianceBenefit3Body: "اعرف أي المستندات تدعم المطلب التالي.",
     compliancePanelTitle: "مستندات الشركة",
     complianceAddLabel: "إضافة مستند",
     complianceAlertTitle: "التأمين ينتهي قريبًا",
     complianceReadyLabel: "أنت جاهز",
-    complianceReadyHint: "المستندات الأساسية متتبَّعة في مساحة واحدة.",
+    complianceReadyHint: "المستندات الرئيسية متتبَّعة في مساحة واحدة.",
     complianceStatusValid: "ساري",
     complianceStatusExpiring: "ينتهي قريبًا",
-    complianceDocTrade: "الرخصة التجارية",
+    complianceDocTrade: "رخصة تجارية",
     complianceDocTax: "شهادة ضريبية",
-    complianceDocInsurance: "التأمين",
-    complianceDocQuality: "شهادة الجودة",
-    complianceDocFinancial: "البيان المالي",
-    complianceDateTrade: "ساري حتى 31 ديسمبر 2026",
-    complianceDateTax: "ساري حتى 15 أكتوبر 2026",
-    complianceDateInsurance: "ينتهي 28 نوفمبر 2026",
-    complianceDateQuality: "ساري حتى 1 أغسطس 2027",
-    complianceDateFinancial: "ساري حتى 10 فبراير 2027",
+    complianceDocInsurance: "تأمين",
+    complianceDocQuality: "شهادة جودة",
+    complianceDocFinancial: "بيانات مالية",
+    complianceDateTrade: "ساري حتى ٣١ ديسمبر ٢٠٢٦",
+    complianceDateTax: "ساري حتى ١٥ أكتوبر ٢٠٢٦",
+    complianceDateInsurance: "ينتهي ٢٨ نوفمبر ٢٠٢٦",
+    complianceDateQuality: "ساري حتى ١ أغسطس ٢٠٢٧",
+    complianceDateFinancial: "ساري حتى ١٠ فبراير ٢٠٢٧",
     pricingTeaserTitle: "أسعار بسيطة للفرق النامية",
     pricingTeaserBody:
-      "ابدأ مجانًا. رقِّ خطتك عندما توفّر بيدفراء وقتًا حقيقيًا — من {price}/شهر على Pro.",
+      "ابدأ مجانًا. رقِّ الخطة عندما توفّر بيدفراء وقتًا حقيقيًا — من {price}/شهر على Pro.",
     pricingTeaserCta: "قارن الخطط",
-    viewAllFaq: "عرض كل الأسئلة →",
+    viewAllFaq: "عرض كل الأسئلة ←",
     testimonialsTitle: "ماذا تقول الفرق",
     testimonialsBody:
-      "ملاحظات حقيقية من فرق تستخدم بيدفراء للبقاء جاهزة واتخاذ القرار بثقة.",
+      "ملاحظات حقيقية من فرق تستخدم بيدفراء للبقاء جاهزة واتخاذ قرارات بثقة.",
     testimonialsEmptyTitle: "ملاحظات العملاء الأوائل",
     testimonialsEmptyBody:
-      "ننشر شهادات العملاء الحقيقية فقط. كن من أوائل الفرق التي تجمع الجاهزية والأدلة والقرارات في مساحة واحدة.",
+      "ننشر فقط شهادات عملاء حقيقية. كن من أوائل الفرق التي تجمع الجاهزية والأدلة والقرارات — ثم أخبرنا بالنتيجة.",
     testimonialsEmptyCta: "استكشف بيدفراء",
   },
   product: {
@@ -4566,6 +4763,9 @@ const ar: Dictionary = {
     sideHeadline: "اعرف ما يستحق المتابعة. اعرف ما أنت جاهز له.",
     sideBody:
       "تساعد بيدفراء فريقك على تنظيم الجاهزية والتحقق من الأدلة وتقييم الفرص واتخاذ القرار بثقة.",
+    sidePillMatched: "مطابقة — وُجدت فرصة مناسبة للشركة.",
+    sidePillReview: "مراجعة — راجع تفاصيل الفرصة ومدى صلتها.",
+    sidePillNotAMatch: "ليست مطابقة — الفرصة لا تتوافق مع ملف الشركة.",
     signupTitle: "أنشئ حساب Bidvera",
     signupBody: "البريد وكلمة المرور أولاً، ثم إعداد الشركة.",
     name: "اسمك",
@@ -5401,7 +5601,7 @@ const fr: Dictionary = {
   landing: {
     headline: "Sachez quoi poursuivre. Sachez pour quoi vous êtes prêts.",
     subhead:
-      "Comprenez la préparation de l’entreprise, gérez conformité et qualifications, organisez les preuves, découvrez les opportunités pertinentes, et transformez des décisions explicables en action d’équipe.",
+      "Bidvera aide les équipes à comprendre la préparation de l’entreprise, gérer conformité et qualifications, organiser les preuves, évaluer le travail pertinent et transformer des décisions explicables en prochaines actions claires.",
     ctaPrimary: "Explorer Bidvera",
     ctaSecondary: "Voir le fonctionnement",
     trialNote: "Préparation · Opportunités · Preuves · Décisions · Action",
@@ -5417,94 +5617,140 @@ const fr: Dictionary = {
     previewNextValue: "Confirmer les preuves restantes",
     previewWhy:
       "La qualification paraît solide. Un élément doit encore être vérifié avant que l’équipe s’engage.",
-    sectionTitle: "De l’intelligence d’entreprise à l’action confiante",
+    sectionTitle: "Pourquoi les entreprises utilisent Bidvera",
     sectionBody:
-      "Bidvera relie profil, documents, qualifications, preuves et opportunités pour que l’équipe sache ce qui compte — et quoi faire ensuite.",
+      "Au lieu de reconstruire la préparation depuis dossiers, e-mails et tableurs, Bidvera offre un espace structuré pour l’information d’entreprise, les preuves, les décisions et le suivi.",
     feature1Title: "Connaître votre préparation",
     feature1Body:
       "Gardez à jour les informations d’entreprise, les qualifications et les preuves de conformité.",
-    feature2Title: "Comprendre les opportunités",
+    feature2Title: "Organiser le travail pertinent",
     feature2Body:
-      "Découvrez les opportunités et demandes clients pertinentes, puis évaluez les exigences face à ce que vous pouvez réellement livrer.",
+      "Capturez les demandes clients et les échéances du calendrier, puis évaluez les exigences face à ce que vous pouvez réellement livrer.",
     feature3Title: "Agir en confiance",
     feature3Body:
       "Prenez des décisions explicables, assignez les prochaines actions et alignez l’équipe.",
-    capabilitiesTitle: "Un espace pour la préparation, les preuves et l’action",
+    capabilitiesTitle: "Huit capacités pour la préparation, les opportunités et l’action",
+    capabilitiesLearnMore: "En savoir plus",
+    capabilitiesShowLess: "Réduire",
     capabilities: [
       {
-        title: "Socle entreprise",
-        body: "Profil entreprise, conformité documentaire et qualification fournisseur montrent ce que vous avez — et pour quoi vous êtes prêts.",
+        title: "Profil d’entreprise",
+        body: "Gardez identité, services et préparation de l’entreprise dans un seul espace.",
+        detail:
+          "Capturez secteur, services, géographie et taille pour une vue partagée de l’offre. Cette base soutient qualification, preuves et revue d’opportunités.",
       },
       {
-        title: "Intelligence d’opportunités",
-        body: "Les demandes clients et le calendrier organisent le travail entrant et les dates clés.",
+        title: "Conformité documentaire",
+        body: "Suivez les documents critiques et les dates d’expiration avant qu’ils ne bloquent.",
+        detail:
+          "Stockez licences, certificats et assurances dans un espace sécurisé, surveillez la validité et voyez ce qui demande attention avant expiration.",
       },
       {
-        title: "Preuves défendables",
-        body: "L’intelligence de preuves et la décision explicable relient les exigences aux justificatifs. Confiance et sécurité IA gardent le raisonnement accountable.",
+        title: "Qualification fournisseur",
+        body: "Montrez ce que votre entreprise est qualifiée à livrer — et où restent des écarts.",
+        detail:
+          "Maintenez qualifications, couverture et preuves pour voir la préparation avant d’investir du temps sur une demande.",
       },
       {
-        title: "Intelligence de décision",
-        body: "Le moteur de décision produit SOUMISSIONNER, REVOIR ou NE PAS SOUMISSIONNER à partir de la préparation, de la qualification et des preuves. L’analyse d’AO, la mémoire et le simulateur soutiennent ce jugement — ce n’est pas tout le produit.",
+        title: "Demandes clients",
+        body: "Centralisez les demandes d’information et de documents de l’acheteur dans un dossier clair.",
+        detail:
+          "Capturez les demandes entrantes, liez les preuves existantes, suivez l’avancement et partagez un dossier sécurisé.",
       },
       {
-        title: "Agir avec l’équipe",
-        body: "Le plan d’action, le flux de décision d’équipe et les alertes intelligentes transforment une décision en prochaines étapes assignées.",
+        title: "Calendrier des appels d’offres",
+        body: "Gardez visibles échéances, jalons et rappels pour les opportunités suivies.",
+        detail:
+          "Organisez les dates clés et rappels pour réduire les oublis de soumission, avec une chronologie partagée pour l’équipe.",
       },
       {
-        title: "Répondre et conserver",
-        body: "L’assistant questionnaires accélère les réponses structurées. L’export PDF offre un enregistrement portable.",
+        title: "Assistant questionnaires",
+        body: "Structurez les questions et rédigez des réponses fondées sur des preuves avec étapes de vérification.",
+        detail:
+          "Détectez et organisez le contenu du questionnaire, rédigez des brouillons basés sur les preuves disponibles et signalez ce qui nécessite encore une vérification humaine.",
+      },
+      {
+        title: "Moteur de décision",
+        body: "Aboutissez à BID, REVIEW ou NO-BID explicables à partir de la préparation, de la qualification et des preuves.",
+        detail:
+          "Combinez les signaux de préparation avec le contexte des exigences et des preuves. La mémoire et le simulateur de décision soutiennent le jugement — ils ne remplacent pas la responsabilité de l’équipe.",
+      },
+      {
+        title: "Workflow de décision d’équipe",
+        body: "Transformez une décision en prochaines étapes assignées, vérifications et alertes exécutables.",
+        detail:
+          "Créez des tâches, joignez des preuves, fermez la boucle de vérification et utilisez alertes intelligentes et plan d’action selon le plan.",
       },
     ],
-    bottomTitle: "Réunir préparation, opportunités et décisions dans un seul espace",
+    smartMatch: {
+      eyebrow: "Smart Match Engine",
+      title: "Voyez quelles opportunités correspondent au profil de votre entreprise",
+      body: "Smart Match Engine compare les signaux d’opportunité au profil de votre entreprise pour prioriser la revue — au lieu de traiter chaque piste de la même façon.",
+      benefit1: "Faites remonter les opportunités alignées sur services, secteur et géographie.",
+      benefit2: "Utilisez qualifications, expérience et taille comme dimensions structurées.",
+      benefit3: "Examinez les explications d’adéquation avant d’engager le temps de l’équipe.",
+      dimensionsLabel: "Dimensions de correspondance",
+      dimensions: [
+        "Services",
+        "Secteur",
+        "Géographie",
+        "Qualifications",
+        "Expérience",
+        "Taille d’entreprise",
+      ],
+      note: "Les scores guident l’exploration et la revue. Ils ne garantissent ni éligibilité, ni couverture de tout le marché, ni attribution de contrats. L’accès dépend de la configuration de l’espace de travail.",
+      ctaPrimary: "Créer le profil de votre entreprise",
+      ctaSecondary: "Comment fonctionne Bidvera",
+    },
+    bottomTitle: "Réunissez préparation, opportunités et décisions dans un seul espace",
     bottomBody:
-      "Organisez ce que l’entreprise a, vérifiez ce qui peut être prouvé, évaluez ce qui est pertinent, et décidez quoi poursuivre — avec l’équipe.",
+      "Organisez ce que l’entreprise a, vérifiez ce qui peut être prouvé, évaluez ce qui est pertinent et décidez quoi poursuivre — avec l’équipe.",
     bottomCta: "Explorer Bidvera",
-    howTitle: "Comment ça marche",
+    howTitle: "Comment ça fonctionne",
     howBody: "De la préparation de l’entreprise à une action confiante.",
     step1Title: "Comprendre",
     step1Body:
-      "Construisez une vision claire de l’entreprise, des documents, des qualifications et de la préparation.",
+      "Construisez une image claire de l’entreprise, des documents, des qualifications et de la préparation.",
     step2Title: "Organiser",
     step2Body:
-      "Utilisez les demandes clients pour capturer le travail entrant, puis gardez les dates clés au calendrier.",
+      "Utilisez les demandes clients pour capturer le travail entrant, puis gardez les dates clés sur le calendrier.",
     step3Title: "Vérifier",
     step3Body:
       "Comparez les exigences au profil, aux documents, aux qualifications et aux preuves.",
     step4Title: "Décider et agir",
     step4Body:
-      "Parvenez à une décision explicable, puis avancez-la via le flux d’équipe, les alertes et un plan d’action clair.",
-    beforeAfterTitle: "D’informations éparses à une action confiante",
+      "Aboutissez à une décision explicable, puis avancez via le workflow d’équipe, les alertes et un plan d’action clair.",
+    beforeAfterTitle: "D’informations dispersées à une action confiante",
     beforeAfterBody:
       "Arrêtez de reconstituer documents, qualifications et opportunités depuis des endroits différents. Bidvera réunit préparation, preuves et décisions.",
-    beforeLabel: "Avant",
-    afterLabel: "Après",
+    beforeLabel: "Sans un workflow Bidvera structuré",
+    afterLabel: "Avec Bidvera",
     beforeItems: [
-      "Documents, qualifications et preuves éparpillés entre dossiers et boîtes mail",
-      "Difficile de savoir quelles opportunités et demandes vous êtes réellement prêts à poursuivre",
-      "Revue manuelle sans piste de preuves partagée",
-      "Décisions sans plan d’actions suivantes",
+      "Documents, qualifications et preuves dispersés dans dossiers et boîtes mail",
+      "Peu clair quelles demandes vous êtes réellement prêts à poursuivre",
+      "Revue manuelle sans piste de preuve partagée",
+      "Décisions sans propriété claire des prochaines actions",
     ],
     afterItems: [
       "Un espace pour l’intelligence d’entreprise, la préparation et les preuves vérifiées",
-      "Opportunités pertinentes évaluées face à la capacité réelle",
-      "SOUMISSIONNER / REVOIR / NE PAS SOUMISSIONNER explicable, avec la justification",
-      "Actions assignées, alertes et un plan que l’équipe peut exécuter",
+      "Travail entrant organisé face à la capacité réelle",
+      "BID / REVIEW / NO-BID explicables, avec le raisonnement derrière",
+      "Prochaines actions assignées, alertes et un plan exécutable par l’équipe",
     ],
     complianceEyebrow: "Conformité documentaire",
     complianceHeadline: "Gardez votre entreprise prête, en permanence.",
     complianceBody:
-      "Organisez les documents critiques, suivez les dates d’expiration et restez au fait des exigences de conformité depuis un espace sécurisé.",
+      "Organisez les documents critiques, suivez les dates d’expiration et maîtrisez les exigences de conformité depuis un espace sécurisé.",
     complianceBenefit1Title: "Restez organisé",
     complianceBenefit1Body: "Tous les documents d’entreprise dans un espace sécurisé.",
-    complianceBenefit2Title: "Suivez les échéances",
+    complianceBenefit2Title: "Suivez les expirations",
     complianceBenefit2Body: "Voyez ce qui est valide et ce qui demande attention avant expiration.",
     complianceBenefit3Title: "Prêt pour les exigences",
-    complianceBenefit3Body: "Sachez quels documents soutiennent l’exigence suivante.",
-    compliancePanelTitle: "Documents de l’entreprise",
+    complianceBenefit3Body: "Sachez quels documents soutiennent la prochaine exigence.",
+    compliancePanelTitle: "Documents d’entreprise",
     complianceAddLabel: "Ajouter un document",
     complianceAlertTitle: "L’assurance expire bientôt",
-    complianceReadyLabel: "Vous êtes prêt",
+    complianceReadyLabel: "Vous êtes prêts",
     complianceReadyHint: "Les documents clés sont suivis dans un seul espace.",
     complianceStatusValid: "Valide",
     complianceStatusExpiring: "Expire bientôt",
@@ -5518,17 +5764,17 @@ const fr: Dictionary = {
     complianceDateInsurance: "Expire le 28 nov. 2026",
     complianceDateQuality: "Valide jusqu’au 1 août 2027",
     complianceDateFinancial: "Valide jusqu’au 10 fév. 2027",
-    pricingTeaserTitle: "Des tarifs simples pour les équipes en croissance",
+    pricingTeaserTitle: "Tarifs simples pour les équipes en croissance",
     pricingTeaserBody:
-      "Commencez gratuitement. Passez à l’offre supérieure quand Bidvera fait gagner du temps réel — à partir de {price}/mois en Pro.",
-    pricingTeaserCta: "Comparer les offres",
+      "Commencez gratuitement. Passez à un plan supérieur quand Bidvera fait gagner du temps réel — dès {price}/mois sur Pro.",
+    pricingTeaserCta: "Comparer les plans",
     viewAllFaq: "Voir toute la FAQ →",
     testimonialsTitle: "Ce que disent les équipes",
     testimonialsBody:
       "Retours réels d’équipes qui utilisent Bidvera pour rester prêtes et décider en confiance.",
-    testimonialsEmptyTitle: "Premiers retours clients",
+    testimonialsEmptyTitle: "Retours des premiers clients",
     testimonialsEmptyBody:
-      "Nous ne publions que des témoignages authentiques. Soyez parmi les premières équipes à réunir préparation, preuves et décisions — puis dites-nous comment cela s’est passé.",
+      "Nous publions uniquement de vrais témoignages. Soyez parmi les premières équipes à réunir préparation, preuves et décisions — puis dites-nous comment cela s’est passé.",
     testimonialsEmptyCta: "Explorer Bidvera",
   },
   product: {
@@ -5682,6 +5928,9 @@ const fr: Dictionary = {
     sideHeadline: "Sachez quoi poursuivre. Sachez pour quoi vous êtes prêts.",
     sideBody:
       "Bidvera aide votre équipe à organiser la préparation, vérifier les preuves, évaluer des opportunités et décider en confiance.",
+    sidePillMatched: "CORRESPONDANCE — Une opportunité adaptée a été trouvée pour l’entreprise.",
+    sidePillReview: "REVUE — Examinez les détails de l’opportunité et sa pertinence.",
+    sidePillNotAMatch: "PAS DE CORRESPONDANCE — L’opportunité ne correspond pas au profil de l’entreprise.",
     signupTitle: "Créez votre compte Bidvera",
     signupBody: "Email et mot de passe d’abord. L’entreprise ensuite.",
     name: "Votre nom",

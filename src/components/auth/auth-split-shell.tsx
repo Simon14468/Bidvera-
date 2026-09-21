@@ -1,7 +1,7 @@
 import { BrandLogo } from "@/components/brand/brand-logo";
 import { StatusIndicator } from "@/components/ui/status-indicator";
+import { getDictionary } from "@/i18n/dictionaries";
 import { getLocale } from "@/i18n/get-locale";
-import { getDecisionLabel } from "@/lib/labels";
 import Image from "next/image";
 import type { ReactNode } from "react";
 
@@ -18,9 +18,7 @@ type AuthSplitShellProps = {
  */
 export async function AuthSplitShell({ headline, body, children }: AuthSplitShellProps) {
   const locale = await getLocale();
-  const bid = getDecisionLabel("BID", locale);
-  const review = getDecisionLabel("REVIEW", locale);
-  const noBid = getDecisionLabel("NO_BID", locale);
+  const { sidePillMatched, sidePillReview, sidePillNotAMatch } = getDictionary(locale).auth;
 
   return (
     <div className="flex flex-1 items-center px-4 py-10 sm:px-6 sm:py-12 lg:py-16">
@@ -52,18 +50,18 @@ export async function AuthSplitShell({ headline, body, children }: AuthSplitShel
                   inverseOnDark
                   className="[&_img]:h-7 [&_img]:w-auto"
                 />
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-success/25 bg-success/10 px-2.5 py-1 text-xs font-semibold text-success">
-                    <StatusIndicator className="size-3" />
-                    {bid}
+                <div className="mt-4 flex flex-col gap-2">
+                  <span className="inline-flex max-w-full items-start gap-1.5 rounded-lg border border-success/25 bg-success/10 px-2.5 py-1.5 text-xs font-semibold leading-snug text-success">
+                    <StatusIndicator className="mt-0.5 size-3 shrink-0" />
+                    <span className="min-w-0">{sidePillMatched}</span>
                   </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-warning/25 bg-warning/10 px-2.5 py-1 text-xs font-semibold text-warning">
-                    <StatusIndicator className="size-3" />
-                    {review}
+                  <span className="inline-flex max-w-full items-start gap-1.5 rounded-lg border border-warning/25 bg-warning/10 px-2.5 py-1.5 text-xs font-semibold leading-snug text-warning">
+                    <StatusIndicator className="mt-0.5 size-3 shrink-0" />
+                    <span className="min-w-0">{sidePillReview}</span>
                   </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-danger/25 bg-danger/10 px-2.5 py-1 text-xs font-semibold text-danger">
-                    <StatusIndicator className="size-3" />
-                    {noBid}
+                  <span className="inline-flex max-w-full items-start gap-1.5 rounded-lg border border-danger/25 bg-danger/10 px-2.5 py-1.5 text-xs font-semibold leading-snug text-danger">
+                    <StatusIndicator className="mt-0.5 size-3 shrink-0" />
+                    <span className="min-w-0">{sidePillNotAMatch}</span>
                   </span>
                 </div>
               </div>

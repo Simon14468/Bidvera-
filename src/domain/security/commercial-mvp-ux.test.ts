@@ -22,11 +22,23 @@ describe("commercial MVP UX integration", () => {
     assert.match(sidebar, /supplierQualification/);
     assert.match(sidebar, /tenderCalendar/);
     assert.match(sidebar, /tenderAnalysis/);
-    // Tender Analysis is internal — hide when disabled (not upgrade lock).
-    assert.match(
-      sidebar,
-      /entitlement:\s*"tenderAnalysis"[\s\S]*?hideWhenDisabled:\s*true/,
-    );
+    // Plan-gated modules: omit from nav when not entitled (no Lock tease).
+    for (const key of [
+      "tenderAnalysis",
+      "documentCompliance",
+      "supplierQualification",
+      "tenderCalendar",
+      "clientRequests",
+      "questionnaireAssistant",
+      "decisionMemory",
+      "teamWorkflow",
+    ]) {
+      assert.match(
+        sidebar,
+        new RegExp(`entitlement:\\s*"${key}"[\\s\\S]*?hideWhenDisabled:\\s*true`),
+        `${key} must hide when plan entitlement is off`,
+      );
+    }
     assert.match(sidebar, /href = enabled \? item\.href : "\/upgrade"/);
     assert.match(sidebar, /Lock/);
   });

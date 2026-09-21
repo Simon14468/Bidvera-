@@ -63,14 +63,17 @@ const oauthBtnClass =
 export function AuthForm({
   mode,
   labels,
-  googleEnabled: _googleEnabled = false,
-  microsoftEnabled: _microsoftEnabled = false,
+  googleEnabled = false,
+  microsoftEnabled = false,
+  registrationEnabled = true,
   turnstileSiteKey,
 }: {
   mode: "login" | "signup";
   labels: AuthLabels;
   googleEnabled?: boolean;
   microsoftEnabled?: boolean;
+  /** When false, hide signup CTAs on the login screen. */
+  registrationEnabled?: boolean;
   turnstileSiteKey?: string | null;
 }) {
   const router = useRouter();
@@ -80,6 +83,7 @@ export function AuthForm({
   const [showPassword, setShowPassword] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [turnstileReset, setTurnstileReset] = useState(0);
+  const showOAuth = googleEnabled || microsoftEnabled;
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -210,29 +214,35 @@ export function AuthForm({
             {mode === "signup" ? labels.submitSignup : labels.submitLogin}
           </Button>
         </form>
-        <div className="mt-3 space-y-2">
-          {/* OAuth callbacks are not implemented — keep buttons Coming Soon regardless of SA flags. */}
-          <button
-            type="button"
-            disabled
-            className={`${oauthBtnClass} cursor-not-allowed opacity-60`}
-            title={labels.googleComingSoon}
-            aria-disabled="true"
-          >
-            <GoogleIcon className="size-4 shrink-0 text-white" />
-            <span>{labels.googleComingSoon}</span>
-          </button>
-          <button
-            type="button"
-            disabled
-            className={`${oauthBtnClass} cursor-not-allowed opacity-60`}
-            title={labels.microsoftComingSoon}
-            aria-disabled="true"
-          >
-            <MicrosoftIcon className="size-4 shrink-0 text-white" />
-            <span>{labels.microsoftComingSoon}</span>
-          </button>
-        </div>
+        {showOAuth ? (
+          <div className="mt-3 space-y-2">
+            {/* OAuth callbacks are not implemented yet — enabled flags only control visibility. */}
+            {googleEnabled ? (
+              <button
+                type="button"
+                disabled
+                className={`${oauthBtnClass} cursor-not-allowed opacity-60`}
+                title={labels.googleComingSoon}
+                aria-disabled="true"
+              >
+                <GoogleIcon className="size-4 shrink-0 text-white" />
+                <span>{labels.googleComingSoon}</span>
+              </button>
+            ) : null}
+            {microsoftEnabled ? (
+              <button
+                type="button"
+                disabled
+                className={`${oauthBtnClass} cursor-not-allowed opacity-60`}
+                title={labels.microsoftComingSoon}
+                aria-disabled="true"
+              >
+                <MicrosoftIcon className="size-4 shrink-0 text-white" />
+                <span>{labels.microsoftComingSoon}</span>
+              </button>
+            ) : null}
+          </div>
+        ) : null}
         {mode === "login" ? (
           <p className="mt-3 text-center text-sm">
             <Link href="/forgot-password" className="text-primary hover:underline">
@@ -248,14 +258,14 @@ export function AuthForm({
                 {labels.signIn}
               </Link>
             </>
-          ) : (
+          ) : registrationEnabled ? (
             <>
               {labels.newHere}{" "}
               <Link href="/signup" className="font-medium text-primary hover:underline">
                 {labels.startFree}
               </Link>
             </>
-          )}
+          ) : null}
         </p>
       </CardContent>
     </Card>

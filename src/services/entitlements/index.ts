@@ -193,19 +193,11 @@ async function loadEffectiveEntitlements(
         features[key] = true;
       }
     } else if (base?.planFeatures?.length) {
+      // PlanFeature rows are authoritative — no slug-default backfill.
       for (const pf of base.planFeatures) {
         if (pf.enabled && isCommerciallyAvailableFeature(pf.feature.key)) {
           features[canonicalFeatureKey(pf.feature.key)] = true;
           features[pf.feature.key] = true;
-        }
-      }
-      const mappedKeys = new Set(base.planFeatures.map((pf) => pf.feature.key));
-      const slug = base.slug ?? "trial";
-      for (const key of planDefaultFeatureKeys(slug)) {
-        if (!isCommerciallyAvailableFeature(key)) continue;
-        if (!mappedKeys.has(key) && !(key === "smart_alerts" && mappedKeys.has("alerts"))) {
-          features[canonicalFeatureKey(key)] = true;
-          features[key] = true;
         }
       }
     } else {
@@ -242,19 +234,12 @@ async function loadEffectiveEntitlements(
     const features = { ...emptyFeatures };
     const mapped = plan.planFeatures ?? [];
     if (mapped.length > 0) {
+      // PlanFeature rows are authoritative (Plan Editor / seed). Do not re-enable
+      // unchecked keys from slug defaults — that leaked modules into the user nav.
       for (const pf of mapped) {
         if (pf.enabled && isCommerciallyAvailableFeature(pf.feature.key)) {
           features[canonicalFeatureKey(pf.feature.key)] = true;
           features[pf.feature.key] = true;
-        }
-      }
-      // Backward compat: new catalog keys inherit slug defaults until PlanFeature rows exist.
-      const mappedKeys = new Set(mapped.map((pf) => pf.feature.key));
-      for (const key of planDefaultFeatureKeys(plan.slug)) {
-        if (!isCommerciallyAvailableFeature(key)) continue;
-        if (!mappedKeys.has(key) && !(key === "smart_alerts" && mappedKeys.has("alerts"))) {
-          features[canonicalFeatureKey(key)] = true;
-          features[key] = true;
         }
       }
     } else {

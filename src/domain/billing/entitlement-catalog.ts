@@ -308,8 +308,9 @@ export const ADMIN_ENTITLEMENT_KEYS = ENTITLEMENT_CATALOG.filter(
 ).map((e) => e.key);
 
 /**
- * Canonical default entitlements per plan slug (single source of truth).
- * Used by seed scripts and documentation — runtime resolution uses PlanFeature rows.
+ * Canonical default entitlements per plan slug (single source of truth for seed /
+ * Plan Editor defaults). Runtime access uses PlanFeature rows only — no slug
+ * backfill of unchecked keys.
  */
 export const PLAN_ENTITLEMENT_DEFAULTS: Record<string, EntitlementFeatureKey[]> = {
   free: [

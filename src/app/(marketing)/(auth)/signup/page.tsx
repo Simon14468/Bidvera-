@@ -51,6 +51,7 @@ export default async function SignupPage() {
           mode="signup"
           googleEnabled={settings.googleEnabled}
           microsoftEnabled={settings.microsoftEnabled}
+          registrationEnabled={settings.registrationEnabled}
           turnstileSiteKey={getTurnstilePublicConfig().siteKey}
           labels={{ ...t.auth, signIn: t.nav.signIn, startFree: t.nav.startFree }}
         />
