@@ -84,6 +84,20 @@ export function AuthForm({
   const [turnstileToken, setTurnstileToken] = useState("");
   const [turnstileReset, setTurnstileReset] = useState(0);
   const showOAuth = googleEnabled || microsoftEnabled;
+  const nextPath = safeInternalPath(search.get("next"), "/dashboard");
+  const oauthErrorParam = search.get("oauth_error");
+  const oauthMessageParam = search.get("oauth_message");
+  const oauthError =
+    oauthErrorParam || oauthMessageParam
+      ? oauthMessageParam?.trim() || labels.googleOAuthError
+      : null;
+
+  function googleStartHref() {
+    const q = new URLSearchParams();
+    if (nextPath && nextPath !== "/dashboard") q.set("next", nextPath);
+    const qs = q.toString();
+    return qs ? `/api/auth/google/start?${qs}` : "/api/auth/google/start";
+  }
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -203,7 +217,9 @@ export function AuthForm({
               <span>{labels.acceptTerms}</span>
             </label>
           ) : null}
-          {error ? <p className="text-sm text-danger">{error}</p> : null}
+          {error || oauthError ? (
+            <p className="text-sm text-danger">{error ?? oauthError}</p>
+          ) : null}
           <TurnstileField
             siteKey={turnstileSiteKey}
             action={mode === "signup" ? "signup" : "login"}
@@ -216,18 +232,15 @@ export function AuthForm({
         </form>
         {showOAuth ? (
           <div className="mt-3 space-y-2">
-            {/* OAuth callbacks are not implemented yet — enabled flags only control visibility. */}
             {googleEnabled ? (
-              <button
-                type="button"
-                disabled
-                className={`${oauthBtnClass} cursor-not-allowed opacity-60`}
-                title={labels.googleComingSoon}
-                aria-disabled="true"
+              <a
+                href={googleStartHref()}
+                className={oauthBtnClass}
+                aria-label={labels.continueGoogle}
               >
                 <GoogleIcon className="size-4 shrink-0 text-white" />
-                <span>{labels.googleComingSoon}</span>
-              </button>
+                <span>{labels.continueGoogle}</span>
+              </a>
             ) : null}
             {microsoftEnabled ? (
               <button

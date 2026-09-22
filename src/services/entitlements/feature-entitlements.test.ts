@@ -266,9 +266,10 @@ test("dashboard upcoming deadlines prefer Tender Calendar when enabled", () => {
   assert.match(dash, /\/tender-calendar\/\$\{item\.tenderId\}/);
 });
 
-test("auth form marks disabled OAuth as coming soon", () => {
+test("auth form enables Google OAuth start; Microsoft stays coming soon", () => {
   const auth = readSrc("src/components/auth/auth-form.tsx");
-  assert.match(auth, /labels\.googleComingSoon/);
+  assert.match(auth, /\/api\/auth\/google\/start/);
+  assert.match(auth, /labels\.continueGoogle/);
   assert.match(auth, /labels\.microsoftComingSoon/);
   assert.match(auth, /disabled/);
 });

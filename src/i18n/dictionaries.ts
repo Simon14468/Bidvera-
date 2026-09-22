@@ -225,6 +225,7 @@ export type Dictionary = {
     acceptTermsError: string;
     continueGoogle: string;
     googleComingSoon: string;
+    googleOAuthError: string;
     continueMicrosoft: string;
     microsoftComingSoon: string;
     forgotPassword: string;
@@ -1339,6 +1340,7 @@ const en: Dictionary = {
     acceptTermsError: "You must accept the Terms and Privacy Policy.",
     continueGoogle: "Continue with Google",
     googleComingSoon: "Google sign-in is coming soon",
+    googleOAuthError: "Google sign-in failed. Try again.",
     continueMicrosoft: "Continue with Microsoft",
     microsoftComingSoon: "Microsoft sign-in is coming soon",
     forgotPassword: "Forgot password?",
@@ -2509,6 +2511,7 @@ const es: Dictionary = {
     acceptTermsError: "Debes aceptar los Términos y la Política de privacidad.",
     continueGoogle: "Continuar con Google",
     googleComingSoon: "Inicio con Google próximamente",
+    googleOAuthError: "No se pudo iniciar sesión con Google. Inténtalo de nuevo.",
     continueMicrosoft: "Continuar con Microsoft",
     microsoftComingSoon: "Inicio con Microsoft próximamente",
     forgotPassword: "¿Olvidaste la contraseña?",
@@ -3659,6 +3662,7 @@ const zh: Dictionary = {
     acceptTermsError: "必须接受服务条款与隐私政策。",
     continueGoogle: "使用 Google 继续",
     googleComingSoon: "Google 登录即将推出",
+    googleOAuthError: "Google 登录失败，请重试。",
     continueMicrosoft: "使用 Microsoft 继续",
     microsoftComingSoon: "Microsoft 登录即将推出",
     forgotPassword: "忘记密码？",
@@ -4781,6 +4785,7 @@ const ar: Dictionary = {
     acceptTermsError: "يجب قبول الشروط وسياسة الخصوصية.",
     continueGoogle: "تسجيل بواسطة كوكول",
     googleComingSoon: "تسجيل كوكول قريبًا",
+    googleOAuthError: "فشل تسجيل الدخول عبر كوكول. حاول مرة أخرى.",
     continueMicrosoft: "تسجيل بواسطة Microsoft",
     microsoftComingSoon: "تسجيل Microsoft قريبًا",
     forgotPassword: "نسيت كلمة المرور؟",
@@ -5946,6 +5951,7 @@ const fr: Dictionary = {
     acceptTermsError: "Vous devez accepter les Conditions et la Politique.",
     continueGoogle: "Continuer avec Google",
     googleComingSoon: "Connexion Google bientôt disponible",
+    googleOAuthError: "Échec de la connexion Google. Réessayez.",
     continueMicrosoft: "Continuer avec Microsoft",
     microsoftComingSoon: "Connexion Microsoft bientôt disponible",
     forgotPassword: "Mot de passe oublié ?",
