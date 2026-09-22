@@ -340,7 +340,8 @@ model User {
   name            String
   email           String         @unique
   emailVerified   Boolean        @default(false)
-  passwordHash    String
+  /** Null for OAuth-only accounts (no password login until a reset sets one). */
+  passwordHash    String?
   /** Public path for profile photo, e.g. /uploads/avatars/{userId}/….png */
   avatarUrl       String?
   role            UserRole       @default(OWNER)
@@ -350,6 +351,7 @@ model User {
   updatedAt       DateTime       @updatedAt
 
   sessions                 Session[]
+  oauthIdentities          OAuthIdentity[]
   auditLogs                AuditLog[]
   decidedTenders           TenderDecision[]        @relation("DecidedBy")
   emailVerificationTokens  EmailVerificationToken[]
@@ -366,6 +368,22 @@ model User {
   @@index([companyId])
   @@index([email])
   @@index([onboardingStep])
+}
+
+/** External IdP link (Google today). Provider+subject is the stable identity key. */
+model OAuthIdentity {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider       String
+  providerUserId String
+  email          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([provider, providerUserId])
+  @@index([userId])
+  @@index([email])
 }
 
 model EmailVerificationToken {

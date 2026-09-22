@@ -199,8 +199,9 @@ describe("OAuth login buttons respect Super Admin auth flags", () => {
     assert.match(src, /\{googleEnabled \?/);
     assert.match(src, /\{microsoftEnabled \?/);
     assert.match(src, /registrationEnabled/);
-    // Still never advertise live OAuth callbacks — Coming Soon while disabled interaction.
-    assert.match(src, /googleComingSoon/);
+    // Google is live when enabled; Microsoft remains Coming Soon.
+    assert.match(src, /\/api\/auth\/google\/start/);
+    assert.match(src, /labels\.continueGoogle/);
     assert.match(src, /microsoftComingSoon/);
   });
 });

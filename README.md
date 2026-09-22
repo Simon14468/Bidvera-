@@ -104,6 +104,8 @@ Copy `.env.example` → `.env`. **Never commit `.env` or real secrets.**
 
 Assistant voice keys are stored encrypted in Super Admin (AI Knowledge). Optional env fallbacks: `ELEVENLABS_*`, `GOOGLE_CLIENT_*`, `MICROSOFT_CLIENT_*`.
 
+Google login: enable in Super Admin → Auth, then register the callback URI documented in [`docs/google-oauth.md`](docs/google-oauth.md) (`/api/auth/google/callback`).
+
 See `.env.example` for the full list (Stripe optional).
 
 ## Database
