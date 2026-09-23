@@ -148,23 +148,58 @@ export async function MarketingFooter() {
     { label: t.nav.faq, href: "/faq" },
   ];
 
+  const legal = [
+    { label: t.legal.privacyLink, href: "/privacy-policy" },
+    { label: t.legal.termsLink, href: "/terms-of-service" },
+  ];
+
   return (
     <footer className="border-t border-border bg-card">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-6 sm:py-10">
-        <div className="space-y-2">
-          <BrandLogo href="/" height={32} inverseOnDark className="[&_img]:h-7 [&_img]:w-auto sm:[&_img]:h-8" />
-          <p className="max-w-sm text-sm leading-relaxed text-muted">{t.brand.tagline}</p>
-        </div>
-        <nav className="flex flex-wrap gap-x-5 gap-y-3 text-sm text-muted">
-          {nav.map((item) => (
-            <Link key={item.href} href={item.href} className="hover:text-foreground">
-              {item.label}
+      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
+          <div className="space-y-2">
+            <BrandLogo
+              href="/"
+              height={32}
+              inverseOnDark
+              className="[&_img]:h-7 [&_img]:w-auto sm:[&_img]:h-8"
+            />
+            <p className="max-w-sm text-sm leading-relaxed text-muted">
+              {t.brand.tagline}
+            </p>
+            <nav
+              className="flex flex-wrap gap-x-5 gap-y-2 pt-1 text-sm text-muted"
+              aria-label={t.legal.footerHeading}
+            >
+              {legal.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="hover:text-foreground"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+          <nav
+            className="flex flex-wrap gap-x-5 gap-y-3 text-sm text-muted"
+            aria-label="Product"
+          >
+            {nav.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="hover:text-foreground"
+              >
+                {item.label}
+              </Link>
+            ))}
+            <Link href="/signup" className="hover:text-foreground">
+              {t.nav.startFree}
             </Link>
-          ))}
-          <Link href="/signup" className="hover:text-foreground">
-            {t.nav.startFree}
-          </Link>
-        </nav>
+          </nav>
+        </div>
       </div>
     </footer>
   );

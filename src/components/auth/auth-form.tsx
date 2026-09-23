@@ -214,7 +214,27 @@ export function AuthForm({
                 required
                 className="mt-1 h-4 w-4 rounded border-border"
               />
-              <span>{labels.acceptTerms}</span>
+              <span>
+                {labels.acceptTermsLead}{" "}
+                <Link
+                  href="/terms-of-service"
+                  className="font-medium text-primary hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {labels.termsOfServiceLink}
+                </Link>{" "}
+                {labels.acceptTermsJoiner}{" "}
+                <Link
+                  href="/privacy-policy"
+                  className="font-medium text-primary hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {labels.privacyPolicyLink}
+                </Link>
+                .
+              </span>
             </label>
           ) : null}
           {error || oauthError ? (

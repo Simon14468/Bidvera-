@@ -227,6 +227,108 @@ export const coreMarketingPages: SeoPageContent[] = [
       },
     },
   },
+  {
+    path: "/privacy-policy",
+    priority: 0.4,
+    changeFrequency: "yearly",
+    schemaType: "WebPage",
+    locales: {
+      en: {
+        title: "Privacy Policy",
+        description:
+          "How Bidvera processes personal data for accounts, workspaces, documents, billing, Google sign-in, and security.",
+        h1: "Privacy Policy",
+        answer:
+          "Bidvera’s Privacy Policy describes personal data processed for the SaaS platform, including accounts, documents, billing metadata, and security.",
+        sections: [],
+      },
+      fr: {
+        title: "Politique de confidentialité",
+        description:
+          "Comment Bidvera traite les données personnelles des comptes, documents, facturation et sécurité.",
+        h1: "Politique de confidentialité",
+        answer:
+          "La politique de confidentialité Bidvera décrit les données traitées pour la plateforme SaaS.",
+        sections: [],
+      },
+      es: {
+        title: "Política de privacidad",
+        description:
+          "Cómo Bidvera trata datos personales de cuentas, documentos, facturación y seguridad.",
+        h1: "Política de privacidad",
+        answer:
+          "La Política de privacidad de Bidvera describe los datos personales tratados en la plataforma SaaS.",
+        sections: [],
+      },
+      ar: {
+        title: "سياسة الخصوصية",
+        description:
+          "كيف تعالج بيدفراء البيانات الشخصية للحسابات والمستندات والفوترة والأمان.",
+        h1: "سياسة الخصوصية",
+        answer:
+          "توضح سياسة خصوصية بيدفراء البيانات الشخصية المعالجة على المنصة.",
+        sections: [],
+      },
+      zh: {
+        title: "隐私政策",
+        description: "Bidvera 如何处理账户、文档、计费与安全相关的个人数据。",
+        h1: "隐私政策",
+        answer: "Bidvera 隐私政策说明 SaaS 平台处理的个人数据类别与用途。",
+        sections: [],
+      },
+    },
+  },
+  {
+    path: "/terms-of-service",
+    priority: 0.4,
+    changeFrequency: "yearly",
+    schemaType: "WebPage",
+    locales: {
+      en: {
+        title: "Terms of Service",
+        description:
+          "Terms governing use of the Bidvera SaaS platform, including accounts, AI outputs, and subscriptions.",
+        h1: "Terms of Service",
+        answer:
+          "Bidvera’s Terms of Service set rules for accounts, acceptable use, AI outputs, and subscriptions.",
+        sections: [],
+      },
+      fr: {
+        title: "Conditions d’utilisation",
+        description:
+          "Conditions d’utilisation de la plateforme SaaS Bidvera : comptes, IA et abonnements.",
+        h1: "Conditions d’utilisation",
+        answer:
+          "Les conditions Bidvera régissent les comptes, l’usage acceptable, les sorties IA et les abonnements.",
+        sections: [],
+      },
+      es: {
+        title: "Términos del servicio",
+        description:
+          "Condiciones de uso de la plataforma SaaS Bidvera: cuentas, IA y suscripciones.",
+        h1: "Términos del servicio",
+        answer:
+          "Los Términos de Bidvera regulan cuentas, uso aceptable, resultados de IA y suscripciones.",
+        sections: [],
+      },
+      ar: {
+        title: "شروط الخدمة",
+        description:
+          "شروط استخدام منصة بيدفراء السحابية بما في ذلك الحسابات ومخرجات الذكاء الاصطناعي والاشتراكات.",
+        h1: "شروط الخدمة",
+        answer:
+          "تحدد شروط خدمة بيدفراء قواعد الحسابات والاستخدام المقبول ومخرجات الذكاء الاصطناعي والاشتراكات.",
+        sections: [],
+      },
+      zh: {
+        title: "服务条款",
+        description: "Bidvera SaaS 平台使用条款，涵盖账户、AI 输出与订阅。",
+        h1: "服务条款",
+        answer: "Bidvera 服务条款约定账户、可接受使用、AI 输出与订阅规则。",
+        sections: [],
+      },
+    },
+  },
 ];
 
 export const allSeoPages: SeoPageContent[] = [
