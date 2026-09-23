@@ -17,7 +17,6 @@ export const LEGAL_PLACEHOLDERS = {
   privacyContactEmail: "[PRIVACY_CONTACT_EMAIL]",
   legalContactEmail: "[LEGAL_CONTACT_EMAIL]",
   governingLaw: "[GOVERNING_LAW_AND_VENUE — to be confirmed by counsel]",
-  cndpReference: "[CNDP_NOTIFICATION_OR_AUTHORIZATION_REFERENCE — if/when applicable]",
   dataProtectionOfficer: "[DATA_PROTECTION_CONTACT — if designated]",
   refundPolicySummary: "[REFUND_AND_CANCELLATION_POLICY — business decision pending]",
   hostingRegions: "[HOSTING_AND_PROCESSING_REGIONS — confirm with infrastructure provider]",
@@ -25,4 +24,4 @@ export const LEGAL_PLACEHOLDERS = {
 
 /** Raw tokens and internal drafting notes that must never appear in published legal bodies. */
 export const UNPUBLISHED_LEGAL_TOKEN_RE =
-  /\[LEGAL_ENTITY_NAME\]|\[REGISTERED_ADDRESS\]|\[PRIVACY_CONTACT_EMAIL\]|\[LEGAL_CONTACT_EMAIL\]|\[GOVERNING_LAW_AND_VENUE[^\]]*\]|\[CNDP_NOTIFICATION_OR_AUTHORIZATION_REFERENCE[^\]]*\]|\[DATA_PROTECTION_CONTACT[^\]]*\]|\[REFUND_AND_CANCELLATION_POLICY[^\]]*\]|\[HOSTING_AND_PROCESSING_REGIONS[^\]]*\]|to be confirmed by counsel|business decision pending|confirm with infrastructure provider|if\/when applicable|if designated/i;
+  /\[LEGAL_ENTITY_NAME\]|\[REGISTERED_ADDRESS\]|\[PRIVACY_CONTACT_EMAIL\]|\[LEGAL_CONTACT_EMAIL\]|\[GOVERNING_LAW_AND_VENUE[^\]]*\]|\[DATA_PROTECTION_CONTACT[^\]]*\]|\[REFUND_AND_CANCELLATION_POLICY[^\]]*\]|\[HOSTING_AND_PROCESSING_REGIONS[^\]]*\]|to be confirmed by counsel|business decision pending|confirm with infrastructure provider|if designated/i;

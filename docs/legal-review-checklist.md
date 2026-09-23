@@ -13,7 +13,6 @@ Public pages no longer show raw tokens. They use temporary pending wording from 
 | `[PRIVACY_CONTACT_EMAIL]` | Privacy §2 privacy contact | Business | Unpublished — pending wording only |
 | `[LEGAL_CONTACT_EMAIL]` | Not on public pages (contact sections omitted) | Business | Held in `LEGAL_PLACEHOLDERS` only |
 | `[DATA_PROTECTION_CONTACT — if designated]` | Privacy §2 data-protection contact | Counsel | Unpublished — pending wording only |
-| `[CNDP_NOTIFICATION_OR_AUTHORIZATION_REFERENCE — if/when applicable]` | Privacy §14 CNDP status | Counsel (Morocco) | Unpublished — pending wording only |
 | `[HOSTING_AND_PROCESSING_REGIONS — confirm with infrastructure provider]` | Privacy §10 hosting / transfers | Ops + counsel | Unpublished — pending wording only |
 | `[GOVERNING_LAW_AND_VENUE — to be confirmed by counsel]` | Terms §22 governing law | Counsel | Unpublished — pending wording only |
 | `[REFUND_AND_CANCELLATION_POLICY — business decision pending]` | Terms §14 refunds | Business | Unpublished — pending wording only |
@@ -25,9 +24,8 @@ Source of tokens: `src/content/legal/meta.ts`.
 - [ ] Registered legal entity name and office address
 - [ ] Dedicated privacy and legal contact emails
 - [ ] Whether a data-protection contact / DPO is designated
-- [ ] CNDP filing / authorization status (do not claim without documents)
 - [ ] Hosting and processing regions with the infrastructure provider
-- [ ] GDPR / other foreign-law applicability and transfer tools
+- [ ] Which regional privacy laws apply, and any required filings or transfer tools (do not claim a specific regime without documents)
 - [ ] Exact retention schedules per data category
 - [ ] Whether AI providers may use customer content for training (contractual truth)
 - [ ] Refund / cooling-off rules for the sales model

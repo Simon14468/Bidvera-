@@ -142,7 +142,7 @@ export const privacyPolicySectionsZh: LegalSection[] = [
     id: "rights",
     title: "13. 您的权利",
     paragraphs: [
-      "根据适用法律（在相关时包括摩洛哥关于个人数据处理保护的 09-08 号法律，以及在适用于您情况时可能包括 GDPR 等其他制度），您可能有权：",
+      "根据适用于您及相关处理活动的法律，您可能有权：",
     ],
     bullets: [
       "访问我们持有的关于您的个人数据。",
@@ -154,11 +154,12 @@ export const privacyPolicySectionsZh: LegalSection[] = [
     ],
   },
   {
-    id: "morocco-cndp",
-    title: "14. 摩洛哥（09-08 号法律）与 CNDP",
+    id: "regional-privacy-laws",
+    title: "14. 地区隐私法律与您的权利",
     paragraphs: [
-      "若 Bidvera 在受摩洛哥 09-08 号法律约束的情形下处理个人数据，可能适用额外要求，包括目的限制、比例原则、安全以及查阅与更正权，以及可能需向国家个人数据保护监管委员会（CNDP）履行通知或授权手续。",
-      PENDING.cndpStatus,
+      "Bidvera 作为全球服务提供。适用的隐私法律取决于您的所在地以及相关处理活动的性质。本政策不将任何特定国家、监管机构或法律视为适用于每一位用户或每一项处理活动。",
+      "当某项隐私法律适用于您或某项处理活动时，您可能享有额外权利，我们也可能负有额外义务，但仅限于该法律所要求的范围。",
+      "本政策不主张 Bidvera 已在任何特定隐私制度下获得认证、登记、授权或其他正式批准。",
     ],
   },
   {

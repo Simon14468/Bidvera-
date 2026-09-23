@@ -43,7 +43,6 @@ describe("legal pages", () => {
 
   it("keeps unresolved tokens private and does not invent entity facts", () => {
     assert.match(LEGAL_PLACEHOLDERS.legalEntityName, /LEGAL_ENTITY_NAME/);
-    assert.match(LEGAL_PLACEHOLDERS.cndpReference, /CNDP/);
     assert.match(LEGAL_PLACEHOLDERS.legalContactEmail, /LEGAL_CONTACT_EMAIL/);
     const checklist = read("docs/legal-review-checklist.md");
     for (const token of Object.values(LEGAL_PLACEHOLDERS)) {
@@ -51,7 +50,7 @@ describe("legal pages", () => {
     }
     for (const locale of locales) {
       const privacy = flatten(getPrivacyPolicySections(locale));
-      assert.doesNotMatch(privacy, /we are GDPR certified|CNDP receipt number \d/i);
+      assert.doesNotMatch(privacy, /we are GDPR certified/i);
       assert.doesNotMatch(privacy, /never used for training/i);
     }
   });
@@ -71,6 +70,38 @@ describe("legal pages", () => {
         assert.ok(value.trim().length > 8, `${locale}.${key} too short`);
       }
     }
+  });
+
+  it("keeps Privacy Policy copy global and omits country-specific regimes", () => {
+    const countrySpecific =
+      /Morocco|Moroccan|CNDP|09-08|Maroc|marocaine|marocain|Marruecos|marroquí|المغرب|المغربي|مغربية|摩洛哥/i;
+    const titles: Record<Locale, RegExp> = {
+      en: /Regional Privacy Laws and Your Rights/,
+      es: /Leyes regionales de privacidad y sus derechos/,
+      fr: /Lois régionales sur la protection de la vie privée et vos droits/,
+      ar: /قوانين الخصوصية الإقليمية وحقوقك/,
+      zh: /地区隐私法律与您的权利/,
+    };
+    for (const locale of locales) {
+      const sections = getPrivacyPolicySections(locale);
+      const privacy = flatten(sections);
+      const terms = flatten(getTermsOfServiceSections(locale));
+      assert.doesNotMatch(privacy, countrySpecific, `privacy ${locale}`);
+      assert.doesNotMatch(terms, countrySpecific, `terms ${locale}`);
+      assert.equal(sections.some((s) => s.id === "morocco-cndp"), false);
+      const regional = sections.find((s) => s.id === "regional-privacy-laws");
+      assert.ok(regional, `regional section ${locale}`);
+      assert.match(regional.title, /^14\./, `regional numbering ${locale}`);
+      assert.match(regional.title, titles[locale], `regional title ${locale}`);
+    }
+    const pendingJoined = Object.values(LEGAL_PENDING_COPY)
+      .flatMap((copy) => Object.values(copy))
+      .join("\n");
+    assert.doesNotMatch(pendingJoined, countrySpecific);
+    const en = getPrivacyPolicySections("en").find((s) => s.id === "regional-privacy-laws");
+    assert.ok(en);
+    assert.match(en.paragraphs.join(" "), /depends on your location/i);
+    assert.match(en.paragraphs.join(" "), /does not claim/i);
   });
 
   it("omits published contact sections until entity details exist", () => {

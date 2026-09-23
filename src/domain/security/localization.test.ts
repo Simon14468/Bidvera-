@@ -95,6 +95,23 @@ function stripAllowed(s: string): string {
 }
 
 describe("localization parity", () => {
+  it("dictionaries.ts is valid UTF-8 without Windows-1252 mojibake", () => {
+    const src = readFileSync(join(process.cwd(), "src/i18n/dictionaries.ts"), "utf8");
+    assert.doesNotMatch(
+      src,
+      /Ã©|Ã¨|Ã |Â¿|Â·|â€™|â€”|Ø§Ù|çŸ¥é|ÔÇö|ÔÇÖ|ÔÇô|┬À|ÔåÆ|ÔåÉ|├ó|ÔÇ|Ôå/,
+    );
+    assert.doesNotMatch(src, /Ã|Â/);
+    assert.match(src, /المنتج/);
+    assert.match(src, /qué/);
+    assert.match(src, /êtes/);
+    assert.match(src, /产品/);
+    assert.match(src, /You’re Ready For/);
+    assert.match(src, /Readiness · Opportunities/);
+    assert.match(src, /—/);
+    assert.match(src, /→/);
+  });
+
   it("all locales expose identical core dictionary leaf paths", () => {
     const base = leafPaths(getCoreDictionary("en")).sort();
     for (const locale of locales) {

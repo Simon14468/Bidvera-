@@ -142,7 +142,7 @@ export const privacyPolicySectionsFr: LegalSection[] = [
     id: "rights",
     title: "13. Vos droits",
     paragraphs: [
-      "Selon le droit applicable (y compris, le cas échéant, la loi marocaine 09-08 relative à la protection des personnes physiques à l’égard du traitement des données à caractère personnel, et éventuellement d’autres régimes tels que le RGPD s’ils s’appliquent à votre situation), vous pouvez disposer de droits pour :",
+      "Selon les lois qui s’appliquent à vous et au traitement concerné, vous pouvez disposer de droits pour :",
     ],
     bullets: [
       "Accéder aux données personnelles que nous détenons à votre sujet.",
@@ -154,11 +154,12 @@ export const privacyPolicySectionsFr: LegalSection[] = [
     ],
   },
   {
-    id: "morocco-cndp",
-    title: "14. Maroc (loi 09-08) et CNDP",
+    id: "regional-privacy-laws",
+    title: "14. Lois régionales sur la protection de la vie privée et vos droits",
     paragraphs: [
-      "Si Bidvera traite des données personnelles dans des circonstances soumises à la loi marocaine 09-08, des exigences supplémentaires peuvent s’appliquer, notamment les principes de finalité, de proportionnalité, de sécurité et les droits d’accès et de rectification, ainsi que d’éventuelles formalités de notification ou d’autorisation auprès de la Commission Nationale de contrôle de la protection des Données à caractère Personnel (CNDP).",
-      PENDING.cndpStatus,
+      "Bidvera est proposé comme un service mondial. Les lois sur la protection de la vie privée applicables dépendent de votre localisation et de la nature du traitement concerné. Cette Politique ne désigne aucun pays, aucune autorité ni aucune loi particulière comme régissant chaque utilisateur ou chaque activité de traitement.",
+      "Lorsqu’une loi sur la protection de la vie privée s’applique à vous ou à une activité de traitement donnée, vous pouvez disposer de droits supplémentaires, et nous d’obligations supplémentaires, uniquement dans la mesure exigée par cette loi.",
+      "Cette Politique n’affirme pas que Bidvera est certifié, enregistré, autorisé ou autrement formellement approuvé au titre d’un régime spécifique de protection de la vie privée.",
     ],
   },
   {

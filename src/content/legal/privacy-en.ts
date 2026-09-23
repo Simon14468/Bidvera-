@@ -148,7 +148,7 @@ export const privacyPolicySections: LegalSection[] = [
     id: "rights",
     title: "13. Your rights",
     paragraphs: [
-      "Depending on applicable law (including, where relevant, Moroccan Law 09-08 on the protection of individuals with regard to the processing of personal data, and potentially other regimes such as GDPR if they apply to your situation), you may have rights to:",
+      "Depending on the laws that apply to you and to the relevant processing, you may have rights to:",
     ],
     bullets: [
       "Access personal data we hold about you.",
@@ -158,14 +158,14 @@ export const privacyPolicySections: LegalSection[] = [
       "Withdraw consent where processing is based on consent.",
       "Lodge a complaint with a competent supervisory authority.",
     ],
-    // Morocco CNDP specifics flagged below — do not claim filings.
   },
   {
-    id: "morocco-cndp",
-    title: "14. Morocco (Law 09-08) and CNDP",
+    id: "regional-privacy-laws",
+    title: "14. Regional Privacy Laws and Your Rights",
     paragraphs: [
-      "If Bidvera processes personal data in circumstances subject to Moroccan Law 09-08, additional requirements may apply, including principles of purpose limitation, proportionality, security, and rights of access and rectification, as well as possible notification or authorization formalities before the Commission Nationale de contrôle de la protection des Données à caractère Personnel (CNDP).",
-      PENDING.cndpStatus,
+      "Bidvera is offered as a global service. Which privacy laws apply depends on your location and on the nature of the relevant processing. This Policy does not treat any particular country, regulator, or statute as governing every user or every processing activity.",
+      "Where a privacy law applies to you or to a given processing activity, you may have additional rights, and we may have additional obligations, only to the extent that law requires.",
+      "This Policy does not claim that Bidvera is certified, registered, authorized, or otherwise formally approved under any specific privacy regime.",
     ],
   },
   {

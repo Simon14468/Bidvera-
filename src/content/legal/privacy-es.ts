@@ -142,7 +142,7 @@ export const privacyPolicySectionsEs: LegalSection[] = [
     id: "rights",
     title: "13. Sus derechos",
     paragraphs: [
-      "Según la ley aplicable (incluida, cuando proceda, la Ley marroquí 09-08 relativa a la protección de las personas físicas frente al tratamiento de datos de carácter personal, y potencialmente otros regímenes como el RGPD si se aplican a su situación), puede tener derecho a:",
+      "Según las leyes que le resulten aplicables a usted y al tratamiento pertinente, puede tener derecho a:",
     ],
     bullets: [
       "Acceder a los datos personales que conservamos sobre usted.",
@@ -154,11 +154,12 @@ export const privacyPolicySectionsEs: LegalSection[] = [
     ],
   },
   {
-    id: "morocco-cndp",
-    title: "14. Marruecos (Ley 09-08) y CNDP",
+    id: "regional-privacy-laws",
+    title: "14. Leyes regionales de privacidad y sus derechos",
     paragraphs: [
-      "Si Bidvera trata datos personales en circunstancias sujetas a la Ley marroquí 09-08, pueden aplicarse requisitos adicionales, incluidos los principios de limitación de finalidad, proporcionalidad, seguridad y derechos de acceso y rectificación, así como posibles formalidades de notificación o autorización ante la Commission Nationale de contrôle de la protection des Données à caractère Personnel (CNDP).",
-      PENDING.cndpStatus,
+      "Bidvera se ofrece como un servicio global. Qué leyes de privacidad resultan aplicables depende de su ubicación y de la naturaleza del tratamiento pertinente. Esta Política no trata ningún país, autoridad o ley concreta como aplicable a todos los usuarios o a todas las actividades de tratamiento.",
+      "Cuando una ley de privacidad le resulte aplicable a usted o a una actividad de tratamiento determinada, puede tener derechos adicionales, y nosotros obligaciones adicionales, solo en la medida en que esa ley lo exija.",
+      "Esta Política no afirma que Bidvera esté certificada, registrada, autorizada o formalmente aprobada bajo ningún régimen específico de privacidad.",
     ],
   },
   {

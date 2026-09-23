@@ -11,7 +11,6 @@ export type LegalPendingCopy = {
   dataProtectionContact: string;
   hostingRegions: string;
   transferSafeguards: string;
-  cndpStatus: string;
   operatorIdentity: string;
   refundPolicy: string;
   governingLaw: string;
@@ -33,9 +32,7 @@ export const LEGAL_PENDING_COPY: Record<Locale, LegalPendingCopy> = {
     hostingRegions:
       "Bidvera uses third-party infrastructure providers and may process and store data in more than one country. The specific hosting and processing regions have not yet been published. We will update this Policy when those regions are confirmed.",
     transferSafeguards:
-      "If you access Bidvera from Morocco, the EU/EEA, or other regions, your data may be transferred to or accessed from countries with different data-protection rules. Where required by applicable law, we will use appropriate transfer mechanisms. This Policy does not claim that a specific transfer safeguard (for example a named set of standard contractual clauses) is already in place.",
-    cndpStatus:
-      "Bidvera has not published a CNDP notification, authorization, or receipt reference. This Policy does not claim that any CNDP filing has been obtained. We will update this Policy if and when a filing or authorization applies and has been confirmed.",
+      "If you access Bidvera from different countries or regions, your data may be transferred to or accessed from countries with different data-protection rules. Where required by applicable law, we will use appropriate transfer mechanisms. This Policy does not claim that a specific transfer safeguard (for example a named set of standard contractual clauses) is already in place.",
     operatorIdentity:
       "“Bidvera”, “we”, “us” means the operator of the getbidvera.com Service. The operator’s final registered legal entity name has not yet been published and will be added when confirmed.",
     refundPolicy:
@@ -61,9 +58,7 @@ export const LEGAL_PENDING_COPY: Record<Locale, LegalPendingCopy> = {
     hostingRegions:
       "Bidvera utiliza proveedores de infraestructura de terceros y puede tratar y almacenar datos en más de un país. Las regiones concretas de alojamiento y tratamiento aún no se han publicado. Actualizaremos esta Política cuando esas regiones se confirmen.",
     transferSafeguards:
-      "Si accede a Bidvera desde Marruecos, la UE/EEE u otras regiones, sus datos pueden transferirse o consultarse desde países con normas distintas de protección de datos. Cuando lo exija la ley aplicable, usaremos mecanismos de transferencia adecuados. Esta Política no afirma que ya exista una salvaguarda concreta de transferencia (por ejemplo, un conjunto nominado de cláusulas contractuales tipo).",
-    cndpStatus:
-      "Bidvera no ha publicado una referencia de notificación, autorización o acuse de la CNDP. Esta Política no afirma que se haya obtenido ningún trámite ante la CNDP. Actualizaremos esta Política si y cuando un trámite o autorización resulte aplicable y haya sido confirmado.",
+      "Si accede a Bidvera desde distintos países o regiones, sus datos pueden transferirse o consultarse desde países con normas distintas de protección de datos. Cuando lo exija la ley aplicable, usaremos mecanismos de transferencia adecuados. Esta Política no afirma que ya exista una salvaguarda concreta de transferencia (por ejemplo, un conjunto nominado de cláusulas contractuales tipo).",
     operatorIdentity:
       "«Bidvera», «nosotros» significa el operador del Servicio getbidvera.com. El nombre jurídico registrado definitivo del operador aún no se ha publicado y se añadirá cuando se confirme.",
     refundPolicy:
@@ -89,9 +84,7 @@ export const LEGAL_PENDING_COPY: Record<Locale, LegalPendingCopy> = {
     hostingRegions:
       "Bidvera utilise des prestataires d’infrastructure tiers et peut traiter et stocker des données dans plus d’un pays. Les régions précises d’hébergement et de traitement n’ont pas encore été publiées. Nous mettrons à jour cette Politique lorsque ces régions seront confirmées.",
     transferSafeguards:
-      "Si vous accédez à Bidvera depuis le Maroc, l’UE/EEE ou d’autres régions, vos données peuvent être transférées ou consultées depuis des pays aux règles différentes. Lorsque le droit applicable l’exige, nous utiliserons des mécanismes de transfert appropriés. Cette Politique n’affirme pas qu’une sauvegarde de transfert précise (par exemple un jeu nommé de clauses contractuelles types) est déjà en place.",
-    cndpStatus:
-      "Bidvera n’a pas publié de référence de notification, d’autorisation ou de récépissé CNDP. Cette Politique n’affirme pas qu’une formalité CNDP a déjà été obtenue. Nous mettrons à jour cette Politique si et lorsqu’une formalité ou une autorisation s’applique et a été confirmée.",
+      "Si vous accédez à Bidvera depuis différents pays ou régions, vos données peuvent être transférées ou consultées depuis des pays aux règles différentes. Lorsque le droit applicable l’exige, nous utiliserons des mécanismes de transfert appropriés. Cette Politique n’affirme pas qu’une sauvegarde de transfert précise (par exemple un jeu nommé de clauses contractuelles types) est déjà en place.",
     operatorIdentity:
       "« Bidvera », « nous » désigne l’opérateur du Service getbidvera.com. Le nom juridique enregistré définitif de l’opérateur n’a pas encore été publié et sera ajouté lorsqu’il sera confirmé.",
     refundPolicy:
@@ -117,9 +110,7 @@ export const LEGAL_PENDING_COPY: Record<Locale, LegalPendingCopy> = {
     hostingRegions:
       "تستخدم بيدفراء مزوّدي بنية تحتية من أطراف ثالثة وقد تعالج البيانات وتخزّنها في أكثر من بلد. لم تُنشر بعد مناطق الاستضافة والمعالجة المحددة. سنحدّث هذه السياسة عند تأكيد تلك المناطق.",
     transferSafeguards:
-      "إذا دخلت إلى بيدفراء من المغرب أو الاتحاد الأوروبي/المنطقة الاقتصادية الأوروبية أو مناطق أخرى، فقد تُنقل بياناتك أو يُطَّلع عليها من دول بقواعد حماية بيانات مختلفة. عند اقتضاء القانون المعمول به سنستخدم آليات نقل مناسبة. لا تدّعي هذه السياسة أن ضمانة نقل محددة (مثل مجموعة بنود تعاقدية قياسية معيّنة) قائمة بالفعل.",
-    cndpStatus:
-      "لم تنشر بيدفراء مرجعاً لإشعار أو ترخيص أو وصل من اللجنة الوطنية لمراقبة حماية المعطيات ذات الطابع الشخصي (CNDP). لا تدّعي هذه السياسة أنه تم الحصول على أي إجراء لدى اللجنة. سنحدّث هذه السياسة إذا ومتى انطبق إشعار أو ترخيص وتم تأكيده.",
+      "إذا دخلت إلى بيدفراء من بلدان أو مناطق مختلفة، فقد تُنقل بياناتك أو يُطَّلع عليها من دول بقواعد حماية بيانات مختلفة. عند اقتضاء القانون المعمول به سنستخدم آليات نقل مناسبة. لا تدّعي هذه السياسة أن ضمانة نقل محددة (مثل مجموعة بنود تعاقدية قياسية معيّنة) قائمة بالفعل.",
     operatorIdentity:
       "«بيدفراء» أو «نحن» تعني مشغّل خدمة getbidvera.com. لم يُنشر بعد الاسم القانوني المسجّل النهائي للمشغّل وسيُضاف عند تأكيده.",
     refundPolicy:
@@ -145,9 +136,7 @@ export const LEGAL_PENDING_COPY: Record<Locale, LegalPendingCopy> = {
     hostingRegions:
       "Bidvera 使用第三方基础设施提供商，并可能在一个以上的国家处理与存储数据。具体托管与处理地区尚未公布。确认这些地区后，我们将更新本政策。",
     transferSafeguards:
-      "若您从摩洛哥、欧盟/欧洲经济区或其他地区访问 Bidvera，您的数据可能被传输至或从数据保护规则不同的国家访问。在适用法律要求时，我们将使用适当的传输机制。本政策不主张已具备特定传输保障（例如某一套具名标准合同条款）。",
-    cndpStatus:
-      "Bidvera 尚未公布 CNDP 通知、授权或回执编号。本政策不主张已完成任何 CNDP 备案。若日后适用并经确认存在备案或授权，我们将更新本政策。",
+      "若您从不同国家或地区访问 Bidvera，您的数据可能被传输至或从数据保护规则不同的国家访问。在适用法律要求时，我们将使用适当的传输机制。本政策不主张已具备特定传输保障（例如某一套具名标准合同条款）。",
     operatorIdentity:
       "「Bidvera」「我们」指 getbidvera.com 服务的运营方。运营方最终登记的法律实体名称尚未公布，确认后将予补充。",
     refundPolicy:
