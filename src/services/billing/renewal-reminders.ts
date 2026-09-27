@@ -5,13 +5,18 @@
  * Delivery reuses the existing notification service (in-app, deduped by
  * dedupeKey) and the existing SEND_EMAIL job queue (deduped by idempotencyKey).
  * Never invents amounts — the renewal amount comes from the DB plan.
+ *
+ * Free Workspace first-signup trials are excluded on purpose (FREE/TRIAL / isFree).
+ * 7/3/1-day FW emails would need dedicated product copy and a separate eligibility
+ * path — do not reuse this paid-renewal scheduler for that.
  */
 
 import { prisma } from "@/lib/db";
-import { escapeHtml } from "@/lib/html";
 import { enqueueJob } from "@/services/jobs";
 import { notificationService } from "@/services/notifications";
 import { logInfo } from "@/services/observability";
+import { billingAbsoluteUrl } from "@/services/billing/billing-app-url";
+import { buildPaidRenewalReminderEmail } from "@/services/billing/emails";
 import type { BillingInterval, Plan } from "@prisma/client";
 
 export type RenewalReminderStage = "7d" | "3d" | "24h";
@@ -184,6 +189,17 @@ export async function sendDueRenewalReminders(
       dedupeKey,
     });
 
+    const daysRemaining =
+      stage === "24h" ? 1 : stage === "3d" ? 3 : 7;
+    const email = buildPaidRenewalReminderEmail({
+      planName: sub.billingPlan?.name ?? sub.plan,
+      daysRemaining,
+      renewalDate: sub.currentPeriodEnd,
+      amountCents,
+      currency: sub.billingPlan?.currency ?? "USD",
+      interval: sub.billingInterval,
+    });
+    const billingUrl = billingAbsoluteUrl("/billing");
     const owners = await prisma.user.findMany({
       where: { companyId: sub.companyId, role: { in: ["OWNER", "ADMIN"] } },
       select: { email: true },
@@ -196,9 +212,9 @@ export async function sendDueRenewalReminders(
         type: "SEND_EMAIL",
         payload: {
           to: user.email,
-          subject: `Bidvera: ${title}`,
-          html: `<p>${escapeHtml(title)}</p><p>${escapeHtml(message)}</p><p><a href="/billing">Manage subscription</a></p>`,
-          text: message,
+          subject: email.subject,
+          html: email.html,
+          text: `${email.text}\n\n${billingUrl}`,
         },
         idempotencyKey: `${dedupeKey}:${user.email}`,
       }).catch(() => null);

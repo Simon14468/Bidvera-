@@ -12,9 +12,12 @@ import { prisma } from "@/lib/db";
 import { formatDate } from "@/lib/format";
 import {
   canCancelProviderSubscription,
+  isFirstSignupFreeWorkspaceSurface,
+  isStripeManagedCardTrial,
   resolveBillingDisplayStatus,
   resolveGraceDaysRemaining,
   resolveTrialCountdown,
+  resolveUserFacingPlanName,
   type BillingDisplayStatus,
 } from "@/services/billing/billing-display";
 import { listPublicCheckoutPlans } from "@/services/billing/catalog";
@@ -30,7 +33,6 @@ import { companyHasUpgradePath } from "@/services/billing/upgrade-eligibility";
 import { countCompanySeats, getEffectiveEntitlements } from "@/services/entitlements";
 import { sumCompanyAiTokensInPeriod } from "@/services/entitlements/ai-quota";
 import { getTrialUsage } from "@/services/usage";
-import { isAnalysesBlocked, isUnlimitedAnalyses } from "@/config/usage";
 import type { Dictionary } from "@/i18n/dictionaries";
 import Link from "next/link";
 
@@ -110,15 +112,29 @@ export default async function BillingPage({
   const displayStatus = resolveBillingDisplayStatus({
     status: sub?.status ?? usage.subscriptionStatus,
     effectiveStatus: usage.effectiveStatus,
+    reason: usage.isTrialExpired ? "trial_expired" : undefined,
     plan: sub?.plan ?? usage.plan,
     slug: sub?.billingPlan?.slug ?? entitlements.planSlug,
     isFree: sub?.billingPlan?.isFree ?? entitlements.planSlug === "free",
   });
   const isFreeWorkspace = displayStatus === "FREE_WORKSPACE";
   const countdown = resolveTrialCountdown({
-    status: sub?.status ?? usage.subscriptionStatus,
+    status: displayStatus === "EXPIRED" ? "EXPIRED" : (sub?.status ?? usage.subscriptionStatus),
     cancelAtPeriodEnd: sub?.cancelAtPeriodEnd ?? false,
     trialEndsAt: sub?.currentPeriodEnd ?? usage.trialEndsAt,
+  });
+  const firstSignupTrial = isFirstSignupFreeWorkspaceSurface({
+    status: sub?.status ?? usage.subscriptionStatus,
+    plan: sub?.plan ?? usage.plan,
+    slug: sub?.billingPlan?.slug ?? entitlements.planSlug,
+    isFree: sub?.billingPlan?.isFree ?? entitlements.planSlug === "free",
+  });
+  const stripeCardTrial = isStripeManagedCardTrial({
+    status: sub?.status ?? usage.subscriptionStatus,
+    provider: sub?.provider ?? null,
+    plan: sub?.plan ?? usage.plan,
+    slug: sub?.billingPlan?.slug ?? entitlements.planSlug,
+    isFree: sub?.billingPlan?.isFree ?? entitlements.planSlug === "free",
   });
 
   const intervalLabel =
@@ -128,9 +144,12 @@ export default async function BillingPage({
         ? t.monthlyInterval
         : "—";
 
-  const planName = isFreeWorkspace
-    ? t.freeWorkspace
-    : (sub?.billingPlan?.name ?? entitlements.planName ?? sub?.plan ?? t.trialFallback);
+  const planName = resolveUserFacingPlanName({
+    slug: sub?.billingPlan?.slug ?? entitlements.planSlug,
+    isFree: sub?.billingPlan?.isFree ?? entitlements.planSlug === "free",
+    planName: sub?.billingPlan?.name ?? entitlements.planName,
+    fallback: isFreeWorkspace ? t.freeWorkspace : t.trialFallback,
+  });
 
   const nextBillDate = sub?.currentPeriodEnd ?? (usage.periodEndsAt ? new Date(usage.periodEndsAt) : null);
   const showNextBill =
@@ -152,8 +171,6 @@ export default async function BillingPage({
         ? t.paypalMethod
         : "—";
 
-  const analysesUnlimited = isUnlimitedAnalyses(entitlements.analysesLimit);
-  const analysesBlocked = isAnalysesBlocked(entitlements.analysesLimit);
   const paymentProblem =
     displayStatus === "PAST_DUE" ||
     displayStatus === "PAYMENT_FAILED" ||
@@ -203,7 +220,7 @@ export default async function BillingPage({
         </Alert>
       ) : null}
 
-      {usage.isTrialExpired ? (
+      {usage.isTrialExpired && !stripeCardTrial ? (
         <Alert variant="warning" title={t.trialEndedTitle}>
           {t.trialEndedBody}
           <UpgradeLink label={t.viewPlans} />
@@ -290,8 +307,17 @@ export default async function BillingPage({
                 {fill(t.trialEndsOn, { date: formatDate(countdown.endsAt, locale) })}
               </p>
             ) : null}
-            <p>{t.noChargeToday}</p>
-            <p>{t.trialAutoConvert}</p>
+            {stripeCardTrial ? (
+              <>
+                <p>{t.noChargeToday}</p>
+                <p>{t.trialAutoConvert}</p>
+              </>
+            ) : firstSignupTrial ? (
+              <>
+                <p>{t.freeWorkspaceTrialBannerHint}</p>
+                <p>{t.cancelTrialExplainAccess}</p>
+              </>
+            ) : null}
           </CardContent>
         </Card>
       ) : null}
@@ -418,21 +444,11 @@ export default async function BillingPage({
           <CardTitle>{t.usage}</CardTitle>
           <CardDescription>{t.usageTitle}</CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-4 sm:grid-cols-3">
+        <CardContent className="grid gap-4 sm:grid-cols-2">
           <div>
             <p className="text-xs uppercase tracking-wide text-muted">{t.seatsUsage}</p>
             <p className="mt-1 font-semibold tabular-nums">
               {seatsUsed} / {entitlements.seatsLimit}
-            </p>
-          </div>
-          <div>
-            <p className="text-xs uppercase tracking-wide text-muted">{t.analysesUsage}</p>
-            <p className="mt-1 font-semibold tabular-nums">
-              {analysesUnlimited
-                ? t.unlimited
-                : analysesBlocked
-                  ? t.analysesNotIncluded
-                  : `${usage.analysesUsed} / ${entitlements.analysesLimit}`}
             </p>
           </div>
           <div>

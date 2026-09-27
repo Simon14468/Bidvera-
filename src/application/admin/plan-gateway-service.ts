@@ -3,6 +3,7 @@ import type { SuperAdminContext } from "@/auth/super-admin-session";
 import { prisma } from "@/lib/db";
 import { AppError, ErrorCode } from "@/lib/errors";
 import { writeAdminAudit } from "@/services/admin/audit";
+import { isOfficialFreeWorkspacePaymentsPlan } from "@/application/admin/payments-plan-visibility";
 import { applyFreeWorkspaceCheckoutGuard } from "@/services/billing/free-plan-guard";
 
 export const planGatewayUpdateSchema = z.object({
@@ -26,6 +27,14 @@ export async function updatePlanGatewaysForAdmin(
   const data = planGatewayUpdateSchema.parse(raw);
   const previous = await prisma.plan.findUnique({ where: { id: data.planId } });
   if (!previous) throw new AppError(ErrorCode.NOT_FOUND, "Plan not found.", 404);
+
+  if (isOfficialFreeWorkspacePaymentsPlan(previous)) {
+    throw new AppError(
+      ErrorCode.VALIDATION,
+      "Configure Free Workspace from Free Workspace settings.",
+      400,
+    );
+  }
 
   const guarded = applyFreeWorkspaceCheckoutGuard({
     slug: previous.slug,

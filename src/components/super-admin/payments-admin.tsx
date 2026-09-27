@@ -4,6 +4,10 @@ import {
   saSaveBillingGateways,
   saUpdatePlanGateways,
 } from "@/app/actions/super-admin";
+import {
+  isOfficialFreeWorkspacePaymentsPlan,
+  shouldRenderCommercialPaymentFields,
+} from "@/application/admin/payments-plan-visibility";
 import type { BillingGatewaySettings } from "@/services/billing/settings";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -54,6 +58,7 @@ export function PaymentsAdminPanel({
   metrics,
   plans,
   paypalIntegration,
+  freeWorkspaceSettingsHref,
 }: {
   settings: BillingGatewaySettings;
   metrics: Metrics;
@@ -63,6 +68,7 @@ export function PaymentsAdminPanel({
     webhookConfigured: boolean;
     environment: "sandbox" | "live";
   };
+  freeWorkspaceSettingsHref?: string;
 }) {
   const router = useRouter();
   const [pending, start] = useTransition();
@@ -264,6 +270,7 @@ export function PaymentsAdminPanel({
                   key={p.id}
                   plan={p}
                   pending={pending}
+                  freeWorkspaceSettingsHref={freeWorkspaceSettingsHref}
                   onSaved={(m) => {
                     setMsg(m);
                     router.refresh();
@@ -321,11 +328,14 @@ function PlanGatewayRow({
   plan,
   pending,
   onSaved,
+  freeWorkspaceSettingsHref,
 }: {
   plan: PlanRow;
   pending: boolean;
   onSaved: (msg: string) => void;
+  freeWorkspaceSettingsHref?: string;
 }) {
+  const officialFreeWorkspace = isOfficialFreeWorkspacePaymentsPlan(plan);
   const [visible, setVisible] = useState(plan.visibleToPublic);
   const [stripeOn, setStripeOn] = useState(plan.stripeEnabled);
   const [paypalOn, setPaypalOn] = useState(plan.paypalEnabled);
@@ -335,13 +345,45 @@ function PlanGatewayRow({
   const [paypalAnnual, setPaypalAnnual] = useState(plan.paypalPlanAnnual ?? "");
   const [localPending, start] = useTransition();
 
+  if (officialFreeWorkspace) {
+    return (
+      <tr className="border-b border-slate-800/60 align-top">
+        <td className="px-2 py-3">
+          <p className="font-medium text-white">{plan.name}</p>
+          <p className="text-xs text-slate-500">
+            {plan.slug} · {plan.status} · {plan.subscriptionsCount} subs
+            {" · Official Free Workspace"}
+          </p>
+        </td>
+        <td className="px-2 py-3 text-xs text-slate-500">—</td>
+        <td className="px-2 py-3 text-xs text-slate-500">Off</td>
+        <td className="px-2 py-3 text-xs text-slate-500">Off</td>
+        <td className="px-2 py-3 text-xs text-slate-400">
+          Not a checkout product. Stripe and PayPal stay off. Configure trial
+          features on the Free Workspace settings page.
+        </td>
+        <td className="px-2 py-3">
+          {freeWorkspaceSettingsHref ? (
+            <a
+              href={freeWorkspaceSettingsHref}
+              className="rounded border border-slate-700 px-2 py-1 text-xs text-slate-200 hover:bg-slate-800"
+            >
+              Free Workspace settings
+            </a>
+          ) : (
+            <span className="text-xs text-slate-500">Dedicated settings only</span>
+          )}
+        </td>
+      </tr>
+    );
+  }
+
   return (
     <tr className="border-b border-slate-800/60 align-top">
       <td className="px-2 py-3">
         <p className="font-medium text-white">{plan.name}</p>
         <p className="text-xs text-slate-500">
           {plan.slug} · {plan.status} · {plan.subscriptionsCount} subs
-          {plan.isFree || plan.slug === "free" ? " · Free Workspace" : ""}
         </p>
       </td>
       <td className="px-2 py-3">
@@ -364,32 +406,34 @@ function PlanGatewayRow({
         />
       </td>
       <td className="px-2 py-3">
-        <div className="grid min-w-[14rem] gap-1">
-          <input
-            className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-xs"
-            placeholder="Stripe price monthly"
-            value={stripeMonthly}
-            onChange={(e) => setStripeMonthly(e.target.value)}
-          />
-          <input
-            className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-xs"
-            placeholder="Stripe price annual"
-            value={stripeAnnual}
-            onChange={(e) => setStripeAnnual(e.target.value)}
-          />
-          <input
-            className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-xs"
-            placeholder="PayPal plan monthly"
-            value={paypalMonthly}
-            onChange={(e) => setPaypalMonthly(e.target.value)}
-          />
-          <input
-            className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-xs"
-            placeholder="PayPal plan annual"
-            value={paypalAnnual}
-            onChange={(e) => setPaypalAnnual(e.target.value)}
-          />
-        </div>
+        {shouldRenderCommercialPaymentFields(plan) ? (
+          <div className="grid min-w-[14rem] gap-1">
+            <input
+              className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-xs"
+              placeholder="Stripe price monthly"
+              value={stripeMonthly}
+              onChange={(e) => setStripeMonthly(e.target.value)}
+            />
+            <input
+              className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-xs"
+              placeholder="Stripe price annual"
+              value={stripeAnnual}
+              onChange={(e) => setStripeAnnual(e.target.value)}
+            />
+            <input
+              className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-xs"
+              placeholder="PayPal plan monthly"
+              value={paypalMonthly}
+              onChange={(e) => setPaypalMonthly(e.target.value)}
+            />
+            <input
+              className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-xs"
+              placeholder="PayPal plan annual"
+              value={paypalAnnual}
+              onChange={(e) => setPaypalAnnual(e.target.value)}
+            />
+          </div>
+        ) : null}
       </td>
       <td className="px-2 py-3">
         <button

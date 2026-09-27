@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { AppError, ErrorCode } from "@/lib/errors";
 import { trackEvent } from "@/services/observability";
 import { evaluateSubscriptionAccess } from "@/services/billing/lifecycle";
+import { resolveIsTrialExpired } from "@/services/billing/billing-display";
 import type { Prisma, SubscriptionPlan, SubscriptionStatus } from "@prisma/client";
 
 export type AnalysisBlockReason =
@@ -42,7 +43,10 @@ export interface TrialUsageSnapshot {
 async function getUsageRow(companyId: string) {
   const [usage, subscription] = await Promise.all([
     prisma.companyUsage.findUnique({ where: { companyId } }),
-    prisma.subscription.findUnique({ where: { companyId } }),
+    prisma.subscription.findUnique({
+      where: { companyId },
+      include: { billingPlan: { select: { slug: true, isFree: true } } },
+    }),
   ]);
   return { usage, subscription };
 }
@@ -308,7 +312,15 @@ export async function getTrialUsage(companyId: string): Promise<TrialUsageSnapsh
     gracePeriodEndsAt: subscription?.gracePeriodEndsAt?.toISOString() ?? null,
     inGrace: liveAccess.inGrace,
     billingWarning: liveAccess.billingWarning,
-    isTrialExpired: liveAccess.reason === "trial_expired" || subscription?.status === "EXPIRED",
+    isTrialExpired: resolveIsTrialExpired({
+      reason: liveAccess.reason,
+      status: subscription?.status,
+      plan: subscription?.plan,
+      slug: subscription?.billingPlan?.slug ?? null,
+      isFree: subscription?.billingPlan?.isFree ?? null,
+      provider: subscription?.provider ?? null,
+      currentPeriodEnd: subscription?.currentPeriodEnd ?? null,
+    }),
     accessAllowed: liveAccess.allowed,
     tendersAnalyzed: completed,
     decisionsGenerated: decisions,

@@ -1,6 +1,7 @@
 import { getPaymentsAdminDashboard } from "@/application/admin/payments-service";
 import { requireSuperAdmin } from "@/auth/super-admin-session";
 import { PaymentsAdminPanel } from "@/components/super-admin/payments-admin";
+import { getSuperAdminPath } from "@/config/super-admin";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,7 @@ export default async function SaPaymentsPage() {
         settings={data.settings}
         metrics={data.metrics}
         paypalIntegration={data.paypalIntegration}
+        freeWorkspaceSettingsHref={`/${getSuperAdminPath()}/plans/free-workspace`}
         plans={data.plans.map((p) => ({
           ...p,
           subscriptionsCount: p._count.subscriptions,

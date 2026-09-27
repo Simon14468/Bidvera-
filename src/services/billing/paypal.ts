@@ -260,24 +260,15 @@ export async function createPayPalCheckoutSession(input: {
     throw new AppError(ErrorCode.UPSTREAM, "PayPal approval URL missing.", 502);
   }
 
-  await prisma.subscription.upsert({
-    where: { companyId: input.companyId },
-    create: {
-      companyId: input.companyId,
-      provider: "paypal",
-      providerSubscriptionId: json.id,
-      plan: plan.legacyEnum ?? "STARTER",
-      planId: plan.id,
-      status: "INCOMPLETE",
-      billingInterval: input.interval,
-    },
-    update: {
-      provider: "paypal",
-      providerSubscriptionId: json.id,
-      planId: plan.id,
-      status: "INCOMPLETE",
-      billingInterval: input.interval,
-    },
+  const { recordPendingCheckout } = await import(
+    "@/services/billing/pending-checkout"
+  );
+  await recordPendingCheckout({
+    companyId: input.companyId,
+    provider: "paypal",
+    planId: plan.id,
+    interval: input.interval,
+    providerRef: json.id,
   });
 
   await recordBillingAudit({
@@ -326,6 +317,14 @@ export async function activatePayPalSubscription(input: {
     existing.providerSubscriptionId === input.providerSubscriptionId &&
     existing.planId === verified.plan.id
   ) {
+    const { clearPendingCheckoutIfMatch } = await import(
+      "@/services/billing/pending-checkout"
+    );
+    await clearPendingCheckoutIfMatch({
+      companyId: input.companyId,
+      provider: "paypal",
+      providerRef: input.providerSubscriptionId,
+    });
     return;
   }
 
@@ -337,6 +336,14 @@ export async function activatePayPalSubscription(input: {
     billingInterval: verified.interval,
     currentPeriodStart: new Date(),
     currentPeriodEnd: verified.currentPeriodEnd,
+  });
+  const { clearPendingCheckoutIfMatch } = await import(
+    "@/services/billing/pending-checkout"
+  );
+  await clearPendingCheckoutIfMatch({
+    companyId: input.companyId,
+    provider: "paypal",
+    providerRef: input.providerSubscriptionId,
   });
 
   const paymentKey = `paypal-activate:${input.providerSubscriptionId}`;
@@ -507,7 +514,20 @@ async function processPayPalEvent(event: {
     const existing = await prisma.subscription.findFirst({
       where: { providerSubscriptionId: subId, provider: "paypal" },
     });
-    if (!existing) return;
+    if (!existing) {
+      const companyFromCustom = custom.split(":")[0];
+      if (companyFromCustom) {
+        const { clearPendingCheckoutIfMatch } = await import(
+          "@/services/billing/pending-checkout"
+        );
+        await clearPendingCheckoutIfMatch({
+          companyId: companyFromCustom,
+          provider: "paypal",
+          providerRef: subId,
+        });
+      }
+      return;
+    }
     await updateSubscriptionStatus({
       companyId: existing.companyId,
       status: "CANCELED",

@@ -8,6 +8,7 @@ import {
   verificationEmail,
 } from "@/services/email";
 import { buildRenewalReminderMessage } from "@/services/billing/renewal-reminders";
+import { buildBillingWarningEmailHtml } from "@/services/billing/billing-warnings";
 
 describe("L6 email HTML escaping", () => {
   it("escapes names and URLs in verification email HTML", () => {
@@ -57,6 +58,14 @@ describe("L6 email HTML escaping", () => {
     const html = `<p>${escapeHtml(title)}</p><p>${escapeHtml(message)}</p>`;
     assert.equal(html.includes("<script>"), false);
     assert.match(html, /&lt;script&gt;/);
+  });
+
+  it("billing warning email uses escaped absolute links", () => {
+    const html = buildBillingWarningEmailHtml(`ended <script>alert(1)</script>`, {
+      NEXT_PUBLIC_APP_URL: "https://getbidvera.com",
+    });
+    assert.equal(html.includes("<script>"), false);
+    assert.match(html, /href="https:\/\/getbidvera\.com\/billing"/);
   });
 
   it("escapes email-change confirmation HTML", () => {

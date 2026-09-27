@@ -474,6 +474,11 @@ model Company {
    * Company-private outcomes remain available regardless.
    */
   globalLearningConsent Boolean @default(true)
+  /**
+   * In-flight Stripe/PayPal checkout. Must not replace a live Subscription.
+   * Shape: { provider, planId, interval, providerRef, createdAt }.
+   */
+  pendingCheckout Json?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 

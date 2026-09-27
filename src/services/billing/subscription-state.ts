@@ -54,6 +54,7 @@ export async function applyPaidPlanActivation(input: {
   paymentMethodBrand?: string | null;
   paymentMethodLast4?: string | null;
   status?: SubscriptionStatus;
+  cancelAtPeriodEnd?: boolean;
 }) {
   const legacy = (input.plan.legacyEnum ?? slugToLegacy(input.plan.slug)) as SubscriptionPlan;
   const existing = await prisma.subscription.findUnique({
@@ -70,6 +71,7 @@ export async function applyPaidPlanActivation(input: {
   }
 
   const status = input.status ?? "ACTIVE";
+  const cancelAtPeriodEnd = input.cancelAtPeriodEnd ?? false;
   const interval = input.billingInterval ?? existing?.billingInterval ?? "MONTH";
   const periodStart = input.currentPeriodStart ?? new Date();
   const periodEnd = input.currentPeriodEnd ?? null;
@@ -114,8 +116,8 @@ export async function applyPaidPlanActivation(input: {
         gracePeriodEndsAt,
         paymentMethodBrand: input.paymentMethodBrand ?? null,
         paymentMethodLast4: input.paymentMethodLast4 ?? null,
-        cancelAtPeriodEnd: false,
-        canceledAt: null,
+        cancelAtPeriodEnd,
+        canceledAt: cancelAtPeriodEnd ? (existing?.canceledAt ?? new Date()) : null,
       },
       update: {
         provider: input.provider,
@@ -131,8 +133,8 @@ export async function applyPaidPlanActivation(input: {
         gracePeriodEndsAt,
         paymentMethodBrand: input.paymentMethodBrand ?? undefined,
         paymentMethodLast4: input.paymentMethodLast4 ?? undefined,
-        cancelAtPeriodEnd: false,
-        canceledAt: null,
+        cancelAtPeriodEnd,
+        canceledAt: cancelAtPeriodEnd ? (existing?.canceledAt ?? new Date()) : null,
       },
     });
 
@@ -199,6 +201,35 @@ export async function applyPaidPlanActivation(input: {
     await markOnboardingDoneIfSubscribed(input.companyId);
   }
 
+  if (status === "ACTIVE" && eventType === "SUBSCRIPTION_ACTIVATED") {
+    await import("@/services/billing/emails")
+      .then(async ({
+        buildPaidSubscriptionActivatedEmail,
+        enqueueCompanyBillingEmail,
+        loadBillingEmailAudience,
+      }) => {
+        const audience = await loadBillingEmailAudience(input.companyId);
+        const email = buildPaidSubscriptionActivatedEmail({
+          firstName: audience.firstName,
+          companyName: audience.companyName,
+          planName: audience.planName,
+          interval: interval,
+          amountCents: audience.amountCents,
+          currency: audience.currency,
+          nextBillingDate: periodEnd,
+          paymentMethod: audience.paymentMethod,
+        });
+        await enqueueCompanyBillingEmail({
+          companyId: input.companyId,
+          subject: email.subject,
+          html: email.html,
+          text: email.text,
+          dedupeKey: `billing:paid_activated:${input.companyId}:${input.providerSubscriptionId}`,
+        });
+      })
+      .catch(() => null);
+  }
+
   return sub;
 }
 
@@ -252,6 +283,33 @@ export async function updateSubscriptionStatus(input: {
       companyId: input.companyId,
       metadata: input.metadata,
     });
+  }
+  if (
+    input.eventType === "SUBSCRIPTION_CANCEL_SCHEDULED" ||
+    input.eventType === "SUBSCRIPTION_CANCELLED"
+  ) {
+    await import("@/services/billing/emails")
+      .then(async ({
+        buildSubscriptionCancellationEmail,
+        enqueueCompanyBillingEmail,
+        loadBillingEmailAudience,
+      }) => {
+        const audience = await loadBillingEmailAudience(input.companyId);
+        const email = buildSubscriptionCancellationEmail({
+          firstName: audience.firstName,
+          companyName: audience.companyName,
+          planName: audience.planName,
+          accessUntil: audience.currentPeriodEnd,
+        });
+        await enqueueCompanyBillingEmail({
+          companyId: input.companyId,
+          subject: email.subject,
+          html: email.html,
+          text: email.text,
+          dedupeKey: `billing:cancelled:${input.companyId}:${input.eventType}`,
+        });
+      })
+      .catch(() => null);
   }
   if (input.status === "PAST_DUE" || input.status === "PAYMENT_FAILED") {
     await trackEvent({

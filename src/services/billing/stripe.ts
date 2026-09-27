@@ -184,22 +184,15 @@ export async function createStripeCheckoutSession(input: {
     throw new AppError(ErrorCode.UPSTREAM, "Stripe checkout URL missing.", 502);
   }
 
-  await prisma.subscription.upsert({
-    where: { companyId: input.companyId },
-    create: {
-      companyId: input.companyId,
-      provider: "stripe",
-      plan: plan.legacyEnum ?? "STARTER",
-      planId: plan.id,
-      status: "INCOMPLETE",
-      billingInterval: input.interval,
-    },
-    update: {
-      provider: "stripe",
-      planId: plan.id,
-      status: "INCOMPLETE",
-      billingInterval: input.interval,
-    },
+  const { recordPendingCheckout } = await import(
+    "@/services/billing/pending-checkout"
+  );
+  await recordPendingCheckout({
+    companyId: input.companyId,
+    provider: "stripe",
+    planId: plan.id,
+    interval: input.interval,
+    providerRef: session.id,
   });
 
   await recordBillingAudit({
@@ -280,6 +273,7 @@ export async function activateStripeCheckoutSession(input: {
     provider: "stripe",
     providerSubscriptionId: subscriptionId,
     planId: plan.id,
+    checkoutSessionId: input.sessionId,
   });
 
   const stripeSub = await stripe.subscriptions.retrieve(subscriptionId, {
@@ -322,6 +316,14 @@ export async function activateStripeCheckoutSession(input: {
     existing.providerSubscriptionId === subscriptionId &&
     existing.planId === plan.id
   ) {
+    const { clearPendingCheckoutIfMatch } = await import(
+      "@/services/billing/pending-checkout"
+    );
+    await clearPendingCheckoutIfMatch({
+      companyId: input.companyId,
+      provider: "stripe",
+      providerRef: input.sessionId,
+    });
     return { ok: true as const };
   }
 
@@ -347,10 +349,19 @@ export async function activateStripeCheckoutSession(input: {
       ? new Date(period.current_period_end * 1000)
       : null,
     status: stripeSub.status === "trialing" ? "TRIALING" : "ACTIVE",
+    cancelAtPeriodEnd: Boolean(stripeSub.cancel_at_period_end),
     paymentMethodBrand:
       stripePaymentMethodBrand(stripeSub.default_payment_method) ?? undefined,
     paymentMethodLast4:
       stripePaymentMethodLast4(stripeSub.default_payment_method) ?? undefined,
+  });
+  const { clearPendingCheckoutIfMatch } = await import(
+    "@/services/billing/pending-checkout"
+  );
+  await clearPendingCheckoutIfMatch({
+    companyId: input.companyId,
+    provider: "stripe",
+    providerRef: input.sessionId,
   });
 
   if (stripeSub.status === "trialing") {
@@ -450,6 +461,21 @@ async function processStripeEvent(event: Stripe.Event) {
       });
       return;
     }
+    case "checkout.session.expired":
+    case "checkout.session.async_payment_failed": {
+      const session = event.data.object as Stripe.Checkout.Session;
+      const companyId = session.metadata?.companyId ?? session.client_reference_id;
+      if (!companyId || !session.id) return;
+      const { clearPendingCheckoutIfMatch } = await import(
+        "@/services/billing/pending-checkout"
+      );
+      await clearPendingCheckoutIfMatch({
+        companyId,
+        provider: "stripe",
+        providerRef: session.id,
+      });
+      return;
+    }
     case "customer.subscription.updated":
     case "customer.subscription.created": {
       const sub = event.data.object as Stripe.Subscription & {
@@ -472,7 +498,7 @@ async function processStripeEvent(event: Stripe.Event) {
       const plan = await prisma.plan.findUnique({ where: { id: planId } });
       if (!plan) return;
 
-      await assertStripeSubscriptionWebhookBinding({
+      const webhookBinding = await assertStripeSubscriptionWebhookBinding({
         companyId,
         planId: plan.id,
         providerSubscriptionId: sub.id,
@@ -540,6 +566,7 @@ async function processStripeEvent(event: Stripe.Event) {
           ? new Date(sub.current_period_end * 1000)
           : null,
         status,
+        cancelAtPeriodEnd: Boolean(sub.cancel_at_period_end),
         paymentMethodBrand: stripePaymentMethodBrand(
           typeof sub.default_payment_method === "object"
             ? sub.default_payment_method
@@ -557,6 +584,12 @@ async function processStripeEvent(event: Stripe.Event) {
           planSlug: plan.slug,
           paymentFingerprint,
         });
+      }
+      if (webhookBinding === "checkout") {
+        const { clearPendingCheckout } = await import(
+          "@/services/billing/pending-checkout"
+        );
+        await clearPendingCheckout(companyId);
       }
       return;
     }

@@ -7,6 +7,12 @@ import {
   resolveStripePriceId,
 } from "@/services/billing/catalog";
 import { recordBillingAudit } from "@/services/billing/audit";
+import {
+  assertPendingCheckoutMatches,
+  isStripeCheckoutSessionRef,
+  readPendingCheckout,
+  shouldPreserveSubscriptionOnCheckout,
+} from "@/services/billing/pending-checkout";
 import type { BillingInterval, Plan } from "@prisma/client";
 import type Stripe from "stripe";
 
@@ -50,18 +56,34 @@ export function assertCurrencyMatch(expected: string, actual: string | null | un
   }
 }
 
-/** Bind activation to local INCOMPLETE checkout row — prevents IDOR / foreign subscription activation. */
+/** Bind activation to pending checkout or a same-company live/legacy row. */
 export async function assertLocalCheckoutBinding(input: {
   companyId: string;
   provider: "paypal" | "stripe";
   providerSubscriptionId: string;
   planId: string;
+  checkoutSessionId?: string | null;
 }) {
+  const pending = await readPendingCheckout(input.companyId);
+  if (pending) {
+    assertPendingCheckoutMatches({
+      pending,
+      provider: input.provider,
+      planId: input.planId,
+      checkoutSessionId: input.checkoutSessionId,
+      providerSubscriptionId: input.providerSubscriptionId,
+    });
+    return;
+  }
+
   const local = await prisma.subscription.findUnique({
     where: { companyId: input.companyId },
   });
   if (!local) {
     throw new AppError(ErrorCode.FORBIDDEN, "No checkout session for company.", 403);
+  }
+  if (shouldPreserveSubscriptionOnCheckout(local)) {
+    return;
   }
   if (local.provider !== input.provider) {
     throw new AppError(ErrorCode.FORBIDDEN, "Checkout provider mismatch.", 403);
@@ -122,6 +144,8 @@ export function resolveStripeSubscriptionWebhookBinding(input: {
   providerSubscriptionId: string;
   knownByProviderId: StripeWebhookBindingRow | null;
   localByCompany: StripeWebhookBindingRow | null;
+  pendingCheckout?: { provider: string; planId: string; providerRef?: string | null } | null;
+  checkoutSessionId?: string | null;
 }): "existing" | "checkout" {
   if (input.knownByProviderId) {
     if (input.knownByProviderId.companyId !== input.companyId) {
@@ -149,6 +173,33 @@ export function resolveStripeSubscriptionWebhookBinding(input: {
       );
     }
     return "existing";
+  }
+
+  if (input.pendingCheckout) {
+    if (input.pendingCheckout.provider !== "stripe") {
+      throw new AppError(ErrorCode.FORBIDDEN, "Checkout provider mismatch.", 403);
+    }
+    if (input.pendingCheckout.planId !== input.planId) {
+      throw new AppError(ErrorCode.FORBIDDEN, "Plan does not match checkout session.", 403);
+    }
+    if (
+      input.pendingCheckout.providerRef &&
+      input.checkoutSessionId &&
+      input.pendingCheckout.providerRef !== input.checkoutSessionId
+    ) {
+      throw new AppError(
+        ErrorCode.FORBIDDEN,
+        "Checkout session does not match pending checkout.",
+        403,
+      );
+    }
+    // Session-bound pending is proven on checkout.session.completed, not subscription events.
+    if (
+      !isStripeCheckoutSessionRef(input.pendingCheckout.providerRef) ||
+      input.checkoutSessionId
+    ) {
+      return "checkout";
+    }
   }
 
   const local = input.localByCompany;
@@ -186,7 +237,7 @@ export async function assertStripeSubscriptionWebhookBinding(input: {
   planId: string;
   providerSubscriptionId: string;
 }): Promise<"existing" | "checkout"> {
-  const [knownByProviderId, localByCompany] = await Promise.all([
+  const [knownByProviderId, localByCompany, pending] = await Promise.all([
     prisma.subscription.findFirst({
       where: {
         provider: "stripe",
@@ -210,6 +261,7 @@ export async function assertStripeSubscriptionWebhookBinding(input: {
         status: true,
       },
     }),
+    readPendingCheckout(input.companyId),
   ]);
 
   return resolveStripeSubscriptionWebhookBinding({
@@ -218,6 +270,7 @@ export async function assertStripeSubscriptionWebhookBinding(input: {
     providerSubscriptionId: input.providerSubscriptionId,
     knownByProviderId,
     localByCompany,
+    pendingCheckout: pending,
   });
 }
 
