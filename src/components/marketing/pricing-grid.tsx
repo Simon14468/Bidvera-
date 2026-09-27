@@ -3,6 +3,7 @@
 import { BRAND_MARK_SRC } from "@/components/brand/brand-logo";
 import { cn } from "@/lib/cn";
 import type { PublicBillingPlan } from "@/services/billing/catalog";
+import { isPublicCommercialPricingPlan } from "@/services/billing/free-workspace-identity";
 import type { Dictionary } from "@/i18n/dictionaries";
 import Image from "next/image";
 import Link from "next/link";
@@ -81,9 +82,10 @@ export function PricingGrid({
   plans: PublicBillingPlan[];
   labels: PricingCopy;
 }) {
+  const commercialPlans = plans.filter(isPublicCommercialPricingPlan);
   const [cycle, setCycle] = useState<BillingCycle>("monthly");
-  const yearlyAvailable = plans.some(
-    (p) => !p.isFree && p.annualEnabled && p.annualPriceCents != null && p.annualPriceCents > 0,
+  const yearlyAvailable = commercialPlans.some(
+    (p) => p.annualEnabled && p.annualPriceCents != null && p.annualPriceCents > 0,
   );
 
   return (
@@ -128,19 +130,17 @@ export function PricingGrid({
       <div
         className={cn(
           "mt-10 grid gap-4 sm:grid-cols-2",
-          plans.length >= 4 ? "lg:grid-cols-4" : "lg:grid-cols-3",
+          commercialPlans.length >= 4 ? "lg:grid-cols-4" : "lg:grid-cols-3",
         )}
       >
-        {plans.map((plan, i) => {
+        {commercialPlans.map((plan, i) => {
           const price = priceLabel(plan, cycle, labels);
           const marketing = cycle === "yearly" ? plan.copy.year : plan.copy.month;
           const cta = ctaForPlan(plan, labels);
           const isFree = plan.isFree || plan.slug === "free";
           const usageLine = isFree
             ? labels.freeLimitedNote
-            : labels.analysesSeats
-                .replace("{analyses}", String(plan.analysesLimit))
-                .replace("{seats}", String(plan.seatsLimit));
+            : labels.seatsOnly.replace("{seats}", String(plan.seatsLimit));
           return (
             <article
               id={plan.slug}

@@ -10,10 +10,12 @@ import {
 import {
   canonicalFeatureKey,
   isCommerciallyAvailableFeature,
+  isObsoleteAnalysesQuotaLabel,
   planDefaultFeatureKeys,
 } from "@/domain/billing/entitlement-catalog";
 import { marketingLabelsForPlan } from "@/services/entitlements";
 import { resolvePlanTrialDays } from "@/services/billing/trial-checkout";
+import { isPublicCommercialPricingPlan } from "@/services/billing/free-workspace-identity";
 import type { Locale } from "@/i18n/config";
 import type { BillingInterval, Plan, PlanStatus } from "@prisma/client";
 import { unstable_cache } from "next/cache";
@@ -125,8 +127,9 @@ export function publicStripeTrialDays(
 }
 
 export function sanitizeFreeMarketingLabels(plan: Pick<Plan, "isFree" | "slug">, labels: string[]): string[] {
-  if (!plan.isFree && plan.slug !== "free") return labels;
-  return labels.filter((line) => !/unlimited analyses/i.test(line));
+  const withoutAnalyses = labels.filter((line) => !isObsoleteAnalysesQuotaLabel(line));
+  if (!plan.isFree && plan.slug !== "free") return withoutAnalyses;
+  return withoutAnalyses.filter((line) => !/unlimited analyses/i.test(line));
 }
 
 function toPublicBillingPlan(
@@ -228,8 +231,8 @@ export const listPublicMarketingPlans = cache(
 );
 
 /**
- * Public pricing page: paid visible plans + Free Workspace.
- * Legacy credit-trial plan is never shown as a product.
+ * Public pricing page: paid commercial plans only.
+ * Free Workspace is a first-signup trial, not a checkout product.
  */
 export async function listPublicPricingPlans(
   locale: Locale = "en",
@@ -238,13 +241,16 @@ export async function listPublicPricingPlans(
   const plans = await prisma.plan.findMany({
     where: {
       status: "ACTIVE",
-      slug: { not: "trial" },
-      OR: [{ visibleToPublic: true }, { isFree: true, slug: "free" }],
+      visibleToPublic: true,
+      isFree: false,
+      slug: { notIn: ["trial", "free"] },
     },
     include: { planFeatures: { include: { feature: true } } },
     orderBy: [{ sortOrder: "asc" }, { monthlyPriceCents: "asc" }],
   });
-  return plans.map((plan) => toPublicBillingPlan(plan, settings, locale));
+  return plans
+    .filter(isPublicCommercialPricingPlan)
+    .map((plan) => toPublicBillingPlan(plan, settings, locale));
 }
 
 /** Paid checkout cards (gateways required). Same localization as marketing. */

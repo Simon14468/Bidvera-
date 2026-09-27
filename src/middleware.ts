@@ -22,6 +22,12 @@ const PUBLIC = [
   "/api/health",
   "/api/ready",
   "/api/billing/webhook",
+  "/api/auth/google/start",
+  "/api/auth/google/callback",
+  "/api/auth/microsoft/start",
+  "/api/auth/microsoft/callback",
+  "/api/auth/apple/start",
+  "/api/auth/apple/callback",
 ];
 
 const PUBLIC_PREFIXES = [

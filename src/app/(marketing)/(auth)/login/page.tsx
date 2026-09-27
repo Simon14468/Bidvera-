@@ -11,7 +11,11 @@ import { getDictionary } from "@/i18n/dictionaries";
 import { getLocale } from "@/i18n/get-locale";
 import { isDatabaseTransientError } from "@/lib/db-capacity";
 import { prisma } from "@/lib/db";
-import { getAuthSettings } from "@/services/auth/settings";
+import {
+  getAuthSettings,
+  resolveAppleOAuthCredentials,
+  resolveMicrosoftOAuthCredentials,
+} from "@/services/auth/settings";
 import { getTurnstilePublicConfig } from "@/services/security/turnstile";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -27,9 +31,13 @@ export default async function LoginPage() {
   const t = getDictionary(await getLocale());
   let auth;
   let settings;
+  let microsoftReady = false;
+  let appleReady = false;
   try {
     auth = await resolveAuthContext();
     settings = await getAuthSettings();
+    microsoftReady = Boolean(await resolveMicrosoftOAuthCredentials());
+    appleReady = Boolean(await resolveAppleOAuthCredentials());
   } catch (error) {
     if (isDatabaseTransientError(error)) {
       return (
@@ -108,7 +116,8 @@ export default async function LoginPage() {
         <AuthForm
           mode="login"
           googleEnabled={settings.googleEnabled}
-          microsoftEnabled={settings.microsoftEnabled}
+          microsoftEnabled={microsoftReady}
+          appleEnabled={appleReady}
           registrationEnabled={settings.registrationEnabled}
           turnstileSiteKey={getTurnstilePublicConfig().siteKey}
           labels={{ ...t.auth, signIn: t.nav.signIn, startFree: t.nav.startFree }}

@@ -198,13 +198,13 @@ async function tick() {
     SEND_ALERT: async (job) => handleSendAlert(job),
     SCHEDULE_DEADLINE_ALERTS: async (job) => handleScheduleDeadlines(job),
     PROCESS_BILLING_WEBHOOK: async (job) => {
+      // Billing webhooks are processed inline in /api/billing/webhook.
+      // This job type is reserved and must not mutate subscriptions.
       const payload = job.payload as { webhookEventId?: string };
       if (!payload.webhookEventId) return;
-      const { prisma } = await import("@/lib/db");
-      const row = await prisma.webhookEvent.findUnique({
-        where: { id: payload.webhookEventId },
+      logInfo("billing.webhook_job_unused", {
+        webhookEventId: payload.webhookEventId,
       });
-      if (!row || row.status === "PROCESSED" || row.status === "IGNORED") return;
     },
     SEND_EMAIL: async (job) => {
       const rawPayload = job.payload;

@@ -22,7 +22,6 @@ export function applyFreeWorkspaceCheckoutGuard<
     isFree: true,
     stripeEnabled: false,
     paypalEnabled: false,
-    trialEligible: false,
     monthlyPriceCents: 0,
     annualPriceCents: null,
   };

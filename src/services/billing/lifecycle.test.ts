@@ -42,6 +42,40 @@ test("ACTIVE after period end blocks and maps to EXPIRED", () => {
   assert.equal(access.effectiveStatus, "EXPIRED");
 });
 
+test("ACTIVE cancel_at_period_end keeps access until currentPeriodEnd", () => {
+  const end = new Date("2026-10-20T00:00:00.000Z");
+  const before = evaluateSubscriptionAccess(
+    {
+      status: "ACTIVE",
+      plan: "STARTER",
+      billingInterval: "MONTH",
+      startedAt: new Date("2026-09-20T00:00:00.000Z"),
+      currentPeriodStart: new Date("2026-09-20T00:00:00.000Z"),
+      currentPeriodEnd: end,
+      gracePeriodEndsAt: null,
+      cancelAtPeriodEnd: true,
+    },
+    new Date("2026-10-10T00:00:00.000Z"),
+  );
+  assert.equal(before.allowed, true);
+  assert.equal(before.reason, "active");
+  const after = evaluateSubscriptionAccess(
+    {
+      status: "ACTIVE",
+      plan: "STARTER",
+      billingInterval: "MONTH",
+      startedAt: new Date("2026-09-20T00:00:00.000Z"),
+      currentPeriodStart: new Date("2026-09-20T00:00:00.000Z"),
+      currentPeriodEnd: end,
+      gracePeriodEndsAt: null,
+      cancelAtPeriodEnd: true,
+    },
+    new Date("2026-10-21T00:00:00.000Z"),
+  );
+  assert.equal(after.allowed, false);
+  assert.equal(after.reason, "period_expired");
+});
+
 test("TRIALING after period end is trial_expired", () => {
   const access = evaluateSubscriptionAccess(
     sub({ status: "TRIALING", plan: "TRIAL" }),

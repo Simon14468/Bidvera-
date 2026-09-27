@@ -102,9 +102,13 @@ Copy `.env.example` → `.env`. **Never commit `.env` or real secrets.**
 | `STORAGE_ROOT` | Default `.data/uploads` locally. **Production:** set an absolute persistent path (e.g. `/var/lib/bidvera/uploads`) that survives redeploys. Also persist `public/uploads/avatars` and `public/uploads/landing` (see `docs/production-deployment.md`). |
 | `TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | Cloudflare Turnstile. Required in production. Local: omit to skip, or use Cloudflare dummy keys. |
 
-Assistant voice keys are stored encrypted in Super Admin (AI Knowledge). Optional env fallbacks: `ELEVENLABS_*`, `GOOGLE_CLIENT_*`, `MICROSOFT_CLIENT_*`.
+Assistant voice keys are stored encrypted in Super Admin (AI Knowledge). Optional env fallbacks: `ELEVENLABS_*`, `GOOGLE_CLIENT_*`, `MICROSOFT_CLIENT_*`, `APPLE_*`.
 
 Google login: enable in Super Admin → Auth, then register the callback URI documented in [`docs/google-oauth.md`](docs/google-oauth.md) (`/api/auth/google/callback`).
+
+Microsoft login: enable in Super Admin → Auth, then register the callback URI documented in [`docs/microsoft-oauth.md`](docs/microsoft-oauth.md) (`/api/auth/microsoft/callback`).
+
+Apple login: enable in Super Admin → Auth, then register the callback URI documented in [`docs/apple-oauth.md`](docs/apple-oauth.md) (`/api/auth/apple/callback`). Never commit the `.p8` private key.
 
 See `.env.example` for the full list (Stripe optional).
 

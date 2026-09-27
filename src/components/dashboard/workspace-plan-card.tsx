@@ -46,7 +46,22 @@ export function WorkspacePlanCard({
           </p>
         </div>
 
-        {plan.isTrialing && plan.trialEndsAt ? (
+        {plan.isExpiredTrial ? (
+          <div className="rounded-[12px] border border-[#EF4444]/25 bg-[#FAFAFA] px-3 py-2">
+            <p className="text-sm font-medium text-[#1A1D1F]">
+              {labels.freeWorkspaceTrialExpiredTitle}
+            </p>
+            <p className="mt-1 text-sm text-muted">
+              {labels.freeWorkspaceTrialExpiredBody}
+            </p>
+            <Link
+              href="/upgrade?reason=trial_expired"
+              className="mt-2 inline-flex h-10 items-center justify-center rounded-[12px] bg-[#4CAF6D] px-4 text-sm font-medium text-white"
+            >
+              {labels.freeWorkspaceTrialCta}
+            </Link>
+          </div>
+        ) : plan.isTrialing && plan.trialEndsAt ? (
           <p className="text-sm text-muted">
             {formatMessage(labels.trialEnds, {
               date: formatDate(plan.trialEndsAt, locale),

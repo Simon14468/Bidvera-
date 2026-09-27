@@ -53,8 +53,8 @@ export default async function UpgradePage({ searchParams }: PageProps) {
         </Alert>
       ) : null}
       {params.reason === "trial_expired" ? (
-        <Alert variant="warning" title="Trial ended">
-          Your free trial has ended. Choose a plan below to continue analyzing tenders.
+        <Alert variant="warning" title="Free Workspace period ended">
+          Your 14-day Free Workspace access has ended. Choose a paid plan below to continue. Payment is required.
         </Alert>
       ) : params.reason === "credits_exhausted" ? (
         <Alert variant="warning" title="Analysis limit reached">

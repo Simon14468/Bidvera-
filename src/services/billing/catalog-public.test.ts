@@ -7,6 +7,7 @@ import {
   publicStripeTrialDays,
   sanitizeFreeMarketingLabels,
 } from "@/services/billing/catalog";
+import { isPublicCommercialPricingPlan } from "@/services/billing/free-workspace-identity";
 import { planDefaultFeatureKeys } from "@/domain/billing/entitlement-catalog";
 import { DEFAULT_BILLING_GATEWAY_SETTINGS } from "@/services/billing/settings";
 import { PRICING_FEATURE_GROUPS } from "@/components/marketing/pricing-feature-groups";
@@ -110,10 +111,22 @@ test("sanitizeFreeMarketingLabels strips unlimited-analyses copy for Free Worksp
   assert.deepEqual(
     sanitizeFreeMarketingLabels(
       { isFree: false, slug: "pro" },
-      ["Unlimited analyses / month"],
+      ["Unlimited analyses / month", "Up to 5 seats"],
     ),
-    ["Unlimited analyses / month"],
+    ["Up to 5 seats"],
   );
+});
+
+test("public pricing never advertises Tender Analysis credits", () => {
+  const grid = readSrc("src/components/marketing/pricing-grid.tsx");
+  assert.doesNotMatch(grid, /analysesSeats/);
+  assert.doesNotMatch(grid, /analysesLimit/);
+  assert.match(grid, /seatsOnly/);
+  const labels = sanitizeFreeMarketingLabels(
+    { isFree: false, slug: "starter" },
+    ["20 analyses / month", "1 seat", "Company Profile"],
+  );
+  assert.deepEqual(labels, ["1 seat", "Company Profile"]);
 });
 
 test("pricing comparison groups never advertise Matching Engine, discovery, or Tender Analysis", () => {
@@ -137,6 +150,18 @@ test("pricing UI copy does not use BID/REVIEW/NO-BID or fake trial language", ()
   for (const file of files) {
     assert.doesNotMatch(readSrc(file), banned, file);
   }
+});
+
+test("public pricing excludes Free Workspace as a commercial plan", () => {
+  assert.equal(isPublicCommercialPricingPlan({ isFree: true, slug: "free" }), false);
+  assert.equal(isPublicCommercialPricingPlan({ isFree: false, slug: "trial" }), false);
+  assert.equal(isPublicCommercialPricingPlan({ isFree: false, slug: "starter" }), true);
+  const catalog = readSrc("src/services/billing/catalog.ts");
+  assert.match(catalog, /isFree: false/);
+  assert.match(catalog, /notIn: \["trial", "free"\]/);
+  const pricing = readSrc("src/app/(marketing)/(site)/pricing/page.tsx");
+  assert.match(pricing, /startTrial/);
+  assert.doesNotMatch(pricing, /Choose plan/);
 });
 
 test("all locales include pricing feature labels and trial copy", () => {

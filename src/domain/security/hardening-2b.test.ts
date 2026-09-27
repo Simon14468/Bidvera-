@@ -192,17 +192,22 @@ describe("Public marketing does not advertise Tender Discovery", () => {
 });
 
 describe("OAuth login buttons respect Super Admin auth flags", () => {
-  it("AuthForm only renders OAuth when googleEnabled / microsoftEnabled", () => {
+  it("AuthForm only renders OAuth when googleEnabled / microsoftEnabled / appleEnabled", () => {
     const src = readSrc("src/components/auth/auth-form.tsx");
     assert.match(src, /googleEnabled/);
     assert.match(src, /microsoftEnabled/);
+    assert.match(src, /appleEnabled/);
     assert.match(src, /\{googleEnabled \?/);
     assert.match(src, /\{microsoftEnabled \?/);
+    assert.match(src, /\{appleEnabled \?/);
     assert.match(src, /registrationEnabled/);
-    // Google is live when enabled; Microsoft remains Coming Soon.
     assert.match(src, /\/api\/auth\/google\/start/);
+    assert.match(src, /\/api\/auth\/microsoft\/start/);
+    assert.match(src, /\/api\/auth\/apple\/start/);
     assert.match(src, /labels\.continueGoogle/);
-    assert.match(src, /microsoftComingSoon/);
+    assert.match(src, /labels\.continueMicrosoft/);
+    assert.match(src, /labels\.continueApple/);
+    assert.doesNotMatch(src, /microsoftComingSoon/);
   });
 });
 

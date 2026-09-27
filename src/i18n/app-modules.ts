@@ -85,6 +85,9 @@ export type AppModuleBundle = {
     currentPlanHint: string;
     noSubscription: string;
     trialEnds: string;
+    freeWorkspaceTrialExpiredTitle: string;
+    freeWorkspaceTrialExpiredBody: string;
+    freeWorkspaceTrialCta: string;
     teamMembers: string;
     planLabel: string;
     enabledCapabilities: string;
@@ -269,6 +272,10 @@ const en: AppModuleBundle = {
       "Workspace subscription and enabled capabilities for your company.",
     noSubscription: "No active subscription row",
     trialEnds: "Trial ends {date}",
+    freeWorkspaceTrialExpiredTitle: "Your Free Workspace trial has ended.",
+    freeWorkspaceTrialExpiredBody:
+      "Payment is required to continue. Choose a paid plan to restore access.",
+    freeWorkspaceTrialCta: "Choose a plan",
     teamMembers: "Team members",
     planLabel: "Plan",
     enabledCapabilities: "Enabled capabilities",
@@ -814,6 +821,10 @@ Object.assign(es.common, {
     "Suscripción del espacio y capacidades habilitadas para tu empresa.",
   noSubscription: "Sin suscripción activa",
   trialEnds: "La prueba termina el {date}",
+  freeWorkspaceTrialExpiredTitle: "Tu prueba de Free Workspace ha terminado.",
+  freeWorkspaceTrialExpiredBody:
+    "El pago es obligatorio para continuar. Elige un plan de pago para recuperar el acceso.",
+  freeWorkspaceTrialCta: "Elegir un plan",
   teamMembers: "Miembros del equipo",
   planLabel: "Plan",
   enabledCapabilities: "Capacidades habilitadas",

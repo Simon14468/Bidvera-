@@ -12,6 +12,9 @@ import {
 } from "@/domain/billing/entitlement-catalog";
 import { localeLabels } from "@/i18n/config";
 import {
+  type AdminPlanRow,
+} from "@/application/admin/plan-view-model";
+import {
   buildPlanLanguagesDraft,
   MARKETING_LOCALES,
   parsePlanTranslations,
@@ -22,42 +25,10 @@ import {
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 
+export type { AdminPlanRow } from "@/application/admin/plan-view-model";
+
 const inputClass =
   "rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100";
-
-export type AdminPlanRow = {
-  id: string;
-  slug: string;
-  name: string;
-  description: string | null;
-  monthlyPriceCents: number;
-  annualPriceCents: number | null;
-  annualMonths: number;
-  monthlyEnabled: boolean;
-  annualEnabled: boolean;
-  analysesLimit: number;
-  analysesLimitYearly: number | null;
-  seatsLimit: number;
-  seatsLimitYearly: number | null;
-  aiTokensLimit: number | null;
-  storageMbLimit: number | null;
-  isFree: boolean;
-  visibleToPublic: boolean;
-  stripeEnabled: boolean;
-  paypalEnabled: boolean;
-  status: "ACTIVE" | "INACTIVE" | "ARCHIVED";
-  trialEligible: boolean;
-  trialDays: number | null;
-  graceDays: number | null;
-  currency: string;
-  sortOrder: number;
-  highlighted: boolean;
-  preferEntitlementLabels: boolean;
-  featureList: string[];
-  featureKeys: string[];
-  translations: PlanTranslations | null;
-  subscriptionsCount: number;
-};
 
 function dollarsToCents(value: string): number {
   const n = Number(value);
@@ -72,14 +43,31 @@ function centsToDollars(cents: number): string {
 export function PlansManager({
   plans,
   entitlementKeys,
+  focusSlug,
+  focusMode,
+  defaultIsFree,
+  defaultSlug,
+  defaultName,
 }: {
   plans: AdminPlanRow[];
   entitlementKeys: string[];
+  focusSlug?: string;
+  focusMode?: boolean;
+  defaultIsFree?: boolean;
+  defaultSlug?: string;
+  defaultName?: string;
 }) {
   const router = useRouter();
   const [msg, setMsg] = useState<string | null>(null);
   const [pending, start] = useTransition();
-  const [editing, setEditing] = useState<AdminPlanRow | null>(null);
+  const [editing, setEditing] = useState<AdminPlanRow | null>(() => {
+    if (!focusSlug) return null;
+    return (
+      plans.find((p) => p.slug === focusSlug) ??
+      plans.find((p) => p.isFree) ??
+      null
+    );
+  });
   const [langPlan, setLangPlan] = useState<AdminPlanRow | null>(null);
 
   return (
@@ -93,7 +81,6 @@ export function PlansManager({
               <th className="px-3 py-2">Monthly</th>
               <th className="px-3 py-2">Annual</th>
               <th className="px-3 py-2">Duration</th>
-              <th className="px-3 py-2">Analyses</th>
               <th className="px-3 py-2">AI</th>
               <th className="px-3 py-2">Seats</th>
               <th className="px-3 py-2">Status</th>
@@ -137,7 +124,6 @@ export function PlansManager({
                 <td className="px-3 py-2 text-slate-300">
                   {p.annualEnabled ? `${p.annualMonths} mo` : "—"}
                 </td>
-                <td className="px-3 py-2">{p.analysesLimit}</td>
                 <td className="px-3 py-2 text-slate-300">
                   {p.aiTokensLimit == null ? "Unlimited" : p.aiTokensLimit}
                 </td>
@@ -246,6 +232,10 @@ export function PlansManager({
           initial={editing}
           pending={pending}
           entitlementKeys={entitlementKeys}
+          focusMode={focusMode}
+          defaultIsFree={defaultIsFree}
+          defaultSlug={defaultSlug}
+          defaultName={defaultName}
           onClear={() => setEditing(null)}
           onSave={(payload, form) => {
             start(async () => {
@@ -256,8 +246,10 @@ export function PlansManager({
                   : r.error.message,
               );
               if (r.ok) {
-                setEditing(null);
-                form?.reset();
+                if (!focusMode) {
+                  setEditing(null);
+                  form?.reset();
+                }
                 router.refresh();
               }
             });
@@ -707,7 +699,7 @@ function PlanLanguagesEditor({
             </span>
           </div>
           <p className="mt-1 text-xs text-slate-500">
-            {plan.analysesLimit} analyses · {plan.seatsLimit} seats
+            {plan.seatsLimit} seats
           </p>
           <p className="mt-3 text-2xl font-semibold tabular-nums text-white">
             {priceLabel}
@@ -736,12 +728,20 @@ function PlanEditor({
   initial,
   pending,
   entitlementKeys,
+  focusMode,
+  defaultIsFree,
+  defaultSlug,
+  defaultName,
   onClear,
   onSave,
 }: {
   initial: AdminPlanRow | null;
   pending: boolean;
   entitlementKeys: string[];
+  focusMode?: boolean;
+  defaultIsFree?: boolean;
+  defaultSlug?: string;
+  defaultName?: string;
   onClear: () => void;
   onSave: (
     payload: Record<string, unknown>,
@@ -759,7 +759,11 @@ function PlanEditor({
   );
   const [analysesLimit, setAnalysesLimit] = useState(initial?.analysesLimit ?? 3);
   const [seatsLimit, setSeatsLimit] = useState(initial?.seatsLimit ?? 1);
-  const [isFree, setIsFree] = useState(initial?.isFree ?? initial?.slug === "free");
+  const [isFree, setIsFree] = useState(() =>
+    initial
+      ? initial.isFree || initial.slug === "free"
+      : Boolean(defaultIsFree),
+  );
   const [visibleToPublic, setVisibleToPublic] = useState(initial?.visibleToPublic ?? true);
   const [stripeEnabled, setStripeEnabled] = useState(initial?.stripeEnabled ?? true);
   const [paypalEnabled, setPaypalEnabled] = useState(initial?.paypalEnabled ?? true);
@@ -778,7 +782,11 @@ function PlanEditor({
     );
     setAnalysesLimit(initial?.analysesLimit ?? 3);
     setSeatsLimit(initial?.seatsLimit ?? 1);
-    setIsFree(initial?.isFree ?? initial?.slug === "free");
+    setIsFree(
+      initial
+        ? initial.isFree || initial.slug === "free"
+        : Boolean(defaultIsFree),
+    );
     setVisibleToPublic(initial?.visibleToPublic ?? true);
     setStripeEnabled(initial?.stripeEnabled ?? true);
     setPaypalEnabled(initial?.paypalEnabled ?? true);
@@ -806,7 +814,6 @@ function PlanEditor({
         const fd = new FormData(form);
         const monthlyDollars = String(fd.get("monthlyDollars") ?? "0");
         const annualDollars = String(fd.get("annualDollars") ?? "");
-        const yearlyAnalyses = String(fd.get("analysesLimitYearly") ?? "");
         const yearlySeats = String(fd.get("seatsLimitYearly") ?? "");
         onSave(
           {
@@ -814,18 +821,19 @@ function PlanEditor({
             slug: String(fd.get("slug")),
             name: String(fd.get("name")),
             description: String(fd.get("description") || "") || null,
-            monthlyPriceCents: dollarsToCents(monthlyDollars),
-            annualPriceCents: annualDollars
-              ? dollarsToCents(annualDollars)
-              : null,
+            monthlyPriceCents: isFree ? 0 : dollarsToCents(monthlyDollars),
+            annualPriceCents:
+              isFree || !annualDollars
+                ? null
+                : dollarsToCents(annualDollars),
             annualMonths: Number(fd.get("annualMonths") || 12),
             monthlyEnabled,
             annualEnabled,
-            analysesLimit: Number(fd.get("analysesLimit") || 0),
-            analysesLimitYearly: yearlyAnalyses ? Number(yearlyAnalyses) : null,
+            analysesLimit: initial?.analysesLimit ?? 3,
+            analysesLimitYearly: initial?.analysesLimitYearly ?? null,
             seatsLimit: Number(fd.get("seatsLimit") || 1),
             seatsLimitYearly: yearlySeats ? Number(yearlySeats) : null,
-            trialEligible: isFree ? false : fd.get("trialEligible") === "on",
+            trialEligible: fd.get("trialEligible") === "on",
             trialDays: Number(fd.get("trialDays") || 0) || null,
             isFree,
             visibleToPublic,
@@ -871,7 +879,7 @@ function PlanEditor({
         <h2 className="font-medium text-white">
           {initial ? `Edit: ${initial.name}` : "Create plan"}
         </h2>
-        {initial ? (
+        {initial && !focusMode ? (
           <button
             type="button"
             onClick={onClear}
@@ -907,46 +915,80 @@ function PlanEditor({
           />
           Visible on public pricing
         </label>
-        <div className="flex flex-wrap gap-4 text-sm text-slate-300">
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={!isFree && stripeEnabled}
-              disabled={isFree}
-              onChange={(e) => setStripeEnabled(e.target.checked)}
-            />
-            Stripe checkout
-          </label>
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={!isFree && paypalEnabled}
-              disabled={isFree}
-              onChange={(e) => setPaypalEnabled(e.target.checked)}
-            />
-            PayPal checkout
-          </label>
-        </div>
         {isFree ? (
           <p className="text-xs text-slate-500">
-            Free Workspace cannot be sold through Stripe or PayPal. Checkout stays blocked.
+            Free Workspace is an automatic first-signup trial. There is no
+            monthly or yearly price, and checkout stays blocked. No payment
+            method is required.
           </p>
-        ) : null}
+        ) : (
+          <div className="flex flex-wrap gap-4 text-sm text-slate-300">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={stripeEnabled}
+                onChange={(e) => setStripeEnabled(e.target.checked)}
+              />
+              Stripe checkout
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={paypalEnabled}
+                onChange={(e) => setPaypalEnabled(e.target.checked)}
+              />
+              PayPal checkout
+            </label>
+          </div>
+        )}
       </div>
+
+      {isFree ? (
+        <div className="space-y-3 rounded-lg border border-emerald-800/70 bg-emerald-950/20 p-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-emerald-300">
+            First-signup trial
+          </p>
+          <p className="text-xs text-slate-400">
+            When eligible, Bidvera automatically assigns this plan to a brand-new
+            workspace as a dated TRIALING subscription. Duration comes from this
+            plan. No Stripe or PayPal checkout is used for that automatic grant.
+            After expiry the workspace becomes EXPIRED and must pay — it is not
+            converted to an indefinite ACTIVE Free Workspace.
+          </p>
+          <label className="flex items-center gap-2 text-sm text-slate-200">
+            <input
+              name="trialEligible"
+              type="checkbox"
+              defaultChecked={initial?.trialEligible ?? true}
+            />
+            Eligible for first-signup trial
+          </label>
+          <label className="text-xs text-slate-400">
+            Trial duration in days
+            <input
+              name="trialDays"
+              type="number"
+              min={1}
+              defaultValue={initial?.trialDays ?? 14}
+              className={`mt-1 w-full ${inputClass}`}
+            />
+          </label>
+        </div>
+      ) : null}
 
       <div className="grid gap-2 sm:grid-cols-2">
         <input
           name="slug"
           required
           readOnly={Boolean(initial)}
-          defaultValue={initial?.slug ?? ""}
+          defaultValue={initial?.slug ?? defaultSlug ?? ""}
           placeholder="slug (starter)"
           className={`${inputClass} ${initial ? "opacity-70" : ""}`}
         />
         <input
           name="name"
           required
-          defaultValue={initial?.name ?? ""}
+          defaultValue={initial?.name ?? defaultName ?? ""}
           placeholder="Display name"
           className={inputClass}
         />
@@ -960,97 +1002,98 @@ function PlanEditor({
         className={inputClass}
       />
 
-      <div className="grid gap-2 sm:grid-cols-2">
-        <label className="text-xs text-slate-400">
-          Monthly price (USD)
+      {isFree ? (
+        <>
+          <input type="hidden" name="monthlyDollars" value="0" />
+          <input type="hidden" name="annualDollars" value="" />
           <input
-            name="monthlyDollars"
-            type="number"
-            step="0.01"
-            min="0"
-            required
-            defaultValue={
-              initial ? centsToDollars(initial.monthlyPriceCents) : ""
-            }
-            className={`mt-1 w-full ${inputClass}`}
-          />
-        </label>
-        <label className="text-xs text-slate-400">
-          Yearly price (USD)
-          <input
-            name="annualDollars"
-            type="number"
-            step="0.01"
-            min="0"
-            defaultValue={
-              initial?.annualPriceCents != null
-                ? centsToDollars(initial.annualPriceCents)
-                : ""
-            }
-            className={`mt-1 w-full ${inputClass}`}
-          />
-        </label>
-      </div>
-
-      <div className="grid gap-2 sm:grid-cols-3">
-        <label className="text-xs text-slate-400">
-          Annual months
-          <input
+            type="hidden"
             name="annualMonths"
-            type="number"
-            min={1}
-            max={36}
-            defaultValue={initial?.annualMonths ?? 12}
-            className={`mt-1 w-full ${inputClass}`}
+            value={String(initial?.annualMonths ?? 12)}
           />
-        </label>
-        <label className="text-xs text-slate-400">
-          Currency
           <input
+            type="hidden"
             name="currency"
-            defaultValue={initial?.currency ?? "usd"}
-            className={`mt-1 w-full ${inputClass}`}
+            value={initial?.currency ?? "usd"}
           />
-        </label>
-        <label className="text-xs text-slate-400">
-          Sort order
           <input
+            type="hidden"
             name="sortOrder"
-            type="number"
-            defaultValue={initial?.sortOrder ?? 0}
-            className={`mt-1 w-full ${inputClass}`}
+            value={String(initial?.sortOrder ?? 0)}
           />
-        </label>
-      </div>
+        </>
+      ) : (
+        <>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <label className="text-xs text-slate-400">
+              Monthly price (USD)
+              <input
+                name="monthlyDollars"
+                type="number"
+                step="0.01"
+                min="0"
+                required
+                defaultValue={
+                  initial ? centsToDollars(initial.monthlyPriceCents) : ""
+                }
+                className={`mt-1 w-full ${inputClass}`}
+              />
+            </label>
+            <label className="text-xs text-slate-400">
+              Yearly price (USD)
+              <input
+                name="annualDollars"
+                type="number"
+                step="0.01"
+                min="0"
+                defaultValue={
+                  initial?.annualPriceCents != null
+                    ? centsToDollars(initial.annualPriceCents)
+                    : ""
+                }
+                className={`mt-1 w-full ${inputClass}`}
+              />
+            </label>
+          </div>
+
+          <div className="grid gap-2 sm:grid-cols-3">
+            <label className="text-xs text-slate-400">
+              Annual months
+              <input
+                name="annualMonths"
+                type="number"
+                min={1}
+                max={36}
+                defaultValue={initial?.annualMonths ?? 12}
+                className={`mt-1 w-full ${inputClass}`}
+              />
+            </label>
+            <label className="text-xs text-slate-400">
+              Currency
+              <input
+                name="currency"
+                defaultValue={initial?.currency ?? "usd"}
+                className={`mt-1 w-full ${inputClass}`}
+              />
+            </label>
+            <label className="text-xs text-slate-400">
+              Sort order
+              <input
+                name="sortOrder"
+                type="number"
+                defaultValue={initial?.sortOrder ?? 0}
+                className={`mt-1 w-full ${inputClass}`}
+              />
+            </label>
+          </div>
+        </>
+      )}
 
       <div className="rounded-lg border border-slate-700 p-3 space-y-2">
         <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
           Real limits (enforced)
         </p>
         <div className="grid gap-2 sm:grid-cols-2">
-          <label className="text-xs text-slate-400">
-            Analyses / month
-            <input
-              name="analysesLimit"
-              type="number"
-              min={0}
-              required
-              value={analysesLimit}
-              onChange={(e) => setAnalysesLimit(Number(e.target.value) || 0)}
-              className={`mt-1 w-full ${inputClass}`}
-            />
-          </label>
-          <label className="text-xs text-slate-400">
-            Analyses / year billing (optional)
-            <input
-              name="analysesLimitYearly"
-              type="number"
-              min={0}
-              defaultValue={initial?.analysesLimitYearly ?? ""}
-              placeholder="same as monthly"
-              className={`mt-1 w-full ${inputClass}`}
-            />
-          </label>
           <label className="text-xs text-slate-400">
             Seats (monthly)
             <input
@@ -1103,6 +1146,13 @@ function PlanEditor({
         <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
           Entitlements (backend gates)
         </p>
+        {isFree ? (
+          <p className="text-xs text-slate-500">
+            These PlanFeature flags are the source of truth for Free Workspace
+            trial access. Tender Analysis cannot be granted to normal workspaces
+            from this list.
+          </p>
+        ) : null}
         <div className="grid gap-2 sm:grid-cols-2">
           {catalog.map((def) => (
             <label
@@ -1157,15 +1207,16 @@ function PlanEditor({
           />
           Offer annual
         </label>
-        <label className="flex items-center gap-2">
-          <input
-            name="trialEligible"
-            type="checkbox"
-            disabled={isFree}
-            defaultChecked={!isFree && (initial?.trialEligible ?? false)}
-          />
-          Trial eligible
-        </label>
+        {!isFree ? (
+          <label className="flex items-center gap-2">
+            <input
+              name="trialEligible"
+              type="checkbox"
+              defaultChecked={initial?.trialEligible ?? false}
+            />
+            Trial eligible
+          </label>
+        ) : null}
         <label className="flex items-center gap-2">
           <input
             name="highlighted"
@@ -1185,16 +1236,18 @@ function PlanEditor({
       </div>
 
       <div className="grid gap-2 sm:grid-cols-3">
-        <label className="text-xs text-slate-400">
-          Trial days
-          <input
-            name="trialDays"
-            type="number"
-            min={0}
-            defaultValue={initial?.trialDays ?? ""}
-            className={`mt-1 w-full ${inputClass}`}
-          />
-        </label>
+        {!isFree ? (
+          <label className="text-xs text-slate-400">
+            Trial days
+            <input
+              name="trialDays"
+              type="number"
+              min={0}
+              defaultValue={initial?.trialDays ?? ""}
+              className={`mt-1 w-full ${inputClass}`}
+            />
+          </label>
+        ) : null}
         <label className="text-xs text-slate-400">
           Grace days (payment fail)
           <input
@@ -1241,4 +1294,3 @@ function PlanEditor({
     </form>
   );
 }
-

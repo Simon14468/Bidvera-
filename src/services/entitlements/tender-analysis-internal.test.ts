@@ -11,6 +11,8 @@ import {
   ENTITLEMENT_CATALOG,
   buildEntitlementMarketingLabels,
   isCommerciallyAvailableFeature,
+  isIsolatedInternalFeatureKey,
+  isObsoleteAnalysesQuotaLabel,
   planDefaultFeatureKeys,
 } from "@/domain/billing/entitlement-catalog";
 import { publicEnabledFeatureKeys } from "@/services/billing/catalog";
@@ -100,6 +102,20 @@ test("3b. marketing labels never list tender_analysis", () => {
     false,
   );
   assert.ok(labels.some((l) => /pdf/i.test(l)));
+  assert.equal(
+    labels.some((l) => /analyses/i.test(l)),
+    false,
+    "marketing labels must not sell analyses quota",
+  );
+  assert.ok(labels.some((l) => /seat/i.test(l)));
+});
+
+test("3c. obsolete analyses quota labels are stripped from commercial copy", () => {
+  assert.equal(isObsoleteAnalysesQuotaLabel("10 analyses / month"), true);
+  assert.equal(isObsoleteAnalysesQuotaLabel("Unlimited analyses / month"), true);
+  assert.equal(isObsoleteAnalysesQuotaLabel("1 seat"), false);
+  assert.equal(isIsolatedInternalFeatureKey("tender_analysis"), true);
+  assert.equal(isIsolatedInternalFeatureKey("company_profile"), false);
 });
 
 test("4. Super Admin Features page still lists DB features (module intact)", () => {
@@ -178,7 +194,7 @@ test("company chrome never surfaces tender_analysis while commercially unavailab
     sidebar,
     /entitlement:\s*"tenderAnalysis"[\s\S]*?hideWhenDisabled:\s*true/,
   );
-  assert.match(dash, /isCommerciallyAvailableFeature\("tender_analysis"\)/);
+  assert.doesNotMatch(dash, /tender_analysis/);
 });
 
 test("ensureFeatureRows is memoized once per process (avoids pool storms)", () => {
@@ -193,4 +209,35 @@ test("entitlement resolution fallbacks no longer hard-grant tender_analysis", ()
   const src = readSrc("src/services/entitlements/index.ts");
   assert.doesNotMatch(src, /tender_analysis:\s*true/);
   assert.doesNotMatch(src, /features\.tender_analysis\s*=\s*true/);
+});
+
+test("plan editor hides analyses quota and preserves existing DB values", () => {
+  const form = readSrc("src/components/super-admin/plan-form.tsx");
+  assert.doesNotMatch(form, /Analyses \/ month/);
+  assert.doesNotMatch(form, /Analyses \/ year/);
+  assert.doesNotMatch(form, />Analyses</);
+  assert.doesNotMatch(form, /name="analysesLimit"/);
+  assert.match(form, /analysesLimit: initial\?\.analysesLimit \?\? 3/);
+  assert.match(form, /analysesLimitYearly: initial\?\.analysesLimitYearly \?\? null/);
+});
+
+test("user billing and paywall do not present Tender Analysis credits", () => {
+  const billing = readSrc("src/app/(app)/billing/page.tsx");
+  assert.doesNotMatch(billing, /analysesUsage/);
+  assert.doesNotMatch(billing, /analysesUsed/);
+  assert.doesNotMatch(billing, /entitlements\.analysesLimit/);
+  const paywall = readSrc("src/components/billing/paywall.tsx");
+  assert.doesNotMatch(paywall, /analyses ·/);
+  assert.doesNotMatch(paywall, /analysesLimit/);
+});
+
+test("company override and plan toggle cannot grant tender_analysis", () => {
+  const entitlements = readSrc("src/services/entitlements/index.ts");
+  assert.match(entitlements, /isIsolatedInternalFeatureKey\(key\)/);
+  assert.match(
+    entitlements,
+    /persistEnabled = isIsolatedInternalFeatureKey\(featureKey\) \? false : enabled/,
+  );
+  const companyService = readSrc("src/application/admin/company-service.ts");
+  assert.match(companyService, /isIsolatedInternalFeatureKey\(key\)/);
 });

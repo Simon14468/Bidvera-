@@ -247,7 +247,7 @@ export async function saIssueCompanyUserPasswordReset(input: {
 
 export async function saSetCompanyPlan(input: {
   companyId: string;
-  planId: "free" | "trial" | "starter" | "pro" | "business";
+  planId: string;
   status?:
     | "TRIALING"
     | "ACTIVE"
@@ -615,6 +615,7 @@ export async function saSaveAuthSettings(raw: unknown) {
         ...previous,
         hasGoogleClientSecret: previous.hasGoogleClientSecret,
         hasMicrosoftClientSecret: previous.hasMicrosoftClientSecret,
+        hasApplePrivateKey: previous.hasApplePrivateKey,
       },
       newValue: {
         registrationEnabled: data.registrationEnabled,
@@ -625,6 +626,11 @@ export async function saSaveAuthSettings(raw: unknown) {
         microsoftEnabled: data.microsoftEnabled,
         microsoftClientId: data.microsoftClientId,
         hasMicrosoftClientSecret: data.hasMicrosoftClientSecret,
+        appleEnabled: data.appleEnabled,
+        appleClientId: data.appleClientId,
+        appleTeamId: data.appleTeamId,
+        appleKeyId: data.appleKeyId,
+        hasApplePrivateKey: data.hasApplePrivateKey,
         mediumRiskTrialDelayHours: data.mediumRiskTrialDelayHours,
         mediumRiskRequireBusinessEmail: data.mediumRiskRequireBusinessEmail,
         highRiskBlockTrial: data.highRiskBlockTrial,

@@ -1,22 +1,12 @@
 "use client";
 
 import { saSetCompanyPlan } from "@/app/actions/super-admin";
-import type { PlanId } from "@/config/plans";
+import {
+  defaultStatusForGrantablePlan,
+  type GrantableAdminPlan,
+} from "@/application/admin/grantable-plans";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
-
-const PLAN_OPTIONS: Array<{
-  id: PlanId;
-  label: string;
-  rank: number;
-  defaultStatus: "ACTIVE" | "TRIALING";
-}> = [
-  { id: "free", label: "Free", rank: 0, defaultStatus: "ACTIVE" },
-  { id: "trial", label: "Trial", rank: 1, defaultStatus: "TRIALING" },
-  { id: "starter", label: "Starter", rank: 2, defaultStatus: "ACTIVE" },
-  { id: "pro", label: "Pro", rank: 3, defaultStatus: "ACTIVE" },
-  { id: "business", label: "Business", rank: 4, defaultStatus: "ACTIVE" },
-];
 
 const STATUS_OPTIONS = [
   "ACTIVE",
@@ -26,34 +16,28 @@ const STATUS_OPTIONS = [
   "PAST_DUE",
 ] as const;
 
-function planIdFromPrisma(plan: string): PlanId {
-  const key = plan.toUpperCase();
-  if (key === "FREE") return "free";
-  if (key === "STARTER") return "starter";
-  if (key === "PRO") return "pro";
-  if (key === "BUSINESS") return "business";
-  return "trial";
-}
-
 export function CompanyListPlanControl({
   companyId,
   planName,
-  planEnum,
+  planSlug,
   subscriptionStatus,
+  plans,
 }: {
   companyId: string;
   planName: string;
-  /** Prisma Plan enum e.g. TRIAL */
-  planEnum: string;
+  planSlug: string;
   subscriptionStatus: string;
+  plans: GrantableAdminPlan[];
 }) {
   const router = useRouter();
-  const currentId = planIdFromPrisma(planEnum);
-  const currentRank =
-    PLAN_OPTIONS.find((p) => p.id === currentId)?.rank ?? 1;
+  const options = plans;
+  const currentId = options.some((p) => p.slug === planSlug)
+    ? planSlug
+    : (options[0]?.slug ?? "");
+  const currentRank = options.find((p) => p.slug === currentId)?.sortOrder ?? 0;
 
   const [open, setOpen] = useState(false);
-  const [planId, setPlanId] = useState<PlanId>(currentId);
+  const [planId, setPlanId] = useState(currentId);
   const [status, setStatus] = useState<(typeof STATUS_OPTIONS)[number]>(
     (STATUS_OPTIONS as readonly string[]).includes(subscriptionStatus)
       ? (subscriptionStatus as (typeof STATUS_OPTIONS)[number])
@@ -64,12 +48,12 @@ export function CompanyListPlanControl({
   const [pending, start] = useTransition();
 
   const direction = useMemo(() => {
-    const next = PLAN_OPTIONS.find((p) => p.id === planId);
+    const next = options.find((p) => p.slug === planId);
     if (!next || planId === currentId) return null;
-    if (next.rank > currentRank) return `Upgrade → ${next.label}`;
-    if (next.rank < currentRank) return `Downgrade → ${next.label}`;
+    if (next.sortOrder > currentRank) return `Upgrade → ${next.name}`;
+    if (next.sortOrder < currentRank) return `Downgrade → ${next.name}`;
     return null;
-  }, [planId, currentId, currentRank]);
+  }, [planId, currentId, currentRank, options]);
 
   return (
     <div className="min-w-[140px]">
@@ -95,17 +79,17 @@ export function CompanyListPlanControl({
           <select
             value={planId}
             onChange={(e) => {
-              const next = e.target.value as PlanId;
+              const next = e.target.value;
               setPlanId(next);
-              const cfg = PLAN_OPTIONS.find((p) => p.id === next);
-              if (cfg) setStatus(cfg.defaultStatus);
+              const cfg = options.find((p) => p.slug === next);
+              if (cfg) setStatus(defaultStatusForGrantablePlan(cfg));
             }}
             className="w-full rounded-md border border-slate-700 bg-slate-900 px-2 py-1.5 text-xs"
           >
-            {PLAN_OPTIONS.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.label}
-                {p.id === currentId ? " (current)" : ""}
+            {options.map((p) => (
+              <option key={p.slug} value={p.slug}>
+                {p.name}
+                {p.slug === currentId ? " (current)" : ""}
               </option>
             ))}
           </select>
@@ -137,7 +121,7 @@ export function CompanyListPlanControl({
           />
           <button
             type="button"
-            disabled={pending || !password}
+            disabled={pending || !password || !planId}
             className="w-full rounded-md bg-sky-700 px-2 py-1.5 text-xs font-medium text-white hover:bg-sky-600 disabled:opacity-50"
             onClick={() =>
               start(async () => {

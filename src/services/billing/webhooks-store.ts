@@ -194,7 +194,10 @@ export async function markWebhookIgnored(id: string, reason?: string) {
   });
 }
 
-/** Fast ACK path — queue heavy work when a system company exists; else process inline. */
+/**
+ * Reserved helper. The live webhook route processes Stripe/PayPal synchronously.
+ * Do not enqueue this from /api/billing/webhook — PROCESS_BILLING_WEBHOOK is a no-op.
+ */
 export async function enqueueBillingWebhookJob(input: {
   companyId: string;
   provider: BillingProvider;

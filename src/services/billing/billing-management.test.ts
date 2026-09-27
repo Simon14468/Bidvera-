@@ -94,7 +94,7 @@ test("F. Free Workspace cannot become a checkout product", () => {
   assert.equal(guarded.isFree, true);
   assert.equal(guarded.stripeEnabled, false);
   assert.equal(guarded.paypalEnabled, false);
-  assert.equal(guarded.trialEligible, false);
+  assert.equal(guarded.trialEligible, true);
   assert.equal(guarded.monthlyPriceCents, 0);
   assert.equal(guarded.annualPriceCents, null);
   const paid = applyFreeWorkspaceCheckoutGuard({

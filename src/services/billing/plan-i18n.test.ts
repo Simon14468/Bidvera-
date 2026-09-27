@@ -22,7 +22,7 @@ test("localize prefers admin translations over built-in map", () => {
     slug: "starter",
     name: "Starter",
     description: null,
-    featureList: ["20 analyses / month", "Email support"],
+    featureList: ["1 seat", "Email support"],
     translations: {
       ar: {
         name: "مخصص",
@@ -40,25 +40,25 @@ test("monthly vs yearly features switch from Admin copy", () => {
     slug: "starter",
     name: "Starter",
     description: null,
-    featureList: ["20 analyses / month"],
+    featureList: ["1 seat"],
     translations: {
       ar: {
         monthly: {
           name: "المبتدئ",
-          features: ["٢٠ تحليلًا / شهر", "دعم شهري"],
+          features: ["مقعد واحد", "دعم شهري"],
         },
         yearly: {
           name: "المبتدئ سنوي",
-          features: ["٢٠ تحليلًا / شهر", "وفّر شهرين"],
+          features: ["مقعد واحد", "وفّر شهرين"],
         },
       },
     },
     locale: "ar",
   });
   assert.equal(bundle.month.name, "المبتدئ");
-  assert.deepEqual(bundle.month.featureList, ["٢٠ تحليلًا / شهر", "دعم شهري"]);
+  assert.deepEqual(bundle.month.featureList, ["مقعد واحد", "دعم شهري"]);
   assert.equal(bundle.year.name, "المبتدئ سنوي");
-  assert.deepEqual(bundle.year.featureList, ["٢٠ تحليلًا / شهر", "وفّر شهرين"]);
+  assert.deepEqual(bundle.year.featureList, ["مقعد واحد", "وفّر شهرين"]);
 });
 
 test("published locale with name only uses EN features not phantom map", () => {
@@ -66,17 +66,31 @@ test("published locale with name only uses EN features not phantom map", () => {
     slug: "trial",
     name: "Trial",
     description: null,
-    featureList: ["3 free tender analyses", "Company profile"],
+    featureList: ["1 seat", "Company profile"],
     translations: {
       ar: { name: "تجريبي" },
     },
     locale: "ar",
   });
   assert.equal(out.name, "تجريبي");
-  assert.deepEqual(out.featureList, [
-    "3 free tender analyses",
-    "Company profile",
-  ]);
+  assert.deepEqual(out.featureList, ["1 seat", "Company profile"]);
+});
+
+test("localize strips leftover Tender Analysis quota lines", () => {
+  const out = localizePlanMarketing({
+    slug: "starter",
+    name: "Starter",
+    description: null,
+    featureList: ["20 analyses / month", "1 seat"],
+    translations: {
+      ar: {
+        name: "مبتدئ",
+        features: ["٢٠ تحليلًا / شهر", "مقعد واحد"],
+      },
+    },
+    locale: "ar",
+  });
+  assert.deepEqual(out.featureList, ["مقعد واحد"]);
 });
 
 test("unpublished locale uses temporary suggestions until Admin saves", () => {

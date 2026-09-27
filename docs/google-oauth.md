@@ -73,4 +73,4 @@ NEXT_PUBLIC_APP_URL=https://getbidvera.com
 - Unverified Google email → rejected.
 - Incomplete onboarding → redirect to the correct onboarding step.
 
-Microsoft OAuth remains Coming Soon until implemented separately.
+Microsoft OAuth is documented in [`docs/microsoft-oauth.md`](microsoft-oauth.md).

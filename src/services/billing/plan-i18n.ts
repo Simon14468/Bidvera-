@@ -8,6 +8,7 @@
  * Legacy: translations[locale].features ≡ monthly.features
  */
 
+import { filterCommerciallyHonestLabels } from "@/domain/billing/entitlement-catalog";
 import type { Locale } from "@/i18n/config";
 import { z } from "zod";
 
@@ -337,7 +338,7 @@ function resolveIntervalCopy(input: {
     return {
       name: input.name,
       description: input.description,
-      featureList: features,
+      featureList: filterCommerciallyHonestLabels(features),
     };
   }
 
@@ -372,17 +373,22 @@ function resolveIntervalCopy(input: {
           : input.featureList;
     }
 
-    return { name, description, featureList: features };
+    return {
+      name,
+      description,
+      featureList: filterCommerciallyHonestLabels(features),
+    };
   }
 
   // Unpublished → temporary suggestions
   return {
     name: suggestLocalePlanName(input.slug, locale) || input.name,
     description: input.description,
-    featureList:
+    featureList: filterCommerciallyHonestLabels(
       interval === "year"
         ? suggestYearlyFeatures(input.featureList, locale)
         : suggestLocaleFeatures(input.featureList, locale),
+    ),
   };
 }
 

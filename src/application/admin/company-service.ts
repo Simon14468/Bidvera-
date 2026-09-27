@@ -6,6 +6,7 @@ import { prisma } from "@/lib/db";
 import { AppError, ErrorCode } from "@/lib/errors";
 import { writeAdminAudit } from "@/services/admin/audit";
 import { getEffectiveLimits } from "@/services/plans/effective";
+import { isIsolatedInternalFeatureKey } from "@/domain/billing/entitlement-catalog";
 import type { SuperAdminContext } from "@/auth/super-admin-session";
 import type { Prisma } from "@prisma/client";
 
@@ -69,6 +70,7 @@ export async function listCompaniesForAdmin(rawFilters?: unknown) {
         analysesUsed: c.usage?.analysesUsed ?? 0,
         analysesLimit: limits.analysesLimit,
         plan: c.subscription?.plan ?? "TRIAL",
+        planSlug: c.subscription?.billingPlan?.slug ?? null,
         planName: limits.planName,
         subscriptionStatus: c.subscription?.status ?? "TRIALING",
         hasOverride: Boolean(c.planOverride?.active),
@@ -221,6 +223,7 @@ export async function upsertCompanyPlanOverride(
   const previous = await prisma.companyPlanOverride.findUnique({
     where: { companyId: data.companyId },
   });
+  const features = data.features.filter((key) => !isIsolatedInternalFeatureKey(key));
 
   const row = await prisma.companyPlanOverride.upsert({
     where: { companyId: data.companyId },
@@ -233,7 +236,7 @@ export async function upsertCompanyPlanOverride(
       aiTokensLimit: data.aiTokensLimit ?? null,
       storageMbLimit: data.storageMbLimit ?? null,
       seatsLimit: data.seatsLimit ?? null,
-      features: data.features,
+      features,
       expiresAt: data.expiresAt ? new Date(data.expiresAt) : null,
       notes: data.notes ?? null,
       active: data.active,
@@ -246,7 +249,7 @@ export async function upsertCompanyPlanOverride(
       aiTokensLimit: data.aiTokensLimit ?? null,
       storageMbLimit: data.storageMbLimit ?? null,
       seatsLimit: data.seatsLimit ?? null,
-      features: data.features,
+      features,
       expiresAt: data.expiresAt ? new Date(data.expiresAt) : null,
       notes: data.notes ?? null,
       active: data.active,

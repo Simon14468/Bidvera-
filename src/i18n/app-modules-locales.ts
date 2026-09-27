@@ -32,6 +32,10 @@ export function applyZh(m: AppModuleBundle): void {
     currentPlanHint: "贵公司工作区的订阅与已启用能力。",
     noSubscription: "暂无有效订阅",
     trialEnds: "试用于 {date} 结束",
+    freeWorkspaceTrialExpiredTitle: "免费工作区试用已结束。",
+    freeWorkspaceTrialExpiredBody:
+      "需要付费才能继续使用。请选择付费套餐以恢复访问。",
+    freeWorkspaceTrialCta: "选择套餐",
     teamMembers: "团队成员",
     planLabel: "套餐",
     enabledCapabilities: "已启用能力",
@@ -343,6 +347,10 @@ export function applyAr(m: AppModuleBundle): void {
     currentPlanHint: "اشتراك مساحة العمل والقدرات المفعّلة لشركتك.",
     noSubscription: "لا اشتراك نشط",
     trialEnds: "تنتهي التجربة في {date}",
+    freeWorkspaceTrialExpiredTitle: "انتهت تجربة مساحة العمل المجانية.",
+    freeWorkspaceTrialExpiredBody:
+      "يلزم الدفع للمتابعة. اختر خطة مدفوعة لاستعادة الوصول.",
+    freeWorkspaceTrialCta: "اختر خطة",
     teamMembers: "أعضاء الفريق",
     planLabel: "الخطة",
     enabledCapabilities: "القدرات المفعّلة",
@@ -669,6 +677,10 @@ export function applyFr(m: AppModuleBundle): void {
       "Abonnement de l’espace et capacités activées pour votre entreprise.",
     noSubscription: "Aucun abonnement actif",
     trialEnds: "L’essai se termine le {date}",
+    freeWorkspaceTrialExpiredTitle: "Votre essai Free Workspace est terminé.",
+    freeWorkspaceTrialExpiredBody:
+      "Le paiement est obligatoire pour continuer. Choisissez une offre payante pour rétablir l’accès.",
+    freeWorkspaceTrialCta: "Choisir une offre",
     teamMembers: "Membres de l’équipe",
     planLabel: "Offre",
     enabledCapabilities: "Capacités activées",

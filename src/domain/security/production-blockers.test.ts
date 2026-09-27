@@ -370,11 +370,12 @@ describe("H-01 free/trial activation requires OWNER/ADMIN", () => {
       src.indexOf("function isLikelyPersonalEmail"),
     );
     const billingIdx = fn.indexOf("assertCanManageBilling(auth.user.role)");
-    const freeIdx = fn.indexOf("assignFreeWorkspace");
+    const freeIdx = fn.indexOf("ensureTrialSubscription");
     const turnstileIdx = fn.indexOf("assertTurnstileToken");
     assert.ok(billingIdx >= 0);
     assert.ok(turnstileIdx > billingIdx);
     assert.ok(freeIdx > turnstileIdx);
+    assert.doesNotMatch(fn, /assignFreeWorkspace/);
     assert.match(fn, /assertTurnstileToken/);
     assert.throws(
       () => assertCanManageBilling("MEMBER"),

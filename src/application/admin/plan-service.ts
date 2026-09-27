@@ -15,6 +15,7 @@ import {
   syncSubscribersToPlanLimits,
 } from "@/services/entitlements";
 import { applyFreeWorkspaceCheckoutGuard } from "@/services/billing/free-plan-guard";
+import { shouldRejectDuplicateFreeWorkspacePlan } from "@/services/billing/free-workspace-identity";
 
 export async function listPlansForAdmin() {
   return prisma.plan.findMany({
@@ -51,6 +52,11 @@ export async function upsertPlanForAdmin(
   const previous = data.id
     ? await prisma.plan.findUnique({ where: { id: data.id } })
     : await prisma.plan.findUnique({ where: { slug: data.slug } });
+
+  await assertUniqueDesignatedFreeWorkspace(
+    { slug: data.slug, isFree: data.isFree ?? false, id: data.id },
+    previous,
+  );
 
   const plan = await prisma.plan.upsert({
     where: data.id ? { id: data.id } : { slug: data.slug },
@@ -256,6 +262,31 @@ export async function setPlanStatusForAdmin(
 
   revalidatePublicPlanSurfaces();
   return plan;
+}
+
+async function assertUniqueDesignatedFreeWorkspace(
+  incoming: { id?: string; slug: string; isFree: boolean },
+  previous: { id: string; slug: string; isFree: boolean } | null,
+) {
+  const existingCandidates = await prisma.plan.findMany({
+    where: { OR: [{ slug: "free" }, { isFree: true }] },
+    select: { id: true, slug: true, name: true, isFree: true },
+  });
+  if (
+    !shouldRejectDuplicateFreeWorkspacePlan({
+      incoming,
+      previous,
+      existingCandidates,
+    })
+  ) {
+    return;
+  }
+  throw new AppError(
+    ErrorCode.CONFLICT,
+    "Only one Free Workspace system plan can exist. Edit the existing Free Workspace plan instead of creating another.",
+    409,
+    { duplicates: existingCandidates.filter((plan) => plan.id !== previous?.id) },
+  );
 }
 
 export async function listSubscriptionsForAdmin() {

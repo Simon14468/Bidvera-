@@ -6,7 +6,9 @@ import {
 } from "@/components/marketing/pricing-feature-groups";
 import { getDictionary } from "@/i18n/dictionaries";
 import { getLocale } from "@/i18n/get-locale";
+import { resolveAuthContext } from "@/auth/session";
 import { listPublicPricingPlans } from "@/services/billing/catalog";
+import { canOfferFirstSignupFreeWorkspaceTrial } from "@/services/billing/subscription-state";
 import { buildPageMetadata } from "@/seo/metadata";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -28,7 +30,13 @@ export default async function PricingPage() {
   const locale = await getLocale();
   const t = getDictionary(locale);
   const p = t.pricing;
-  const plans = await listPublicPricingPlans(locale);
+  const [plans, auth] = await Promise.all([
+    listPublicPricingPlans(locale),
+    resolveAuthContext(),
+  ]);
+  const showFirstSignupTrialCta = auth?.user.companyId
+    ? await canOfferFirstSignupFreeWorkspaceTrial(auth.user.companyId)
+    : !auth;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
@@ -39,6 +47,19 @@ export default async function PricingPage() {
         <h1 className="mt-3 text-4xl font-semibold tracking-tight">{p.title}</h1>
         <p className="mt-4 text-lg text-muted">{p.body}</p>
       </div>
+
+      {showFirstSignupTrialCta ? (
+        <div className="mx-auto mt-8 max-w-xl rounded-xl border border-border bg-card p-5 text-center shadow-[var(--shadow-soft)]">
+          <p className="text-sm font-semibold text-foreground">{p.trialBadge}</p>
+          <p className="mt-2 text-sm text-muted">{p.freeHeadline}</p>
+          <Link
+            href="/signup"
+            className="mt-4 inline-flex h-10 items-center justify-center rounded-xl bg-primary px-5 text-sm font-medium text-white hover:bg-primary-hover"
+          >
+            {p.startTrial}
+          </Link>
+        </div>
+      ) : null}
 
       <div className="mt-10">
         <PricingGrid plans={plans} labels={p} />

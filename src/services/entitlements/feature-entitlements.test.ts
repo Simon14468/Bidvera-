@@ -11,9 +11,11 @@ import {
   filterCommerciallyHonestLabels,
   isCommerciallyAvailableFeature,
   isFeatureEnabledInMap,
+  isIsolatedInternalFeatureKey,
   planDefaultFeatureKeys,
   upgradeMessageForFeature,
 } from "@/domain/billing/entitlement-catalog";
+import { resolveCommercialFeatureAccess } from "@/services/entitlements";
 import { AppError, ErrorCode } from "@/lib/errors";
 
 const PREMIUM_KEYS = [
@@ -266,10 +268,50 @@ test("dashboard upcoming deadlines prefer Tender Calendar when enabled", () => {
   assert.match(dash, /\/tender-calendar\/\$\{item\.tenderId\}/);
 });
 
-test("auth form enables Google OAuth start; Microsoft stays coming soon", () => {
+test("expired commercial subscription cannot retain a paid feature via override", () => {
+  assert.equal(
+    resolveCommercialFeatureAccess({
+      isolated: false,
+      override: true,
+      enabledGlobal: true,
+      accessAllowed: false,
+      entitled: true,
+    }),
+    false,
+  );
+  assert.equal(
+    resolveCommercialFeatureAccess({
+      isolated: false,
+      override: true,
+      enabledGlobal: true,
+      accessAllowed: true,
+      entitled: false,
+    }),
+    true,
+  );
+  assert.equal(isIsolatedInternalFeatureKey("tender_analysis"), true);
+  assert.equal(isCommerciallyAvailableFeature("tender_analysis"), false);
+  assert.equal(
+    resolveCommercialFeatureAccess({
+      isolated: true,
+      override: true,
+      enabledGlobal: true,
+      accessAllowed: true,
+      entitled: false,
+    }),
+    false,
+  );
+  const src = readSrc("src/services/entitlements/index.ts");
+  assert.match(src, /resolveCommercialFeatureAccess/);
+  assert.match(src, /if \(!input\.accessAllowed\) return false/);
+});
+
+test("auth form enables Google, Microsoft, and Apple OAuth start when flags on", () => {
   const auth = readSrc("src/components/auth/auth-form.tsx");
   assert.match(auth, /\/api\/auth\/google\/start/);
+  assert.match(auth, /\/api\/auth\/microsoft\/start/);
+  assert.match(auth, /\/api\/auth\/apple\/start/);
   assert.match(auth, /labels\.continueGoogle/);
-  assert.match(auth, /labels\.microsoftComingSoon/);
-  assert.match(auth, /disabled/);
+  assert.match(auth, /labels\.continueMicrosoft/);
+  assert.match(auth, /labels\.continueApple/);
 });

@@ -1,7 +1,9 @@
 import { resolveAuthContext } from "@/auth/session";
 import { onboardingPathForStep } from "@/auth/onboarding";
+import { loadFreeWorkspaceTrialChrome } from "@/application/workspace-trial-banner";
 import { AppSidebar } from "@/components/app/app-sidebar";
 import { AppTopbar } from "@/components/app/app-topbar";
+import { FreeWorkspaceTrialBanner } from "@/components/billing/free-workspace-trial-banner";
 import { PwaProvider } from "@/components/pwa/pwa-provider";
 import { DatabaseUnavailable } from "@/components/system/database-unavailable";
 import { getDictionary } from "@/i18n/dictionaries";
@@ -10,6 +12,7 @@ import { isDatabaseTransientError } from "@/lib/db-capacity";
 import { notificationService } from "@/services/notifications";
 import { hasFeature } from "@/services/entitlements";
 import { isCommerciallyAvailableFeature } from "@/domain/billing/entitlement-catalog";
+import { formatFreeWorkspaceTrialBanner } from "@/services/billing/billing-display";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -99,6 +102,23 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     ? await notificationService.countUnread(companyId).catch(() => 0)
     : 0;
 
+  const trialChrome = await loadFreeWorkspaceTrialChrome(companyId).catch(
+    () => null,
+  );
+  const trialBanner = trialChrome
+    ? formatFreeWorkspaceTrialBanner(trialChrome, {
+        titleDays: dict.app.billing.freeWorkspaceTrialBannerDays,
+        titleDay: dict.app.billing.freeWorkspaceTrialBannerDay,
+        titleHours: dict.app.billing.freeWorkspaceTrialBannerHours,
+        titleHour: dict.app.billing.freeWorkspaceTrialBannerHour,
+        titleEnding: dict.app.billing.freeWorkspaceTrialBannerEnding,
+        hint: dict.app.billing.freeWorkspaceTrialBannerHint,
+        expiredTitle: dict.app.billing.freeWorkspaceTrialExpiredTitle,
+        expiredBody: dict.app.billing.freeWorkspaceTrialExpiredBody,
+        cta: dict.app.billing.freeWorkspaceTrialCta,
+      })
+    : null;
+
   return (
     <PwaProvider accountId={companyId}>
       <div className="flex min-h-full flex-col lg:flex-row">
@@ -124,7 +144,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             companyProfileEnabled={companyProfileEnabled}
             languageLabel={dict.nav.language}
           />
-          <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">{children}</main>
+          <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+            {trialBanner ? <FreeWorkspaceTrialBanner {...trialBanner} /> : null}
+            {children}
+          </main>
         </div>
       </div>
     </PwaProvider>

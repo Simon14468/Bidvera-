@@ -43,6 +43,7 @@ export function CompanyAvatar({
             ? "size-full object-cover"
             : "size-full object-contain p-[12%] brightness-0 invert opacity-60 [.light_&]:invert-0 [.light_&]:opacity-50"
         }
+        unoptimized={isCustom}
         aria-hidden={!alt}
       />
     </span>

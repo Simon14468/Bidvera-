@@ -23,6 +23,7 @@ export function SaShell({
     { href: `${base}/payments`, label: "Payments" },
     { href: `${base}/auth`, label: "Auth" },
     { href: `${base}/plans`, label: "Plans" },
+    { href: `${base}/plans/free-workspace`, label: "Free Workspace" },
     { href: `${base}/features`, label: "Features" },
     { href: `${base}/matching`, label: "Matching" },
     { href: `${base}/matching-sponsorship`, label: "Sponsorship" },

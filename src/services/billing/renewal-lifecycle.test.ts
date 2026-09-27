@@ -195,8 +195,11 @@ test("grace-period countdown is computed from real server dates", () => {
 });
 
 test("expiration downgrades through the existing Free Workspace mechanism", () => {
+  assert.equal(
+    shouldAssignFreeWorkspace({ freeWorkspaceEnabled: true, reason: "trial_expired" }),
+    false,
+  );
   for (const reason of [
-    "trial_expired",
     "period_expired",
     "past_due_expired",
     "canceled",
@@ -214,6 +217,7 @@ test("expiration downgrades through the existing Free Workspace mechanism", () =
   }
   const reconcile = readSrc("src/services/billing/reconcile.ts");
   assert.match(reconcile, /assignFreeWorkspace/);
+  assert.match(reconcile, /shouldAssignFreeWorkspace/);
   assert.match(reconcile, /past_due_expired/);
 });
 

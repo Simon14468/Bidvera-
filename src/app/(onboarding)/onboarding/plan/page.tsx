@@ -6,6 +6,7 @@ import { resolveAuthContext } from "@/auth/session";
 import { getDictionary } from "@/i18n/dictionaries";
 import { getLocale } from "@/i18n/get-locale";
 import { listPublicPricingPlans } from "@/services/billing/catalog";
+import { canOfferFirstSignupFreeWorkspaceTrial } from "@/services/billing/subscription-state";
 import { getBillingGatewaySettings } from "@/services/billing/settings";
 import { getTurnstilePublicConfig } from "@/services/security/turnstile";
 import { redirect } from "next/navigation";
@@ -33,9 +34,12 @@ export default async function OnboardingPlanPage({
   }
 
   const locale = await getLocale();
-  const [plans, billing] = await Promise.all([
+  const [plans, billing, showFirstSignupTrialCta] = await Promise.all([
     listPublicPricingPlans(locale),
     getBillingGatewaySettings(),
+    auth.user.companyId
+      ? canOfferFirstSignupFreeWorkspaceTrial(auth.user.companyId)
+      : Promise.resolve(false),
   ]);
   const t = getDictionary(locale).app.onboarding;
 
@@ -68,6 +72,7 @@ export default async function OnboardingPlanPage({
       ) : null}
       <OnboardingPlanPicker
         plans={plans}
+        showFirstSignupTrialCta={showFirstSignupTrialCta}
         defaultGateway={billing.defaultGateway}
         turnstileSiteKey={getTurnstilePublicConfig().siteKey}
         copy={{

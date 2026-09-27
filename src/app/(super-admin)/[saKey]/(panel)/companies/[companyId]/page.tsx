@@ -1,5 +1,7 @@
 import { getCompanyDetailForAdmin } from "@/application/admin/company-service";
+import { toGrantableAdminPlans } from "@/application/admin/grantable-plans";
 import { getCompanyMatchingReadinessForAdmin } from "@/application/admin/matching-readiness";
+import { listPlansForAdmin } from "@/application/admin/plan-service";
 import { requireSuperAdmin } from "@/auth/super-admin-session";
 import { CompanyAdminActions } from "@/components/super-admin/company-actions";
 import { EnterCompanyForm } from "@/components/super-admin/enter-company-form";
@@ -20,13 +22,18 @@ export default async function SaCompanyDetailPage({
   const { companyId } = await params;
   let detail;
   let matchingReadiness;
+  let catalog;
   try {
-    detail = await getCompanyDetailForAdmin(companyId);
-    matchingReadiness = await getCompanyMatchingReadinessForAdmin(companyId);
+    [detail, matchingReadiness, catalog] = await Promise.all([
+      getCompanyDetailForAdmin(companyId),
+      getCompanyMatchingReadinessForAdmin(companyId),
+      listPlansForAdmin(),
+    ]);
   } catch {
     notFound();
   }
   const { company, limits, aiCost } = detail;
+  const currentPlanSlug = company.subscription?.billingPlan?.slug ?? null;
 
   return (
     <div className="space-y-6">
@@ -162,6 +169,8 @@ export default async function SaCompanyDetailPage({
           email: u.email,
           role: u.role,
         }))}
+        plans={toGrantableAdminPlans(catalog, currentPlanSlug)}
+        currentPlanSlug={currentPlanSlug}
       />
     </div>
   );

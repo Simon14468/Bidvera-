@@ -44,6 +44,19 @@ function GoogleIcon({ className }: { className?: string }) {
   );
 }
 
+function AppleIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden
+    >
+      <path d="M16.37 12.62c.03 3.27 2.87 4.36 2.9 4.38-.02.07-.45 1.55-1.49 3.07-.9 1.31-1.83 2.62-3.3 2.65-1.45.03-1.91-.86-3.57-.86-1.65 0-2.17.83-3.54.88-1.42.06-2.5-1.42-3.41-2.73-1.86-2.68-3.28-7.57-1.37-10.87.95-1.64 2.64-2.68 4.48-2.71 1.4-.03 2.72.94 3.57.94.85 0 2.45-1.16 4.13-.99.7.03 2.68.28 3.95 2.14-.1.06-2.36 1.38-2.35 4.1ZM14.7 5.18c.76-.92 1.27-2.2 1.13-3.48-1.1.04-2.42.73-3.21 1.65-.71.82-1.33 2.13-1.16 3.39 1.22.1 2.48-.62 3.24-1.56Z" />
+    </svg>
+  );
+}
+
 function MicrosoftIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -65,6 +78,7 @@ export function AuthForm({
   labels,
   googleEnabled = false,
   microsoftEnabled = false,
+  appleEnabled = false,
   registrationEnabled = true,
   turnstileSiteKey,
 }: {
@@ -72,6 +86,7 @@ export function AuthForm({
   labels: AuthLabels;
   googleEnabled?: boolean;
   microsoftEnabled?: boolean;
+  appleEnabled?: boolean;
   /** When false, hide signup CTAs on the login screen. */
   registrationEnabled?: boolean;
   turnstileSiteKey?: string | null;
@@ -83,7 +98,7 @@ export function AuthForm({
   const [showPassword, setShowPassword] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [turnstileReset, setTurnstileReset] = useState(0);
-  const showOAuth = googleEnabled || microsoftEnabled;
+  const showOAuth = googleEnabled || microsoftEnabled || appleEnabled;
   const nextPath = safeInternalPath(search.get("next"), "/dashboard");
   const oauthErrorParam = search.get("oauth_error");
   const oauthMessageParam = search.get("oauth_message");
@@ -92,11 +107,25 @@ export function AuthForm({
       ? oauthMessageParam?.trim() || labels.googleOAuthError
       : null;
 
-  function googleStartHref() {
+  function oauthStartQuery() {
     const q = new URLSearchParams();
     if (nextPath && nextPath !== "/dashboard") q.set("next", nextPath);
-    const qs = q.toString();
+    return q.toString();
+  }
+
+  function googleStartHref() {
+    const qs = oauthStartQuery();
     return qs ? `/api/auth/google/start?${qs}` : "/api/auth/google/start";
+  }
+
+  function microsoftStartHref() {
+    const qs = oauthStartQuery();
+    return qs ? `/api/auth/microsoft/start?${qs}` : "/api/auth/microsoft/start";
+  }
+
+  function appleStartHref() {
+    const qs = oauthStartQuery();
+    return qs ? `/api/auth/apple/start?${qs}` : "/api/auth/apple/start";
   }
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -263,16 +292,24 @@ export function AuthForm({
               </a>
             ) : null}
             {microsoftEnabled ? (
-              <button
-                type="button"
-                disabled
-                className={`${oauthBtnClass} cursor-not-allowed opacity-60`}
-                title={labels.microsoftComingSoon}
-                aria-disabled="true"
+              <a
+                href={microsoftStartHref()}
+                className={oauthBtnClass}
+                aria-label={labels.continueMicrosoft}
               >
                 <MicrosoftIcon className="size-4 shrink-0 text-white" />
-                <span>{labels.microsoftComingSoon}</span>
-              </button>
+                <span>{labels.continueMicrosoft}</span>
+              </a>
+            ) : null}
+            {appleEnabled ? (
+              <a
+                href={appleStartHref()}
+                className={oauthBtnClass}
+                aria-label={labels.continueApple}
+              >
+                <AppleIcon className="size-4 shrink-0 text-white" />
+                <span>{labels.continueApple}</span>
+              </a>
             ) : null}
           </div>
         ) : null}

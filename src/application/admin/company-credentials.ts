@@ -1,11 +1,11 @@
 import { createSession } from "@/auth/session";
 import { SA_ENTER_FINGERPRINT_PREFIX } from "@/auth/super-admin-enter";
 import type { SuperAdminContext } from "@/auth/super-admin-session";
-import { PLANS, type PlanId } from "@/config/plans";
 import { prisma } from "@/lib/db";
 import { AppError, ErrorCode } from "@/lib/errors";
 import { writeAdminAudit } from "@/services/admin/audit";
 import { issuePasswordReset } from "@/services/auth/tokens";
+import { slugToLegacyPlan } from "@/services/billing/free-workspace";
 import { analysesLimitForPlan } from "@/services/entitlements";
 import { getEffectiveLimits } from "@/services/plans/effective";
 import type { SubscriptionStatus } from "@prisma/client";
@@ -137,7 +137,7 @@ export async function adminEnterCompanyAccount(input: {
 export async function adminSetCompanySubscriptionPlan(input: {
   ctx: SuperAdminContext;
   companyId: string;
-  planId: PlanId;
+  planId: string;
   status?: SubscriptionStatus;
   ipHash?: string | null;
 }) {
@@ -147,14 +147,18 @@ export async function adminSetCompanySubscriptionPlan(input: {
   });
   if (!company) throw new AppError(ErrorCode.NOT_FOUND, "Company not found.", 404);
 
-  const cfg = PLANS[input.planId];
-  if (!cfg) throw new AppError(ErrorCode.VALIDATION, "Unknown plan.", 400);
-
-  const billingPlan = await prisma.plan.findUnique({ where: { slug: cfg.id } });
+  const billingPlan = await prisma.plan.findUnique({ where: { slug: input.planId } });
   if (!billingPlan) {
     throw new AppError(
       ErrorCode.VALIDATION,
-      "Billing plan catalog missing this slug. Seed plans first.",
+      "Unknown plan. Use a slug from Plans & Entitlements.",
+      400,
+    );
+  }
+  if (billingPlan.status !== "ACTIVE") {
+    throw new AppError(
+      ErrorCode.VALIDATION,
+      "Only active Plans catalog entries can be granted.",
       400,
     );
   }
@@ -166,13 +170,19 @@ export async function adminSetCompanySubscriptionPlan(input: {
     analysesLimit: company.usage?.analysesLimit ?? null,
   };
 
+  const legacyPlan = billingPlan.legacyEnum ?? slugToLegacyPlan(billingPlan.slug);
   const status: SubscriptionStatus =
-    input.status ?? (cfg.id === "trial" ? "TRIALING" : "ACTIVE");
+    input.status ??
+    (billingPlan.trialEligible || billingPlan.isFree ? "TRIALING" : "ACTIVE");
 
   const periodStart = new Date();
   const periodEnd = new Date();
   if (status === "CANCELED" || status === "INCOMPLETE" || status === "EXPIRED") {
     periodEnd.setDate(periodEnd.getDate() - 1);
+  } else if (status === "TRIALING") {
+    const days =
+      billingPlan.trialDays && billingPlan.trialDays > 0 ? billingPlan.trialDays : 14;
+    periodEnd.setTime(periodStart.getTime() + days * 86_400_000);
   } else {
     periodEnd.setFullYear(periodEnd.getFullYear() + 1);
   }
@@ -187,7 +197,7 @@ export async function adminSetCompanySubscriptionPlan(input: {
     where: { companyId: input.companyId },
     create: {
       companyId: input.companyId,
-      plan: cfg.prismaPlan,
+      plan: legacyPlan,
       planId: billingPlan.id,
       status,
       provider: "manual_admin",
@@ -200,7 +210,7 @@ export async function adminSetCompanySubscriptionPlan(input: {
       canceledAt: status === "CANCELED" ? new Date() : null,
     },
     update: {
-      plan: cfg.prismaPlan,
+      plan: legacyPlan,
       planId: billingPlan.id,
       status,
       currentPeriodStart: periodStart,
@@ -238,8 +248,8 @@ export async function adminSetCompanySubscriptionPlan(input: {
       fromStatus: previous.status,
       toStatus: status,
       fromPlan: previous.plan,
-      toPlan: cfg.prismaPlan,
-      metadata: { source: "super_admin", planSlug: cfg.id },
+      toPlan: legacyPlan,
+      metadata: { source: "super_admin", planSlug: billingPlan.slug },
     },
   });
 
@@ -250,10 +260,10 @@ export async function adminSetCompanySubscriptionPlan(input: {
     targetId: input.companyId,
     previousValue: previous,
     newValue: {
-      plan: cfg.prismaPlan,
+      plan: legacyPlan,
       planId: billingPlan.id,
       status,
-      analysesLimit: cfg.analysesLimit,
+      analysesLimit,
     },
     ipHash: input.ipHash,
   });

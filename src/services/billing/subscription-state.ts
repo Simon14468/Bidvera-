@@ -2,6 +2,14 @@ import { prisma } from "@/lib/db";
 import { trackEvent } from "@/services/observability";
 import { analysesLimitForPlan } from "@/services/entitlements";
 import { shouldResetUsageForPeriod } from "@/services/billing/lifecycle";
+import {
+  hasConsumedFreeWorkspaceFirstSignupTrial,
+  pickFreeWorkspaceTrialPlan,
+  resolveFirstSignupTrialOffer,
+  resolveTrialDurationDays,
+  trialPeriodEndFromDays,
+  type TrialSourcePlan,
+} from "@/services/billing/trial-grant";
 import type {
   BillingInterval,
   BillingProvider,
@@ -311,6 +319,7 @@ export async function updateSubscriptionStatus(input: {
       })
       .catch(() => null);
   }
+
   if (input.status === "PAST_DUE" || input.status === "PAYMENT_FAILED") {
     await trackEvent({
       action: "PAYMENT_FAILURE",
@@ -331,116 +340,280 @@ export async function ensureTrialSubscription(
   options?: { grant?: boolean },
 ) {
   const grant = options?.grant ?? true;
-  const existing = await prisma.subscription.findUnique({
-    where: { companyId },
-  });
+  const [existing, consumedAt] = await Promise.all([
+    prisma.subscription.findUnique({
+      where: { companyId },
+    }),
+    readFreeWorkspaceTrialConsumedAt(companyId),
+  ]);
 
-  if (existing) {
-    const locked =
-      existing.status === "ACTIVE" ||
-      existing.status === "PAST_DUE" ||
-      existing.status === "PAYMENT_FAILED" ||
-      existing.status === "CANCELED" ||
-      existing.status === "EXPIRED" ||
-      existing.status === "UNPAID" ||
-      existing.status === "INCOMPLETE" ||
-      (existing.plan !== "TRIAL" && existing.status !== "TRIALING");
-
-    if (locked) {
-      if (
-        existing.status === "TRIALING" &&
-        existing.plan === "TRIAL" &&
-        !existing.planId
-      ) {
-        const trialPlan = await prisma.plan.findFirst({
-          where: {
-            OR: [{ slug: "trial" }, { legacyEnum: "TRIAL" }],
-            status: "ACTIVE",
-          },
-        });
-        if (trialPlan) {
-          await prisma.subscription.update({
-            where: { companyId },
-            data: { planId: trialPlan.id },
-          });
-        }
-      }
-      return;
-    }
-
-    if (existing.status === "TRIALING") {
-      await prisma.companyUsage.upsert({
+  if (
+    existing?.status === "TRIALING" &&
+    existing.plan === "TRIAL" &&
+    !existing.planId
+  ) {
+    const backfillPlan = await findFreeWorkspaceTrialPlan();
+    if (backfillPlan) {
+      await prisma.subscription.update({
         where: { companyId },
-        create: {
-          companyId,
-          analysesUsed: 0,
-          analysesLimit: 3,
-          periodStart: existing.currentPeriodStart,
-          periodEnd: existing.currentPeriodEnd,
-        },
-        update: {},
+        data: { planId: backfillPlan.id },
       });
-      return;
     }
   }
 
   const [trialPlan, billingSettings] = await Promise.all([
-    prisma.plan.findFirst({
-      where: { OR: [{ slug: "trial" }, { legacyEnum: "TRIAL" }], status: "ACTIVE" },
-    }),
+    findFreeWorkspaceTrialPlan(),
     import("@/services/billing/settings").then((m) => m.getBillingGatewaySettings()),
   ]);
 
-  if (billingSettings.requirePaymentMethodForTrial) {
-    // Card-verified trials start only via Stripe Checkout — do not auto-grant.
+  const decision = resolveFirstSignupTrialOffer({
+    grant,
+    trialEnabled: billingSettings.trialEnabled,
+    hasEligiblePlan: Boolean(trialPlan),
+    consumedAt,
+    existing,
+  });
+
+  if (
+    existing?.status === "TRIALING" &&
+    existing.plan === "TRIAL" &&
+    decision.action === "skip" &&
+    (decision.reason === "already_trialing" ||
+      decision.reason === "already_consumed")
+  ) {
+    await persistConsumedMarkerIfMissing(companyId, consumedAt);
+    await prisma.companyUsage.upsert({
+      where: { companyId },
+      create: {
+        companyId,
+        analysesUsed: 0,
+        analysesLimit: 3,
+        periodStart: existing.currentPeriodStart,
+        periodEnd: existing.currentPeriodEnd,
+      },
+      update: {},
+    });
     return;
   }
 
-  const planAllowsTrial = trialPlan ? trialPlan.trialEligible !== false : true;
-  const trialsOn = grant && billingSettings.trialEnabled && planAllowsTrial;
+  if (decision.action === "skip" && decision.reason === "already_consumed") {
+    await persistConsumedMarkerIfMissing(companyId, consumedAt);
+    return;
+  }
 
-  const trialDays =
-    trialPlan?.trialDays && trialPlan.trialDays > 0
-      ? trialPlan.trialDays
-      : billingSettings.trialDays > 0
-        ? billingSettings.trialDays
-        : null;
+  if (
+    decision.action === "skip" &&
+    decision.reason === "locked" &&
+    existing?.plan === "TRIAL" &&
+    existing.status === "EXPIRED"
+  ) {
+    await persistConsumedMarkerIfMissing(companyId, consumedAt);
+    return;
+  }
+
+  // Config gaps, temporary policy delays, and risk blocks must not persist EXPIRED
+  // and must not consume the one-time first-signup trial.
+  if (decision.action !== "grant" || !trialPlan) {
+    return;
+  }
+
+  const trialDays = resolveTrialDurationDays({
+    planTrialDays: trialPlan.trialDays,
+    settingsTrialDays: billingSettings.trialDays,
+  });
 
   const periodStart = new Date();
-  const periodEnd = trialDays ? new Date(Date.now() + trialDays * 86400000) : null;
-  const status: SubscriptionStatus = trialsOn ? "TRIALING" : "EXPIRED";
-  const limit = trialsOn ? (trialPlan?.analysesLimit ?? 3) : 0;
+  const periodEnd = trialPeriodEndFromDays(periodStart, trialDays);
+  const limit = analysesLimitForPlan(trialPlan, "MONTH");
 
-  await prisma.subscription.create({
-    data: {
-      companyId,
-      plan: "TRIAL",
-      planId: trialPlan?.id ?? null,
-      status,
-      provider: "manual",
-      billingInterval: "MONTH",
-      startedAt: periodStart,
-      currentPeriodStart: periodStart,
-      currentPeriodEnd: periodEnd,
-      gracePeriodEndsAt: null,
-    },
-  });
+  try {
+    await prisma.$transaction(async (tx) => {
+      const freshSub = await tx.subscription.findUnique({
+        where: { companyId },
+        select: { status: true, plan: true },
+      });
+      if (
+        hasConsumedFreeWorkspaceFirstSignupTrial({
+          consumedAt,
+          existing: freshSub,
+        })
+      ) {
+        return;
+      }
 
-  await prisma.companyUsage.upsert({
-    where: { companyId },
-    create: {
-      companyId,
-      analysesUsed: 0,
-      analysesLimit: limit,
-      periodStart,
-      periodEnd,
-    },
-    update: {
-      analysesLimit: limit,
-      periodStart,
-      periodEnd,
-    },
+      await tx.subscription.create({
+        data: {
+          companyId,
+          plan: "TRIAL",
+          planId: trialPlan.id,
+          status: "TRIALING",
+          provider: "manual",
+          billingInterval: "MONTH",
+          startedAt: periodStart,
+          currentPeriodStart: periodStart,
+          currentPeriodEnd: periodEnd,
+          gracePeriodEndsAt: null,
+        },
+      });
+
+      await tx.companyUsage.upsert({
+        where: { companyId },
+        create: {
+          companyId,
+          analysesUsed: 0,
+          analysesLimit: limit,
+          periodStart,
+          periodEnd,
+        },
+        update: {
+          analysesLimit: limit,
+          periodStart,
+          periodEnd,
+        },
+      });
+    });
+  } catch (error) {
+    if (isUniqueConstraintError(error)) {
+      await persistConsumedMarkerIfMissing(companyId, null);
+      return;
+    }
+    throw error;
+  }
+
+  await persistConsumedMarkerIfMissing(companyId, null);
+
+  await import("@/services/billing/emails")
+    .then(async ({ buildFreeWorkspaceTrialStartedEmail, enqueueCompanyBillingEmail, loadBillingEmailAudience }) => {
+      const audience = await loadBillingEmailAudience(companyId);
+      const email = buildFreeWorkspaceTrialStartedEmail({
+        firstName: audience.firstName,
+        companyName: audience.companyName,
+        daysRemaining: trialDays,
+        trialEndDate: periodEnd,
+      });
+      await enqueueCompanyBillingEmail({
+        companyId,
+        subject: email.subject,
+        html: email.html,
+        text: email.text,
+        dedupeKey: `billing:fw_trial_started:${companyId}`,
+      });
+    })
+    .catch(() => null);
+}
+
+export async function workspaceHasConsumedFreeWorkspaceFirstSignupTrial(
+  companyId: string,
+): Promise<boolean> {
+  const [consumedAt, existing] = await Promise.all([
+    readFreeWorkspaceTrialConsumedAt(companyId),
+    prisma.subscription.findUnique({
+      where: { companyId },
+      select: { status: true, plan: true },
+    }),
+  ]);
+  return hasConsumedFreeWorkspaceFirstSignupTrial({
+    consumedAt,
+    existing,
   });
+}
+
+export async function canOfferFirstSignupFreeWorkspaceTrial(
+  companyId: string,
+): Promise<boolean> {
+  const [consumedAt, existing, trialPlan, billingSettings] = await Promise.all([
+    readFreeWorkspaceTrialConsumedAt(companyId),
+    prisma.subscription.findUnique({
+      where: { companyId },
+      select: { status: true, plan: true },
+    }),
+    findFreeWorkspaceTrialPlan(),
+    import("@/services/billing/settings").then((m) => m.getBillingGatewaySettings()),
+  ]);
+  const decision = resolveFirstSignupTrialOffer({
+    grant: true,
+    trialEnabled: billingSettings.trialEnabled,
+    hasEligiblePlan: Boolean(trialPlan),
+    consumedAt,
+    existing,
+  });
+  return decision.action === "grant";
+}
+
+async function readFreeWorkspaceTrialConsumedAt(
+  companyId: string,
+): Promise<Date | null> {
+  try {
+    const company = await prisma.company.findUnique({
+      where: { id: companyId },
+      select: { freeWorkspaceTrialConsumedAt: true },
+    });
+    return company?.freeWorkspaceTrialConsumedAt ?? null;
+  } catch (error) {
+    if (isMissingConsumedAtFieldError(error)) return null;
+    throw error;
+  }
+}
+
+async function persistConsumedMarkerIfMissing(
+  companyId: string,
+  consumedAt?: Date | null,
+) {
+  if (consumedAt) return;
+  try {
+    await prisma.company.updateMany({
+      where: { id: companyId, freeWorkspaceTrialConsumedAt: null },
+      data: { freeWorkspaceTrialConsumedAt: new Date() },
+    });
+  } catch (error) {
+    if (isMissingConsumedAtFieldError(error)) return;
+    throw error;
+  }
+}
+
+function isMissingConsumedAtFieldError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  const code =
+    typeof error === "object" && error !== null && "code" in error
+      ? String((error as { code?: string }).code)
+      : "";
+  return (
+    message.includes("freeWorkspaceTrialConsumedAt") ||
+    code === "P2022" ||
+    /column .*freeWorkspaceTrialConsumedAt/i.test(message)
+  );
+}
+
+function isUniqueConstraintError(error: unknown): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    (error as { code?: string }).code === "P2002"
+  );
+}
+
+async function findFreeWorkspaceTrialPlan(): Promise<TrialSourcePlan | null> {
+  const rows = await prisma.plan.findMany({
+    where: {
+      status: "ACTIVE",
+      trialEligible: true,
+      slug: "free",
+      isFree: true,
+    },
+    select: {
+      id: true,
+      slug: true,
+      status: true,
+      isFree: true,
+      trialEligible: true,
+      trialDays: true,
+      analysesLimit: true,
+      analysesLimitYearly: true,
+    },
+    orderBy: { sortOrder: "asc" },
+  });
+  return pickFreeWorkspaceTrialPlan(rows);
 }
 
 function slugToLegacy(slug: string): SubscriptionPlan {

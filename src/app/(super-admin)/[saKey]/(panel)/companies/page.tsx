@@ -1,4 +1,6 @@
 import { listCompaniesForAdmin } from "@/application/admin/company-service";
+import { toGrantableAdminPlans } from "@/application/admin/grantable-plans";
+import { listPlansForAdmin } from "@/application/admin/plan-service";
 import { requireSuperAdmin } from "@/auth/super-admin-session";
 import { CompanyListActions } from "@/components/super-admin/company-list-actions";
 import { CompanyListPlanControl } from "@/components/super-admin/company-list-plan";
@@ -15,6 +17,7 @@ export default async function SaCompaniesPage({
 }) {
   await requireSuperAdmin();
   const sp = await searchParams;
+  const catalog = await listPlansForAdmin();
   const companies = await listCompaniesForAdmin({
     query: sp.q,
     status: sp.status === "SUSPENDED" || sp.status === "ACTIVE" ? sp.status : "ALL",
@@ -82,8 +85,9 @@ export default async function SaCompaniesPage({
                   <CompanyListPlanControl
                     companyId={c.id}
                     planName={c.planName}
-                    planEnum={String(c.plan)}
+                    planSlug={c.planSlug ?? String(c.plan).toLowerCase()}
                     subscriptionStatus={c.subscriptionStatus}
+                    plans={toGrantableAdminPlans(catalog, c.planSlug)}
                   />
                 </td>
                 <td className="px-3 py-2">

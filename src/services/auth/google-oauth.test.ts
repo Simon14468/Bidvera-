@@ -98,9 +98,15 @@ describe("google OAuth account linking rules (source)", () => {
     const { readFileSync } = await import("node:fs");
     const { join } = await import("node:path");
     const src = readFileSync(
+      join(process.cwd(), "src/application/oauth-account-service.ts"),
+      "utf8",
+    );
+    const google = readFileSync(
       join(process.cwd(), "src/application/google-oauth-service.ts"),
       "utf8",
     );
+    assert.match(google, /resolveUserForOAuthClaims/);
+    assert.match(google, /GOOGLE_OAUTH_PROVIDER/);
     assert.match(src, /registrationEnabled/);
     assert.match(src, /passwordHash:\s*null/);
     assert.match(src, /emailVerified:\s*true/);
@@ -128,7 +134,7 @@ describe("google OAuth account linking rules (source)", () => {
     assert.doesNotMatch(cb, /console\.(log|info|debug).*idToken|client_secret/i);
   });
 
-  it("AuthForm enables live Google start when flag on; Microsoft stays coming soon", async () => {
+  it("AuthForm enables live Google, Microsoft, and Apple start when flags on", async () => {
     const { readFileSync } = await import("node:fs");
     const { join } = await import("node:path");
     const src = readFileSync(
@@ -136,8 +142,12 @@ describe("google OAuth account linking rules (source)", () => {
       "utf8",
     );
     assert.match(src, /\/api\/auth\/google\/start/);
+    assert.match(src, /\/api\/auth\/microsoft\/start/);
+    assert.match(src, /\/api\/auth\/apple\/start/);
     assert.match(src, /labels\.continueGoogle/);
-    assert.match(src, /microsoftComingSoon/);
+    assert.match(src, /labels\.continueMicrosoft/);
+    assert.match(src, /labels\.continueApple/);
     assert.match(src, /oauth_error/);
+    assert.doesNotMatch(src, /microsoftComingSoon/);
   });
 });

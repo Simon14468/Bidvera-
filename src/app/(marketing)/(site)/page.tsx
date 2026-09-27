@@ -1,5 +1,7 @@
+import { resolveAuthContext } from "@/auth/session";
 import { getDictionary } from "@/i18n/dictionaries";
 import { getLocale } from "@/i18n/get-locale";
+import { canOfferFirstSignupFreeWorkspaceTrial } from "@/services/billing/subscription-state";
 import { PLANS } from "@/config/plans";
 import {
   getPublicLandingVideo,
@@ -36,10 +38,15 @@ export default async function LandingPage() {
   const l = t.landing;
   const pro = PLANS.pro;
   const proPrice = `$${pro.priceMonthlyCents / 100}`;
-  const [landingVideo, testimonials] = await Promise.all([
+  const [landingVideo, testimonials, auth] = await Promise.all([
     getPublicLandingVideo(locale),
     listPublicTestimonials(),
+    resolveAuthContext(),
   ]);
+  const showFirstSignupTrialCta = auth?.user.companyId
+    ? await canOfferFirstSignupFreeWorkspaceTrial(auth.user.companyId)
+    : !auth;
+  const p = t.pricing;
 
   const workflow = [
     { step: "01", title: l.step1Title, body: l.step1Body },
@@ -90,7 +97,20 @@ export default async function LandingPage() {
                 {l.ctaSecondary}
               </Link>
             </div>
-            <p className="mt-3 px-2 text-sm text-muted sm:mt-4">{l.trialNote}</p>
+            {showFirstSignupTrialCta ? (
+              <p className="mt-3 px-2 text-sm text-muted sm:mt-4">
+                {p.trialBadge}. {p.freeHeadline}{" "}
+                <Link href="/signup" className="font-medium text-primary hover:underline">
+                  {p.startTrial}
+                </Link>
+              </p>
+            ) : (
+              <p className="mt-3 px-2 text-sm text-muted sm:mt-4">
+                <Link href="/pricing" className="font-medium text-primary hover:underline">
+                  {p.startSubscription}
+                </Link>
+              </p>
+            )}
           </Reveal>
 
           {landingVideo ? (

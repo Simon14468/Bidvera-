@@ -40,9 +40,11 @@ export function OnboardingPlanPicker({
   defaultGateway,
   copy,
   turnstileSiteKey,
+  showFirstSignupTrialCta = false,
 }: {
   plans: PublicBillingPlan[];
   defaultGateway: "stripe" | "paypal";
+  showFirstSignupTrialCta?: boolean;
   turnstileSiteKey?: string | null;
   copy: {
     title: string;
@@ -68,10 +70,6 @@ export function OnboardingPlanPicker({
   const [turnstileToken, setTurnstileToken] = useState("");
   const [turnstileReset, setTurnstileReset] = useState(0);
 
-  const freePlans = useMemo(
-    () => plans.filter((p) => p.isFree || p.slug === "free"),
-    [plans],
-  );
   const paidPlans = useMemo(
     () =>
       plans.filter(
@@ -102,11 +100,11 @@ export function OnboardingPlanPicker({
         resetKey={turnstileReset}
       />
 
-      {freePlans.map((plan) => (
-        <Card key={plan.id} className="border-border shadow-[var(--shadow-soft)]">
+      {showFirstSignupTrialCta ? (
+        <Card className="border-border shadow-[var(--shadow-soft)]">
           <CardHeader>
-            <CardTitle>{copy.freeTitle}</CardTitle>
-            <CardDescription>{copy.freeBody}</CardDescription>
+            <CardTitle>{copy.trialTitle}</CardTitle>
+            <CardDescription>{copy.trialBody}</CardDescription>
           </CardHeader>
           <CardContent>
             <Button
@@ -127,11 +125,11 @@ export function OnboardingPlanPicker({
                 });
               }}
             >
-              {copy.freeCta}
+              {copy.trialCta}
             </Button>
           </CardContent>
         </Card>
-      ))}
+      ) : null}
 
       {yearlyAvailable ? (
         <div className="flex justify-center gap-2">

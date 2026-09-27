@@ -592,18 +592,6 @@ export async function activateFreeOrTrialPlanAction(raw: unknown) {
     ip: meta.ip,
   });
 
-  if (data.kind === "free") {
-    const { assignFreeWorkspace } = await import(
-      "@/services/billing/free-workspace"
-    );
-    await assignFreeWorkspace(companyId, "onboarding_free");
-    await prisma.user.update({
-      where: { id: auth.user.id },
-      data: { onboardingStep: "DONE" },
-    });
-    return { ok: true as const, redirectTo: "/dashboard" };
-  }
-
   if (!billingSettings.trialEnabled && data.kind === "trial") {
     throw new AppError(ErrorCode.FORBIDDEN, "Trials are currently disabled.", 403);
   }

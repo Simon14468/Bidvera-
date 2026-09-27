@@ -475,6 +475,11 @@ model Company {
    */
   globalLearningConsent Boolean @default(true)
   /**
+   * Set only after a successful automatic Free Workspace first-signup trial grant.
+   * NULL means the workspace has never consumed that one-time trial.
+   */
+  freeWorkspaceTrialConsumedAt DateTime?
+  /**
    * In-flight Stripe/PayPal checkout. Must not replace a live Subscription.
    * Shape: { provider, planId, interval, providerRef, createdAt }.
    */

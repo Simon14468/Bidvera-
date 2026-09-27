@@ -13,6 +13,11 @@ type AuthSnapshot = {
   microsoftEnabled: boolean;
   microsoftClientId: string | null;
   hasMicrosoftClientSecret: boolean;
+  appleEnabled: boolean;
+  appleClientId: string | null;
+  appleTeamId: string | null;
+  appleKeyId: string | null;
+  hasApplePrivateKey: boolean;
   mediumRiskTrialDelayHours: number;
   mediumRiskRequireBusinessEmail: boolean;
   highRiskBlockTrial: boolean;
@@ -32,6 +37,7 @@ export function AuthAdminPanel({ initial }: { initial: AuthSnapshot }) {
   const [hasMicrosoftSecret, setHasMicrosoftSecret] = useState(
     initial.hasMicrosoftClientSecret,
   );
+  const [hasAppleKey, setHasAppleKey] = useState(initial.hasApplePrivateKey);
   const [form, setForm] = useState({
     registrationEnabled: initial.registrationEnabled,
     requireEmailVerification: initial.requireEmailVerification,
@@ -43,6 +49,12 @@ export function AuthAdminPanel({ initial }: { initial: AuthSnapshot }) {
     microsoftClientId: initial.microsoftClientId ?? "",
     microsoftClientSecret: "",
     clearMicrosoftClientSecret: false,
+    appleEnabled: initial.appleEnabled,
+    appleClientId: initial.appleClientId ?? "",
+    appleTeamId: initial.appleTeamId ?? "",
+    appleKeyId: initial.appleKeyId ?? "",
+    applePrivateKey: "",
+    clearApplePrivateKey: false,
     mediumRiskTrialDelayHours: initial.mediumRiskTrialDelayHours,
     mediumRiskRequireBusinessEmail: initial.mediumRiskRequireBusinessEmail,
     highRiskBlockTrial: initial.highRiskBlockTrial,
@@ -54,6 +66,7 @@ export function AuthAdminPanel({ initial }: { initial: AuthSnapshot }) {
       | "requireEmailVerification"
       | "googleEnabled"
       | "microsoftEnabled"
+      | "appleEnabled"
       | "mediumRiskRequireBusinessEmail"
       | "highRiskBlockTrial",
     value: boolean,
@@ -67,7 +80,7 @@ export function AuthAdminPanel({ initial }: { initial: AuthSnapshot }) {
       <h2 className="text-lg font-semibold text-white">Registration & auth</h2>
       <p className="mt-1 text-sm text-slate-400">
         Control public signup, email verification, trial risk gates, and OAuth
-        login credentials (Google / Microsoft).
+        login credentials (Google / Microsoft / Apple).
       </p>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -77,6 +90,7 @@ export function AuthAdminPanel({ initial }: { initial: AuthSnapshot }) {
             ["requireEmailVerification", "Require email verification"],
             ["googleEnabled", "Google login"],
             ["microsoftEnabled", "Microsoft login"],
+            ["appleEnabled", "Apple login"],
             ["mediumRiskRequireBusinessEmail", "Medium risk: require business email"],
             ["highRiskBlockTrial", "High risk: block trial activation"],
           ] as const
@@ -260,6 +274,107 @@ export function AuthAdminPanel({ initial }: { initial: AuthSnapshot }) {
         </div>
       ) : null}
 
+      {form.appleEnabled ? (
+        <div className="mt-4 space-y-4 rounded-lg border border-slate-800 bg-slate-950/50 p-4">
+          <div>
+            <h3 className="text-sm font-medium text-white">Apple Sign In keys</h3>
+            <p className="mt-1 text-xs text-slate-500">
+              From Apple Developer → Certificates, Identifiers &amp; Profiles →
+              Services ID + Sign in with Apple key. The .p8 private key is stored
+              encrypted server-side and never shown again.
+            </p>
+          </div>
+          <label className="block text-sm text-slate-300">
+            Apple Client ID (Services ID)
+            <input
+              className={inputClass}
+              value={form.appleClientId}
+              onChange={(e) => {
+                setForm((f) => ({ ...f, appleClientId: e.target.value }));
+                setSaved(false);
+              }}
+              placeholder="com.bidvera.web"
+              autoComplete="off"
+              spellCheck={false}
+            />
+          </label>
+          <label className="block text-sm text-slate-300">
+            Apple Team ID
+            <input
+              className={inputClass}
+              value={form.appleTeamId}
+              onChange={(e) => {
+                setForm((f) => ({ ...f, appleTeamId: e.target.value }));
+                setSaved(false);
+              }}
+              placeholder="ABCD123456"
+              autoComplete="off"
+              spellCheck={false}
+            />
+          </label>
+          <label className="block text-sm text-slate-300">
+            Apple Key ID
+            <input
+              className={inputClass}
+              value={form.appleKeyId}
+              onChange={(e) => {
+                setForm((f) => ({ ...f, appleKeyId: e.target.value }));
+                setSaved(false);
+              }}
+              placeholder="XYZ9876543"
+              autoComplete="off"
+              spellCheck={false}
+            />
+          </label>
+          <div>
+            <label className="block text-sm text-slate-300">
+              Apple Private Key (.p8)
+              <textarea
+                autoComplete="new-password"
+                className={`${inputClass} h-28 font-mono text-xs`}
+                value={form.applePrivateKey}
+                onChange={(e) => {
+                  setForm((f) => ({
+                    ...f,
+                    applePrivateKey: e.target.value,
+                    clearApplePrivateKey: false,
+                  }));
+                  setSaved(false);
+                }}
+                placeholder={
+                  hasAppleKey
+                    ? "•••••••• (saved — leave blank to keep)"
+                    : "-----BEGIN PRIVATE KEY-----"
+                }
+                spellCheck={false}
+              />
+            </label>
+            <p className="mt-1 text-xs text-slate-500">
+              {hasAppleKey
+                ? "Private key is stored encrypted server-side."
+                : "No private key saved yet."}
+            </p>
+            {hasAppleKey ? (
+              <button
+                type="button"
+                className="mt-1 text-xs text-rose-400 hover:underline"
+                onClick={() => {
+                  setForm((f) => ({
+                    ...f,
+                    applePrivateKey: "",
+                    clearApplePrivateKey: true,
+                  }));
+                  setHasAppleKey(false);
+                  setSaved(false);
+                }}
+              >
+                Clear saved private key
+              </button>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
+
       {error ? <p className="mt-3 text-sm text-rose-400">{error}</p> : null}
       {saved ? <p className="mt-3 text-sm text-emerald-400">Saved.</p> : null}
 
@@ -281,6 +396,12 @@ export function AuthAdminPanel({ initial }: { initial: AuthSnapshot }) {
               microsoftClientId: form.microsoftClientId.trim() || null,
               microsoftClientSecret: form.microsoftClientSecret || null,
               clearMicrosoftClientSecret: form.clearMicrosoftClientSecret,
+              appleEnabled: form.appleEnabled,
+              appleClientId: form.appleClientId.trim() || null,
+              appleTeamId: form.appleTeamId.trim() || null,
+              appleKeyId: form.appleKeyId.trim() || null,
+              applePrivateKey: form.applePrivateKey || null,
+              clearApplePrivateKey: form.clearApplePrivateKey,
               mediumRiskTrialDelayHours: form.mediumRiskTrialDelayHours,
               mediumRiskRequireBusinessEmail: form.mediumRiskRequireBusinessEmail,
               highRiskBlockTrial: form.highRiskBlockTrial,
@@ -291,6 +412,7 @@ export function AuthAdminPanel({ initial }: { initial: AuthSnapshot }) {
             }
             setHasGoogleSecret(result.data.hasGoogleClientSecret);
             setHasMicrosoftSecret(result.data.hasMicrosoftClientSecret);
+            setHasAppleKey(result.data.hasApplePrivateKey);
             setForm((f) => ({
               ...f,
               googleClientId: result.data.googleClientId ?? "",
@@ -301,6 +423,12 @@ export function AuthAdminPanel({ initial }: { initial: AuthSnapshot }) {
               microsoftClientSecret: "",
               clearMicrosoftClientSecret: false,
               microsoftEnabled: result.data.microsoftEnabled,
+              appleClientId: result.data.appleClientId ?? "",
+              appleTeamId: result.data.appleTeamId ?? "",
+              appleKeyId: result.data.appleKeyId ?? "",
+              applePrivateKey: "",
+              clearApplePrivateKey: false,
+              appleEnabled: result.data.appleEnabled,
               registrationEnabled: result.data.registrationEnabled,
               requireEmailVerification: result.data.requireEmailVerification,
               mediumRiskTrialDelayHours: result.data.mediumRiskTrialDelayHours,

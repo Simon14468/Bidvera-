@@ -7,6 +7,10 @@ import {
   saSuspendCompany,
   saUpsertOverride,
 } from "@/app/actions/super-admin";
+import {
+  defaultStatusForGrantablePlan,
+  type GrantableAdminPlan,
+} from "@/application/admin/grantable-plans";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
@@ -17,6 +21,8 @@ export function CompanyAdminActions({
   companiesHref,
   suspended,
   users,
+  plans,
+  currentPlanSlug,
 }: {
   companyId: string;
   companySlug: string;
@@ -24,19 +30,21 @@ export function CompanyAdminActions({
   companiesHref: string;
   suspended: boolean;
   users: Array<{ id: string; name: string; email: string; role: string }>;
+  plans: GrantableAdminPlan[];
+  currentPlanSlug: string | null;
 }) {
   const router = useRouter();
+  const initialPlan =
+    plans.find((p) => p.slug === currentPlanSlug) ?? plans[0] ?? null;
   const [password, setPassword] = useState("");
   const [confirmSlug, setConfirmSlug] = useState("");
   const [msg, setMsg] = useState<string | null>(null);
   const [pending, start] = useTransition();
   const [resetUserId, setResetUserId] = useState(users[0]?.id ?? "");
-  const [planId, setPlanId] = useState<"free" | "trial" | "starter" | "pro" | "business">(
-    "business",
-  );
+  const [planId, setPlanId] = useState(initialPlan?.slug ?? "");
   const [planStatus, setPlanStatus] = useState<
     "ACTIVE" | "TRIALING" | "EXPIRED" | "CANCELED"
-  >("ACTIVE");
+  >(initialPlan ? defaultStatusForGrantablePlan(initialPlan) : "ACTIVE");
 
   return (
     <div className="space-y-6 rounded-xl border border-slate-800 bg-slate-900/50 p-4">
@@ -128,16 +136,20 @@ export function CompanyAdminActions({
         </p>
         <select
           value={planId}
-          onChange={(e) =>
-            setPlanId(e.target.value as "free" | "trial" | "starter" | "pro" | "business")
-          }
+          onChange={(e) => {
+            const next = e.target.value;
+            setPlanId(next);
+            const cfg = plans.find((p) => p.slug === next);
+            if (cfg) setPlanStatus(defaultStatusForGrantablePlan(cfg));
+          }}
           className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm"
         >
-          <option value="free">Free Workspace</option>
-          <option value="trial">Trial</option>
-          <option value="starter">Starter</option>
-          <option value="pro">Pro</option>
-          <option value="business">Business</option>
+          {plans.map((p) => (
+            <option key={p.slug} value={p.slug}>
+              {p.name}
+              {p.slug === currentPlanSlug ? " (current)" : ""}
+            </option>
+          ))}
         </select>
         <select
           value={planStatus}
@@ -155,7 +167,7 @@ export function CompanyAdminActions({
         </select>
         <button
           type="button"
-          disabled={pending || !password}
+          disabled={pending || !password || !planId}
           className="rounded-lg bg-sky-700 px-3 py-2 text-sm disabled:opacity-50"
           onClick={() =>
             start(async () => {

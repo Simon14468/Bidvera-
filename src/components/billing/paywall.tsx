@@ -214,7 +214,9 @@ export function Paywall({
                     {marketing.name}
                   </CardTitle>
                   <CardDescription>
-                    {plan.analysesLimit} analyses · {plan.seatsLimit} seats
+                    {plan.seatsLimit === 1
+                      ? "1 seat"
+                      : `Up to ${plan.seatsLimit} seats`}
                   </CardDescription>
                   <p className="pt-2 text-3xl font-semibold tracking-tight tabular-nums">
                     {formatMoney(price, plan.currency)}

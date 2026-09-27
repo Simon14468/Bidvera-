@@ -52,6 +52,8 @@ export function shouldAssignFreeWorkspace(input: {
     | "trial_cancelled";
 }): boolean {
   if (!input.freeWorkspaceEnabled) return false;
+  // Expired Free Workspace trials require payment — do not reopen an indefinite workspace.
+  if (input.reason === "trial_expired") return false;
   return true;
 }
 

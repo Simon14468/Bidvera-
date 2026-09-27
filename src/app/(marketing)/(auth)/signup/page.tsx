@@ -6,7 +6,11 @@ import { onboardingPathForStep } from "@/auth/onboarding";
 import { getDictionary } from "@/i18n/dictionaries";
 import { getLocale } from "@/i18n/get-locale";
 import { isDatabaseTransientError } from "@/lib/db-capacity";
-import { getAuthSettings } from "@/services/auth/settings";
+import {
+  getAuthSettings,
+  resolveAppleOAuthCredentials,
+  resolveMicrosoftOAuthCredentials,
+} from "@/services/auth/settings";
 import { getTurnstilePublicConfig } from "@/services/security/turnstile";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -27,8 +31,12 @@ export default async function SignupPage() {
 
   const t = getDictionary(await getLocale());
   let settings;
+  let microsoftReady = false;
+  let appleReady = false;
   try {
     settings = await getAuthSettings();
+    microsoftReady = Boolean(await resolveMicrosoftOAuthCredentials());
+    appleReady = Boolean(await resolveAppleOAuthCredentials());
   } catch (error) {
     if (isDatabaseTransientError(error)) {
       return <DatabaseUnavailable />;
@@ -50,7 +58,8 @@ export default async function SignupPage() {
         <AuthForm
           mode="signup"
           googleEnabled={settings.googleEnabled}
-          microsoftEnabled={settings.microsoftEnabled}
+          microsoftEnabled={microsoftReady}
+          appleEnabled={appleReady}
           registrationEnabled={settings.registrationEnabled}
           turnstileSiteKey={getTurnstilePublicConfig().siteKey}
           labels={{ ...t.auth, signIn: t.nav.signIn, startFree: t.nav.startFree }}

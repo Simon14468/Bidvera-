@@ -209,9 +209,10 @@ describe("M/L free Turnstile + skip onboarding eligibility", () => {
       src.indexOf("function isLikelyPersonalEmail"),
     );
     const turnstileIdx = fn.indexOf("assertTurnstileToken");
-    const freeAssign = fn.indexOf("assignFreeWorkspace");
+    const freeAssign = fn.indexOf("ensureTrialSubscription");
     assert.ok(turnstileIdx >= 0);
     assert.ok(freeAssign > turnstileIdx);
+    assert.doesNotMatch(fn, /assignFreeWorkspace/);
     assert.match(fn, /assertCanManageBilling\(auth\.user\.role\)/);
   });
 

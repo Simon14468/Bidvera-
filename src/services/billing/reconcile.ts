@@ -13,6 +13,7 @@ import {
 import { getBillingGatewaySettings } from "@/services/billing/settings";
 import {
   isLegacyOpenEndedTrial,
+  shouldAssignFreeWorkspace,
   shouldDeferProviderManagedTrial,
 } from "@/services/billing/free-workspace";
 import { analysesLimitForPlan } from "@/services/entitlements";
@@ -112,7 +113,9 @@ export async function markSubscriptionPaymentFailed(input: {
 }
 
 /**
- * Apply period renewal: advance dates, clear grace, reset usage when period advances.
+ * Local period-advance helper. Not called by checkout, webhooks, or the worker.
+ * Paid renewals apply through applyPaidPlanActivation from Stripe/PayPal events.
+ * Kept for a future provider-confirmed local sync — do not wire from checkout.
  */
 export async function applyBillingPeriodRenewal(input: {
   companyId: string;
@@ -257,12 +260,15 @@ async function reconcileCompanySubscriptionInner(
   }
 
   if (
-    settings.freeWorkspaceEnabled &&
     !access.allowed &&
     (access.reason === "trial_expired" ||
       access.reason === "period_expired" ||
       access.reason === "past_due_expired" ||
-      access.reason === "canceled")
+      access.reason === "canceled") &&
+    shouldAssignFreeWorkspace({
+      freeWorkspaceEnabled: settings.freeWorkspaceEnabled,
+      reason: access.reason,
+    })
   ) {
     const { assignFreeWorkspace } = await import(
       "@/services/billing/free-workspace"

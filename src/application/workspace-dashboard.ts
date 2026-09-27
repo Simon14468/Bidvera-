@@ -6,6 +6,10 @@
 import { prisma } from "@/lib/db";
 import { hasFeature, getEffectiveEntitlements } from "@/services/entitlements";
 import { isCommerciallyAvailableFeature } from "@/domain/billing/entitlement-catalog";
+import {
+  resolveFreeWorkspaceTrialChrome,
+  resolveUserFacingPlanName,
+} from "@/services/billing/billing-display";
 import type { ComplianceStatus } from "@prisma/client";
 
 export type WorkspaceKpiId =
@@ -52,6 +56,7 @@ export type WorkspacePlanSummary = {
   subscriptionStatus: string | null;
   trialEndsAt: string | null;
   isTrialing: boolean;
+  isExpiredTrial: boolean;
   seatsLimit: number;
   memberCount: number;
   enabledCapabilityLabels: string[];
@@ -228,8 +233,11 @@ export async function getWorkspaceDashboard(
       where: { companyId },
       select: {
         status: true,
+        plan: true,
         currentPeriodEnd: true,
         billingInterval: true,
+        cancelAtPeriodEnd: true,
+        billingPlan: { select: { slug: true, isFree: true } },
       },
     }),
     clientOn
@@ -459,16 +467,34 @@ export async function getWorkspaceDashboard(
     .slice(0, 8);
   const enabledLabels = enabledKeys.map((key) => key.replaceAll("_", " "));
 
+  const trialChrome = subscription
+    ? resolveFreeWorkspaceTrialChrome({
+        status: subscription.status,
+        plan: subscription.plan,
+        slug: subscription.billingPlan?.slug ?? entitlements.planSlug,
+        isFree:
+          subscription.billingPlan?.isFree ?? entitlements.planSlug === "free",
+        currentPeriodEnd: subscription.currentPeriodEnd,
+        cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
+      })
+    : null;
+
   const plan: WorkspacePlanSummary = {
-    planName: entitlements.planName,
+    planName: resolveUserFacingPlanName({
+      slug: entitlements.planSlug,
+      isFree: entitlements.planSlug === "free",
+      planName: entitlements.planName,
+      fallback: entitlements.planName,
+    }),
     planSlug: entitlements.planSlug,
     billingInterval: entitlements.billingInterval,
     subscriptionStatus: subscription?.status ?? null,
     trialEndsAt:
-      subscription?.status === "TRIALING"
-        ? (subscription.currentPeriodEnd?.toISOString() ?? null)
+      trialChrome?.kind === "active"
+        ? (subscription?.currentPeriodEnd?.toISOString() ?? null)
         : null,
-    isTrialing: subscription?.status === "TRIALING",
+    isTrialing: trialChrome?.kind === "active",
+    isExpiredTrial: trialChrome?.kind === "expired",
     seatsLimit: entitlements.seatsLimit,
     memberCount,
     enabledCapabilityLabels: enabledLabels,

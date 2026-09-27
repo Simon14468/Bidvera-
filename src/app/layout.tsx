@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Noto_Sans_Arabic } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { siteConfig } from "@/config/site";
 import { getDirection } from "@/i18n/config";
@@ -26,10 +27,20 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const notoArabic = Noto_Sans_Arabic({
+const notoArabic = localFont({
   variable: "--font-arabic",
-  subsets: ["arabic"],
-  weight: ["400", "500", "600", "700"],
+  src: [
+    {
+      path: "./fonts/NotoSansArabic-Regular.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./fonts/NotoSansArabic-SemiBold.ttf",
+      weight: "600",
+      style: "normal",
+    },
+  ],
 });
 
 export async function generateMetadata(): Promise<Metadata> {
