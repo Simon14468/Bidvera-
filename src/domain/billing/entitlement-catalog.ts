@@ -428,6 +428,25 @@ export function isCommerciallyAvailableFeature(key: string): boolean {
   return def.commerciallyAvailable !== false;
 }
 
+/** Obsolete Tender Analysis credit copy — never sell or display as a plan quota. */
+export function isObsoleteAnalysesQuotaLabel(raw: string): boolean {
+  const line = raw.trim().toLowerCase();
+  if (!line) return false;
+  if (/\bunlimited analyses\b/.test(line)) return true;
+  if (/\btender analyses?\b/.test(line)) return true;
+  if (/\b\d+\s+analyses?\b/.test(line)) return true;
+  if (/\banalyses?\s*\/\s*(month|year|mois|an)\b/.test(line)) return true;
+  if (/\banálisis\s*\/\s*mes\b/.test(line)) return true;
+  if (/تحليل/.test(line) && /شهر|سنة|مناقص/.test(line)) return true;
+  if (/次分析/.test(line)) return true;
+  return false;
+}
+
+/** Isolated internal module — never grantable on a plan or company override. */
+export function isIsolatedInternalFeatureKey(key: string): boolean {
+  return canonicalFeatureKey(key) === "tender_analysis";
+}
+
 /** Strip unshipped marketing claims from any plan/pricing label list. */
 export function filterCommerciallyHonestLabels(
   labels: readonly string[],
@@ -436,6 +455,7 @@ export function filterCommerciallyHonestLabels(
     const line = raw.trim().toLowerCase();
     if (!line) return false;
     if (UNSHIPPED_MARKETING_LABEL_BLOCKLIST.has(line)) return false;
+    if (isObsoleteAnalysesQuotaLabel(raw)) return false;
     for (const def of ENTITLEMENT_CATALOG) {
       if (def.commerciallyAvailable === false) {
         if (
@@ -459,12 +479,7 @@ export function buildEntitlementMarketingLabels(input: {
   /** Billing interval wording for analysis limit bullets */
   interval?: "month" | "year";
 }): { labels: string[]; displayOnly: string[] } {
-  const interval = input.interval ?? "month";
-  const period = interval === "year" ? "year" : "month";
   const labels: string[] = [];
-  if (input.analysesLimit > 0) {
-    labels.push(`${input.analysesLimit} analyses / ${period}`);
-  }
   labels.push(
     input.seatsLimit === 1
       ? "1 seat"
