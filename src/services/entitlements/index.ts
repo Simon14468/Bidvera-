@@ -15,6 +15,7 @@ import {
   filterCommerciallyHonestLabels,
   isCommerciallyAvailableFeature,
   isFeatureEnabledInMap,
+  isIsolatedInternalFeatureKey,
   planDefaultFeatureKeys,
   upgradeMessageForFeature,
   type EntitlementFeatureKey,
@@ -37,6 +38,7 @@ export {
   filterCommerciallyHonestLabels,
   isCommerciallyAvailableFeature,
   isFeatureEnabledInMap,
+  isIsolatedInternalFeatureKey,
   planDefaultFeatureKeys,
   upgradeMessageForFeature,
 };
@@ -351,19 +353,50 @@ export async function hasFeature(
   if (!target) return false;
 
   const overrideIds = [target.id, legacy?.id].filter(Boolean) as string[];
-  for (const id of overrideIds) {
-    if (ctx.overrideByFeatureId.has(id)) {
-      return Boolean(ctx.overrideByFeatureId.get(id));
+  let override: boolean | undefined;
+  if (!isIsolatedInternalFeatureKey(key)) {
+    for (const id of overrideIds) {
+      if (ctx.overrideByFeatureId.has(id)) {
+        override = Boolean(ctx.overrideByFeatureId.get(id));
+        break;
+      }
     }
   }
 
-  if (!target.enabledGlobal) return false;
-  if (!ctx.accessAllowed) return false;
+  const entitled =
+    Boolean(ctx.entitlements.features[key]) ||
+    (featureKey === "alerts" && Boolean(ctx.entitlements.features.smart_alerts)) ||
+    (key === "smart_alerts" && Boolean(ctx.entitlements.features.alerts));
 
-  if (ctx.entitlements.features[key]) return true;
-  if (featureKey === "alerts" && ctx.entitlements.features.smart_alerts) return true;
-  if (key === "smart_alerts" && ctx.entitlements.features.alerts) return true;
-  return false;
+  return resolveCommercialFeatureAccess({
+    isolated: isIsolatedInternalFeatureKey(key),
+    override,
+    enabledGlobal: target.enabledGlobal,
+    accessAllowed: ctx.accessAllowed,
+    entitled,
+  });
+}
+
+/**
+ * Commercial feature access cannot survive a denied subscription via override.
+ * Isolated internal keys never use company override.
+ */
+export function resolveCommercialFeatureAccess(input: {
+  isolated: boolean;
+  override?: boolean;
+  enabledGlobal: boolean;
+  accessAllowed: boolean;
+  entitled: boolean;
+}): boolean {
+  if (input.isolated) {
+    if (!input.enabledGlobal || !input.accessAllowed) return false;
+    return input.entitled;
+  }
+  if (input.override === false) return false;
+  if (!input.accessAllowed) return false;
+  if (!input.enabledGlobal) return false;
+  if (input.override === true) return true;
+  return input.entitled;
 }
 
 export async function assertFeature(
@@ -429,13 +462,14 @@ export async function setPlanFeature(
   enabled: boolean,
 ) {
   await ensureFeatureRows();
+  const persistEnabled = isIsolatedInternalFeatureKey(featureKey) ? false : enabled;
   const feature = await prisma.feature.findUniqueOrThrow({
     where: { key: featureKey },
   });
   return prisma.planFeature.upsert({
     where: { planId_featureId: { planId, featureId: feature.id } },
-    create: { planId, featureId: feature.id, enabled },
-    update: { enabled },
+    create: { planId, featureId: feature.id, enabled: persistEnabled },
+    update: { enabled: persistEnabled },
   });
 }
 
@@ -445,13 +479,14 @@ export async function setCompanyFeature(
   enabled: boolean,
 ) {
   await ensureFeatureRows();
+  const persistEnabled = isIsolatedInternalFeatureKey(featureKey) ? false : enabled;
   const feature = await prisma.feature.findUniqueOrThrow({
     where: { key: featureKey },
   });
   return prisma.companyFeatureOverride.upsert({
     where: { companyId_featureId: { companyId, featureId: feature.id } },
-    create: { companyId, featureId: feature.id, enabled },
-    update: { enabled },
+    create: { companyId, featureId: feature.id, enabled: persistEnabled },
+    update: { enabled: persistEnabled },
   });
 }
 

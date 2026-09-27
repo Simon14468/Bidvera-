@@ -247,6 +247,7 @@ export type Dictionary = {
     googleOAuthError: string;
     continueMicrosoft: string;
     microsoftComingSoon: string;
+    continueApple: string;
     forgotPassword: string;
     forgotTitle: string;
     forgotBody: string;
@@ -518,6 +519,15 @@ export type Dictionary = {
       accessUntil: string;
       freeWorkspace: string;
       freeWorkspaceBody: string;
+      freeWorkspaceTrialBannerDays: string;
+      freeWorkspaceTrialBannerDay: string;
+      freeWorkspaceTrialBannerHours: string;
+      freeWorkspaceTrialBannerHour: string;
+      freeWorkspaceTrialBannerEnding: string;
+      freeWorkspaceTrialBannerHint: string;
+      freeWorkspaceTrialCta: string;
+      freeWorkspaceTrialExpiredTitle: string;
+      freeWorkspaceTrialExpiredBody: string;
       freeCapabilityProfile: string;
       freeCapabilityCompliance: string;
       nextBillingDate: string;
@@ -1383,6 +1393,7 @@ const en: Dictionary = {
     googleOAuthError: "Google sign-in failed. Try again.",
     continueMicrosoft: "Continue with Microsoft",
     microsoftComingSoon: "Microsoft sign-in is coming soon",
+    continueApple: "Continue with Apple",
     forgotPassword: "Forgot password?",
     forgotTitle: "Reset password",
     forgotBody: "We’ll email you a one-time link if an account exists.",
@@ -1670,6 +1681,19 @@ const en: Dictionary = {
       freeWorkspace: "Free Workspace",
       freeWorkspaceBody:
         "A limited workspace. Company Profile and limited Document Compliance are included. Paid capabilities are not.",
+      freeWorkspaceTrialBannerDays:
+        "Free Workspace trial — {days} days remaining.",
+      freeWorkspaceTrialBannerDay: "Free Workspace trial — 1 day remaining.",
+      freeWorkspaceTrialBannerHours:
+        "Free Workspace trial — {hours} hours remaining.",
+      freeWorkspaceTrialBannerHour: "Free Workspace trial — 1 hour remaining.",
+      freeWorkspaceTrialBannerEnding: "Free Workspace trial — ending soon.",
+      freeWorkspaceTrialBannerHint:
+        "Choose a paid plan before your trial ends to keep access.",
+      freeWorkspaceTrialCta: "Choose a plan",
+      freeWorkspaceTrialExpiredTitle: "Your Free Workspace trial has ended.",
+      freeWorkspaceTrialExpiredBody:
+        "Payment is required to continue. Choose a paid plan to restore access.",
       freeCapabilityProfile: "Company Profile",
       freeCapabilityCompliance: "Document Compliance (limited)",
       nextBillingDate: "Next billing date",
@@ -2575,6 +2599,7 @@ const es: Dictionary = {
     googleOAuthError: "No se pudo iniciar sesión con Google. Inténtalo de nuevo.",
     continueMicrosoft: "Continuar con Microsoft",
     microsoftComingSoon: "Inicio con Microsoft próximamente",
+    continueApple: "Continuar con Apple",
     forgotPassword: "¿Olvidaste la contraseña?",
     forgotTitle: "Restablecer contraseña",
     forgotBody: "Te enviaremos un enlace si existe la cuenta.",
@@ -2864,6 +2889,19 @@ const es: Dictionary = {
       freeWorkspace: "Free Workspace",
       freeWorkspaceBody:
         "Un espacio limitado. Incluye Company Profile y Document Compliance limitado. Las capacidades de pago no están incluidas.",
+      freeWorkspaceTrialBannerDays:
+        "Prueba de Free Workspace — {days} días restantes.",
+      freeWorkspaceTrialBannerDay: "Prueba de Free Workspace — 1 día restante.",
+      freeWorkspaceTrialBannerHours:
+        "Prueba de Free Workspace — {hours} horas restantes.",
+      freeWorkspaceTrialBannerHour: "Prueba de Free Workspace — 1 hora restante.",
+      freeWorkspaceTrialBannerEnding: "Prueba de Free Workspace — termina pronto.",
+      freeWorkspaceTrialBannerHint:
+        "Elige un plan de pago antes de que termine la prueba para conservar el acceso.",
+      freeWorkspaceTrialCta: "Elegir un plan",
+      freeWorkspaceTrialExpiredTitle: "Tu prueba de Free Workspace ha terminado.",
+      freeWorkspaceTrialExpiredBody:
+        "El pago es obligatorio para continuar. Elige un plan de pago para recuperar el acceso.",
       freeCapabilityProfile: "Company Profile",
       freeCapabilityCompliance: "Document Compliance (limitado)",
       nextBillingDate: "Próxima fecha de facturación",
@@ -3747,6 +3785,7 @@ const zh: Dictionary = {
     googleOAuthError: "Google 登录失败，请重试。",
     continueMicrosoft: "使用 Microsoft 继续",
     microsoftComingSoon: "Microsoft 登录即将推出",
+    continueApple: "使用 Apple 继续",
     forgotPassword: "忘记密码？",
     forgotTitle: "重置密码",
     forgotBody: "若账户存在，我们将发送一次性链接。",
@@ -4025,6 +4064,16 @@ const zh: Dictionary = {
       freeWorkspace: "免费工作区",
       freeWorkspaceBody:
         "有限工作区。包含公司资料和有限的文件合规。不包含付费能力。",
+      freeWorkspaceTrialBannerDays: "免费工作区试用 — 剩余 {days} 天。",
+      freeWorkspaceTrialBannerDay: "免费工作区试用 — 剩余 1 天。",
+      freeWorkspaceTrialBannerHours: "免费工作区试用 — 剩余 {hours} 小时。",
+      freeWorkspaceTrialBannerHour: "免费工作区试用 — 剩余 1 小时。",
+      freeWorkspaceTrialBannerEnding: "免费工作区试用 — 即将结束。",
+      freeWorkspaceTrialBannerHint: "请在试用结束前选择付费套餐以保留访问权限。",
+      freeWorkspaceTrialCta: "选择套餐",
+      freeWorkspaceTrialExpiredTitle: "免费工作区试用已结束。",
+      freeWorkspaceTrialExpiredBody:
+        "需要付费才能继续使用。请选择付费套餐以恢复访问。",
       freeCapabilityProfile: "公司资料",
       freeCapabilityCompliance: "文件合规（有限）",
       nextBillingDate: "下次扣费日期",
@@ -4891,6 +4940,7 @@ const ar: Dictionary = {
     googleOAuthError: "فشل تسجيل الدخول عبر كوكول. حاول مرة أخرى.",
     continueMicrosoft: "تسجيل بواسطة Microsoft",
     microsoftComingSoon: "تسجيل Microsoft قريبًا",
+    continueApple: "تسجيل بواسطة Apple",
     forgotPassword: "نسيت كلمة المرور؟",
     forgotTitle: "إعادة تعيين كلمة المرور",
     forgotBody: "سنرسل رابطًا لمرة واحدة إن وُجد الحساب.",
@@ -5179,6 +5229,19 @@ const ar: Dictionary = {
       freeWorkspace: "مساحة العمل المجانية",
       freeWorkspaceBody:
         "مساحة محدودة. تشمل ملف الشركة وامتثال المستندات المحدود. لا تشمل القدرات المدفوعة.",
+      freeWorkspaceTrialBannerDays:
+        "تجربة مساحة العمل المجانية — تبقّى {days} أيام.",
+      freeWorkspaceTrialBannerDay: "تجربة مساحة العمل المجانية — تبقّى يوم واحد.",
+      freeWorkspaceTrialBannerHours:
+        "تجربة مساحة العمل المجانية — تبقّى {hours} ساعات.",
+      freeWorkspaceTrialBannerHour: "تجربة مساحة العمل المجانية — تبقّى ساعة واحدة.",
+      freeWorkspaceTrialBannerEnding: "تجربة مساحة العمل المجانية — تنتهي قريبًا.",
+      freeWorkspaceTrialBannerHint:
+        "اختر خطة مدفوعة قبل انتهاء التجربة للاحتفاظ بالوصول.",
+      freeWorkspaceTrialCta: "اختر خطة",
+      freeWorkspaceTrialExpiredTitle: "انتهت تجربة مساحة العمل المجانية.",
+      freeWorkspaceTrialExpiredBody:
+        "يلزم الدفع للمتابعة. اختر خطة مدفوعة لاستعادة الوصول.",
       freeCapabilityProfile: "ملف الشركة",
       freeCapabilityCompliance: "امتثال المستندات (محدود)",
       nextBillingDate: "تاريخ الفوترة التالي",
@@ -6078,6 +6141,7 @@ const fr: Dictionary = {
     googleOAuthError: "Échec de la connexion Google. Réessayez.",
     continueMicrosoft: "Continuer avec Microsoft",
     microsoftComingSoon: "Connexion Microsoft bientôt disponible",
+    continueApple: "Continuer avec Apple",
     forgotPassword: "Mot de passe oublié ?",
     forgotTitle: "Réinitialiser le mot de passe",
     forgotBody: "Nous enverrons un lien unique si le compte existe.",
@@ -6368,6 +6432,19 @@ const fr: Dictionary = {
       freeWorkspace: "Free Workspace",
       freeWorkspaceBody:
         "Espace limité. Profil d’entreprise et conformité documentaire limitée sont inclus. Les capacités payantes ne le sont pas.",
+      freeWorkspaceTrialBannerDays:
+        "Essai Free Workspace — {days} jours restants.",
+      freeWorkspaceTrialBannerDay: "Essai Free Workspace — 1 jour restant.",
+      freeWorkspaceTrialBannerHours:
+        "Essai Free Workspace — {hours} heures restantes.",
+      freeWorkspaceTrialBannerHour: "Essai Free Workspace — 1 heure restante.",
+      freeWorkspaceTrialBannerEnding: "Essai Free Workspace — se termine bientôt.",
+      freeWorkspaceTrialBannerHint:
+        "Choisissez une offre payante avant la fin de l’essai pour conserver l’accès.",
+      freeWorkspaceTrialCta: "Choisir une offre",
+      freeWorkspaceTrialExpiredTitle: "Votre essai Free Workspace est terminé.",
+      freeWorkspaceTrialExpiredBody:
+        "Le paiement est obligatoire pour continuer. Choisissez une offre payante pour rétablir l’accès.",
       freeCapabilityProfile: "Profil d’entreprise",
       freeCapabilityCompliance: "Conformité documentaire (limitée)",
       nextBillingDate: "Prochaine date de facturation",
