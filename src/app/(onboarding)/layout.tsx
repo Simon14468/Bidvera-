@@ -42,24 +42,26 @@ export default async function OnboardingLayout({
   );
 
   return (
-    <div className="relative flex min-h-full flex-col bg-[radial-gradient(ellipse_at_top,_var(--primary-muted)_0%,_var(--background)_55%)]">
-      <header className="flex items-center justify-between gap-3 border-b border-border/60 px-4 py-3 sm:px-6">
-        <BrandLogo href="/" height={32} />
-        <div className="flex items-center gap-2">
-          <p className="hidden text-sm text-muted sm:block">{auth.user.email}</p>
+    <div className="relative flex min-h-dvh flex-col bg-[radial-gradient(ellipse_at_top,_var(--primary-muted)_0%,_var(--background)_55%)]">
+      <header className="flex min-w-0 items-center justify-between gap-2 border-b border-border/60 px-3 py-2.5 sm:gap-3 sm:px-6 sm:py-3">
+        <BrandLogo href="/" height={32} className="min-w-0 shrink" />
+        <div className="flex min-w-0 shrink-0 items-center gap-1.5 sm:gap-2">
+          <p className="hidden max-w-[12rem] truncate text-sm text-muted md:block">
+            {auth.user.email}
+          </p>
           <ThemeToggle />
           <Link
             href="/login"
-            className="text-sm font-medium text-primary hover:underline"
+            className="max-w-[7rem] truncate text-sm font-medium text-primary hover:underline sm:max-w-none"
           >
             {t.signOutHint}
           </Link>
         </div>
       </header>
 
-      <div className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
-        <nav aria-label="Onboarding progress" className="mb-8">
-          <ol className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mx-auto w-full min-w-0 max-w-3xl flex-1 px-3 py-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:px-6 sm:py-8">
+        <nav aria-label="Onboarding progress" className="mb-5 sm:mb-8">
+          <ol className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
             {STEPS.map((step, i) => {
               const active = i === currentIdx;
               const done = i < currentIdx;
@@ -71,9 +73,12 @@ export default async function OnboardingLayout({
                     ? t.stepCompany
                     : t.stepPlan;
               return (
-                <li key={step} className="flex flex-1 items-center gap-2">
+                <li
+                  key={step}
+                  className="flex min-w-0 items-center gap-2 sm:flex-1"
+                >
                   <span
-                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${
+                    className={`flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${
                       active
                         ? "bg-primary text-white"
                         : done
@@ -84,7 +89,7 @@ export default async function OnboardingLayout({
                     {i + 1}
                   </span>
                   <span
-                    className={`text-sm ${active ? "font-semibold text-foreground" : "text-muted"}`}
+                    className={`min-w-0 break-words text-sm ${active ? "font-semibold text-foreground" : "text-muted"}`}
                   >
                     {label}
                   </span>
@@ -104,7 +109,7 @@ export default async function OnboardingLayout({
             })}
           </ol>
         </nav>
-        {children}
+        <div className="min-w-0">{children}</div>
       </div>
     </div>
   );

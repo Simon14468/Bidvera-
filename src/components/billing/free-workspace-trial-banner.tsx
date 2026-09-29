@@ -23,13 +23,13 @@ export function FreeWorkspaceTrialBanner({
           : "mb-6 flex flex-col gap-3 rounded-[12px] border border-[#F59E0B]/30 bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
       }
     >
-      <div>
-        <p className="text-sm font-semibold text-[#1A1D1F]">{title}</p>
-        <p className="mt-0.5 text-sm text-[#6B7280]">{body}</p>
+      <div className="min-w-0">
+        <p className="break-words text-sm font-semibold text-[#1A1D1F]">{title}</p>
+        <p className="mt-0.5 break-words text-sm text-[#6B7280]">{body}</p>
       </div>
       <Link
         href={href}
-        className="inline-flex h-10 shrink-0 items-center justify-center rounded-[12px] bg-[#4CAF6D] px-4 text-sm font-medium text-white transition hover:opacity-90"
+        className="inline-flex h-11 w-full shrink-0 items-center justify-center rounded-[12px] bg-[#4CAF6D] px-4 text-sm font-medium text-white transition hover:opacity-90 sm:h-10 sm:w-auto"
       >
         {cta}
       </Link>

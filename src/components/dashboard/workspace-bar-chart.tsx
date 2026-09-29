@@ -23,14 +23,14 @@ export function WorkspaceBarChart({
   return (
     <section
       className={cn(
-        "rounded-xl border border-border bg-card p-4 shadow-[var(--shadow-soft)]",
+        "min-w-0 rounded-xl border border-border bg-card p-3.5 shadow-[var(--shadow-soft)] sm:p-4",
         className,
       )}
       aria-label={title}
     >
       <h3 className="text-sm font-semibold tracking-tight">{title}</h3>
       {description ? (
-        <p className="mt-0.5 text-xs text-muted">{description}</p>
+        <p className="mt-0.5 break-words text-xs text-muted">{description}</p>
       ) : null}
 
       {!hasData ? (

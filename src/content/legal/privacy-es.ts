@@ -181,7 +181,7 @@ export const privacyPolicySectionsEs: LegalSection[] = [
     paragraphs: [
       "La preferencia de tema puede guardarse en el almacenamiento local del navegador (no es una cookie).",
       "Cuando la protección antibot está habilitada, Cloudflare Turnstile puede establecer o leer tecnologías controladas por Cloudflare para verificar que una solicitud es humana.",
-      "No afirmamos que Bidvera opere actualmente un conjunto de cookies de analítica de marketing ni un banner de consentimiento de cookies. Si se introducen cookies no esenciales de analítica o publicidad, se actualizarán esta Política y la interfaz de consentimiento requerida.",
+      "Las cookies opcionales de analítica y marketing permanecen desactivadas hasta que las elija en los controles de consentimiento de cookies de Bidvera. Puede aceptar todas, rechazar todas o abrir la configuración de cookies desde el aviso o el pie del sitio. Las cookies necesarias siguen activas para que el servicio funcione de forma segura.",
     ],
   },
   {

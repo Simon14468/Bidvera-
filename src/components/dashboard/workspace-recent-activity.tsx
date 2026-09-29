@@ -40,14 +40,19 @@ export function WorkspaceRecentActivity({
         ) : (
           items.map((item) => {
             const inner = (
-              <div className="flex items-start justify-between gap-3 rounded-xl border border-border px-3 py-3 transition hover:border-primary/25 hover:bg-background">
+              <div className="flex flex-col gap-1 rounded-xl border border-border px-3 py-3 transition hover:border-primary/25 hover:bg-background sm:flex-row sm:items-start sm:justify-between sm:gap-3">
                 <div className="min-w-0">
                   <p className="text-xs text-muted">
                     {kindLabel[item.kind] ?? item.kind}
                   </p>
-                  <p className="truncate text-sm font-medium">{item.title}</p>
+                  <p className="break-words text-sm font-medium sm:truncate">
+                    {item.title}
+                  </p>
                 </div>
-                <time className="shrink-0 text-xs text-muted" dateTime={item.at}>
+                <time
+                  className="shrink-0 text-xs text-muted"
+                  dateTime={item.at}
+                >
                   {formatDate(item.at, locale)}
                 </time>
               </div>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import { ThemeProvider } from "@/components/theme/theme-provider";
+import { CookieConsentMount } from "@/components/consent/cookie-consent-mount";
 import { siteConfig } from "@/config/site";
 import { getDirection } from "@/i18n/config";
 import { getLocale } from "@/i18n/get-locale";
@@ -145,7 +146,10 @@ export default async function RootLayout({
         <JsonLd data={organizationJsonLd()} />
         <JsonLd data={websiteJsonLd()} />
         <JsonLd data={softwareApplicationJsonLd()} />
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+          <CookieConsentMount />
+        </ThemeProvider>
       </body>
     </html>
   );

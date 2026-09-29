@@ -181,7 +181,7 @@ export const privacyPolicySectionsZh: LegalSection[] = [
     paragraphs: [
       "主题偏好可能存储在浏览器本地存储中（不是 Cookie）。",
       "启用机器人防护时，Cloudflare Turnstile 可能设置或读取由 Cloudflare 控制的技术，以验证请求来自真人。",
-      "我们不主张 Bidvera 目前运营营销分析 Cookie 套件或 Cookie 同意横幅。若日后引入非必要的分析或广告 Cookie，将更新本政策及所需的同意界面。",
+      "可选的分析与营销 Cookie 在您通过 Bidvera 的 Cookie 同意控件选择之前保持关闭。您可以从同意提示或网站页脚接受全部、全部拒绝或打开 Cookie 设置。必要 Cookie 会保持开启，以确保服务安全运行。",
     ],
   },
   {

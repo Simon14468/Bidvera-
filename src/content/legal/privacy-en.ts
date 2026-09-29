@@ -188,7 +188,7 @@ export const privacyPolicySections: LegalSection[] = [
     paragraphs: [
       "Theme preference may be stored in your browser’s local storage (not a cookie).",
       "When bot protection is enabled, Cloudflare Turnstile may set or read technologies controlled by Cloudflare as part of verifying that a request is human.",
-      "We do not claim that Bidvera currently operates a marketing analytics cookie suite or a cookie consent banner. If non-essential analytics or advertising cookies are introduced later, this Policy and any required consent UI will be updated.",
+      "Optional analytics and marketing cookies are disabled until you choose them in Bidvera’s cookie consent controls. You can accept all, reject all, or open Cookie settings from the consent notice or the website footer. Necessary cookies remain active so the service can function securely.",
     ],
   },
   {

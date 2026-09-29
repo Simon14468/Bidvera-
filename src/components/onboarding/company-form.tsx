@@ -3,26 +3,34 @@
 import { completeCompanyOnboarding, skipCompanyOnboarding } from "@/app/actions";
 import {
   COMPANY_SIZE_OPTIONS,
-  COUNTRY_OPTIONS,
   EXPERIENCE_LEVEL_OPTIONS,
-  INDUSTRY_OPTIONS,
 } from "@/config/company-options";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { CountryFlag } from "@/components/ui/country-flag";
 import { Input } from "@/components/ui/input";
+import { SearchableCombobox } from "@/components/ui/searchable-combobox";
 import { TurnstileField } from "@/components/security/turnstile-field";
+import type { Locale } from "@/i18n/config";
+import { getCompanyIndustryCopy, getCompanyIndustryOptions } from "@/i18n/company-industries";
+import { getCountryOptions, getCountryUiCopy } from "@/i18n/countries";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { FormEvent, KeyboardEvent, useState, useTransition } from "react";
+import { FormEvent, KeyboardEvent, useMemo, useState, useTransition } from "react";
 
 const selectClass =
-  "h-10 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+  "box-border h-11 w-full max-w-full min-w-0 rounded-xl border border-border bg-card px-3 text-base text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:h-10 sm:text-sm";
+
+const fieldInputClass =
+  "h-11 text-base sm:h-10 sm:text-sm";
 
 export function CompanyOnboardingForm({
   copy,
+  locale,
   turnstileSiteKey,
 }: {
   turnstileSiteKey?: string | null;
+  locale: Locale;
   copy: {
     title: string;
     body: string;
@@ -43,11 +51,28 @@ export function CompanyOnboardingForm({
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [industry, setIndustry] = useState("");
-  const [industryOther, setIndustryOther] = useState("");
+  const [country, setCountry] = useState("");
   const [services, setServices] = useState<string[]>([]);
   const [serviceDraft, setServiceDraft] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
   const [turnstileReset, setTurnstileReset] = useState(0);
+
+  const industryCopy = useMemo(() => getCompanyIndustryCopy(locale), [locale]);
+  const industryOptions = useMemo(
+    () => getCompanyIndustryOptions(locale),
+    [locale],
+  );
+  const countryCopy = useMemo(() => getCountryUiCopy(locale), [locale]);
+  const countryOptions = useMemo(
+    () =>
+      getCountryOptions(locale).map((c) => ({
+        value: c.value,
+        label: c.label,
+        searchText: c.searchText,
+        leading: <CountryFlag code={c.value} title={c.label} />,
+      })),
+    [locale],
+  );
 
   function addService(raw: string) {
     const value = raw.trim().replace(/,+$/, "");
@@ -73,10 +98,14 @@ export function CompanyOnboardingForm({
     e.preventDefault();
     setError(null);
     const fd = new FormData(e.currentTarget);
-    const resolvedIndustry =
-      industry === "Other" ? industryOther.trim() : industry.trim();
+    const resolvedIndustry = industry.trim();
     if (!resolvedIndustry) {
-      setError("Select an industry or enter one under Other.");
+      setError(industryCopy.required);
+      return;
+    }
+    const resolvedCountry = country.trim();
+    if (!resolvedCountry) {
+      setError(countryCopy.required);
       return;
     }
     if (services.length === 0) {
@@ -86,7 +115,7 @@ export function CompanyOnboardingForm({
     const experienceRaw = String(fd.get("experienceLevel") ?? "");
     const payload = {
       companyName: String(fd.get("companyName") ?? "").trim(),
-      country: String(fd.get("country") ?? ""),
+      country: resolvedCountry,
       industry: resolvedIndustry,
       companySize: String(fd.get("companySize") ?? "") as
         | "Solo"
@@ -132,52 +161,36 @@ export function CompanyOnboardingForm({
   }
 
   return (
-    <Card className="mx-auto max-w-lg shadow-[var(--shadow-lift)]">
-      <CardHeader>
-        <CardTitle>{copy.title}</CardTitle>
-        <CardDescription>{copy.body}</CardDescription>
+    <Card className="mx-auto w-full min-w-0 max-w-lg overflow-visible shadow-[var(--shadow-lift)]">
+      <CardHeader className="px-4 pt-4 pb-2 sm:px-5 sm:pt-5 sm:pb-3">
+        <CardTitle className="break-words text-lg sm:text-base">
+          {copy.title}
+        </CardTitle>
+        <CardDescription className="break-words">{copy.body}</CardDescription>
       </CardHeader>
-      <CardContent>
-        <form className="grid gap-4" onSubmit={onSubmit}>
+      <CardContent className="overflow-visible px-4 pb-4 sm:px-5 sm:pb-5">
+        <form className="grid min-w-0 gap-3.5 sm:gap-4" onSubmit={onSubmit}>
           <Input
             name="companyName"
             label={copy.companyName}
             required
             autoComplete="organization"
+            className={fieldInputClass}
           />
 
-          <div className="space-y-1.5">
-            <label htmlFor="industry" className="block text-sm font-medium text-foreground">
-              {copy.industry}
-            </label>
-            <select
-              id="industry"
-              required
-              className={selectClass}
-              value={industry}
-              onChange={(e) => setIndustry(e.target.value)}
-            >
-              <option value="" disabled>
-                —
-              </option>
-              {INDUSTRY_OPTIONS.map((opt) => (
-                <option key={opt} value={opt}>
-                  {opt}
-                </option>
-              ))}
-            </select>
-            {industry === "Other" ? (
-              <Input
-                name="industryOther"
-                label="Describe your industry"
-                required
-                value={industryOther}
-                onChange={(e) => setIndustryOther(e.target.value)}
-              />
-            ) : null}
-          </div>
+          <SearchableCombobox
+            id="industry"
+            label={copy.industry}
+            value={industry}
+            options={industryOptions}
+            onChange={setIndustry}
+            placeholder={industryCopy.placeholder}
+            searchPlaceholder={industryCopy.searchPlaceholder}
+            emptyMessage={industryCopy.empty}
+            required
+          />
 
-          <div className="space-y-1.5">
+          <div className="min-w-0 space-y-1.5">
             <label htmlFor="companySize" className="block text-sm font-medium text-foreground">
               {copy.companySize}
             </label>
@@ -193,25 +206,25 @@ export function CompanyOnboardingForm({
             </select>
           </div>
 
-          <div className="space-y-1.5">
+          <div className="min-w-0 space-y-1.5">
             <label htmlFor="serviceDraft" className="block text-sm font-medium text-foreground">
               {copy.services}
             </label>
-            <p className="text-xs text-muted">{copy.servicesHint}</p>
-            <div className="flex flex-wrap gap-2 rounded-xl border border-border bg-background px-2 py-2">
+            <p className="break-words text-xs text-muted">{copy.servicesHint}</p>
+            <div className="flex min-w-0 flex-wrap gap-2 rounded-xl border border-border bg-background px-2 py-2">
               {services.map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex items-center gap-1 rounded-lg bg-primary-muted px-2 py-1 text-xs font-medium text-primary"
+                  className="inline-flex max-w-full items-center gap-1 rounded-lg bg-primary-muted px-2 py-1.5 text-xs font-medium text-primary"
                 >
-                  {tag}
+                  <span className="min-w-0 break-words">{tag}</span>
                   <button
                     type="button"
-                    className="rounded p-0.5 hover:bg-primary/15"
+                    className="inline-flex size-7 shrink-0 items-center justify-center rounded-md hover:bg-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     aria-label={`Remove ${tag}`}
                     onClick={() => setServices((prev) => prev.filter((s) => s !== tag))}
                   >
-                    <X className="size-3" aria-hidden />
+                    <X className="size-3.5" aria-hidden />
                   </button>
                 </span>
               ))}
@@ -222,29 +235,25 @@ export function CompanyOnboardingForm({
                 onKeyDown={onServiceKeyDown}
                 onBlur={() => addService(serviceDraft)}
                 placeholder="Type and press Enter"
-                className="min-w-[8rem] flex-1 bg-transparent px-1 py-1 text-sm outline-none placeholder:text-muted"
+                className="min-h-11 min-w-0 flex-1 basis-full bg-transparent px-1 py-1 text-base outline-none placeholder:text-muted sm:min-h-0 sm:basis-[8rem] sm:text-sm"
               />
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <label htmlFor="country" className="block text-sm font-medium text-foreground">
-              {copy.country}
-            </label>
-            <select id="country" name="country" required className={selectClass} defaultValue="">
-              <option value="" disabled>
-                —
-              </option>
-              {COUNTRY_OPTIONS.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </div>
+          <SearchableCombobox
+            id="country"
+            label={copy.country}
+            value={country}
+            options={countryOptions}
+            onChange={setCountry}
+            placeholder={countryCopy.placeholder}
+            searchPlaceholder={countryCopy.searchPlaceholder}
+            emptyMessage={countryCopy.empty}
+            required
+          />
 
-          <div className="space-y-1.5">
-            <label htmlFor="experienceLevel" className="block text-sm font-medium text-foreground">
+          <div className="min-w-0 space-y-1.5">
+            <label htmlFor="experienceLevel" className="block break-words text-sm font-medium text-foreground">
               {copy.experience}{" "}
               <span className="font-normal text-muted">({copy.experienceOptional})</span>
             </label>
@@ -263,27 +272,33 @@ export function CompanyOnboardingForm({
             </select>
           </div>
 
-          <p className="rounded-xl border border-border/80 bg-background px-3 py-2.5 text-xs leading-relaxed text-muted">
+          <p className="break-words rounded-xl border border-border/80 bg-background px-3 py-2.5 text-xs leading-relaxed text-muted">
             {copy.privacyNote}
           </p>
 
-          {error ? <p className="text-sm text-danger">{error}</p> : null}
+          {error ? (
+            <p className="break-words text-sm text-danger" role="alert">
+              {error}
+            </p>
+          ) : null}
 
-          <TurnstileField
-            siteKey={turnstileSiteKey}
-            action="trial"
-            onToken={setTurnstileToken}
-            resetKey={turnstileReset}
-          />
+          <div className="min-w-0 overflow-x-auto">
+            <TurnstileField
+              siteKey={turnstileSiteKey}
+              action="trial"
+              onToken={setTurnstileToken}
+              resetKey={turnstileReset}
+            />
+          </div>
 
-          <Button type="submit" className="w-full" loading={pending}>
+          <Button type="submit" className="h-11 w-full text-base sm:h-10 sm:text-sm" loading={pending}>
             {copy.companySubmit}
           </Button>
           <button
             type="button"
             disabled={pending}
             onClick={onSkip}
-            className="w-full text-center text-sm font-medium text-muted hover:text-foreground disabled:opacity-60"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-xl px-3 text-center text-sm font-medium text-muted transition hover:bg-foreground/[0.04] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-60"
           >
             {copy.companySkip}
           </button>

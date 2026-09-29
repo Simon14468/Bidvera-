@@ -19,10 +19,12 @@ export default async function OnboardingCompanyPage() {
     redirect("/onboarding/plan");
   }
 
-  const t = getDictionary(await getLocale()).app.onboarding;
+  const locale = await getLocale();
+  const t = getDictionary(locale).app.onboarding;
 
   return (
     <CompanyOnboardingForm
+      locale={locale}
       turnstileSiteKey={getTurnstilePublicConfig().siteKey}
       copy={{
         title: t.companyTitle,

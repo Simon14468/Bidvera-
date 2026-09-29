@@ -33,13 +33,13 @@ export default async function DashboardPage() {
   ]);
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
+    <div className="min-w-0 space-y-6 animate-fade-in sm:space-y-8">
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
+        <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
             {common.yourWorkspace}
           </p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">
+          <h1 className="mt-1 text-xl font-semibold tracking-tight sm:text-2xl">
             {common.dashboardTitle}
           </h1>
           <p className="mt-1 max-w-2xl text-sm text-muted">
@@ -48,7 +48,7 @@ export default async function DashboardPage() {
         </div>
         <Link
           href="/billing"
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-border px-5 text-sm font-medium transition hover:bg-background"
+          className="inline-flex h-11 w-full shrink-0 items-center justify-center gap-2 rounded-xl border border-border px-5 text-sm font-medium transition hover:bg-background sm:w-auto"
         >
           {common.viewPlan}
           <ArrowRight className="size-4" aria-hidden />
@@ -57,8 +57,8 @@ export default async function DashboardPage() {
 
       <PwaInstallCard copy={dict.app.pwa} />
 
-      <section className="space-y-3">
-        <div>
+      <section className="min-w-0 space-y-3">
+        <div className="min-w-0">
           <h2 className="text-base font-semibold tracking-tight">
             {common.workspaceOverview}
           </h2>
@@ -78,7 +78,7 @@ export default async function DashboardPage() {
         <MatchingEngineOverview data={matchingOverview} locale={locale} />
       ) : null}
 
-      <section className="grid gap-4 xl:grid-cols-3">
+      <section className="grid min-w-0 gap-4 xl:grid-cols-3">
         <WorkspaceBarChart
           title={common.complianceStatus}
           description={
@@ -107,13 +107,13 @@ export default async function DashboardPage() {
         />
       </section>
 
-      <div className="grid gap-4 xl:grid-cols-[1.2fr_1fr]">
+      <div className="grid min-w-0 gap-4 xl:grid-cols-[1.2fr_1fr]">
         <WorkspaceRecentActivity
           items={data.recentActivity}
           locale={locale}
           labels={common}
         />
-        <div className="space-y-4">
+        <div className="min-w-0 space-y-4">
           <WorkspacePlanCard
             plan={data.plan}
             locale={locale}

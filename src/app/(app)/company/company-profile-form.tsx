@@ -6,13 +6,23 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { SearchableCombobox } from "@/components/ui/searchable-combobox";
 import { Textarea } from "@/components/ui/textarea";
 import {
   COMPANY_SIZE_OPTIONS,
   EXPERIENCE_LEVEL_OPTIONS,
+  resolveCompanyIndustryId,
+  resolveCountryCode,
 } from "@/config/company-options";
+import type { Locale } from "@/i18n/config";
+import {
+  getCompanyIndustryCopy,
+  getCompanyIndustryOptions,
+} from "@/i18n/company-industries";
+import { getCountryOptions, getCountryUiCopy } from "@/i18n/countries";
 import type { Dictionary } from "@/i18n/dictionaries";
-import { useState, useTransition } from "react";
+import { CountryFlag } from "@/components/ui/country-flag";
+import { useMemo, useState, useTransition } from "react";
 
 export interface CompanyProfileFormState {
   industry: string | null;
@@ -74,20 +84,61 @@ function experienceLabel(value: string, copy: Copy) {
   }
 }
 
+function normalizeIndustryState(stored: string | null | undefined): string {
+  if (!stored?.trim()) return "";
+  return resolveCompanyIndustryId(stored) ?? stored.trim();
+}
+
+function normalizeCountryState(stored: string | null | undefined): string {
+  if (!stored?.trim()) return "";
+  return resolveCountryCode(stored) ?? stored.trim();
+}
+
 export function CompanyProfileForm({
   companyName,
   initial,
   copy,
+  locale,
 }: {
   companyName: string;
   initial: CompanyProfileFormState;
   copy: Copy;
+  locale: Locale;
 }) {
   const [name, setName] = useState(companyName);
-  const [profile, setProfile] = useState(initial);
+  const [profile, setProfile] = useState(() => ({
+    ...initial,
+    industry: normalizeIndustryState(initial.industry) || null,
+    country: normalizeCountryState(initial.country) || null,
+  }));
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+
+  const industryCopy = useMemo(() => getCompanyIndustryCopy(locale), [locale]);
+  const industryOptions = useMemo(() => {
+    const base = getCompanyIndustryOptions(locale);
+    const current = profile.industry?.trim();
+    if (current && !resolveCompanyIndustryId(current)) {
+      return [{ value: current, label: current }, ...base];
+    }
+    return base;
+  }, [locale, profile.industry]);
+
+  const countryCopy = useMemo(() => getCountryUiCopy(locale), [locale]);
+  const countryOptions = useMemo(() => {
+    const base = getCountryOptions(locale).map((c) => ({
+      value: c.value,
+      label: c.label,
+      searchText: c.searchText,
+      leading: <CountryFlag code={c.value} title={c.label} />,
+    }));
+    const current = profile.country?.trim();
+    if (current && !resolveCountryCode(current)) {
+      return [{ value: current, label: current }, ...base];
+    }
+    return base;
+  }, [locale, profile.country]);
 
   function update<K extends keyof CompanyProfileFormState>(
     key: K,
@@ -159,21 +210,31 @@ export function CompanyProfileForm({
         </Alert>
       ) : null}
 
-      <Card>
+      <Card className="overflow-visible">
         <CardHeader>
           <CardTitle>{copy.basicsTitle}</CardTitle>
           <CardDescription>{copy.basicsBody}</CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-4 sm:grid-cols-2">
-          <Input
+        <CardContent className="grid gap-4 overflow-visible sm:grid-cols-2">
+          <SearchableCombobox
+            id="company-industry"
             label={copy.industry}
             value={profile.industry ?? ""}
-            onChange={(e) => update("industry", e.target.value)}
+            options={industryOptions}
+            onChange={(next) => update("industry", next || null)}
+            placeholder={industryCopy.placeholder}
+            searchPlaceholder={industryCopy.searchPlaceholder}
+            emptyMessage={industryCopy.empty}
           />
-          <Input
+          <SearchableCombobox
+            id="company-country"
             label={copy.country}
             value={profile.country ?? ""}
-            onChange={(e) => update("country", e.target.value)}
+            options={countryOptions}
+            onChange={(next) => update("country", next || null)}
+            placeholder={countryCopy.placeholder}
+            searchPlaceholder={countryCopy.searchPlaceholder}
+            emptyMessage={countryCopy.empty}
           />
           <label className="block space-y-1.5 text-sm">
             <span className="font-medium text-foreground">{copy.companySize}</span>

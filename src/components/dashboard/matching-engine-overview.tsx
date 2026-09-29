@@ -16,10 +16,10 @@ function StatCell({
   hint?: string;
 }) {
   return (
-    <div className="rounded-xl border border-border bg-background px-3 py-3">
-      <p className="text-xs text-muted">{label}</p>
-      <p className="mt-1 text-2xl font-semibold tabular-nums tracking-tight">{value}</p>
-      {hint ? <p className="mt-0.5 text-[11px] text-muted">{hint}</p> : null}
+    <div className="rounded-xl border border-border bg-background px-3 py-3 min-w-0">
+      <p className="break-words text-xs text-muted">{label}</p>
+      <p className="mt-1 text-xl font-semibold tabular-nums tracking-tight sm:text-2xl">{value}</p>
+      {hint ? <p className="mt-0.5 break-words text-[11px] text-muted">{hint}</p> : null}
     </div>
   );
 }
@@ -47,8 +47,8 @@ function FunnelBars({
             return (
               <li key={stage.id} className="space-y-1">
                 <div className="flex items-baseline justify-between gap-2 text-xs">
-                  <span className="text-muted">{stage.label}</span>
-                  <span className="font-medium tabular-nums text-foreground">
+                  <span className="min-w-0 truncate text-muted">{stage.label}</span>
+                  <span className="shrink-0 font-medium tabular-nums text-foreground">
                     {stage.value}
                   </span>
                 </div>
@@ -149,10 +149,10 @@ export function MatchingEngineOverview({
     <section className="space-y-4" aria-label="Matching Engine Overview">
       <Card>
         <CardHeader className="pb-2">
-          <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <Sparkles className="size-4 text-primary" aria-hidden />
+                <Sparkles className="size-4 shrink-0 text-primary" aria-hidden />
                 <CardTitle>Matching Engine Overview</CardTitle>
               </div>
               <CardDescription className="mt-1">
@@ -163,7 +163,7 @@ export function MatchingEngineOverview({
             </div>
             <Link
               href="/matched-opportunities"
-              className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-xl border border-border bg-card px-3 text-sm font-medium transition hover:border-primary/25 hover:bg-background"
+              className="inline-flex h-11 w-full shrink-0 items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-3 text-sm font-medium transition hover:border-primary/25 hover:bg-background sm:h-9 sm:w-auto"
             >
               View matched opportunities
               <ArrowRight className="size-3.5" aria-hidden />
@@ -195,7 +195,7 @@ export function MatchingEngineOverview({
             </div>
           ) : (
             <>
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+              <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-6">
                 <StatCell label="Matches found" value={stats.matchesFound} />
                 <StatCell
                   label="Highly relevant"
@@ -226,7 +226,7 @@ export function MatchingEngineOverview({
               </div>
 
               <div>
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
                   <p className="text-sm font-medium text-foreground">Recent matches</p>
                   <Link
                     href="/matched-opportunities"
@@ -244,13 +244,15 @@ export function MatchingEngineOverview({
                         <Link
                           href={item.href}
                           className={cn(
-                            "flex items-start justify-between gap-3 rounded-xl border border-border px-3 py-3 transition",
+                            "flex flex-col gap-1 rounded-xl border border-border px-3 py-3 transition sm:flex-row sm:items-start sm:justify-between sm:gap-3",
                             "hover:border-primary/25 hover:bg-background",
                           )}
                         >
                           <div className="min-w-0">
-                            <p className="truncate text-sm font-medium">{item.title}</p>
-                            <p className="mt-1 text-xs text-muted">
+                            <p className="break-words text-sm font-medium sm:truncate">
+                              {item.title}
+                            </p>
+                            <p className="mt-1 break-words text-xs text-muted">
                               {item.geography ? `${item.geography} · ` : ""}
                               {item.highlyRelevant ? "Highly relevant" : "Relevant"}
                               {item.sponsored ? " · Sponsored" : ""}

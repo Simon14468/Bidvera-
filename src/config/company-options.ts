@@ -14,59 +14,18 @@ export const EXPERIENCE_LEVEL_OPTIONS = [
   { value: "highly_experienced", label: "Highly experienced" },
 ] as const;
 
-export const INDUSTRY_OPTIONS = [
-  "Information Technology",
-  "Software & SaaS",
-  "Construction & Engineering",
-  "Consulting & Professional Services",
-  "Security & Facilities",
-  "Healthcare",
-  "Education",
-  "Energy & Utilities",
-  "Manufacturing",
-  "Logistics & Transportation",
-  "Marketing & Creative",
-  "Finance & Insurance",
-  "Government & Public Sector",
-  "Agriculture",
-  "Telecommunications",
-  "Other",
-] as const;
+export {
+  COMPANY_INDUSTRY_IDS,
+  INDUSTRY_OPTIONS,
+  isCompanyIndustryId,
+  resolveCompanyIndustryId,
+  type CompanyIndustryId,
+} from "@/config/company-industries";
 
-/** Common country names for business location (not a precise address). */
-export const COUNTRY_OPTIONS = [
-  "Morocco",
-  "Algeria",
-  "Tunisia",
-  "Egypt",
-  "Saudi Arabia",
-  "United Arab Emirates",
-  "Qatar",
-  "Kuwait",
-  "Bahrain",
-  "Oman",
-  "Jordan",
-  "Lebanon",
-  "United Kingdom",
-  "France",
-  "Germany",
-  "Spain",
-  "Portugal",
-  "Italy",
-  "Netherlands",
-  "Belgium",
-  "Switzerland",
-  "United States",
-  "Canada",
-  "Mexico",
-  "Brazil",
-  "India",
-  "China",
-  "Japan",
-  "Singapore",
-  "Australia",
-  "South Africa",
-  "Nigeria",
-  "Kenya",
-  "Other",
-] as const;
+export {
+  COMPANY_COUNTRY_CODES,
+  COUNTRY_OPTIONS,
+  isCompanyCountryCode,
+  resolveCountryCode,
+} from "@/config/countries";
+

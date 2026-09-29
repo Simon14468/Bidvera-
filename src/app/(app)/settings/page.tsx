@@ -3,10 +3,12 @@ export const dynamic = "force-dynamic";
 import { logout, revokeOtherSessions } from "@/app/actions";
 import { requireAuth } from "@/auth/session";
 import { canManageCompanySettings } from "@/auth/company-settings-access";
+import { CookieSettingsLink } from "@/components/consent/cookie-consent-root";
 import { AccountProfileForm } from "@/components/settings/account-profile-form";
 import { NotificationPrefsForm } from "@/components/settings/notification-prefs-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getCookieConsentCopy } from "@/i18n/cookie-consent";
 import { getDictionary } from "@/i18n/dictionaries";
 import { getLocale } from "@/i18n/get-locale";
 import { getCompanyNotificationPrefs } from "@/services/notifications/prefs";
@@ -30,6 +32,7 @@ async function signOutOtherDevices() {
 export default async function SettingsPage() {
   const locale = await getLocale();
   const t = getDictionary(locale).app.settings;
+  const cookiesCopy = getCookieConsentCopy(locale);
   const auth = await requireAuth();
   if (!auth.user.companyId) redirect("/onboarding/company");
   const [
@@ -169,6 +172,19 @@ export default async function SettingsPage() {
               {t.revokeOtherSessions}
             </Button>
           </form>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>{cookiesCopy.settingsTitle}</CardTitle>
+          <CardDescription>{cookiesCopy.settingsDescription}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <CookieSettingsLink
+            label={cookiesCopy.manageCookies}
+            className="inline-flex h-10 items-center rounded-xl border border-border bg-card px-4 text-sm font-medium text-foreground hover:bg-background"
+          />
         </CardContent>
       </Card>
     </div>

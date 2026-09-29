@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type EntitlementFlag =
   | "tenderAnalysis"
@@ -206,6 +206,20 @@ export function AppSidebar({
   const [open, setOpen] = useState(false);
   const { nav, shell } = copy;
 
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open]);
+
   const entitlementEnabled: Record<EntitlementFlag, boolean> = {
     tenderAnalysis: tenderAnalysisEnabled,
     documentCompliance: documentComplianceEnabled,
@@ -252,7 +266,8 @@ export function AppSidebar({
                   href={href}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                    "flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                     active
                       ? "bg-primary-muted text-primary"
                       : enabled
@@ -313,7 +328,7 @@ export function AppSidebar({
 
   return (
     <>
-      <div className="flex items-center justify-between gap-2 border-b border-border bg-background px-4 py-3 lg:hidden">
+      <div className="flex items-center justify-between gap-2 border-b border-border bg-background px-3 py-2.5 sm:px-4 sm:py-3 lg:hidden">
         <BrandLogo href="/dashboard" height={32} className="min-w-0" inverseOnDark />
         <div className="flex shrink-0 items-center gap-1">
           <ThemeToggle />
@@ -321,6 +336,7 @@ export function AppSidebar({
             type="button"
             variant="ghost"
             size="sm"
+            className="size-11 shrink-0 px-0"
             aria-label={open ? shell.closeMenu : shell.openMenu}
             aria-expanded={open}
             aria-controls="app-mobile-nav"
@@ -344,10 +360,29 @@ export function AppSidebar({
             role="dialog"
             aria-modal="true"
             aria-label={shell.openMenu}
-            className="relative z-10 flex h-full w-72 max-w-[85vw] flex-col border-r border-border bg-background"
+            className="relative z-10 flex h-dvh max-h-dvh w-[min(18rem,88vw)] flex-col border-r border-border bg-background pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
           >
-            <SidebarBrand />
-            <div className="scrollbar-pro min-h-0 flex-1 overflow-y-auto">{navEl}</div>
+            <div className="flex items-start justify-between gap-2 border-b border-border px-4 py-3 sm:px-5 sm:py-4">
+              <div className="min-w-0">
+                <BrandLogo href="/dashboard" height={34} inverseOnDark />
+              </div>
+              <div className="flex shrink-0 items-center gap-1">
+                <ThemeToggle className="mt-0.5" />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="size-11 shrink-0 px-0"
+                  aria-label={shell.closeMenu}
+                  onClick={() => setOpen(false)}
+                >
+                  <X className="size-5" />
+                </Button>
+              </div>
+            </div>
+            <div className="scrollbar-pro min-h-0 flex-1 overflow-y-auto overscroll-contain">
+              {navEl}
+            </div>
             {footer(true)}
           </aside>
         </div>

@@ -56,7 +56,7 @@ export function WorkspacePlanCard({
             </p>
             <Link
               href="/upgrade?reason=trial_expired"
-              className="mt-2 inline-flex h-10 items-center justify-center rounded-[12px] bg-[#4CAF6D] px-4 text-sm font-medium text-white"
+              className="mt-2 inline-flex h-11 w-full items-center justify-center rounded-[12px] bg-[#4CAF6D] px-4 text-sm font-medium text-white sm:h-10 sm:w-auto"
             >
               {labels.freeWorkspaceTrialCta}
             </Link>

@@ -75,7 +75,12 @@ export function LanguageSwitcher({
         )}
       >
         <Globe className="size-4 shrink-0" aria-hidden />
-        <span className={cn(!isHeader && "hidden sm:inline")}>
+        <span
+          className={cn(
+            !isHeader && "hidden sm:inline",
+            isHeader && "hidden min-[400px]:inline",
+          )}
+        >
           {localeLabels[current].short}
         </span>
       </button>

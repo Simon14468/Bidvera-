@@ -39,25 +39,26 @@ export async function AppTopbar({
 
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="flex h-14 items-center justify-between gap-3 px-4 sm:gap-4 sm:px-6">
-        <div className="min-w-0 flex-1">
+      <div className="flex h-14 min-w-0 items-center justify-between gap-2 px-3 sm:gap-4 sm:px-6">
+        <div className="min-w-0 flex-1 overflow-hidden">
           <p className="truncate text-sm font-semibold tracking-tight text-foreground">
             {t.decisionWorkspace}
           </p>
           <p className="truncate text-xs text-muted">{t.tagline}</p>
         </div>
 
-        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2.5">
+        <div className="flex min-w-0 shrink-0 items-center gap-1 sm:gap-2.5">
           <LanguageSwitcher
             current={locale as Locale}
             label={langLabel}
             variant="header"
           />
 
+          {/* Upgrade also lives in the mobile sidebar footer — hide here under sm to avoid topbar overflow. */}
           {showUpgrade ? (
             <Link
               href="/upgrade"
-              className="inline-flex h-9 shrink-0 items-center rounded-xl border border-border bg-card px-3 text-sm font-medium text-foreground transition hover:bg-background"
+              className="hidden h-9 shrink-0 items-center rounded-xl border border-border bg-card px-3 text-sm font-medium text-foreground transition hover:bg-background sm:inline-flex"
             >
               {t.upgrade}
             </Link>
@@ -74,7 +75,7 @@ export async function AppTopbar({
 
           <Link
             href={companyHref}
-            className="group flex min-w-0 max-w-[11rem] items-center gap-2 rounded-xl border border-border bg-card py-1 pe-2.5 ps-1 transition hover:border-primary/25 hover:shadow-[var(--shadow-soft)] sm:max-w-[16rem] sm:gap-2.5 sm:pe-3"
+            className="group flex min-w-0 max-w-[7.5rem] items-center gap-1.5 rounded-xl border border-border bg-card py-1 pe-2 ps-1 transition hover:border-primary/25 hover:shadow-[var(--shadow-soft)] sm:max-w-[16rem] sm:gap-2.5 sm:pe-3"
             title={companyName}
           >
             <CompanyAvatar

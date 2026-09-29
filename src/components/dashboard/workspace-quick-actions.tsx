@@ -40,12 +40,12 @@ export function WorkspaceQuickActions({
         <CardTitle>{labels.quickActionsTitle}</CardTitle>
         <CardDescription>{labels.quickActionsHint}</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-wrap gap-2">
+      <CardContent className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         {actions.map((action) => (
           <Link
             key={action.id}
             href={action.href}
-            className="inline-flex h-9 items-center rounded-xl border border-border bg-card px-3 text-sm font-medium transition hover:border-primary/25 hover:bg-background"
+            className="inline-flex h-11 w-full items-center justify-center rounded-xl border border-border bg-card px-3 text-sm font-medium transition hover:border-primary/25 hover:bg-background sm:h-9 sm:w-auto sm:justify-start"
           >
             {actionLabels[action.labelKey as QuickActionLabelKey] ??
               action.labelKey}

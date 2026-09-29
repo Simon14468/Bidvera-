@@ -1,10 +1,12 @@
 import { BrandLogo } from "@/components/brand/brand-logo";
 import { CompanyAvatar } from "@/components/brand/company-avatar";
+import { CookieSettingsLink } from "@/components/consent/cookie-consent-root";
 import { LanguageSwitcher } from "@/components/marketing/language-switcher";
 import { MarketingMobileMenu } from "@/components/marketing/marketing-mobile-menu";
 import { MarketingNavShell } from "@/components/marketing/marketing-nav-shell";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { resolveAuthContext } from "@/auth/session";
+import { getCookieConsentCopy } from "@/i18n/cookie-consent";
 import { getDictionary } from "@/i18n/dictionaries";
 import { getLocale } from "@/i18n/get-locale";
 import { prisma } from "@/lib/db";
@@ -139,6 +141,7 @@ export async function MarketingHeader() {
 export async function MarketingFooter() {
   const locale = await getLocale();
   const t = getDictionary(locale);
+  const cookiesCopy = getCookieConsentCopy(locale);
 
   const nav = [
     { label: t.nav.product, href: "/product" },
@@ -180,6 +183,7 @@ export async function MarketingFooter() {
                   {item.label}
                 </Link>
               ))}
+              <CookieSettingsLink label={cookiesCopy.manageCookies} />
             </nav>
           </div>
           <nav

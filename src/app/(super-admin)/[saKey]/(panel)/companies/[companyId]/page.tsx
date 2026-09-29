@@ -7,6 +7,8 @@ import { CompanyAdminActions } from "@/components/super-admin/company-actions";
 import { EnterCompanyForm } from "@/components/super-admin/enter-company-form";
 import { MatchingReadinessCard } from "@/components/super-admin/matching-readiness-card";
 import { MetricGrid } from "@/components/super-admin/metric-grid";
+import { formatCompanyIndustryLabel } from "@/i18n/company-industries";
+import { formatCountryLabel } from "@/i18n/countries";
 import { saHref } from "@/lib/super-admin-nav";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -86,11 +88,19 @@ export default async function SaCompanyDetailPage({
           <dl className="mt-3 grid gap-2 text-sm text-slate-300 sm:grid-cols-2">
             <div>
               <dt className="text-xs text-slate-500">Industry</dt>
-              <dd>{company.profile.industry ?? "—"}</dd>
+              <dd>
+                {company.profile.industry
+                  ? formatCompanyIndustryLabel(company.profile.industry, "en")
+                  : "—"}
+              </dd>
             </div>
             <div>
               <dt className="text-xs text-slate-500">Country</dt>
-              <dd>{company.profile.country ?? "—"}</dd>
+              <dd>
+                {company.profile.country
+                  ? formatCountryLabel(company.profile.country, "en")
+                  : "—"}
+              </dd>
             </div>
             <div>
               <dt className="text-xs text-slate-500">Size</dt>

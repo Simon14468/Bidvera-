@@ -55,6 +55,7 @@ export default async function CompanyPage() {
       </div>
       <CompanyProfileForm
         companyName={company.name}
+        locale={locale}
         copy={copy}
         initial={{
           industry: profile?.industry ?? null,
