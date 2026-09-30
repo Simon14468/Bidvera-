@@ -397,7 +397,7 @@ test("PayPal environment and secrets stay on the server", () => {
   }
 });
 
-test("PayPal production fail-closed never defaults to sandbox", () => {
+test("PayPal production fail-closed never defaults to sandbox", async () => {
   const prevEnv = process.env.PAYPAL_ENVIRONMENT;
   const prevMode = process.env.PAYPAL_MODE;
   const prevId = process.env.PAYPAL_CLIENT_ID;
@@ -433,7 +433,7 @@ test("PayPal production fail-closed never defaults to sandbox", () => {
     process.env.PAYPAL_CLIENT_ID = "sb-sandbox-client";
     process.env.PAYPAL_CLIENT_SECRET = "secret";
     delete process.env.PAYPAL_WEBHOOK_ID;
-    assert.throws(
+    await assert.rejects(
       () => assertPaypalRuntimeReady(),
       (error: unknown) =>
         error instanceof AppError &&
@@ -443,18 +443,20 @@ test("PayPal production fail-closed never defaults to sandbox", () => {
 
     process.env.PAYPAL_CLIENT_ID = "live-client-id";
     process.env.PAYPAL_CLIENT_SECRET = "live-secret";
-    assert.throws(
+    await assert.rejects(
       () => assertPaypalRuntimeReady(),
       (error: unknown) =>
         error instanceof AppError &&
         error.status === 503 &&
-        /PAYPAL_WEBHOOK_ID/i.test(error.message),
+        /PAYPAL_WEBHOOK_ID|webhook/i.test(
+          error instanceof Error ? error.message : "",
+        ),
     );
 
     process.env.PAYPAL_WEBHOOK_ID = "WH-LIVE";
     assert.equal(resolvePaypalEnvironment(), "live");
     assert.equal(paypalBaseUrl(), "https://api-m.paypal.com");
-    assert.doesNotThrow(() => assertPaypalRuntimeReady());
+    await assert.doesNotReject(() => assertPaypalRuntimeReady());
     const ready = getPaypalIntegrationStatus();
     assert.equal(ready.environment, "live");
     assert.equal(ready.productionReady, true);

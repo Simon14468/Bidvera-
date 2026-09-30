@@ -17,6 +17,8 @@ import {
   isFeatureEnabledInMap,
   isIsolatedInternalFeatureKey,
   planDefaultFeatureKeys,
+  planHasAllCommercialModules,
+  planQualifiesForPremiumPricingHover,
   upgradeMessageForFeature,
   type EntitlementFeatureKey,
 } from "@/domain/billing/entitlement-catalog";
@@ -40,6 +42,8 @@ export {
   isFeatureEnabledInMap,
   isIsolatedInternalFeatureKey,
   planDefaultFeatureKeys,
+  planHasAllCommercialModules,
+  planQualifiesForPremiumPricingHover,
   upgradeMessageForFeature,
 };
 

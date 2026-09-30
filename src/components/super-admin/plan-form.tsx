@@ -10,22 +10,26 @@ import {
   buildEntitlementMarketingLabels,
   planEditorCanonicalFeatures,
 } from "@/domain/billing/entitlement-catalog";
+import { normalizePlanSlug } from "@/domain/billing/plan-slug";
 import { localeLabels } from "@/i18n/config";
 import {
   type AdminPlanRow,
 } from "@/application/admin/plan-view-model";
 import {
   buildPlanLanguagesDraft,
+  DEFAULT_CURRENCY_LABELS,
   MARKETING_LOCALES,
   parsePlanTranslations,
   suggestLocaleFeatures,
   suggestLocalePlanName,
   type PlanTranslations,
 } from "@/services/billing/plan-i18n";
+import { formatPlanMoney } from "@/i18n/format-money";
 import { useRouter } from "next/navigation";
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 
 export type { AdminPlanRow } from "@/application/admin/plan-view-model";
+export { normalizePlanSlug } from "@/domain/billing/plan-slug";
 
 const inputClass =
   "rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100";
@@ -40,6 +44,76 @@ function centsToDollars(cents: number): string {
   return (cents / 100).toFixed(cents % 100 === 0 ? 0 : 2);
 }
 
+function planRowFromUpsert(
+  saved: {
+    id: string;
+    slug: string;
+    name: string;
+    description: string | null;
+    monthlyPriceCents: number;
+    annualPriceCents: number | null;
+    annualMonths: number;
+    monthlyEnabled: boolean;
+    annualEnabled: boolean;
+    analysesLimit: number;
+    analysesLimitYearly: number | null;
+    seatsLimit: number;
+    seatsLimitYearly: number | null;
+    aiTokensLimit: number | null;
+    storageMbLimit: number | null;
+    isFree: boolean;
+    visibleToPublic: boolean;
+    stripeEnabled: boolean;
+    paypalEnabled: boolean;
+    status: "ACTIVE" | "INACTIVE" | "ARCHIVED";
+    trialEligible: boolean;
+    trialDays: number | null;
+    graceDays: number | null;
+    currency: string;
+    sortOrder: number;
+    highlighted: boolean;
+    preferEntitlementLabels: boolean;
+    featureList: string[];
+  },
+  featureKeys: string[],
+  translations: AdminPlanRow["translations"],
+  subscriptionsCount: number,
+): AdminPlanRow {
+  return {
+    id: saved.id,
+    slug: saved.slug,
+    name: saved.name,
+    description: saved.description,
+    monthlyPriceCents: saved.monthlyPriceCents,
+    annualPriceCents: saved.annualPriceCents,
+    annualMonths: saved.annualMonths,
+    monthlyEnabled: saved.monthlyEnabled,
+    annualEnabled: saved.annualEnabled,
+    analysesLimit: saved.analysesLimit,
+    analysesLimitYearly: saved.analysesLimitYearly,
+    seatsLimit: saved.seatsLimit,
+    seatsLimitYearly: saved.seatsLimitYearly,
+    aiTokensLimit: saved.aiTokensLimit,
+    storageMbLimit: saved.storageMbLimit,
+    isFree: saved.isFree,
+    visibleToPublic: saved.visibleToPublic,
+    stripeEnabled: saved.stripeEnabled,
+    paypalEnabled: saved.paypalEnabled,
+    status: saved.status,
+    trialEligible: saved.trialEligible,
+    trialDays: saved.trialDays,
+    graceDays: saved.graceDays,
+    currency: saved.currency,
+    sortOrder: saved.sortOrder,
+    highlighted: saved.highlighted,
+    preferEntitlementLabels: saved.preferEntitlementLabels,
+    featureList: saved.featureList,
+    featureKeys,
+    translations,
+    subscriptionsCount,
+  };
+}
+
 export function PlansManager({
   plans,
   entitlementKeys,
@@ -48,6 +122,7 @@ export function PlansManager({
   defaultIsFree,
   defaultSlug,
   defaultName,
+  createNonce = 0,
 }: {
   plans: AdminPlanRow[];
   entitlementKeys: string[];
@@ -56,6 +131,8 @@ export function PlansManager({
   defaultIsFree?: boolean;
   defaultSlug?: string;
   defaultName?: string;
+  /** Increment from parent "Add new plan" to open a blank create form. */
+  createNonce?: number;
 }) {
   const router = useRouter();
   const [msg, setMsg] = useState<string | null>(null);
@@ -69,6 +146,23 @@ export function PlansManager({
     );
   });
   const [langPlan, setLangPlan] = useState<AdminPlanRow | null>(null);
+  const [editorEpoch, setEditorEpoch] = useState(0);
+
+  useEffect(() => {
+    if (!createNonce || focusMode) return;
+    setLangPlan(null);
+    setEditing(null);
+    setEditorEpoch((n) => n + 1);
+    setMsg(null);
+    // Scroll after the create form remounts.
+    const t = window.setTimeout(() => {
+      document.getElementById("plan-editor")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 50);
+    return () => window.clearTimeout(t);
+  }, [createNonce, focusMode]);
 
   return (
     <div className="space-y-6">
@@ -150,6 +244,7 @@ export function PlansManager({
                       onClick={() => {
                         setLangPlan(null);
                         setEditing(p);
+                        setEditorEpoch((n) => n + 1);
                       }}
                     >
                       Edit price
@@ -227,34 +322,46 @@ export function PlansManager({
           }}
         />
       ) : (
-        <PlanEditor
-          key={editing?.id ?? "new"}
-          initial={editing}
-          pending={pending}
-          entitlementKeys={entitlementKeys}
-          focusMode={focusMode}
-          defaultIsFree={defaultIsFree}
-          defaultSlug={defaultSlug}
-          defaultName={defaultName}
-          onClear={() => setEditing(null)}
-          onSave={(payload, form) => {
-            start(async () => {
-              const r = await saUpsertPlan(payload);
-              setMsg(
-                r.ok
-                  ? "Plan + entitlements saved — subscribers synced; live on Paywall."
-                  : r.error.message,
-              );
-              if (r.ok) {
-                if (!focusMode) {
-                  setEditing(null);
-                  form?.reset();
+        <div id="plan-editor">
+          <PlanEditor
+            key={`${editing?.id ?? "new"}-${editorEpoch}`}
+            initial={editing}
+            pending={pending}
+            entitlementKeys={entitlementKeys}
+            focusMode={focusMode}
+            defaultIsFree={defaultIsFree}
+            defaultSlug={defaultSlug}
+            defaultName={defaultName}
+            onClear={() => {
+              setEditing(null);
+              setEditorEpoch((n) => n + 1);
+            }}
+            onSave={(payload) => {
+              start(async () => {
+                const r = await saUpsertPlan(payload);
+                if (!r.ok) {
+                  setMsg(r.error.message);
+                  return;
                 }
+                const featureKeys = Array.isArray(payload.featureKeys)
+                  ? (payload.featureKeys as string[])
+                  : editing?.featureKeys ?? [];
+                const nextRow = planRowFromUpsert(
+                  r.data,
+                  featureKeys,
+                  editing?.translations ?? null,
+                  editing?.subscriptionsCount ?? 0,
+                );
+                setEditing(nextRow);
+                setEditorEpoch((n) => n + 1);
+                setMsg(
+                  "Plan saved — subscribers synced; live on /pricing, /upgrade, and Paywall.",
+                );
                 router.refresh();
-              }
-            });
-          }}
-        />
+              });
+            }}
+          />
+        </div>
       )}
 
       {msg ? <p className="text-sm text-emerald-300/90">{msg}</p> : null}
@@ -413,6 +520,7 @@ function PlanLanguagesEditor({
   function patchCurrent(patch: {
     name?: string;
     description?: string | null;
+    currencyLabel?: string | null;
   }) {
     setDirty(true);
     setDraft((d) => {
@@ -433,6 +541,10 @@ function PlanLanguagesEditor({
           name: monthly.name ?? prev.name,
           description: monthly.description ?? prev.description,
           features: monthly.features ?? prev.features,
+          currencyLabel:
+            patch.currencyLabel !== undefined
+              ? patch.currencyLabel
+              : prev.currencyLabel,
           monthly,
           yearly,
         },
@@ -442,12 +554,21 @@ function PlanLanguagesEditor({
 
   const displayName = bucketName(locale, interval);
   const displayDescription = bucketDescription(locale, interval) ?? "";
-  const priceLabel =
+  const displayCurrencyLabel =
+    draft[locale]?.currencyLabel?.trim() ||
+    DEFAULT_CURRENCY_LABELS[locale] ||
+    "$";
+  const amountCents =
     interval === "year" && plan.annualPriceCents != null
-      ? `$${(plan.annualPriceCents / 100).toFixed(plan.annualPriceCents % 100 === 0 ? 0 : 2)}/year`
-      : plan.monthlyPriceCents <= 0
-        ? "$0"
-        : `$${(plan.monthlyPriceCents / 100).toFixed(plan.monthlyPriceCents % 100 === 0 ? 0 : 2)}/month`;
+      ? plan.annualPriceCents
+      : plan.monthlyPriceCents;
+  const pricePreview = formatPlanMoney(
+    amountCents,
+    plan.currency,
+    locale,
+    displayCurrencyLabel,
+  );
+  const priceSuffix = interval === "year" ? "/year" : "/month";
 
   return (
     <div className="grid max-w-4xl gap-4 lg:grid-cols-2">
@@ -569,6 +690,9 @@ function PlanLanguagesEditor({
                     name: monthly.name ?? prev.name ?? suggestedName,
                     description: monthly.description ?? prev.description,
                     features: monthly.features ?? prev.features,
+                    currencyLabel:
+                      prev.currencyLabel?.trim() ||
+                      DEFAULT_CURRENCY_LABELS[locale],
                     monthly,
                     yearly,
                   },
@@ -589,6 +713,26 @@ function PlanLanguagesEditor({
             dir={locale === "ar" ? "rtl" : "ltr"}
             placeholder={plan.name}
           />
+        </label>
+
+        <label className="text-xs text-slate-400">
+          Currency label (shown next to price on /pricing)
+          <input
+            value={draft[locale]?.currencyLabel ?? ""}
+            onChange={(e) =>
+              patchCurrent({ currencyLabel: e.target.value })
+            }
+            className={`mt-1 w-full ${inputClass}`}
+            dir={locale === "ar" ? "rtl" : "ltr"}
+            placeholder={DEFAULT_CURRENCY_LABELS[locale]}
+            maxLength={40}
+          />
+          <span className="mt-1 block text-[11px] text-slate-500">
+            Controls the unit text only (not the amount). Examples:{" "}
+            <code className="text-slate-400">$</code> → $13 ·{" "}
+            <code className="text-slate-400">دولار</code> → 13 دولار ·{" "}
+            <code className="text-slate-400">美元</code> → 13 美元
+          </span>
         </label>
 
         <label className="text-xs text-slate-400">
@@ -655,6 +799,10 @@ function PlanLanguagesEditor({
                   entry.monthly?.description?.trim() ||
                   entry.description?.trim() ||
                   null,
+                currencyLabel:
+                  entry.currencyLabel?.trim() ||
+                  DEFAULT_CURRENCY_LABELS[loc] ||
+                  null,
                 features: monthlyFeatures,
                 monthly: {
                   name: monthName,
@@ -702,7 +850,12 @@ function PlanLanguagesEditor({
             {plan.seatsLimit} seats
           </p>
           <p className="mt-3 text-2xl font-semibold tabular-nums text-white">
-            {priceLabel}
+            {pricePreview}
+            {amountCents > 0 ? (
+              <span className="ms-1 text-sm font-normal text-slate-400">
+                {priceSuffix}
+              </span>
+            ) : null}
           </p>
           <ul className="mt-4 space-y-2 text-sm text-slate-300">
             {previewFeatures.map((f) => (
@@ -767,6 +920,9 @@ function PlanEditor({
   const [visibleToPublic, setVisibleToPublic] = useState(initial?.visibleToPublic ?? true);
   const [stripeEnabled, setStripeEnabled] = useState(initial?.stripeEnabled ?? true);
   const [paypalEnabled, setPaypalEnabled] = useState(initial?.paypalEnabled ?? true);
+  const [slug, setSlug] = useState(
+    () => initial?.slug ?? defaultSlug ?? "",
+  );
   const [sourceKey, setSourceKey] = useState(initial?.id ?? "new");
   const nextKey = initial?.id ?? "new";
   if (nextKey !== sourceKey) {
@@ -790,6 +946,7 @@ function PlanEditor({
     setVisibleToPublic(initial?.visibleToPublic ?? true);
     setStripeEnabled(initial?.stripeEnabled ?? true);
     setPaypalEnabled(initial?.paypalEnabled ?? true);
+    setSlug(initial?.slug ?? defaultSlug ?? "");
   }
 
   const previewLabels = useMemo(() => {
@@ -815,10 +972,15 @@ function PlanEditor({
         const monthlyDollars = String(fd.get("monthlyDollars") ?? "0");
         const annualDollars = String(fd.get("annualDollars") ?? "");
         const yearlySeats = String(fd.get("seatsLimitYearly") ?? "");
+        // Free Workspace system identity keeps slug "free"; paid plans are fully editable.
+        const nextSlug = isFree ? "free" : normalizePlanSlug(slug || String(fd.get("slug") ?? ""));
+        if (!nextSlug || nextSlug.length < 2) {
+          return;
+        }
         onSave(
           {
             id: initial?.id,
-            slug: String(fd.get("slug")),
+            slug: nextSlug,
             name: String(fd.get("name")),
             description: String(fd.get("description") || "") || null,
             monthlyPriceCents: isFree ? 0 : dollarsToCents(monthlyDollars),
@@ -903,7 +1065,15 @@ function PlanEditor({
           <input
             type="checkbox"
             checked={isFree}
-            onChange={(e) => setIsFree(e.target.checked)}
+            onChange={(e) => {
+              const next = e.target.checked;
+              setIsFree(next);
+              if (next) {
+                setSlug("free");
+                setStripeEnabled(false);
+                setPaypalEnabled(false);
+              }
+            }}
           />
           Free Workspace (not a paid checkout product)
         </label>
@@ -977,21 +1147,40 @@ function PlanEditor({
       ) : null}
 
       <div className="grid gap-2 sm:grid-cols-2">
-        <input
-          name="slug"
-          required
-          readOnly={Boolean(initial)}
-          defaultValue={initial?.slug ?? defaultSlug ?? ""}
-          placeholder="slug (starter)"
-          className={`${inputClass} ${initial ? "opacity-70" : ""}`}
-        />
-        <input
-          name="name"
-          required
-          defaultValue={initial?.name ?? defaultName ?? ""}
-          placeholder="Display name"
-          className={inputClass}
-        />
+        <label className="text-xs text-slate-400">
+          Slug
+          <input
+            name="slug"
+            required
+            readOnly={isFree}
+            value={isFree ? "free" : slug}
+            onChange={(e) => {
+              if (isFree) return;
+              setSlug(e.target.value);
+            }}
+            onBlur={() => {
+              if (isFree) return;
+              setSlug((prev) => normalizePlanSlug(prev));
+            }}
+            placeholder="slug (starter)"
+            className={`mt-1 w-full ${inputClass} ${isFree ? "opacity-70" : ""}`}
+            title={
+              isFree
+                ? "Free Workspace system slug is fixed to free"
+                : "Editable — saved on Update / Create"
+            }
+          />
+        </label>
+        <label className="text-xs text-slate-400">
+          Display name
+          <input
+            name="name"
+            required
+            defaultValue={initial?.name ?? defaultName ?? ""}
+            placeholder="Display name"
+            className={`mt-1 w-full ${inputClass}`}
+          />
+        </label>
       </div>
 
       <textarea
@@ -1219,19 +1408,31 @@ function PlanEditor({
         ) : null}
         <label className="flex items-center gap-2">
           <input
-            name="highlighted"
-            type="checkbox"
-            defaultChecked={initial?.highlighted ?? false}
-          />
-          Highlighted
-        </label>
-        <label className="flex items-center gap-2">
-          <input
             type="checkbox"
             checked={preferLabels}
             onChange={(e) => setPreferLabels(e.target.checked)}
           />
           Prefer entitlement labels on Paywall
+        </label>
+      </div>
+
+      <div className="rounded-lg border border-emerald-800/50 bg-emerald-950/20 p-3 space-y-2">
+        <label className="flex items-start gap-2 text-sm text-slate-200">
+          <input
+            name="highlighted"
+            type="checkbox"
+            className="mt-1"
+            defaultChecked={initial?.highlighted ?? false}
+          />
+          <span>
+            <span className="font-semibold text-emerald-200">Recommended</span>
+            <span className="mt-0.5 block text-[11px] text-slate-400">
+              Marks this plan on public pricing (/pricing, Paywall) with a
+              Recommended badge and a soft top-gradient hover. Use for the
+              featured plan in its category (typically the full-module Pro
+              suite).
+            </span>
+          </span>
         </label>
       </div>
 

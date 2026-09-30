@@ -32,6 +32,11 @@ export type PublicBillingPlan = {
   monthlyEnabled: boolean;
   annualEnabled: boolean;
   currency: string;
+  /**
+   * Locale-specific currency display from Plan Languages (e.g. "دولار").
+   * Null for English / when unset — formatPlanMoney falls back to $ / code.
+   */
+  currencyLabel: string | null;
   analysesLimit: number;
   seatsLimit: number;
   isFree: boolean;

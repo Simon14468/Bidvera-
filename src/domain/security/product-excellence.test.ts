@@ -68,8 +68,8 @@ describe("product excellence UX gates", () => {
   it("settings plan summary does not meter analyses", () => {
     const settings = read("src/app/(app)/settings/page.tsx");
     assert.doesNotMatch(settings, /analysesUsed|planLimited|planUnlimited/);
-    assert.match(settings, /usage\.plan/);
-    assert.match(settings, /usage\.effectiveStatus/);
+    assert.match(settings, /loadSettingsBillingSummary/);
+    assert.match(settings, /BillingSubscriptionSection/);
   });
 
   it("public offered capabilities do not list Tender Analysis as sold", () => {

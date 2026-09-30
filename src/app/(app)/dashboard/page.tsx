@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { getMatchingDashboardOverview } from "@/application/matching-dashboard-overview";
 import { getWorkspaceDashboard } from "@/application/workspace-dashboard";
+import { CheckoutConfirmation } from "@/components/billing/checkout-confirmation";
 import { MatchingEngineOverview } from "@/components/dashboard/matching-engine-overview";
 import { WorkspaceBarChart } from "@/components/dashboard/workspace-bar-chart";
 import { WorkspaceKpiGrid } from "@/components/dashboard/workspace-kpi-grid";
@@ -15,12 +16,27 @@ import { getLocale } from "@/i18n/get-locale";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-export default async function DashboardPage() {
+interface PageProps {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
+export default async function DashboardPage({ searchParams }: PageProps) {
   const locale = await getLocale();
   const dict = getDictionary(locale);
   const common = dict.app.common;
   const { requireCompanyId } = await import("@/auth/session");
   const { companyId } = await requireCompanyId();
+  const params = await searchParams;
+
+  // Provider return flags only trigger verification — never mean "paid".
+  const stripeSessionId =
+    params.stripe === "1" && typeof params.session_id === "string"
+      ? params.session_id
+      : null;
+  const paypalSubscriptionId =
+    params.paypal === "1" && typeof params.subscription_id === "string"
+      ? params.subscription_id
+      : null;
 
   // Matching commercially OFF: skip overview DB work entirely (journeys hit /dashboard 3×).
   const matchingCommerciallyOn = isCommerciallyAvailableFeature("matching_engine");
@@ -54,6 +70,13 @@ export default async function DashboardPage() {
           <ArrowRight className="size-4" aria-hidden />
         </Link>
       </div>
+
+      {stripeSessionId || paypalSubscriptionId ? (
+        <CheckoutConfirmation
+          stripeSessionId={stripeSessionId}
+          paypalSubscriptionId={paypalSubscriptionId}
+        />
+      ) : null}
 
       <PwaInstallCard copy={dict.app.pwa} />
 

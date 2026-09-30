@@ -2,9 +2,12 @@
 
 import { BRAND_MARK_SRC } from "@/components/brand/brand-logo";
 import { cn } from "@/lib/cn";
+import { planQualifiesForPremiumPricingHover } from "@/domain/billing/entitlement-catalog";
 import type { PublicBillingPlan } from "@/services/billing/catalog";
 import { isPublicCommercialPricingPlan } from "@/services/billing/free-workspace-identity";
+import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
+import { formatPlanMoney } from "@/i18n/format-money";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -12,35 +15,26 @@ import { useState } from "react";
 type BillingCycle = "monthly" | "yearly";
 type PricingCopy = Dictionary["pricing"];
 
-function formatMoney(cents: number, currency: string): string {
-  try {
-    return new Intl.NumberFormat(undefined, {
-      style: "currency",
-      currency: currency.toUpperCase(),
-      maximumFractionDigits: 0,
-    }).format(Math.max(cents, 0) / 100);
-  } catch {
-    return cents <= 0 ? "$0" : `$${(cents / 100).toFixed(0)}`;
-  }
-}
-
 function priceLabel(
   plan: PublicBillingPlan,
   cycle: BillingCycle,
   labels: PricingCopy,
+  locale: Locale,
 ): { amount: string; suffix: string } {
+  const money = (cents: number) =>
+    formatPlanMoney(cents, plan.currency, locale, plan.currencyLabel);
   if (plan.isFree || plan.slug === "free" || plan.monthlyPriceCents <= 0) {
-    return { amount: formatMoney(0, plan.currency), suffix: "" };
+    return { amount: money(0), suffix: "" };
   }
   if (cycle === "yearly" && plan.annualEnabled && plan.annualPriceCents != null) {
     const perMonth = Math.round(plan.annualPriceCents / Math.max(plan.annualMonths, 1));
     return {
-      amount: formatMoney(perMonth, plan.currency),
+      amount: money(perMonth),
       suffix: labels.perMonthYearly,
     };
   }
   return {
-    amount: formatMoney(plan.monthlyPriceCents, plan.currency),
+    amount: money(plan.monthlyPriceCents),
     suffix: labels.perMonth,
   };
 }
@@ -78,9 +72,11 @@ function PlanMark({ name }: { name: string }) {
 export function PricingGrid({
   plans,
   labels,
+  locale = "en",
 }: {
   plans: PublicBillingPlan[];
   labels: PricingCopy;
+  locale?: Locale;
 }) {
   const commercialPlans = plans.filter(isPublicCommercialPricingPlan);
   const [cycle, setCycle] = useState<BillingCycle>("monthly");
@@ -134,27 +130,35 @@ export function PricingGrid({
         )}
       >
         {commercialPlans.map((plan, i) => {
-          const price = priceLabel(plan, cycle, labels);
+          const price = priceLabel(plan, cycle, labels, locale);
           const marketing = cycle === "yearly" ? plan.copy.year : plan.copy.month;
           const cta = ctaForPlan(plan, labels);
           const isFree = plan.isFree || plan.slug === "free";
           const usageLine = isFree
             ? labels.freeLimitedNote
             : labels.seatsOnly.replace("{seats}", String(plan.seatsLimit));
+          // Glass hover: full commercial modules (Pro suite) or admin Recommended.
+          const premiumHover =
+            plan.highlighted ||
+            planQualifiesForPremiumPricingHover({
+              enabledKeys: plan.enabledFeatureKeys,
+              slug: plan.slug,
+            });
           return (
             <article
               id={plan.slug}
               key={plan.id}
               className={cn(
-                "relative flex flex-col rounded-xl border bg-card p-5 shadow-[var(--shadow-soft)] animate-fade-up hover-lift",
+                "relative flex flex-col rounded-xl border bg-card p-5 shadow-[var(--shadow-soft)] animate-fade-up",
+                premiumHover ? "pricing-card-premium-hover" : null,
                 plan.highlighted
-                  ? "border-primary ring-1 ring-primary/25 lg:scale-[1.02]"
+                  ? "border-emerald-500/40 ring-1 ring-emerald-500/20 lg:scale-[1.02]"
                   : "border-border",
               )}
               style={{ animationDelay: `${i * 50}ms` }}
             >
               {plan.highlighted ? (
-                <span className="absolute -top-2.5 start-5 rounded-lg bg-primary px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-white">
+                <span className="absolute -top-2.5 start-5 rounded-lg bg-emerald-600 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-white shadow-sm">
                   {labels.recommended}
                 </span>
               ) : null}
@@ -196,7 +200,7 @@ export function PricingGrid({
                 className={cn(
                   "mt-6 inline-flex h-10 w-full items-center justify-center rounded-xl text-sm font-medium transition active:scale-[0.98]",
                   plan.highlighted
-                    ? "bg-primary text-white hover:bg-primary-hover"
+                    ? "bg-emerald-600 text-white hover:bg-emerald-500"
                     : "border border-border hover:bg-background",
                 )}
               >

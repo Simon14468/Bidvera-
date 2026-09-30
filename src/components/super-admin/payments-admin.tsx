@@ -1,39 +1,14 @@
 "use client";
 
+import { saSaveBillingGateways } from "@/app/actions/super-admin";
 import {
-  saSaveBillingGateways,
-  saUpdatePlanGateways,
-} from "@/app/actions/super-admin";
-import {
-  isOfficialFreeWorkspacePaymentsPlan,
-  shouldRenderCommercialPaymentFields,
-} from "@/application/admin/payments-plan-visibility";
+  PaymentCredentialsPanel,
+  type PaypalCredSnap,
+  type StripeCredSnap,
+} from "@/components/super-admin/payment-credentials-panel";
 import type { BillingGatewaySettings } from "@/services/billing/settings";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-
-type PlanRow = {
-  id: string;
-  slug: string;
-  name: string;
-  status: string;
-  visibleToPublic: boolean;
-  isFree: boolean;
-  monthlyPriceCents: number;
-  annualPriceCents: number | null;
-  monthlyEnabled: boolean;
-  annualEnabled: boolean;
-  currency: string;
-  stripeEnabled: boolean;
-  paypalEnabled: boolean;
-  trialEligible: boolean;
-  trialDays: number | null;
-  stripePriceMonthly: string | null;
-  stripePriceAnnual: string | null;
-  paypalPlanMonthly: string | null;
-  paypalPlanAnnual: string | null;
-  subscriptionsCount: number;
-};
 
 type Metrics = {
   totalRevenueCents: number;
@@ -56,19 +31,20 @@ function money(cents: number) {
 export function PaymentsAdminPanel({
   settings,
   metrics,
-  plans,
   paypalIntegration,
-  freeWorkspaceSettingsHref,
+  providerCredentials,
 }: {
   settings: BillingGatewaySettings;
   metrics: Metrics;
-  plans: PlanRow[];
   paypalIntegration?: {
     credentialsConfigured: boolean;
     webhookConfigured: boolean;
     environment: "sandbox" | "live";
   };
-  freeWorkspaceSettingsHref?: string;
+  providerCredentials?: {
+    paypal: PaypalCredSnap;
+    stripe: StripeCredSnap;
+  };
 }) {
   const router = useRouter();
   const [pending, start] = useTransition();
@@ -77,6 +53,13 @@ export function PaymentsAdminPanel({
 
   return (
     <div className="space-y-8">
+      {providerCredentials ? (
+        <PaymentCredentialsPanel
+          initialPaypal={providerCredentials.paypal}
+          initialStripe={providerCredentials.stripe}
+        />
+      ) : null}
+
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {[
           { label: "Total revenue", value: money(metrics.totalRevenueCents) },
@@ -247,41 +230,6 @@ export function PaymentsAdminPanel({
         </button>
       </section>
 
-      <section className="rounded-xl border border-slate-800 p-4">
-        <h2 className="text-lg font-medium text-white">Plan visibility & gateways</h2>
-        <p className="mt-1 text-sm text-slate-400">
-          Control which plans and payment methods appear in checkout. Prices stay server-side.
-        </p>
-        <div className="mt-4 overflow-x-auto">
-          <table className="min-w-full text-left text-sm">
-            <thead className="border-b border-slate-800 text-slate-400">
-              <tr>
-                <th className="px-2 py-2">Plan</th>
-                <th className="px-2 py-2">Visible</th>
-                <th className="px-2 py-2">Stripe</th>
-                <th className="px-2 py-2">PayPal</th>
-                <th className="px-2 py-2">Price IDs</th>
-                <th className="px-2 py-2" />
-              </tr>
-            </thead>
-            <tbody>
-              {plans.map((p) => (
-                <PlanGatewayRow
-                  key={p.id}
-                  plan={p}
-                  pending={pending}
-                  freeWorkspaceSettingsHref={freeWorkspaceSettingsHref}
-                  onSaved={(m) => {
-                    setMsg(m);
-                    router.refresh();
-                  }}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
       <section className="grid gap-4 lg:grid-cols-2">
         <div className="rounded-xl border border-slate-800 p-4">
           <h3 className="font-medium text-white">Revenue by gateway</h3>
@@ -321,145 +269,5 @@ export function PaymentsAdminPanel({
 
       {msg ? <p className="text-sm text-slate-300">{msg}</p> : null}
     </div>
-  );
-}
-
-function PlanGatewayRow({
-  plan,
-  pending,
-  onSaved,
-  freeWorkspaceSettingsHref,
-}: {
-  plan: PlanRow;
-  pending: boolean;
-  onSaved: (msg: string) => void;
-  freeWorkspaceSettingsHref?: string;
-}) {
-  const officialFreeWorkspace = isOfficialFreeWorkspacePaymentsPlan(plan);
-  const [visible, setVisible] = useState(plan.visibleToPublic);
-  const [stripeOn, setStripeOn] = useState(plan.stripeEnabled);
-  const [paypalOn, setPaypalOn] = useState(plan.paypalEnabled);
-  const [stripeMonthly, setStripeMonthly] = useState(plan.stripePriceMonthly ?? "");
-  const [stripeAnnual, setStripeAnnual] = useState(plan.stripePriceAnnual ?? "");
-  const [paypalMonthly, setPaypalMonthly] = useState(plan.paypalPlanMonthly ?? "");
-  const [paypalAnnual, setPaypalAnnual] = useState(plan.paypalPlanAnnual ?? "");
-  const [localPending, start] = useTransition();
-
-  if (officialFreeWorkspace) {
-    return (
-      <tr className="border-b border-slate-800/60 align-top">
-        <td className="px-2 py-3">
-          <p className="font-medium text-white">{plan.name}</p>
-          <p className="text-xs text-slate-500">
-            {plan.slug} · {plan.status} · {plan.subscriptionsCount} subs
-            {" · Official Free Workspace"}
-          </p>
-        </td>
-        <td className="px-2 py-3 text-xs text-slate-500">—</td>
-        <td className="px-2 py-3 text-xs text-slate-500">Off</td>
-        <td className="px-2 py-3 text-xs text-slate-500">Off</td>
-        <td className="px-2 py-3 text-xs text-slate-400">
-          Not a checkout product. Stripe and PayPal stay off. Configure trial
-          features on the Free Workspace settings page.
-        </td>
-        <td className="px-2 py-3">
-          {freeWorkspaceSettingsHref ? (
-            <a
-              href={freeWorkspaceSettingsHref}
-              className="rounded border border-slate-700 px-2 py-1 text-xs text-slate-200 hover:bg-slate-800"
-            >
-              Free Workspace settings
-            </a>
-          ) : (
-            <span className="text-xs text-slate-500">Dedicated settings only</span>
-          )}
-        </td>
-      </tr>
-    );
-  }
-
-  return (
-    <tr className="border-b border-slate-800/60 align-top">
-      <td className="px-2 py-3">
-        <p className="font-medium text-white">{plan.name}</p>
-        <p className="text-xs text-slate-500">
-          {plan.slug} · {plan.status} · {plan.subscriptionsCount} subs
-        </p>
-      </td>
-      <td className="px-2 py-3">
-        <input type="checkbox" checked={visible} onChange={(e) => setVisible(e.target.checked)} />
-      </td>
-      <td className="px-2 py-3">
-        <input
-          type="checkbox"
-          checked={plan.isFree ? false : stripeOn}
-          disabled={plan.isFree}
-          onChange={(e) => setStripeOn(e.target.checked)}
-        />
-      </td>
-      <td className="px-2 py-3">
-        <input
-          type="checkbox"
-          checked={plan.isFree ? false : paypalOn}
-          disabled={plan.isFree}
-          onChange={(e) => setPaypalOn(e.target.checked)}
-        />
-      </td>
-      <td className="px-2 py-3">
-        {shouldRenderCommercialPaymentFields(plan) ? (
-          <div className="grid min-w-[14rem] gap-1">
-            <input
-              className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-xs"
-              placeholder="Stripe price monthly"
-              value={stripeMonthly}
-              onChange={(e) => setStripeMonthly(e.target.value)}
-            />
-            <input
-              className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-xs"
-              placeholder="Stripe price annual"
-              value={stripeAnnual}
-              onChange={(e) => setStripeAnnual(e.target.value)}
-            />
-            <input
-              className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-xs"
-              placeholder="PayPal plan monthly"
-              value={paypalMonthly}
-              onChange={(e) => setPaypalMonthly(e.target.value)}
-            />
-            <input
-              className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-xs"
-              placeholder="PayPal plan annual"
-              value={paypalAnnual}
-              onChange={(e) => setPaypalAnnual(e.target.value)}
-            />
-          </div>
-        ) : null}
-      </td>
-      <td className="px-2 py-3">
-        <button
-          type="button"
-          disabled={pending || localPending}
-          className="rounded border border-slate-700 px-2 py-1 text-xs hover:bg-slate-800 disabled:opacity-50"
-          onClick={() =>
-            start(async () => {
-              const r = await saUpdatePlanGateways({
-                planId: plan.id,
-                visibleToPublic: visible,
-                stripeEnabled: plan.isFree ? false : stripeOn,
-                paypalEnabled: plan.isFree ? false : paypalOn,
-                isFree: plan.isFree,
-                stripePriceMonthly: stripeMonthly || null,
-                stripePriceAnnual: stripeAnnual || null,
-                paypalPlanMonthly: paypalMonthly || null,
-                paypalPlanAnnual: paypalAnnual || null,
-              });
-              onSaved(r.ok ? `${plan.name} gateways saved` : r.error.message);
-            })
-          }
-        >
-          Save
-        </button>
-      </td>
-    </tr>
   );
 }

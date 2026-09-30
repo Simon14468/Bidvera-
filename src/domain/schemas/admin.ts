@@ -58,6 +58,7 @@ export const planUpsertSchema = z.object({
       z.object({
         name: z.string().max(120).optional(),
         description: z.string().max(2000).optional().nullable(),
+        currencyLabel: z.string().max(40).optional().nullable(),
         features: z.array(z.string().max(200)).max(50).optional(),
         monthly: z
           .object({
@@ -105,6 +106,7 @@ export const planTranslationsUpdateSchema = z.object({
       z.object({
         name: z.string().max(120).optional(),
         description: z.string().max(2000).optional().nullable(),
+        currencyLabel: z.string().max(40).optional().nullable(),
         features: z.array(z.string().max(200)).max(50).optional(),
         monthly: z
           .object({

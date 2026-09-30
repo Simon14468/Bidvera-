@@ -72,6 +72,7 @@ export default async function OnboardingPlanPage({
       ) : null}
       <OnboardingPlanPicker
         plans={plans}
+        locale={locale}
         showFirstSignupTrialCta={showFirstSignupTrialCta}
         defaultGateway={billing.defaultGateway}
         turnstileSiteKey={getTurnstilePublicConfig().siteKey}

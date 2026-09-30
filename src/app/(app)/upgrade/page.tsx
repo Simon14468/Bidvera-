@@ -74,6 +74,7 @@ export default async function UpgradePage({ searchParams }: PageProps) {
       <Paywall
         plans={plans}
         defaultGateway={settings.defaultGateway}
+        locale={locale}
         turnstileSiteKey={getTurnstilePublicConfig().siteKey}
         decisionLabels={
           locale === "ar"
@@ -101,14 +102,17 @@ export default async function UpgradePage({ searchParams }: PageProps) {
           estimatedHoursSaved: usage.estimatedHoursSaved,
         }}
       />
-      {paypalReturn && subscriptionId && planId ? (
+      {paypalReturn && subscriptionId ? (
         <PayPalActivate
           subscriptionId={subscriptionId}
           planId={planId}
           interval={interval}
+          redirectTo="/dashboard"
         />
       ) : null}
-      {stripeReturn && sessionId ? <StripeActivate sessionId={sessionId} /> : null}
+      {stripeReturn && sessionId ? (
+        <StripeActivate sessionId={sessionId} redirectTo="/dashboard" />
+      ) : null}
     </div>
   );
 }

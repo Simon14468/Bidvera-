@@ -13,6 +13,8 @@ import {
   isFeatureEnabledInMap,
   isIsolatedInternalFeatureKey,
   planDefaultFeatureKeys,
+  planHasAllCommercialModules,
+  planQualifiesForPremiumPricingHover,
   upgradeMessageForFeature,
 } from "@/domain/billing/entitlement-catalog";
 import { resolveCommercialFeatureAccess } from "@/services/entitlements";
@@ -202,6 +204,89 @@ test("unshipped entitlements are not sold on plans or in admin checkboxes", () =
   }
 });
 
+test("marketing labels include Plan Editor modules when enabled", () => {
+  const { labels } = buildEntitlementMarketingLabels({
+    analysesLimit: 3,
+    seatsLimit: 1,
+    enabledKeys: [
+      "document_compliance",
+      "supplier_qualification",
+      "tender_calendar",
+      "client_requests",
+      "questionnaire_assistant",
+      "company_profile",
+      "decision_memory",
+      "tender_analysis",
+      "matching_engine",
+    ],
+  });
+  assert.ok(labels.includes("Document compliance manager"));
+  assert.ok(labels.includes("Supplier qualification profile"));
+  assert.ok(labels.includes("Tender calendar & deadline reminders"));
+  assert.ok(labels.includes("Client requests & document dossiers"));
+  assert.ok(labels.includes("AI questionnaire assistant"));
+  assert.ok(labels.includes("Decision Memory"));
+  assert.equal(
+    labels.some((l) => /tender analysis/i.test(l)),
+    false,
+    "tender_analysis stays internal",
+  );
+  assert.equal(
+    labels.some((l) => /matching/i.test(l)),
+    false,
+    "matching_engine stays unshipped",
+  );
+});
+
+test("premium pricing hover only for Pro/Business with all commercial modules", () => {
+  const modules = [
+    "document_compliance",
+    "supplier_qualification",
+    "tender_calendar",
+    "client_requests",
+    "questionnaire_assistant",
+  ];
+  assert.equal(planHasAllCommercialModules(modules), true);
+  assert.equal(planHasAllCommercialModules(modules.slice(0, 3)), false);
+
+  assert.equal(
+    planQualifiesForPremiumPricingHover({ enabledKeys: modules, slug: "pro" }),
+    true,
+  );
+  assert.equal(
+    planQualifiesForPremiumPricingHover({
+      enabledKeys: modules,
+      slug: "business",
+    }),
+    true,
+  );
+  assert.equal(
+    planQualifiesForPremiumPricingHover({
+      enabledKeys: modules,
+      slug: "starter",
+    }),
+    false,
+    "Starter never gets premium hover even with modules on",
+  );
+  assert.equal(
+    planQualifiesForPremiumPricingHover({
+      enabledKeys: modules.slice(0, 4),
+      slug: "pro",
+    }),
+    false,
+    "Pro without every module stays without premium hover",
+  );
+
+  const grid = readSrc("src/components/marketing/pricing-grid.tsx");
+  assert.match(grid, /planQualifiesForPremiumPricingHover/);
+  assert.match(grid, /pricing-card-premium-hover/);
+  assert.doesNotMatch(
+    grid,
+    /animate-fade-up hover-lift/,
+    "generic hover-lift must not apply to every pricing card",
+  );
+});
+
 test("marketing labels never advertise unshipped capabilities", () => {
   const { labels, displayOnly } = buildEntitlementMarketingLabels({
     analysesLimit: 75,
@@ -261,11 +346,10 @@ test("alerts page and sidebar gate Smart Alerts via entitlements", () => {
 });
 
 test("dashboard upcoming deadlines prefer Tender Calendar when enabled", () => {
-  const dash = readSrc("src/app/(app)/dashboard/page.tsx");
-  assert.match(dash, /useCalendarDeadlines = tenderCalendarEnabled/);
-  assert.match(dash, /getCalendarDashboard/);
-  assert.match(dash, /upcomingCalendarDeadlines/);
-  assert.match(dash, /\/tender-calendar\/\$\{item\.tenderId\}/);
+  // Calendar deadlines live on /tender-calendar (module-gated), not embedded on dashboard.
+  const calendarPage = readSrc("src/app/(app)/tender-calendar/page.tsx");
+  assert.match(calendarPage, /getCalendarDashboard/);
+  assert.match(calendarPage, /requireTenderCalendarModule/);
 });
 
 test("expired commercial subscription cannot retain a paid feature via override", () => {

@@ -7,6 +7,7 @@ import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getDictionary } from "@/i18n/dictionaries";
+import { formatPlanMoney } from "@/i18n/format-money";
 import { getLocale } from "@/i18n/get-locale";
 import { prisma } from "@/lib/db";
 import { formatDate } from "@/lib/format";
@@ -43,18 +44,6 @@ function fill(template: string, vars: Record<string, string | number>) {
     (out, [key, value]) => out.replaceAll(`{${key}}`, String(value)),
     template,
   );
-}
-
-function formatMoney(cents: number, currency: string): string {
-  try {
-    return new Intl.NumberFormat(undefined, {
-      style: "currency",
-      currency: currency.toUpperCase(),
-      maximumFractionDigits: 0,
-    }).format(cents / 100);
-  } catch {
-    return `${(cents / 100).toFixed(0)} ${currency.toUpperCase()}`;
-  }
 }
 
 function statusLabel(status: BillingDisplayStatus, copy: BillingCopy): string {

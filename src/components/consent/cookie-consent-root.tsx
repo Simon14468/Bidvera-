@@ -94,21 +94,24 @@ export function CookieConsentRoot({
 
   useEffect(() => {
     const decision = resolveConsentDecision(readConsentCookieFromDocument());
-    if (decision.status === "set") {
-      setAnalytics(decision.record.analytics);
-      setMarketing(decision.record.marketing);
-      setBannerOpen(false);
-    } else {
-      if (decision.status === "outdated") {
+    const t = window.setTimeout(() => {
+      if (decision.status === "set") {
         setAnalytics(decision.record.analytics);
         setMarketing(decision.record.marketing);
+        setBannerOpen(false);
       } else {
-        setAnalytics(false);
-        setMarketing(false);
+        if (decision.status === "outdated") {
+          setAnalytics(decision.record.analytics);
+          setMarketing(decision.record.marketing);
+        } else {
+          setAnalytics(false);
+          setMarketing(false);
+        }
+        setBannerOpen(true);
       }
-      setBannerOpen(true);
-    }
-    setReady(true);
+      setReady(true);
+    }, 0);
+    return () => window.clearTimeout(t);
   }, []);
 
   useEffect(() => {

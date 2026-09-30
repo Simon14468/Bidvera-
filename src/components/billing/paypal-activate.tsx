@@ -14,7 +14,7 @@ export function PayPalActivate({
   subscriptionId,
   planId,
   interval = "MONTH",
-  redirectTo = "/billing?activated=1",
+  redirectTo = "/dashboard",
 }: Props) {
   const router = useRouter();
   const [message, setMessage] = useState("Activating subscription…");

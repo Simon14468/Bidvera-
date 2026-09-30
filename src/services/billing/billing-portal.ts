@@ -1,5 +1,6 @@
 import { AppError, ErrorCode } from "@/lib/errors";
 import { prisma } from "@/lib/db";
+import { resolveStripeCredentials } from "@/services/billing/provider-credentials";
 import { assertGatewayEnabled } from "@/services/billing/settings";
 
 export function canOpenStripeBillingPortal(sub: {
@@ -39,12 +40,12 @@ export async function createStripeBillingPortalSession(input: {
     );
   }
 
-  const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) {
+  const creds = await resolveStripeCredentials();
+  if (!creds.secretKey) {
     throw new AppError(ErrorCode.UPSTREAM, "Stripe is not configured.", 503);
   }
   const Stripe = (await import("stripe")).default;
-  const stripe = new Stripe(key);
+  const stripe = new Stripe(creds.secretKey);
   const session = await stripe.billingPortal.sessions.create({
     customer: sub.providerCustomerId!,
     return_url: input.returnUrl,

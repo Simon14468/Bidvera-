@@ -67,6 +67,12 @@ import {
   updateBillingGatewaySettingsForAdmin,
 } from "@/application/admin/payments-service";
 import {
+  savePaypalCredentialsForAdmin,
+  saveStripeCredentialsForAdmin,
+  testPaypalConnectionForAdmin,
+  testStripeConnectionForAdmin,
+} from "@/application/admin/billing-credentials-service";
+import {
   getBackupDashboardForAdmin,
   restoreTestBackupForAdmin,
   runBackupNowForAdmin,
@@ -582,6 +588,54 @@ export async function saSaveBillingGateways(raw: unknown) {
       raw,
       await requestIpHash(),
     );
+    return { ok: true as const, data };
+  } catch (error) {
+    return { ok: false as const, error: toSafeClientError(error) };
+  }
+}
+
+export async function saSavePaypalCredentials(raw: unknown) {
+  try {
+    const ctx = await requireWritableSuperAdmin();
+    const data = await savePaypalCredentialsForAdmin(
+      ctx,
+      raw,
+      await requestIpHash(),
+    );
+    return { ok: true as const, data };
+  } catch (error) {
+    return { ok: false as const, error: toSafeClientError(error) };
+  }
+}
+
+export async function saSaveStripeCredentials(raw: unknown) {
+  try {
+    const ctx = await requireWritableSuperAdmin();
+    const data = await saveStripeCredentialsForAdmin(
+      ctx,
+      raw,
+      await requestIpHash(),
+    );
+    return { ok: true as const, data };
+  } catch (error) {
+    return { ok: false as const, error: toSafeClientError(error) };
+  }
+}
+
+export async function saTestPaypalConnection() {
+  try {
+    const ctx = await requireWritableSuperAdmin();
+    const data = await testPaypalConnectionForAdmin(ctx, await requestIpHash());
+    return { ok: true as const, data };
+  } catch (error) {
+    return { ok: false as const, error: toSafeClientError(error) };
+  }
+}
+
+export async function saTestStripeConnection() {
+  try {
+    const ctx = await requireWritableSuperAdmin();
+    const data = await testStripeConnectionForAdmin(ctx, await requestIpHash());
     return { ok: true as const, data };
   } catch (error) {
     return { ok: false as const, error: toSafeClientError(error) };

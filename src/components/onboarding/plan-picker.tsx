@@ -5,20 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TurnstileField } from "@/components/security/turnstile-field";
 import type { PublicBillingPlan } from "@/services/billing/catalog";
+import type { Locale } from "@/i18n/config";
+import { formatPlanMoney } from "@/i18n/format-money";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
-
-function formatMoney(cents: number, currency: string) {
-  try {
-    return new Intl.NumberFormat(undefined, {
-      style: "currency",
-      currency: currency.toUpperCase(),
-      maximumFractionDigits: 0,
-    }).format(cents / 100);
-  } catch {
-    return `$${(cents / 100).toFixed(0)}`;
-  }
-}
 
 function resolveCheckoutGateway(
   plan: PublicBillingPlan,
@@ -41,11 +31,13 @@ export function OnboardingPlanPicker({
   copy,
   turnstileSiteKey,
   showFirstSignupTrialCta = false,
+  locale = "en",
 }: {
   plans: PublicBillingPlan[];
   defaultGateway: "stripe" | "paypal";
   showFirstSignupTrialCta?: boolean;
   turnstileSiteKey?: string | null;
+  locale?: Locale;
   copy: {
     title: string;
     body: string;
@@ -170,7 +162,7 @@ export function OnboardingPlanPicker({
               <CardHeader>
                 <CardTitle>{plan.name}</CardTitle>
                 <CardDescription>
-                  {formatMoney(price, plan.currency)}
+                  {formatPlanMoney(price, plan.currency, locale, plan.currencyLabel)}
                   {usingYear ? " / yr" : " / mo"}
                 </CardDescription>
               </CardHeader>

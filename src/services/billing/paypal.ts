@@ -24,8 +24,13 @@ import {
 } from "@/services/billing/webhooks-store";
 import type { BillingInterval } from "@prisma/client";
 
+import {
+  resolvePaypalCredentials,
+} from "@/services/billing/provider-credentials";
+
 /**
- * sandbox | live.
+ * sandbox | live (sync, env-only).
+ * Prefer resolvePaypalEnvironmentAsync when vault fallback is allowed.
  * Accepts PAYPAL_ENVIRONMENT=production and legacy PAYPAL_MODE=live.
  * In NODE_ENV=production never defaults to sandbox — requires explicit live/production.
  */
@@ -45,30 +50,33 @@ export function resolvePaypalEnvironment(): "sandbox" | "live" {
       503,
     );
   }
+  if (raw === "sandbox") return "sandbox";
   return "sandbox";
 }
 
-export function paypalBaseUrl() {
-  return resolvePaypalEnvironment() === "live"
+export function paypalBaseUrl(environment?: "sandbox" | "live") {
+  const env = environment ?? resolvePaypalEnvironment();
+  return env === "live"
     ? "https://api-m.paypal.com"
     : "https://api-m.sandbox.paypal.com";
 }
 
-/** Fail-closed gate before any PayPal payment API call. */
-export function assertPaypalRuntimeReady(): void {
-  const environment = resolvePaypalEnvironment();
-  const clientId = process.env.PAYPAL_CLIENT_ID?.trim();
-  const secret = process.env.PAYPAL_CLIENT_SECRET?.trim();
-  if (!clientId || !secret) {
+/**
+ * Fail-closed gate before any PayPal payment API call.
+ * Uses env-first credentials with encrypted vault fallback.
+ */
+export async function assertPaypalRuntimeReady(): Promise<void> {
+  const creds = await resolvePaypalCredentials();
+  if (!creds.clientId || !creds.clientSecret) {
     throw new AppError(
       ErrorCode.UPSTREAM,
-      "PayPal is not configured. Set PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET.",
+      "PayPal is not configured. Set PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET (env or Super Admin vault).",
       503,
     );
   }
-  if (environment === "live") {
+  if (creds.environment === "live") {
     const looksSandboxClient =
-      clientId.startsWith("sb-") || /sandbox/i.test(clientId);
+      creds.clientId.startsWith("sb-") || /sandbox/i.test(creds.clientId);
     if (looksSandboxClient) {
       throw new AppError(
         ErrorCode.UPSTREAM,
@@ -76,8 +84,7 @@ export function assertPaypalRuntimeReady(): void {
         503,
       );
     }
-    const webhookId = process.env.PAYPAL_WEBHOOK_ID?.trim();
-    if (!webhookId) {
+    if (!creds.webhookId) {
       throw new AppError(
         ErrorCode.UPSTREAM,
         "PayPal production requires PAYPAL_WEBHOOK_ID with a valid live webhook configuration.",
@@ -87,6 +94,7 @@ export function assertPaypalRuntimeReady(): void {
   }
 }
 
+/** Sync env-only status — used by legacy tests. Prefer getPaypalIntegrationStatusAsync. */
 export function getPaypalIntegrationStatus() {
   const raw = (
     process.env.PAYPAL_ENVIRONMENT ??
@@ -98,7 +106,6 @@ export function getPaypalIntegrationStatus() {
   const explicitLive = raw === "production" || raw === "live";
   const nodeProd = process.env.NODE_ENV === "production";
 
-  // Never silently report sandbox while the process is in production.
   const environment: "sandbox" | "live" = explicitLive
     ? "live"
     : nodeProd
@@ -117,13 +124,43 @@ export function getPaypalIntegrationStatus() {
       Boolean(clientId && secret) && !(environment === "live" && looksSandboxClient),
     webhookConfigured,
     environment,
-    /** True only when production/live is explicit and credentials + webhook are valid. */
     productionReady:
       explicitLive &&
       Boolean(clientId && secret) &&
       !looksSandboxClient &&
       webhookConfigured,
   };
+}
+
+/** Env-first + vault-aware integration status for Super Admin / dashboards. */
+export async function getPaypalIntegrationStatusAsync() {
+  try {
+    const creds = await resolvePaypalCredentials();
+    const looksSandboxClient =
+      creds.clientId.startsWith("sb-") || /sandbox/i.test(creds.clientId);
+    const credentialsConfigured =
+      Boolean(creds.clientId && creds.clientSecret) &&
+      !(creds.environment === "live" && looksSandboxClient);
+    return {
+      credentialsConfigured,
+      webhookConfigured: Boolean(creds.webhookId),
+      environment: creds.environment,
+      productionReady:
+        creds.environment === "live" &&
+        credentialsConfigured &&
+        !looksSandboxClient &&
+        Boolean(creds.webhookId),
+    };
+  } catch {
+    return {
+      credentialsConfigured: false,
+      webhookConfigured: false,
+      environment: (process.env.NODE_ENV === "production"
+        ? "live"
+        : "sandbox") as "sandbox" | "live",
+      productionReady: false,
+    };
+  }
 }
 
 export function resolvePayPalWebhookAction(
@@ -164,13 +201,19 @@ export function resolvePayPalWebhookSubscriptionId(event: {
   return event.resource?.id;
 }
 
-export async function getPayPalAccessToken(): Promise<string> {
-  assertPaypalRuntimeReady();
-  const clientId = process.env.PAYPAL_CLIENT_ID!.trim();
-  const secret = process.env.PAYPAL_CLIENT_SECRET!.trim();
+async function paypalApiBaseUrl(): Promise<string> {
+  const creds = await resolvePaypalCredentials();
+  return paypalBaseUrl(creds.environment);
+}
 
-  const auth = Buffer.from(`${clientId}:${secret}`).toString("base64");
-  const response = await fetch(`${paypalBaseUrl()}/v1/oauth2/token`, {
+export async function getPayPalAccessToken(): Promise<string> {
+  await assertPaypalRuntimeReady();
+  const creds = await resolvePaypalCredentials();
+
+  const auth = Buffer.from(`${creds.clientId}:${creds.clientSecret}`).toString(
+    "base64",
+  );
+  const response = await fetch(`${paypalBaseUrl(creds.environment)}/v1/oauth2/token`, {
     method: "POST",
     headers: {
       Authorization: `Basic ${auth}`,
@@ -213,13 +256,12 @@ export async function createPayPalCheckoutSession(input: {
   }
 
   const token = await getPayPalAccessToken();
+  // Correlation flag only — never put companyId/amount in the return URL (IDOR / tampering).
+  // PayPal appends subscription_id; activation binds to the authenticated company server-side.
   const success = new URL(input.successUrl);
   success.searchParams.set("paypal", "1");
-  success.searchParams.set("planId", plan.id);
-  success.searchParams.set("interval", input.interval);
-  success.searchParams.set("companyId", input.companyId);
 
-  const response = await fetch(`${paypalBaseUrl()}/v1/billing/subscriptions`, {
+  const response = await fetch(`${(await paypalApiBaseUrl())}/v1/billing/subscriptions`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -295,7 +337,7 @@ export async function activatePayPalSubscription(input: {
 }) {
   const token = await getPayPalAccessToken();
   const response = await fetch(
-    `${paypalBaseUrl()}/v1/billing/subscriptions/${input.providerSubscriptionId}`,
+    `${(await paypalApiBaseUrl())}/v1/billing/subscriptions/${input.providerSubscriptionId}`,
     { headers: { Authorization: `Bearer ${token}` } },
   );
   if (!response.ok) {
@@ -377,8 +419,8 @@ export async function activatePayPalSubscription(input: {
 }
 
 export async function handlePayPalWebhook(rawBody: string, headers: Headers) {
-  const webhookId = process.env.PAYPAL_WEBHOOK_ID;
-  if (!webhookId || !process.env.PAYPAL_CLIENT_ID) {
+  const creds = await resolvePaypalCredentials();
+  if (!creds.webhookId || !creds.clientId) {
     throw new AppError(
       ErrorCode.UPSTREAM,
       "PayPal webhook verification is not configured.",
@@ -402,22 +444,25 @@ export async function handlePayPalWebhook(rawBody: string, headers: Headers) {
   }
 
   const token = await getPayPalAccessToken();
-  const verify = await fetch(`${paypalBaseUrl()}/v1/notifications/verify-webhook-signature`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
+  const verify = await fetch(
+    `${paypalBaseUrl(creds.environment)}/v1/notifications/verify-webhook-signature`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        auth_algo: headers.get("paypal-auth-algo"),
+        cert_url: headers.get("paypal-cert-url"),
+        transmission_id: headers.get("paypal-transmission-id"),
+        transmission_sig: headers.get("paypal-transmission-sig"),
+        transmission_time: headers.get("paypal-transmission-time"),
+        webhook_id: creds.webhookId,
+        webhook_event: event,
+      }),
     },
-    body: JSON.stringify({
-      auth_algo: headers.get("paypal-auth-algo"),
-      cert_url: headers.get("paypal-cert-url"),
-      transmission_id: headers.get("paypal-transmission-id"),
-      transmission_sig: headers.get("paypal-transmission-sig"),
-      transmission_time: headers.get("paypal-transmission-time"),
-      webhook_id: webhookId,
-      webhook_event: event,
-    }),
-  });
+  );
   const verified = (await verify.json()) as { verification_status?: string };
   if (verified.verification_status !== "SUCCESS") {
     await recordBillingAudit({
@@ -588,7 +633,7 @@ export async function cancelPayPalSubscription(companyId: string) {
   }
   const token = await getPayPalAccessToken();
   const response = await fetch(
-    `${paypalBaseUrl()}/v1/billing/subscriptions/${sub.providerSubscriptionId}/cancel`,
+    `${(await paypalApiBaseUrl())}/v1/billing/subscriptions/${sub.providerSubscriptionId}/cancel`,
     {
       method: "POST",
       headers: {

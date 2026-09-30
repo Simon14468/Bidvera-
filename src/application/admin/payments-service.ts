@@ -7,7 +7,8 @@ import {
   saveBillingGatewaySettings,
   type BillingGatewaySettings,
 } from "@/services/billing/settings";
-import { getPaypalIntegrationStatus } from "@/services/billing/paypal";
+import { getPaypalIntegrationStatusAsync } from "@/services/billing/paypal";
+import { getBillingProviderCredentialsForAdmin } from "@/application/admin/billing-credentials-service";
 
 export async function getPaymentsAdminDashboard() {
   const settings = await getBillingGatewaySettings();
@@ -119,7 +120,7 @@ export async function getPaymentsAdminDashboard() {
     },
     recentPayments,
     plans,
-    paypalIntegration: getPaypalIntegrationStatus(),
+    paypalIntegration: await getPaypalIntegrationStatusAsync(),
   };
 }
 

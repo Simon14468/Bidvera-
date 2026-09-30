@@ -78,7 +78,10 @@ export const SECRET_SETTING_KEYS = new Set([
   "ai.providers.vault",
   "auth.google.vault",
   "auth.microsoft.vault",
+  "auth.apple.vault",
   "email.resend.vault",
   "matching.ai.vault",
   "matching.ted.vault",
+  "billing.paypal.vault",
+  "billing.stripe.vault",
 ]);

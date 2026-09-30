@@ -21,6 +21,11 @@ export const planIntervalCopySchema = z.object({
 export const planLocaleCopySchema = z.object({
   name: z.string().max(120).optional(),
   description: z.string().max(2000).optional().nullable(),
+  /**
+   * Admin-controlled currency display for this locale (e.g. "$", "دولار", "美元").
+   * Shown on PricingGrid / Paywall instead of Intl auto symbols like "US$".
+   */
+  currencyLabel: z.string().max(40).optional().nullable(),
   /** @deprecated Prefer monthly.features — kept for backward compatibility */
   features: z.array(z.string().max(200)).max(50).optional(),
   monthly: planIntervalCopySchema.optional(),
@@ -50,6 +55,14 @@ export type PlanMarketingCopy = {
 
 export const MARKETING_LOCALES = ["ar", "es", "zh", "fr"] as const;
 export type MarketingLocale = (typeof MARKETING_LOCALES)[number];
+
+/** Suggested currency display labels when filling Languages from Plan Editor. */
+export const DEFAULT_CURRENCY_LABELS: Record<MarketingLocale, string> = {
+  ar: "دولار",
+  es: "$",
+  zh: "美元",
+  fr: "$",
+};
 
 export function parsePlanTranslations(raw: unknown): PlanTranslations {
   if (!raw || typeof raw !== "object") return {};
@@ -481,6 +494,10 @@ export function buildPlanLanguagesDraft(input: {
     next[loc] = {
       name: monthName,
       description: monthDesc,
+      currencyLabel:
+        existing?.currencyLabel?.trim() ||
+        DEFAULT_CURRENCY_LABELS[loc] ||
+        null,
       features: monthFeatures,
       monthly: {
         name: monthName,
@@ -515,6 +532,10 @@ export function mergePlanTranslations(
       ...patch,
       features:
         patch.features !== undefined ? patch.features : prev?.features,
+      currencyLabel:
+        patch.currencyLabel !== undefined
+          ? patch.currencyLabel
+          : prev?.currencyLabel,
       monthly:
         patch.monthly || prev?.monthly
           ? {

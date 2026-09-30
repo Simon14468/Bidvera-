@@ -45,18 +45,19 @@ import {
   markWebhookFailed,
   markWebhookProcessed,
 } from "@/services/billing/webhooks-store";
+import { resolveStripeCredentials } from "@/services/billing/provider-credentials";
 import type { BillingInterval } from "@prisma/client";
 
-function getStripe(): Stripe {
-  const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) {
+async function getStripe(): Promise<Stripe> {
+  const creds = await resolveStripeCredentials();
+  if (!creds.secretKey) {
     throw new AppError(
       ErrorCode.UPSTREAM,
-      "Stripe is not configured. Set STRIPE_SECRET_KEY.",
+      "Stripe is not configured. Set STRIPE_SECRET_KEY (env or Super Admin vault).",
       503,
     );
   }
-  return new Stripe(key);
+  return new Stripe(creds.secretKey);
 }
 
 /** Inline price_data is a local/test fallback only — never production. */
@@ -410,7 +411,8 @@ export async function activateStripeCheckoutSession(input: {
 }
 
 export async function handleStripeWebhook(rawBody: string, signature: string | null) {
-  const secret = process.env.STRIPE_WEBHOOK_SECRET;
+  const creds = await resolveStripeCredentials();
+  const secret = creds.webhookSecret;
   if (!secret) {
     throw new AppError(ErrorCode.UPSTREAM, "Stripe webhook secret is not configured.", 503);
   }

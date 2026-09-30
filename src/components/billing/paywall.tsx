@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { TurnstileField } from "@/components/security/turnstile-field";
 import type { PublicBillingPlan } from "@/services/billing/catalog";
 import type { PaywallRecap } from "@/domain/types";
+import type { Locale } from "@/i18n/config";
+import { formatPlanMoney } from "@/i18n/format-money";
 import Image from "next/image";
 import { useMemo, useState, useTransition } from "react";
 import { BRAND_MARK_SRC } from "@/components/brand/brand-logo";
@@ -13,6 +15,7 @@ interface PaywallProps {
   recap: PaywallRecap;
   plans: PublicBillingPlan[];
   defaultGateway: "stripe" | "paypal";
+  locale?: Locale;
   turnstileSiteKey?: string | null;
   decisionLabels?: {
     bid: string;
@@ -22,22 +25,11 @@ interface PaywallProps {
   };
 }
 
-function formatMoney(cents: number, currency: string) {
-  try {
-    return new Intl.NumberFormat(undefined, {
-      style: "currency",
-      currency: currency.toUpperCase(),
-      maximumFractionDigits: 0,
-    }).format(cents / 100);
-  } catch {
-    return `$${(cents / 100).toFixed(0)}`;
-  }
-}
-
 export function Paywall({
   recap,
   plans,
   defaultGateway,
+  locale = "en",
   turnstileSiteKey,
   decisionLabels,
 }: PaywallProps) {
@@ -219,7 +211,7 @@ export function Paywall({
                       : `Up to ${plan.seatsLimit} seats`}
                   </CardDescription>
                   <p className="pt-2 text-3xl font-semibold tracking-tight tabular-nums">
-                    {formatMoney(price, plan.currency)}
+                    {formatPlanMoney(price, plan.currency, locale, plan.currencyLabel)}
                     <span className="text-base font-normal text-muted">
                       /{interval === "YEAR" ? "year" : "month"}
                     </span>
@@ -263,19 +255,23 @@ export function Paywall({
                   <button
                     type="button"
                     disabled={pending || !intervalOk}
+                    aria-busy={pending}
                     onClick={() => checkout(plan)}
-                    className={`inline-flex h-11 w-full items-center justify-center rounded-xl text-sm font-medium transition active:scale-[0.98] disabled:opacity-60 ${
+                    className={`inline-flex h-11 w-full items-center justify-center rounded-xl text-sm font-medium transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 ${
                       plan.highlighted
                         ? "bg-primary text-white hover:bg-primary-hover shadow-[var(--shadow-soft)]"
                         : "border border-border bg-card text-foreground hover:bg-background"
                     }`}
                   >
                     {pending
-                      ? "Redirecting…"
+                      ? "Opening secure checkout…"
                       : !intervalOk
                         ? "Interval unavailable"
-                        : `Continue with ${selectedGateway}`}
+                        : `Continue securely with ${selectedGateway}`}
                   </button>
+                  <p className="text-center text-[11px] text-muted">
+                    Amount and plan are locked server-side. Card details stay with {selectedGateway}.
+                  </p>
                 </CardContent>
               </Card>
             );

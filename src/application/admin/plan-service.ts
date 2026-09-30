@@ -53,111 +53,154 @@ export async function upsertPlanForAdmin(
     ? await prisma.plan.findUnique({ where: { id: data.id } })
     : await prisma.plan.findUnique({ where: { slug: data.slug } });
 
+  // Creating a plan must not silently overwrite an existing slug.
+  if (!data.id && previous) {
+    throw new AppError(
+      ErrorCode.CONFLICT,
+      `Slug "${data.slug}" is already used. Pick a unique slug for the new plan.`,
+      409,
+      { slug: data.slug, existingPlanId: previous.id },
+    );
+  }
+
+  // Renaming slug on update must not collide with another plan.
+  if (data.id && previous && previous.slug !== data.slug) {
+    const clash = await prisma.plan.findUnique({
+      where: { slug: data.slug },
+      select: { id: true },
+    });
+    if (clash && clash.id !== data.id) {
+      throw new AppError(
+        ErrorCode.CONFLICT,
+        `Slug "${data.slug}" is already used by another plan.`,
+        409,
+        { slug: data.slug, existingPlanId: clash.id },
+      );
+    }
+  }
+
   await assertUniqueDesignatedFreeWorkspace(
     { slug: data.slug, isFree: data.isFree ?? false, id: data.id },
     previous,
   );
 
-  const plan = await prisma.plan.upsert({
-    where: data.id ? { id: data.id } : { slug: data.slug },
-    create: {
-      slug: data.slug,
-      name: data.name,
-      description: data.description ?? null,
-      monthlyPriceCents: data.monthlyPriceCents,
-      annualPriceCents: data.annualPriceCents ?? null,
-      annualMonths: data.annualMonths,
-      monthlyEnabled: data.monthlyEnabled,
-      annualEnabled: data.annualEnabled,
-      analysesLimit: data.analysesLimit,
-      analysesLimitYearly: data.analysesLimitYearly ?? null,
-      aiTokensLimit: data.aiTokensLimit ?? null,
-      storageMbLimit: data.storageMbLimit ?? null,
-      seatsLimit: data.seatsLimit,
-      seatsLimitYearly: data.seatsLimitYearly ?? null,
-      trialEligible: data.trialEligible,
-      trialDays: data.trialDays ?? null,
-      graceDays: data.graceDays ?? null,
-      isFree: data.isFree ?? false,
-      visibleToPublic: data.visibleToPublic ?? true,
-      stripeEnabled: data.stripeEnabled ?? true,
-      paypalEnabled: data.paypalEnabled ?? true,
-      stripePriceMonthly: data.stripePriceMonthly ?? null,
-      stripePriceAnnual: data.stripePriceAnnual ?? null,
-      paypalPlanMonthly: data.paypalPlanMonthly ?? null,
-      paypalPlanAnnual: data.paypalPlanAnnual ?? null,
-      currency: data.currency ?? "usd",
-      status: data.status,
-      highlighted: data.highlighted,
-      sortOrder: data.sortOrder,
-      featureList: data.featureList,
-      preferEntitlementLabels: data.preferEntitlementLabels ?? true,
-      legacyEnum: data.legacyEnum ?? null,
-      ...(data.translations !== undefined
-        ? {
-            translations:
-              data.translations === null
-                ? Prisma.DbNull
-                : (data.translations as Prisma.InputJsonValue),
-          }
-        : {}),
-    },
-    update: {
-      name: data.name,
-      description: data.description ?? null,
-      monthlyPriceCents: data.monthlyPriceCents,
-      annualPriceCents: data.annualPriceCents ?? null,
-      annualMonths: data.annualMonths,
-      monthlyEnabled: data.monthlyEnabled,
-      annualEnabled: data.annualEnabled,
-      analysesLimit: data.analysesLimit,
-      analysesLimitYearly:
-        data.analysesLimitYearly === undefined
-          ? undefined
-          : data.analysesLimitYearly,
-      aiTokensLimit: data.aiTokensLimit ?? null,
-      storageMbLimit: data.storageMbLimit ?? null,
-      seatsLimit: data.seatsLimit,
-      seatsLimitYearly:
-        data.seatsLimitYearly === undefined ? undefined : data.seatsLimitYearly,
-      trialEligible: data.trialEligible,
-      trialDays: data.trialDays === undefined ? undefined : data.trialDays,
-      graceDays: data.graceDays === undefined ? undefined : data.graceDays,
-      ...(data.isFree !== undefined ? { isFree: data.isFree } : {}),
-      ...(data.visibleToPublic !== undefined
-        ? { visibleToPublic: data.visibleToPublic }
-        : {}),
-      ...(data.stripeEnabled !== undefined ? { stripeEnabled: data.stripeEnabled } : {}),
-      ...(data.paypalEnabled !== undefined ? { paypalEnabled: data.paypalEnabled } : {}),
-      ...(data.stripePriceMonthly !== undefined
-        ? { stripePriceMonthly: data.stripePriceMonthly }
-        : {}),
-      ...(data.stripePriceAnnual !== undefined
-        ? { stripePriceAnnual: data.stripePriceAnnual }
-        : {}),
-      ...(data.paypalPlanMonthly !== undefined
-        ? { paypalPlanMonthly: data.paypalPlanMonthly }
-        : {}),
-      ...(data.paypalPlanAnnual !== undefined
-        ? { paypalPlanAnnual: data.paypalPlanAnnual }
-        : {}),
-      ...(data.currency !== undefined ? { currency: data.currency } : {}),
-      status: data.status,
-      highlighted: data.highlighted,
-      sortOrder: data.sortOrder,
-      featureList: data.featureList,
-      preferEntitlementLabels: data.preferEntitlementLabels ?? true,
-      legacyEnum: data.legacyEnum ?? null,
-      ...(data.translations !== undefined
-        ? {
-            translations:
-              data.translations === null
-                ? Prisma.DbNull
-                : (data.translations as Prisma.InputJsonValue),
-          }
-        : {}),
-    },
-  });
+  let plan;
+  try {
+    plan = await prisma.plan.upsert({
+      where: data.id ? { id: data.id } : { slug: data.slug },
+      create: {
+        slug: data.slug,
+        name: data.name,
+        description: data.description ?? null,
+        monthlyPriceCents: data.monthlyPriceCents,
+        annualPriceCents: data.annualPriceCents ?? null,
+        annualMonths: data.annualMonths,
+        monthlyEnabled: data.monthlyEnabled,
+        annualEnabled: data.annualEnabled,
+        analysesLimit: data.analysesLimit,
+        analysesLimitYearly: data.analysesLimitYearly ?? null,
+        aiTokensLimit: data.aiTokensLimit ?? null,
+        storageMbLimit: data.storageMbLimit ?? null,
+        seatsLimit: data.seatsLimit,
+        seatsLimitYearly: data.seatsLimitYearly ?? null,
+        trialEligible: data.trialEligible,
+        trialDays: data.trialDays ?? null,
+        graceDays: data.graceDays ?? null,
+        isFree: data.isFree ?? false,
+        visibleToPublic: data.visibleToPublic ?? true,
+        stripeEnabled: data.stripeEnabled ?? true,
+        paypalEnabled: data.paypalEnabled ?? true,
+        stripePriceMonthly: data.stripePriceMonthly ?? null,
+        stripePriceAnnual: data.stripePriceAnnual ?? null,
+        paypalPlanMonthly: data.paypalPlanMonthly ?? null,
+        paypalPlanAnnual: data.paypalPlanAnnual ?? null,
+        currency: data.currency ?? "usd",
+        status: data.status,
+        highlighted: data.highlighted,
+        sortOrder: data.sortOrder,
+        featureList: data.featureList,
+        preferEntitlementLabels: data.preferEntitlementLabels ?? true,
+        legacyEnum: data.legacyEnum ?? null,
+        ...(data.translations !== undefined
+          ? {
+              translations:
+                data.translations === null
+                  ? Prisma.DbNull
+                  : (data.translations as Prisma.InputJsonValue),
+            }
+          : {}),
+      },
+      update: {
+        slug: data.slug,
+        name: data.name,
+        description: data.description ?? null,
+        monthlyPriceCents: data.monthlyPriceCents,
+        annualPriceCents: data.annualPriceCents ?? null,
+        annualMonths: data.annualMonths,
+        monthlyEnabled: data.monthlyEnabled,
+        annualEnabled: data.annualEnabled,
+        analysesLimit: data.analysesLimit,
+        analysesLimitYearly:
+          data.analysesLimitYearly === undefined
+            ? undefined
+            : data.analysesLimitYearly,
+        aiTokensLimit: data.aiTokensLimit ?? null,
+        storageMbLimit: data.storageMbLimit ?? null,
+        seatsLimit: data.seatsLimit,
+        seatsLimitYearly:
+          data.seatsLimitYearly === undefined ? undefined : data.seatsLimitYearly,
+        trialEligible: data.trialEligible,
+        trialDays: data.trialDays === undefined ? undefined : data.trialDays,
+        graceDays: data.graceDays === undefined ? undefined : data.graceDays,
+        ...(data.isFree !== undefined ? { isFree: data.isFree } : {}),
+        ...(data.visibleToPublic !== undefined
+          ? { visibleToPublic: data.visibleToPublic }
+          : {}),
+        ...(data.stripeEnabled !== undefined ? { stripeEnabled: data.stripeEnabled } : {}),
+        ...(data.paypalEnabled !== undefined ? { paypalEnabled: data.paypalEnabled } : {}),
+        ...(data.stripePriceMonthly !== undefined
+          ? { stripePriceMonthly: data.stripePriceMonthly }
+          : {}),
+        ...(data.stripePriceAnnual !== undefined
+          ? { stripePriceAnnual: data.stripePriceAnnual }
+          : {}),
+        ...(data.paypalPlanMonthly !== undefined
+          ? { paypalPlanMonthly: data.paypalPlanMonthly }
+          : {}),
+        ...(data.paypalPlanAnnual !== undefined
+          ? { paypalPlanAnnual: data.paypalPlanAnnual }
+          : {}),
+        ...(data.currency !== undefined ? { currency: data.currency } : {}),
+        status: data.status,
+        highlighted: data.highlighted,
+        sortOrder: data.sortOrder,
+        featureList: data.featureList,
+        preferEntitlementLabels: data.preferEntitlementLabels ?? true,
+        legacyEnum: data.legacyEnum ?? null,
+        ...(data.translations !== undefined
+          ? {
+              translations:
+                data.translations === null
+                  ? Prisma.DbNull
+                  : (data.translations as Prisma.InputJsonValue),
+            }
+          : {}),
+      },
+    });
+  } catch (err) {
+    if (
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      err.code === "P2002"
+    ) {
+      throw new AppError(
+        ErrorCode.CONFLICT,
+        `Slug "${data.slug}" is already used. Pick a unique slug.`,
+        409,
+        { slug: data.slug },
+      );
+    }
+    throw err;
+  }
 
   // featureKeys always applied when provided (including empty = strip entitlements)
   if (Array.isArray(data.featureKeys)) {
@@ -173,6 +216,7 @@ export async function upsertPlanForAdmin(
     targetId: plan.id,
     previousValue: previous
       ? {
+          slug: previous.slug,
           monthlyPriceCents: previous.monthlyPriceCents,
           annualPriceCents: previous.annualPriceCents,
           analysesLimit: previous.analysesLimit,

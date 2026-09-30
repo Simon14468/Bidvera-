@@ -306,6 +306,9 @@ test("billing email links are absolute production URLs", () => {
   const reminders = readSrc("src/services/billing/renewal-reminders.ts");
   assert.match(reminders, /billingAbsoluteUrl\("\/billing"\)/);
   assert.doesNotMatch(reminders, /href="\/billing"/);
+  const actions = readSrc("src/app/actions.ts");
+  assert.match(actions, /buildCheckoutSuccessUrl/);
+  assert.match(actions, /buildCheckoutCancelUrl/);
 });
 
 test("3) stale Stripe checkout cannot activate the wrong plan", () => {

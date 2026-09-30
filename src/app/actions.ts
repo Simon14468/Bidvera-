@@ -273,6 +273,7 @@ export async function startCheckoutAction(input: {
   planId: string;
   gateway?: "stripe" | "paypal";
   interval?: "MONTH" | "YEAR";
+  /** Cancel landing only — allowlisted. Success always returns to /dashboard. */
   returnPath?: string;
   turnstileToken?: string;
 }) {
@@ -294,7 +295,7 @@ export async function startCheckoutAction(input: {
     const planId = typeof input === "string" ? input : input.planId;
     const gateway = typeof input === "string" ? undefined : input.gateway;
     const interval = typeof input === "string" ? "MONTH" : input.interval ?? "MONTH";
-    const returnPath =
+    const cancelHint =
       typeof input === "string" ? "/upgrade" : input.returnPath ?? "/upgrade";
     const { assertTurnstileToken, requestClientIp } = await import(
       "@/services/security/turnstile"
@@ -305,6 +306,15 @@ export async function startCheckoutAction(input: {
       ip: await requestClientIp(),
     });
 
+    const {
+      buildCheckoutCancelUrl,
+      buildCheckoutSuccessUrl,
+      sanitizeCheckoutCancelPath,
+    } = await import("@/services/billing/billing-app-url");
+    const cancelPath = sanitizeCheckoutCancelPath(cancelHint);
+    const successUrl = buildCheckoutSuccessUrl();
+    const cancelUrl = buildCheckoutCancelUrl(cancelPath);
+
     await recordUsage({
       companyId,
       action: "CHECKOUT_STARTED",
@@ -314,18 +324,21 @@ export async function startCheckoutAction(input: {
       action: "CHECKOUT_STARTED",
       companyId,
       userId: auth.user.id,
-      metadata: { planId, gateway, interval, onboarding: returnPath.includes("onboarding") },
+      metadata: {
+        planId,
+        gateway,
+        interval,
+        onboarding: cancelPath.includes("onboarding"),
+      },
     });
-    const base = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-    const joiner = returnPath.includes("?") ? "&" : "?";
     const session = await billingService.createCheckoutSession({
       companyId,
       userEmail: auth.user.email,
       planId,
       gateway,
       interval,
-      successUrl: `${base}${returnPath}${joiner}checkout=success`,
-      cancelUrl: `${base}${returnPath}${joiner}canceled=1`,
+      successUrl,
+      cancelUrl,
     });
     return { ok: true as const, data: session };
   } catch (error) {

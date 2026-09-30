@@ -376,6 +376,39 @@ export function planDefaultFeatureKeys(slug: string): EntitlementFeatureKey[] {
   return PLAN_ENTITLEMENT_DEFAULTS[slug] ?? PLAN_ENTITLEMENT_DEFAULTS.trial!;
 }
 
+/**
+ * Commercially sold Plan Editor module master switches (excludes Tender Analysis
+ * and Matching Engine, which are not sold on public pricing).
+ */
+export const COMMERCIAL_MODULE_FEATURE_KEYS = [
+  "document_compliance",
+  "supplier_qualification",
+  "tender_calendar",
+  "client_requests",
+  "questionnaire_assistant",
+] as const satisfies readonly EntitlementFeatureKey[];
+
+/** True when every commercial module checkbox from Plan Editor is enabled. */
+export function planHasAllCommercialModules(
+  enabledKeys: readonly string[],
+): boolean {
+  const enabled = new Set(enabledKeys.map(canonicalFeatureKey));
+  return COMMERCIAL_MODULE_FEATURE_KEYS.every((key) => enabled.has(key));
+}
+
+/**
+ * Premium PricingGrid hover: Pro / Business Pro cards only, and only when every
+ * commercial Plan Editor module is checked for that plan.
+ */
+export function planQualifiesForPremiumPricingHover(input: {
+  enabledKeys: readonly string[];
+  slug?: string | null;
+}): boolean {
+  if (!planHasAllCommercialModules(input.enabledKeys)) return false;
+  const slug = (input.slug ?? "").trim().toLowerCase();
+  return slug === "pro" || slug === "business" || slug.includes("business");
+}
+
 /** Build a deny-by-default feature map from enabled keys (mirrors runtime resolution). */
 export function buildFeatureMapFromEnabledKeys(
   enabledKeys: readonly string[],
@@ -494,17 +527,9 @@ export function buildEntitlementMarketingLabels(input: {
   for (const def of ENTITLEMENT_CATALOG) {
     if (def.commerciallyAvailable === false) continue;
     if (def.hiddenInAdmin) continue;
+    // Internal / unshipped — never sell on pricing even if a PlanFeature row exists.
     if (def.key === "tender_analysis") continue;
-    if (def.key === "document_compliance") continue;
-    if (def.key === "supplier_qualification") continue;
-    if (def.key === "tender_calendar") continue;
-    if (def.key === "client_requests") continue;
-    if (def.key === "questionnaire_assistant") continue;
     if (def.key === "matching_engine") continue;
-    if (def.key === "advanced_decision_engine" && enabled.has(def.key)) {
-      labels.push(def.marketingLabel);
-      continue;
-    }
     if (enabled.has(canonicalFeatureKey(def.key))) {
       labels.push(def.marketingLabel);
     }

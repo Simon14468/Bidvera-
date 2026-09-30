@@ -3,18 +3,19 @@ export const dynamic = "force-dynamic";
 import { logout, revokeOtherSessions } from "@/app/actions";
 import { requireAuth } from "@/auth/session";
 import { canManageCompanySettings } from "@/auth/company-settings-access";
+import { loadSettingsBillingSummary } from "@/application/settings-billing-summary";
 import { CookieSettingsLink } from "@/components/consent/cookie-consent-root";
 import { AccountProfileForm } from "@/components/settings/account-profile-form";
+import { BillingSubscriptionSection } from "@/components/settings/billing-subscription-section";
 import { NotificationPrefsForm } from "@/components/settings/notification-prefs-form";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCookieConsentCopy } from "@/i18n/cookie-consent";
 import { getDictionary } from "@/i18n/dictionaries";
 import { getLocale } from "@/i18n/get-locale";
 import { getCompanyNotificationPrefs } from "@/services/notifications/prefs";
-import { companyHasUpgradePath } from "@/services/billing/upgrade-eligibility";
 import { getPendingEmailChange } from "@/services/auth/tokens";
-import { getTrialUsage } from "@/services/usage";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -31,35 +32,34 @@ async function signOutOtherDevices() {
 
 export default async function SettingsPage() {
   const locale = await getLocale();
-  const t = getDictionary(locale).app.settings;
+  const dict = getDictionary(locale);
+  const t = dict.app.settings;
+  const billingCopy = dict.app.billing;
   const cookiesCopy = getCookieConsentCopy(locale);
   const auth = await requireAuth();
   if (!auth.user.companyId) redirect("/onboarding/company");
+
   const [
-    usage,
     prefs,
-    showUpgrade,
+    billingSummary,
     documentComplianceEnabled,
     tenderCalendarEnabled,
     companyProfileEnabled,
     pendingEmailChange,
   ] = await Promise.all([
-      getTrialUsage(auth.user.companyId),
-      getCompanyNotificationPrefs(auth.user.companyId),
-      companyHasUpgradePath(auth.user.companyId).catch(() => false),
-      import("@/modules/document-compliance").then((m) =>
-        m.isDocumentComplianceAvailable(auth.user.companyId!).catch(() => false),
-      ),
-      import("@/modules/tender-calendar").then((m) =>
-        m.isTenderCalendarAvailable(auth.user.companyId!).catch(() => false),
-      ),
-      import("@/services/entitlements").then((m) =>
-        m.hasFeature(auth.user.companyId!, "company_profile").catch(() => false),
-      ),
-      getPendingEmailChange(auth.user.id),
-    ]);
-
-  const planBody = `${String(usage.plan).replaceAll("_", " ")} · ${String(usage.effectiveStatus).replaceAll("_", " ")}`;
+    getCompanyNotificationPrefs(auth.user.companyId),
+    loadSettingsBillingSummary(auth.user.companyId),
+    import("@/modules/document-compliance").then((m) =>
+      m.isDocumentComplianceAvailable(auth.user.companyId!).catch(() => false),
+    ),
+    import("@/modules/tender-calendar").then((m) =>
+      m.isTenderCalendarAvailable(auth.user.companyId!).catch(() => false),
+    ),
+    import("@/services/entitlements").then((m) =>
+      m.hasFeature(auth.user.companyId!, "company_profile").catch(() => false),
+    ),
+    getPendingEmailChange(auth.user.id),
+  ]);
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 animate-fade-in">
@@ -68,6 +68,7 @@ export default async function SettingsPage() {
         <p className="mt-1 text-sm text-muted">{t.subtitle}</p>
       </div>
 
+      {/* A. Profile */}
       <Card>
         <CardHeader>
           <CardTitle>{t.accountTitle}</CardTitle>
@@ -101,6 +102,27 @@ export default async function SettingsPage() {
         </CardContent>
       </Card>
 
+      {/* B. Security */}
+      <Card>
+        <CardHeader>
+          <CardTitle>{t.securityTitle}</CardTitle>
+          <CardDescription>{t.securityBody}</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-wrap gap-3">
+          <form action={signOut}>
+            <Button type="submit" variant="outline">
+              {t.signOut}
+            </Button>
+          </form>
+          <form action={signOutOtherDevices}>
+            <Button type="submit" variant="outline" title={t.revokeOtherSessionsHint}>
+              {t.revokeOtherSessions}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+
+      {/* C. Notifications */}
       <Card>
         <CardHeader>
           <CardTitle>{t.notificationsTitle}</CardTitle>
@@ -142,38 +164,25 @@ export default async function SettingsPage() {
         </Card>
       ) : null}
 
+      {/* D. Appearance */}
       <Card>
         <CardHeader>
-          <CardTitle>{t.planTitle}</CardTitle>
-          <CardDescription>{planBody}</CardDescription>
+          <CardTitle>{t.appearanceTitle}</CardTitle>
+          <CardDescription>{t.appearanceBody}</CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-wrap gap-3">
-          <Link
-            href="/billing"
-            className="inline-flex h-10 items-center rounded-xl bg-primary px-4 text-sm font-medium text-white hover:bg-primary-hover"
-          >
-            {t.manageBilling}
-          </Link>
-          {showUpgrade ? (
-            <Link
-              href="/upgrade"
-              className="inline-flex h-10 items-center rounded-xl border border-border bg-card px-4 text-sm font-medium hover:bg-background"
-            >
-              {t.viewUpgrade}
-            </Link>
-          ) : null}
-          <form action={signOut}>
-            <Button type="submit" variant="outline">
-              {t.signOut}
-            </Button>
-          </form>
-          <form action={signOutOtherDevices}>
-            <Button type="submit" variant="outline" title={t.revokeOtherSessionsHint}>
-              {t.revokeOtherSessions}
-            </Button>
-          </form>
+        <CardContent className="flex flex-wrap items-center gap-3">
+          <ThemeToggle />
+          <p className="text-sm text-muted">{t.appearanceThemeHint}</p>
         </CardContent>
       </Card>
+
+      {/* E. Billing & Subscription */}
+      <BillingSubscriptionSection
+        summary={billingSummary}
+        settingsCopy={t}
+        billingCopy={billingCopy}
+        locale={locale}
+      />
 
       <Card>
         <CardHeader>

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 export function StripeActivate({
   sessionId,
-  redirectTo = "/billing?activated=1",
+  redirectTo = "/dashboard",
 }: {
   sessionId: string;
   redirectTo?: string;

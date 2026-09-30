@@ -10,6 +10,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
   type KeyboardEvent,
   type ReactNode,
 } from "react";
@@ -79,11 +80,11 @@ export function SearchableCombobox({
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
   const [coords, setCoords] = useState<PanelCoords | null>(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
   const selected = useMemo(
     () => options.find((o) => o.value === value) ?? null,
@@ -142,11 +143,12 @@ export function SearchableCombobox({
 
   useLayoutEffect(() => {
     if (!open) return;
-    updateCoords();
+    const frame = window.requestAnimationFrame(() => updateCoords());
     const onWin = () => updateCoords();
     window.addEventListener("resize", onWin);
     window.addEventListener("scroll", onWin, true);
     return () => {
+      window.cancelAnimationFrame(frame);
       window.removeEventListener("resize", onWin);
       window.removeEventListener("scroll", onWin, true);
     };
@@ -159,12 +161,11 @@ export function SearchableCombobox({
   }, [open]);
 
   useEffect(() => {
-    if (!open) {
-      setQuery("");
-      return;
-    }
+    if (!open) return;
     const selectedIdx = filtered.findIndex((o) => o.value === value);
-    setActiveIndex(selectedIdx >= 0 ? selectedIdx : 0);
+    const next = selectedIdx >= 0 ? selectedIdx : 0;
+    const t = window.setTimeout(() => setActiveIndex(next), 0);
+    return () => window.clearTimeout(t);
   }, [open, filtered, value]);
 
   useEffect(() => {
@@ -187,12 +188,14 @@ export function SearchableCombobox({
   }, [activeIndex, filtered, open]);
 
   function close() {
+    setQuery("");
     setOpen(false);
     triggerRef.current?.focus();
   }
 
   function selectValue(next: string) {
     onChange(next);
+    setQuery("");
     setOpen(false);
     triggerRef.current?.focus();
   }

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import type { BillingInvoice, BillingInvoiceStatus } from "@prisma/client";
+import { resolveStripeCredentials } from "@/services/billing/provider-credentials";
 
 export type CustomerFacingInvoice = {
   id: string;

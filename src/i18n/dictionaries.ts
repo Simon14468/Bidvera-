@@ -650,6 +650,23 @@ export type Dictionary = {
       alertWorkflow: string;
       prefsSaved: string;
       savePrefs: string;
+      securityTitle: string;
+      securityBody: string;
+      appearanceTitle: string;
+      appearanceBody: string;
+      appearanceThemeHint: string;
+      billingSectionTitle: string;
+      billingSectionBody: string;
+      currentPlanLabel: string;
+      statusLabel: string;
+      intervalLabel: string;
+      renewsLabel: string;
+      trialEndsLabel: string;
+      accessUntilLabel: string;
+      providerLabel: string;
+      includedFeatures: string;
+      featuresHint: string;
+      changePlan: string;
     };
     tenders: {
       title: string;
@@ -3054,6 +3071,44 @@ const es: Dictionary = {
       risk: "Riesgo",
       allRiskLevels: "Todos los niveles",
       low: "Bajo",
+      securityTitle: "Seguridad",
+      securityBody: "Controles de sesión de esta cuenta.",
+      appearanceTitle: "Apariencia",
+      appearanceBody: "Preferencia de tema en este dispositivo.",
+      appearanceThemeHint: "Alterna modo claro u oscuro. Se guarda en este dispositivo.",
+      billingSectionTitle: "Facturación y suscripción",
+      billingSectionBody:
+        "Tu plan real desde la facturación de Bidvera — no desde redirecciones ni almacenamiento local.",
+      currentPlanLabel: "Plan actual",
+      statusLabel: "Estado",
+      intervalLabel: "Intervalo de facturación",
+      renewsLabel: "Próxima renovación",
+      trialEndsLabel: "Fin de la prueba",
+      accessUntilLabel: "Acceso hasta",
+      providerLabel: "Proveedor de pago",
+      includedFeatures: "Funciones de este plan",
+      featuresHint:
+        "Las marcas son informativas. El acceso se aplica siempre en el servidor según tu suscripción.",
+      changePlan: "Cambiar plan",
+    },
+    tenders: {
+      title: "Licitaciones",
+      subtitle: "{count} licitaciones · filtrar por decisión, riesgo y plazo",
+      subtitleOne: "1 licitación · filtrar por decisión, riesgo y plazo",
+      analyzeCta: "Analizar licitación",
+      emptyTitle: "Aún no hay licitaciones",
+      emptyDescription:
+        "Sube un ITT o PQQ para obtener una recomendación Bid / Review / No-Bid.",
+      search: "Buscar",
+      searchPlaceholder: "Título o cliente",
+      decision: "Decisión",
+      allDecisions: "Todas las decisiones",
+      bid: "Ofertar",
+      review: "Revisar",
+      noBid: "No ofertar",
+      risk: "Riesgo",
+      allRiskLevels: "Todos los niveles",
+      low: "Bajo",
       medium: "Medio",
       high: "Alto",
       critical: "Crítico",
@@ -4198,25 +4253,23 @@ const zh: Dictionary = {
       alertWorkflow: "流程 / 材料包事件",
       prefsSaved: "偏好已保存。",
       savePrefs: "保存通知偏好",
-    },
-    tenders: {
-      title: "招标",
-      subtitle: "{count} 份招标 · 按决策、风险与截止日期筛选",
-      subtitleOne: "1 份招标 · 按决策、风险与截止日期筛选",
-      analyzeCta: "分析招标",
-      emptyTitle: "暂无招标",
-      emptyDescription: "上传 ITT 或 PQQ，获取 Bid / Review / No-Bid 建议。",
-      search: "搜索",
-      searchPlaceholder: "标题或客户",
-      decision: "决策",
-      allDecisions: "全部决策",
-      bid: "投标",
-      review: "复核",
-      noBid: "不投标",
-      risk: "风险",
-      allRiskLevels: "全部风险等级",
-      low: "低",
-      medium: "中",
+      securityTitle: "安全",
+      securityBody: "此账户的会话控制。",
+      appearanceTitle: "外观",
+      appearanceBody: "此设备的主题偏好。",
+      appearanceThemeHint: "切换浅色或深色模式。偏好保存在此设备上。",
+      billingSectionTitle: "账单与订阅",
+      billingSectionBody: "来自 Bidvera 账单的实时套餐 — 并非来自浏览器跳转或本地存储。",
+      currentPlanLabel: "当前套餐",
+      statusLabel: "状态",
+      intervalLabel: "计费周期",
+      renewsLabel: "下次续费",
+      trialEndsLabel: "试用结束",
+      accessUntilLabel: "可用至",
+      providerLabel: "支付提供方",
+      includedFeatures: "本套餐功能",
+      featuresHint: "勾选仅供参考。访问权限始终由服务器根据订阅执行。",
+      changePlan: "更换套餐",
       high: "高",
       critical: "严重",
       deadline: "截止日期",
@@ -5388,6 +5441,25 @@ const ar: Dictionary = {
       risk: "المخاطر",
       allRiskLevels: "كل مستويات المخاطر",
       low: "منخفض",
+      securityTitle: "الأمان",
+      securityBody: "التحكم بجلسات هذا الحساب.",
+      appearanceTitle: "المظهر",
+      appearanceBody: "تفضيل المظهر على هذا الجهاز.",
+      appearanceThemeHint: "بدّل الوضع الفاتح أو الداكن. يُحفظ التفضيل على هذا الجهاز.",
+      billingSectionTitle: "الفوترة والاشتراك",
+      billingSectionBody:
+        "خطّتك الحية من فوترة Bidvera — وليس من إعادة التوجيه أو التخزين المحلي.",
+      currentPlanLabel: "الخطة الحالية",
+      statusLabel: "الحالة",
+      intervalLabel: "فترة الفوترة",
+      renewsLabel: "التجديد التالي",
+      trialEndsLabel: "نهاية التجربة",
+      accessUntilLabel: "الوصول حتى",
+      providerLabel: "مزوّد الدفع",
+      includedFeatures: "ميزات هذه الخطة",
+      featuresHint:
+        "علامات الصح للمعلومات فقط. يُفرض الوصول دائمًا من الخادم وفق اشتراكك.",
+      changePlan: "تغيير الخطة",
       medium: "متوسط",
       high: "مرتفع",
       critical: "حرج",
@@ -6597,6 +6669,26 @@ const fr: Dictionary = {
       risk: "Risque",
       allRiskLevels: "Tous les niveaux",
       low: "Faible",
+      securityTitle: "Sécurité",
+      securityBody: "Contrôles de session pour ce compte.",
+      appearanceTitle: "Apparence",
+      appearanceBody: "Préférence de thème sur cet appareil.",
+      appearanceThemeHint:
+        "Basculez entre le mode clair et sombre. La préférence est stockée sur cet appareil.",
+      billingSectionTitle: "Facturation et abonnement",
+      billingSectionBody:
+        "Votre offre réelle depuis la facturation Bidvera — pas depuis les redirections ni le stockage local.",
+      currentPlanLabel: "Offre actuelle",
+      statusLabel: "Statut",
+      intervalLabel: "Intervalle de facturation",
+      renewsLabel: "Prochain renouvellement",
+      trialEndsLabel: "Fin de l’essai",
+      accessUntilLabel: "Accès jusqu’au",
+      providerLabel: "Fournisseur de paiement",
+      includedFeatures: "Fonctionnalités de cette offre",
+      featuresHint:
+        "Les coches sont informatives. L’accès est toujours appliqué côté serveur selon votre abonnement.",
+      changePlan: "Changer d’offre",
       medium: "Moyen",
       high: "Élevé",
       critical: "Critique",

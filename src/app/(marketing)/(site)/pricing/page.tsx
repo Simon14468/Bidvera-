@@ -62,7 +62,7 @@ export default async function PricingPage() {
       ) : null}
 
       <div className="mt-10">
-        <PricingGrid plans={plans} labels={p} />
+        <PricingGrid plans={plans} labels={p} locale={locale} />
       </div>
 
       <p className="mt-6 text-center text-sm text-muted">{p.yearlyNote}</p>
