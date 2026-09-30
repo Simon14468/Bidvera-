@@ -5,6 +5,7 @@ import {
 } from "@/services/billing/settings";
 import {
   localizePlanMarketingBundle,
+  parsePlanTranslations,
   type PlanMarketingCopy,
 } from "@/services/billing/plan-i18n";
 import {
@@ -137,6 +138,17 @@ export function sanitizeFreeMarketingLabels(plan: Pick<Plan, "isFree" | "slug">,
   return withoutAnalyses.filter((line) => !/unlimited analyses/i.test(line));
 }
 
+/** Locale currency display from Plan Languages; English / unset → null ($ fallback). */
+export function resolvePublicCurrencyLabel(
+  translations: unknown,
+  locale: Locale,
+): string | null {
+  if (locale === "en") return null;
+  const stored = parsePlanTranslations(translations)[locale];
+  const label = stored?.currencyLabel?.trim();
+  return label || null;
+}
+
 function toPublicBillingPlan(
   plan: PlanWithFeatures,
   settings: BillingGatewaySettings,
@@ -185,6 +197,7 @@ function toPublicBillingPlan(
     monthlyEnabled: plan.monthlyEnabled,
     annualEnabled: plan.annualEnabled,
     currency: plan.currency,
+    currencyLabel: resolvePublicCurrencyLabel(plan.translations, locale),
     analysesLimit: plan.analysesLimit,
     seatsLimit: plan.seatsLimit,
     isFree: plan.isFree,

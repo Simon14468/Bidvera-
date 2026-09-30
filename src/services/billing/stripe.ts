@@ -125,7 +125,7 @@ export async function createStripeCheckoutSession(input: {
 
   const priceId = resolveStripePriceId(plan, input.interval);
   const amountCents = resolvePlanAmountCents(plan, input.interval);
-  const stripe = getStripe();
+  const stripe = await getStripe();
   const settings = await getBillingGatewaySettings();
   const trialContext = await loadStripeTrialContext(input.companyId);
   const trial = decideStripeTrialCheckout({
@@ -215,7 +215,7 @@ export async function activateStripeCheckoutSession(input: {
   companyId: string;
   sessionId: string;
 }) {
-  const stripe = getStripe();
+  const stripe = await getStripe();
   const session = await stripe.checkout.sessions.retrieve(input.sessionId, {
     expand: ["subscription", "line_items", "customer"],
   });
@@ -420,7 +420,7 @@ export async function handleStripeWebhook(rawBody: string, signature: string | n
     throw new AppError(ErrorCode.FORBIDDEN, "Missing Stripe signature.", 401);
   }
 
-  const stripe = getStripe();
+  const stripe = await getStripe();
   let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(rawBody, signature, secret);
@@ -508,7 +508,7 @@ async function processStripeEvent(event: Stripe.Event) {
 
       const interval =
         sub.metadata?.interval === "YEAR" ? ("YEAR" as BillingInterval) : ("MONTH" as BillingInterval);
-      const stripeClient = getStripe();
+      const stripeClient = await getStripe();
       const itemPriceId = sub.items.data[0]?.price?.id;
       const expectedPriceId = resolveStripePriceId(plan, interval);
       if (expectedPriceId) {
@@ -746,7 +746,7 @@ async function processStripeEvent(event: Stripe.Event) {
       const chargeId =
         typeof dispute.charge === "string" ? dispute.charge : dispute.charge?.id;
       if (!chargeId) return;
-      const stripeClient = getStripe();
+      const stripeClient = await getStripe();
       const charge = await stripeClient.charges.retrieve(chargeId);
       const companyId = await findCompanyByStripeCustomer(
         typeof charge.customer === "string" ? charge.customer : charge.customer?.id,
@@ -849,7 +849,7 @@ export async function cancelStripeSubscription(companyId: string, atPeriodEnd = 
   if (!sub?.providerSubscriptionId || sub.provider !== "stripe") {
     throw new AppError(ErrorCode.VALIDATION, "No Stripe subscription to cancel.", 400);
   }
-  const stripe = getStripe();
+  const stripe = await getStripe();
   if (atPeriodEnd) {
     await stripe.subscriptions.update(sub.providerSubscriptionId, {
       cancel_at_period_end: true,

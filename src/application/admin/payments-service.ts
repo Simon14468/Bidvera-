@@ -121,6 +121,7 @@ export async function getPaymentsAdminDashboard() {
     recentPayments,
     plans,
     paypalIntegration: await getPaypalIntegrationStatusAsync(),
+    providerCredentials: await getBillingProviderCredentialsForAdmin(),
   };
 }
 

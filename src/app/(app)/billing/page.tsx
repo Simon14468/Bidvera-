@@ -343,7 +343,7 @@ export default async function BillingPage({
             <p className="mt-1 text-lg font-semibold">{planName}</p>
             {!isFreeWorkspace && priceCents != null && priceCents > 0 ? (
               <p className="mt-1 text-sm text-muted">
-                {formatMoney(priceCents, currency)}
+                {formatPlanMoney(priceCents, currency, locale)}
                 {intervalLabel !== "—" ? ` · ${intervalLabel}` : ""}
               </p>
             ) : null}
