@@ -7,7 +7,6 @@ import { LearningConsentCard } from "@/components/settings/learning-consent-card
 import { getDictionary } from "@/i18n/dictionaries";
 import { getLocale } from "@/i18n/get-locale";
 import { hasFeature } from "@/services/entitlements";
-import Link from "next/link";
 import { CompanyProfileForm } from "./company-profile-form";
 
 export default async function CompanyPage() {
@@ -24,7 +23,6 @@ export default async function CompanyPage() {
             Workspace
           </p>
           <h1 className="text-2xl font-semibold tracking-tight">{copy.title}</h1>
-          <p className="mt-1 text-sm text-muted">{copy.subtitle}</p>
         </div>
         <FeatureUpgradeNotice featureName={copy.title} />
       </div>
@@ -41,17 +39,6 @@ export default async function CompanyPage() {
           Workspace
         </p>
         <h1 className="text-2xl font-semibold tracking-tight">{copy.title}</h1>
-        <p className="mt-1 text-sm text-muted">{copy.subtitle}</p>
-        <p className="mt-2 text-xs text-muted">
-          {copy.supplierQualificationHint}{" "}
-          <Link
-            href="/supplier-qualification"
-            className="font-medium text-primary hover:underline"
-          >
-            {copy.supplierQualificationLink}
-          </Link>
-          .
-        </p>
       </div>
       <CompanyProfileForm
         companyName={company.name}

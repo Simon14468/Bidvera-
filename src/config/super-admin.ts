@@ -80,6 +80,7 @@ export const SECRET_SETTING_KEYS = new Set([
   "auth.microsoft.vault",
   "auth.apple.vault",
   "email.resend.vault",
+  "notifications.channels.vault",
   "matching.ai.vault",
   "matching.ted.vault",
   "billing.paypal.vault",

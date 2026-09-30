@@ -1,6 +1,6 @@
 import { PlanBadge } from "@/components/billing/plan-badge";
 import { Alert } from "@/components/ui/alert";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { SettingsBillingSummary } from "@/application/settings-billing-summary";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { formatDate } from "@/lib/format";
@@ -73,7 +73,6 @@ export function BillingSubscriptionSection({
             size="md"
           />
         </div>
-        <CardDescription>{settingsCopy.billingSectionBody}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
         {summary.paymentProblem ? (
@@ -165,7 +164,6 @@ export function BillingSubscriptionSection({
               </li>
             ))}
           </ul>
-          <p className="mt-2 text-[11px] text-muted">{settingsCopy.featuresHint}</p>
         </div>
 
         <div className="flex flex-wrap gap-3">

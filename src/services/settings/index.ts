@@ -117,6 +117,15 @@ async function seedDefaultSettings(): Promise<void> {
     DEFAULT_ASSISTANT_SETTINGS,
     "Bidvera AI Assistant public controls (no secrets)",
   );
+  const {
+    NOTIFICATION_CHANNEL_SETTINGS_KEY,
+    DEFAULT_NOTIFICATION_CHANNEL_SETTINGS,
+  } = await import("@/services/notifications/channel-settings");
+  await ensureSettingRow(
+    NOTIFICATION_CHANNEL_SETTINGS_KEY,
+    DEFAULT_NOTIFICATION_CHANNEL_SETTINGS,
+    "Platform visibility for WhatsApp / SMS / Push alert channels",
+  );
 }
 
 export async function ensureDefaultSettings() {

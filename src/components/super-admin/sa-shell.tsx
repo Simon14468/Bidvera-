@@ -35,6 +35,7 @@ export function SaShell({
     { href: `${base}/ai-knowledge`, label: "AI Knowledge" },
     { href: `${base}/ai-costs`, label: "AI Costs" },
     { href: `${base}/email`, label: "Email" },
+    { href: `${base}/notification-channels`, label: "Alert channels" },
     { href: `${base}/settings`, label: "Settings" },
     { href: `${base}/backups`, label: "Backups" },
     { href: `${base}/load-test`, label: "Load test" },

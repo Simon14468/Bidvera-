@@ -58,9 +58,6 @@ export default async function DashboardPage({ searchParams }: PageProps) {
           <h1 className="mt-1 text-xl font-semibold tracking-tight sm:text-2xl">
             {common.dashboardTitle}
           </h1>
-          <p className="mt-1 max-w-2xl text-sm text-muted">
-            {common.dashboardSubtitle}
-          </p>
         </div>
         <Link
           href="/billing"
@@ -85,9 +82,6 @@ export default async function DashboardPage({ searchParams }: PageProps) {
           <h2 className="text-base font-semibold tracking-tight">
             {common.workspaceOverview}
           </h2>
-          <p className="mt-0.5 text-sm text-muted">
-            {common.workspaceOverviewHint}
-          </p>
         </div>
         <WorkspaceKpiGrid
           kpis={data.kpis}
@@ -104,17 +98,11 @@ export default async function DashboardPage({ searchParams }: PageProps) {
       <section className="grid min-w-0 gap-4 xl:grid-cols-3">
         <WorkspaceBarChart
           title={common.complianceStatus}
-          description={
-            data.hasComplianceHistory
-              ? common.complianceStatusHint
-              : common.complianceStatusHintEmpty
-          }
           series={data.complianceStatusSeries}
           emptyLabel={common.complianceEmpty}
         />
         <WorkspaceBarChart
           title={common.workspaceActivity}
-          description={common.workspaceActivityHint}
           series={data.activitySeries}
           emptyLabel={
             data.hasActivityHistory

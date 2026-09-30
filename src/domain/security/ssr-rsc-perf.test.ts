@@ -12,15 +12,22 @@ function read(rel: string) {
 }
 
 describe("SSR/RSC final performance pass", () => {
-  it("layout parallelizes module imports and upgrade path with feature gates", () => {
+  it("layout parallelizes chrome snapshot with feature gates in one barrier", () => {
     const src = read("src/app/(app)/layout.tsx");
-    assert.match(src, /await Promise\.all\(\[\s*import\("@\/modules\/tender-analysis"\)/);
-    assert.match(src, /upgradeMod\.companyHasUpgradePath\(companyId\)/);
+    assert.match(src, /loadAppChromeSnapshot\(companyId, locale\)/);
+    assert.match(src, /import\("@\/modules\/tender-analysis"\)\.then/);
+    assert.match(src, /showUpgrade=\{chrome\.showUpgrade\}/);
     // Upgrade must not await after the feature Promise.all sequentially alone.
     assert.doesNotMatch(
       src,
       /const showUpgrade = await companyHasUpgradePath/,
     );
+  });
+
+  it("app loading UI is sync skeleton (no locale/DB await)", () => {
+    const src = read("src/app/(app)/loading.tsx");
+    assert.doesNotMatch(src, /async function|await |getLocale|getDictionary/);
+    assert.match(src, /Skeleton/);
   });
 
   it("dashboard skips matching overview DB when commercially OFF", () => {

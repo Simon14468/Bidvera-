@@ -6,12 +6,13 @@ import { StripeActivate } from "@/components/billing/stripe-activate";
 import { Paywall } from "@/components/billing/paywall";
 import { Alert } from "@/components/ui/alert";
 import { getLocale } from "@/i18n/get-locale";
-import { getDecisionLabel } from "@/lib/labels";
+import { getDictionary } from "@/i18n/dictionaries";
 import { listPublicCheckoutPlans } from "@/services/billing/catalog";
 import { getBillingGatewaySettings } from "@/services/billing/settings";
+import { getEffectiveLimits } from "@/services/plans/effective";
 import { getTurnstilePublicConfig } from "@/services/security/turnstile";
 import { trackEvent } from "@/services/observability";
-import { getTrialUsage, recordUsage } from "@/services/usage";
+import { recordUsage } from "@/services/usage";
 
 interface PageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -19,13 +20,21 @@ interface PageProps {
 
 export default async function UpgradePage({ searchParams }: PageProps) {
   const locale = await getLocale();
+  const dict = getDictionary(locale);
   const { auth, companyId } = await requireCompanyId();
-  const usage = await getTrialUsage(companyId);
   const params = await searchParams;
-  const [plans, settings] = await Promise.all([
+  const [plans, settings, limits] = await Promise.all([
     listPublicCheckoutPlans(locale),
     getBillingGatewaySettings(),
+    getEffectiveLimits(companyId).catch(() => null),
   ]);
+
+  const hasActivePaidPlan = Boolean(
+    limits &&
+      limits.planSlug !== "free" &&
+      limits.planSlug !== "trial" &&
+      limits.monthlyPriceCents > 0,
+  );
 
   await recordUsage({ companyId, action: "UPGRADE_VIEWED" });
   await trackEvent({
@@ -57,8 +66,8 @@ export default async function UpgradePage({ searchParams }: PageProps) {
           Your 14-day Free Workspace access has ended. Choose a paid plan below to continue. Payment is required.
         </Alert>
       ) : params.reason === "credits_exhausted" ? (
-        <Alert variant="warning" title="Analysis limit reached">
-          You have used all analyses included in your trial. Upgrade to continue.
+        <Alert variant="warning" title="Plan limit reached">
+          You have reached a limit on your current plan. Upgrade to continue.
         </Alert>
       ) : null}
       {paypalReturn ? (
@@ -75,32 +84,12 @@ export default async function UpgradePage({ searchParams }: PageProps) {
         plans={plans}
         defaultGateway={settings.defaultGateway}
         locale={locale}
+        pricingLabels={dict.pricing}
         turnstileSiteKey={getTurnstilePublicConfig().siteKey}
-        decisionLabels={
-          locale === "ar"
-            ? {
-                bid: getDecisionLabel("BID", "ar"),
-                review: getDecisionLabel("REVIEW", "ar"),
-                noBid: getDecisionLabel("NO_BID", "ar"),
-                tendersAnalyzed: "مناقصات محلّلة",
-              }
-            : {
-                bid: "BID decisions",
-                review: "REVIEW decisions",
-                noBid: "NO-BID decisions",
-                tendersAnalyzed: "Tenders analyzed",
-              }
-        }
-        recap={{
-          tendersAnalyzed: usage.tendersAnalyzed,
-          decisionsGenerated: usage.decisionsGenerated,
-          bidCount: usage.bidCount,
-          reviewCount: usage.reviewCount,
-          noBidCount: usage.noBidCount,
-          risksDetected: usage.risksDetected,
-          missingDocsDetected: usage.missingDocsDetected,
-          estimatedHoursSaved: usage.estimatedHoursSaved,
-        }}
+        currentPlanId={limits?.planId ?? null}
+        currentPlanSlug={limits?.planSlug ?? null}
+        currentMonthlyPriceCents={limits?.monthlyPriceCents ?? null}
+        hasActivePaidPlan={hasActivePaidPlan}
       />
       {paypalReturn && subscriptionId ? (
         <PayPalActivate

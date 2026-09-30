@@ -383,7 +383,7 @@ function resolveIntervalCopy(input: {
       features =
         interval === "year"
           ? suggestYearlyFeatures(input.featureList, locale)
-          : input.featureList;
+          : suggestLocaleFeatures(input.featureList, locale);
     }
 
     return {

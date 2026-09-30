@@ -28,7 +28,6 @@ export function CompanyAvatar({
     <span
       className={cn(
         "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-[9px] bg-transparent",
-        isCustom && "border border-border bg-card",
         className,
       )}
       style={{ width: size, height: size }}

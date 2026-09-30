@@ -4,6 +4,7 @@
  * URL params, localStorage, or client-controlled state.
  */
 
+import { hasFullCommercialFeatureCoverage } from "@/domain/billing/entitlement-catalog";
 import {
   isFirstSignupFreeWorkspaceSurface,
   isFreeWorkspacePlan,
@@ -11,7 +12,7 @@ import {
   type BillingDisplayStatus,
 } from "@/services/billing/billing-display";
 
-export type PlanBadgeTone = "premium" | "trial" | "free" | "neutral";
+export type PlanBadgeTone = "premium" | "limited" | "trial" | "free" | "neutral";
 
 export type PlanBadgeIdentity = {
   /** Short label shown in the chip (PRO, TRIAL, FREE, STARTER, …). */
@@ -23,8 +24,8 @@ export type PlanBadgeIdentity = {
   /** True when the workspace still has paid (non-free) entitlements. */
   hasPaidAccess: boolean;
   /**
-   * Topbar / chrome: only the Pro tier gets the premium chip.
-   * FREE / TRIAL / Starter still resolve for Settings, but stay off the header.
+   * Topbar / chrome: only when the active plan has every sellable feature
+   * enabled in Plan Editor (full commercial coverage). Partial plans never show.
    */
   showInChrome: boolean;
 };
@@ -40,6 +41,8 @@ export type PlanBadgeInput = {
   cancelAtPeriodEnd?: boolean;
   currentPeriodEnd?: Date | string | null;
   now?: Date;
+  /** Effective feature map or enabled key list from entitlements / PlanFeature. */
+  features?: Record<string, boolean> | readonly string[] | null;
 };
 
 function slugToBadgeLabel(slug: string): string {
@@ -51,14 +54,18 @@ function slugToBadgeLabel(slug: string): string {
   return first.slice(0, 12);
 }
 
-/** True for the commercial Pro tier (slug/plan), not Starter / Free / Trial. */
+/** True for the commercial Pro tier from the active billing plan slug. */
 export function isProPlanTier(input: {
   slug?: string | null;
   plan?: string | null;
 }): boolean {
   const slug = (input.slug ?? "").trim().toLowerCase();
+  // Prefer catalog slug — never let a stale Subscription.plan enum override it.
+  if (slug) {
+    return slug === "pro";
+  }
   const plan = (input.plan ?? "").trim().toUpperCase();
-  return slug === "pro" || plan === "PRO";
+  return plan === "PRO";
 }
 
 /**
@@ -123,8 +130,7 @@ export function resolvePlanBadgeIdentity(input: PlanBadgeInput): PlanBadgeIdenti
         ? "Trial"
         : input.slug?.trim() || "Plan");
 
-  const chromePro =
-    hasPaidAccess && isProPlanTier({ slug: input.slug, plan: input.plan });
+  const fullCoverage = hasFullCommercialFeatureCoverage(input.features);
 
   if (displayStatus === "EXPIRED" || (freePlan && displayStatus === "FREE_WORKSPACE")) {
     return {
@@ -170,24 +176,23 @@ export function resolvePlanBadgeIdentity(input: PlanBadgeInput): PlanBadgeIdenti
     };
   }
 
-  // Paid / premium — use catalog slug (pro → PRO). Never invent from URL.
+  // Paid — label from active catalog slug/name only (never invent PRO from legacy enum).
   const slug = (input.slug ?? "").trim().toLowerCase();
-  let label = "PRO";
+  let label = "PLAN";
   if (slug && slug !== "free" && slug !== "trial") {
     label = slugToBadgeLabel(slug);
+  } else if (input.planName?.trim()) {
+    label = slugToBadgeLabel(input.planName);
   } else if (input.plan && input.plan !== "TRIAL" && input.plan !== "FREE") {
     label = slugToBadgeLabel(input.plan);
-  }
-
-  // Header chrome: only the Pro tier — Starter/Business stay badge-free in the topbar.
-  if (chromePro) {
-    label = "PRO";
   }
 
   const tone: PlanBadgeTone =
     displayStatus === "PAST_DUE" || displayStatus === "PAYMENT_FAILED"
       ? "neutral"
-      : "premium";
+      : fullCoverage
+        ? "premium"
+        : "limited";
 
   return {
     label,
@@ -195,6 +200,7 @@ export function resolvePlanBadgeIdentity(input: PlanBadgeInput): PlanBadgeIdenti
     planName,
     displayStatus,
     hasPaidAccess: true,
-    showInChrome: chromePro,
+    // Chrome only for full Plan Editor coverage (all sellable features on).
+    showInChrome: fullCoverage,
   };
 }

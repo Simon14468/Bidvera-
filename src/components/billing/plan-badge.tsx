@@ -4,6 +4,9 @@ import type { PlanBadgeTone } from "@/services/billing/plan-identity";
 const toneClass: Record<PlanBadgeTone, string> = {
   premium:
     "border-emerald-500/35 bg-gradient-to-b from-emerald-500/20 to-amber-500/15 text-emerald-700 dark:text-emerald-300",
+  /** Paid plan without full commercial feature coverage (e.g. LITE). */
+  limited:
+    "border-border bg-muted/50 text-muted dark:bg-slate-800/80 dark:text-slate-400",
   trial:
     "border-sky-500/35 bg-sky-500/10 text-sky-800 dark:text-sky-300",
   free:

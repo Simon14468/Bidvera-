@@ -18,6 +18,8 @@ export type MatchingAiReorderInput = {
   model: string;
   apiKey: string;
   companyServices: string[];
+  /** Company IANA timezone from matching profile — local deadline context only. */
+  companyTimezone?: string | null;
   candidates: AiRefineCandidate[];
 };
 
@@ -68,6 +70,7 @@ function buildReorderPrompt(input: MatchingAiReorderInput): {
     "You MUST NOT add opportunity IDs that are not in the provided list.",
     "You MUST NOT remove eligibility — only reorder.",
     "Geography may differ across countries; do not reject cross-border matches.",
+    "When companyTimezone is provided, treat it as the company's local clock for urgency/deadline context only — never invent locations from it.",
     "Respond with JSON only: {\"order\":[\"id\",...],\"confidence\":0.0-1.0}",
   ].join(" ");
 
@@ -75,6 +78,9 @@ function buildReorderPrompt(input: MatchingAiReorderInput): {
     companyServices: input.companyServices
       .slice(0, 12)
       .map((s) => String(s).slice(0, 64)),
+    companyTimezone: input.companyTimezone
+      ? String(input.companyTimezone).slice(0, 80)
+      : null,
     eligibleIds,
     candidates: sanitized,
   });
@@ -207,6 +213,7 @@ export function createMatchingAiReorderFn(input: {
   apiKey: string;
 }): (args: {
   companyServices: string[];
+  companyTimezone?: string | null;
   candidates: AiRefineCandidate[];
 }) => Promise<{ order: string[]; confidence: number } | null> {
   const provider = getMatchingAIProvider(input.provider);
@@ -216,6 +223,7 @@ export function createMatchingAiReorderFn(input: {
         model: input.model,
         apiKey: input.apiKey,
         companyServices: args.companyServices,
+        companyTimezone: args.companyTimezone ?? null,
         candidates: args.candidates,
       });
     } catch {

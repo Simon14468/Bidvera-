@@ -3,7 +3,7 @@
 import { updateCompanyProfile } from "@/app/actions";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { SearchableCombobox } from "@/components/ui/searchable-combobox";
@@ -184,7 +184,6 @@ export function CompanyProfileForm({
       <Card>
         <CardHeader>
           <CardTitle>{name || companyName}</CardTitle>
-          <CardDescription>{copy.headerHint}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <Input
@@ -213,7 +212,6 @@ export function CompanyProfileForm({
       <Card className="overflow-visible">
         <CardHeader>
           <CardTitle>{copy.basicsTitle}</CardTitle>
-          <CardDescription>{copy.basicsBody}</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 overflow-visible sm:grid-cols-2">
           <SearchableCombobox
@@ -352,7 +350,6 @@ export function CompanyProfileForm({
       <Card>
         <CardHeader>
           <CardTitle>{copy.rulesTitle}</CardTitle>
-          <CardDescription>{copy.rulesBody}</CardDescription>
         </CardHeader>
         <CardContent>
           <Textarea

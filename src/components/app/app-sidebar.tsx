@@ -1,7 +1,7 @@
 "use client";
 
 import { signOutAndRedirect } from "@/app/actions";
-import { BrandLogo } from "@/components/brand/brand-logo";
+import { BRAND_MARK_SRC, BrandLogo } from "@/components/brand/brand-logo";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button } from "@/components/ui/button";
 import type { Dictionary } from "@/i18n/dictionaries";
@@ -10,6 +10,8 @@ import {
   Bell,
   Building2,
   CalendarDays,
+  ChevronLeft,
+  ChevronRight,
   ClipboardCheck,
   ClipboardList,
   CreditCard,
@@ -26,9 +28,48 @@ import {
   Users,
   X,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+
+const SIDEBAR_COLLAPSED_KEY = "bidvera.sidebar.collapsed";
+const SIDEBAR_COLLAPSED_EVENT = "bidvera-sidebar-collapsed";
+
+function subscribeSidebarCollapsed(onStoreChange: () => void) {
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === SIDEBAR_COLLAPSED_KEY || event.key === null) {
+      onStoreChange();
+    }
+  };
+  window.addEventListener("storage", onStorage);
+  window.addEventListener(SIDEBAR_COLLAPSED_EVENT, onStoreChange);
+  return () => {
+    window.removeEventListener("storage", onStorage);
+    window.removeEventListener(SIDEBAR_COLLAPSED_EVENT, onStoreChange);
+  };
+}
+
+function getSidebarCollapsedSnapshot() {
+  try {
+    return window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function getServerSidebarCollapsedSnapshot() {
+  return false;
+}
+
+function setSidebarCollapsedPreference(collapsed: boolean) {
+  try {
+    window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, collapsed ? "1" : "0");
+  } catch {
+    /* ignore quota / private mode */
+  }
+  window.dispatchEvent(new Event(SIDEBAR_COLLAPSED_EVENT));
+}
 
 type EntitlementFlag =
   | "tenderAnalysis"
@@ -157,14 +198,39 @@ const navSections: NavSection[] = [
   },
 ];
 
-function SidebarBrand() {
+function SidebarBrand({ collapsed }: { collapsed: boolean }) {
   return (
-    <div className="flex items-start justify-between gap-2 border-b border-border px-5 py-4">
-      <div className="min-w-0">
-        <BrandLogo href="/dashboard" height={34} inverseOnDark />
-      </div>
-      <div className="flex shrink-0 items-center gap-1">
-        <ThemeToggle className="mt-0.5" />
+    <div
+      className={cn(
+        "relative flex border-b border-transparent",
+        collapsed
+          ? "flex-col items-center gap-2 px-2 py-3"
+          : "items-start justify-between gap-2 px-5 py-4",
+      )}
+    >
+      {collapsed ? (
+        <Link
+          href="/dashboard"
+          className="inline-flex size-9 items-center justify-center rounded-lg outline-offset-4"
+          aria-label="Bidvera AI"
+        >
+          <Image
+            src={BRAND_MARK_SRC}
+            alt="Bidvera AI"
+            width={28}
+            height={28}
+            unoptimized
+            className="size-7 object-contain"
+            priority
+          />
+        </Link>
+      ) : (
+        <div className="min-w-0">
+          <BrandLogo href="/dashboard" height={34} inverseOnDark />
+        </div>
+      )}
+      <div className={cn("flex shrink-0 items-center", collapsed && "mt-0.5")}>
+        <ThemeToggle className={collapsed ? undefined : "mt-0.5"} />
       </div>
     </div>
   );
@@ -204,7 +270,16 @@ export function AppSidebar({
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const collapsed = useSyncExternalStore(
+    subscribeSidebarCollapsed,
+    getSidebarCollapsedSnapshot,
+    getServerSidebarCollapsedSnapshot,
+  );
   const { nav, shell } = copy;
+
+  const toggleCollapsed = useCallback(() => {
+    setSidebarCollapsedPreference(!collapsed);
+  }, [collapsed]);
 
   useEffect(() => {
     if (!open) return;
@@ -234,8 +309,11 @@ export function AppSidebar({
     companyProfile: companyProfileEnabled,
   };
 
-  const navEl = (
-    <nav className="flex flex-1 flex-col gap-4 p-3" aria-label="Application">
+  const navEl = (compact: boolean) => (
+    <nav
+      className={cn("flex flex-1 flex-col gap-4 p-3", compact && "px-2")}
+      aria-label="Application"
+    >
       {navSections.map((section) => {
         const visibleItems = section.items.filter((item) => {
           if (!item.entitlement) return true;
@@ -246,9 +324,6 @@ export function AppSidebar({
         if (visibleItems.length === 0) return null;
         return (
           <div key={section.labelKey} className="space-y-1">
-            <p className="px-3 pb-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
-              {nav[section.labelKey]}
-            </p>
             {visibleItems.map((item) => {
               const Icon = item.icon;
               const enabled = item.entitlement
@@ -260,31 +335,56 @@ export function AppSidebar({
                 (pathname === item.href || pathname.startsWith(`${item.href}/`));
               const showBadge =
                 item.href === "/alerts" && enabled && unreadAlerts > 0;
+              const label = nav[item.key];
               return (
                 <Link
                   key={item.href}
                   href={href}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    "flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                    "relative flex min-h-11 items-center rounded-xl text-sm font-medium transition-colors",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                    compact
+                      ? "justify-center px-0 py-2.5"
+                      : "gap-3 px-3 py-2.5",
                     active
                       ? "bg-primary-muted text-primary"
                       : enabled
                         ? "text-muted hover:bg-foreground/[0.06] hover:text-foreground"
                         : "text-muted/80 hover:bg-foreground/[0.04] hover:text-muted",
                   )}
-                  title={enabled ? undefined : shell.upgrade}
+                  title={
+                    compact
+                      ? enabled
+                        ? label
+                        : `${label} — ${shell.upgrade}`
+                      : enabled
+                        ? undefined
+                        : shell.upgrade
+                  }
+                  aria-label={compact ? label : undefined}
                 >
                   <Icon className="size-4 shrink-0" aria-hidden />
-                  <span className="min-w-0 flex-1 truncate">{nav[item.key]}</span>
-                  {!enabled ? (
+                  {!compact ? (
+                    <span className="min-w-0 flex-1 truncate">{label}</span>
+                  ) : null}
+                  {!compact && !enabled ? (
                     <Lock className="size-3.5 shrink-0 opacity-70" aria-hidden />
                   ) : null}
+                  {compact && !enabled ? (
+                    <Lock
+                      className="absolute end-1 top-1 size-2.5 opacity-70"
+                      aria-hidden
+                    />
+                  ) : null}
                   {showBadge ? (
-                    <span className="rounded-md bg-primary-muted px-1.5 py-0.5 text-[10px] font-semibold text-primary">
-                      {unreadAlerts > 99 ? "99+" : unreadAlerts}
-                    </span>
+                    compact ? (
+                      <span className="absolute end-1.5 top-1.5 size-2 rounded-full bg-primary" />
+                    ) : (
+                      <span className="rounded-md bg-primary-muted px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                        {unreadAlerts > 99 ? "99+" : unreadAlerts}
+                      </span>
+                    )
                   ) : null}
                 </Link>
               );
@@ -295,32 +395,60 @@ export function AppSidebar({
     </nav>
   );
 
-  const footer = (closeMenu?: boolean) => (
-    <div className="mt-auto space-y-2 border-t border-border p-4">
+  const footer = (closeMenu?: boolean, compact = false) => (
+    <div
+      className={cn(
+        "mt-auto space-y-2 border-t border-transparent",
+        compact ? "p-2" : "p-4",
+      )}
+    >
       {tenderAnalysisEnabled ? (
         <Link
           href="/tenders/upload"
           onClick={() => closeMenu && setOpen(false)}
-          className="inline-flex h-10 w-full items-center justify-center rounded-xl bg-primary text-sm font-medium text-white hover:bg-primary-hover"
+          className={cn(
+            "inline-flex h-10 items-center justify-center rounded-xl bg-primary text-sm font-medium text-white hover:bg-primary-hover",
+            compact ? "w-full px-0" : "w-full",
+          )}
+          title={compact ? shell.analyzeTender : undefined}
+          aria-label={compact ? shell.analyzeTender : undefined}
         >
-          {shell.analyzeTender}
+          {compact ? (
+            <FileSearch className="size-4" aria-hidden />
+          ) : (
+            shell.analyzeTender
+          )}
         </Link>
       ) : showUpgrade ? (
         <Link
           href="/upgrade"
           onClick={() => closeMenu && setOpen(false)}
-          className="inline-flex h-10 w-full items-center justify-center rounded-xl border border-border text-sm font-medium text-foreground hover:bg-background"
+          className={cn(
+            "inline-flex h-10 items-center justify-center rounded-xl border border-border text-sm font-medium text-foreground hover:bg-background",
+            compact ? "w-full px-0" : "w-full",
+          )}
+          title={compact ? shell.upgrade : undefined}
+          aria-label={compact ? shell.upgrade : undefined}
         >
-          {shell.upgrade}
+          {compact ? (
+            <Sparkles className="size-4" aria-hidden />
+          ) : (
+            shell.upgrade
+          )}
         </Link>
       ) : null}
       <form action={signOutAndRedirect}>
         <button
           type="submit"
-          className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-border text-sm font-medium text-foreground hover:bg-background"
+          className={cn(
+            "inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-border text-sm font-medium text-foreground hover:bg-background",
+            compact && "px-0",
+          )}
+          title={compact ? shell.signOut : undefined}
+          aria-label={compact ? shell.signOut : undefined}
         >
           <LogOut className="size-4" aria-hidden />
-          {shell.signOut}
+          {!compact ? shell.signOut : null}
         </button>
       </form>
     </div>
@@ -381,17 +509,45 @@ export function AppSidebar({
               </div>
             </div>
             <div className="scrollbar-pro min-h-0 flex-1 overflow-y-auto overscroll-contain">
-              {navEl}
+              {navEl(false)}
             </div>
-            {footer(true)}
+            {footer(true, false)}
           </aside>
         </div>
       ) : null}
 
-      <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r border-border bg-background lg:flex">
-        <SidebarBrand />
-        <div className="scrollbar-pro flex min-h-0 flex-1 flex-col overflow-y-auto">{navEl}</div>
-        {footer()}
+      <aside
+        className={cn(
+          "relative sticky top-0 hidden h-dvh shrink-0 flex-col overflow-visible bg-background transition-[width] duration-200 ease-out lg:flex",
+          collapsed ? "w-[4.5rem]" : "w-60",
+        )}
+        data-collapsed={collapsed ? "true" : "false"}
+      >
+        <button
+          type="button"
+          onClick={toggleCollapsed}
+          aria-label={collapsed ? shell.expandSidebar : shell.collapseSidebar}
+          aria-expanded={!collapsed}
+          className={cn(
+            "absolute end-0 top-1/2 z-20 flex size-7 -translate-y-1/2 translate-x-1/2 items-center justify-center",
+            "rounded-full border border-transparent bg-background/90 text-muted shadow-sm ring-1 ring-foreground/10 backdrop-blur-sm",
+            "transition-[color,background-color,box-shadow,transform] duration-150",
+            "hover:scale-105 hover:text-foreground hover:shadow-md hover:ring-foreground/20",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            "active:scale-95 rtl:-translate-x-1/2",
+          )}
+        >
+          {collapsed ? (
+            <ChevronRight className="size-3.5 rtl:rotate-180" aria-hidden />
+          ) : (
+            <ChevronLeft className="size-3.5 rtl:rotate-180" aria-hidden />
+          )}
+        </button>
+        <SidebarBrand collapsed={collapsed} />
+        <div className="scrollbar-pro flex min-h-0 flex-1 flex-col overflow-y-auto [scrollbar-gutter:auto]">
+          {navEl(collapsed)}
+        </div>
+        {footer(false, collapsed)}
       </aside>
     </>
   );

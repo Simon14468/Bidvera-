@@ -61,7 +61,7 @@ test("monthly vs yearly features switch from Admin copy", () => {
   assert.deepEqual(bundle.year.featureList, ["مقعد واحد", "وفّر شهرين"]);
 });
 
-test("published locale with name only uses EN features not phantom map", () => {
+test("published locale with name only falls back to suggested locale features", () => {
   const out = localizePlanMarketing({
     slug: "trial",
     name: "Trial",
@@ -73,7 +73,7 @@ test("published locale with name only uses EN features not phantom map", () => {
     locale: "ar",
   });
   assert.equal(out.name, "تجريبي");
-  assert.deepEqual(out.featureList, ["1 seat", "Company profile"]);
+  assert.deepEqual(out.featureList, ["مقعد واحد", "ملف الشركة"]);
 });
 
 test("localize strips leftover Tender Analysis quota lines", () => {

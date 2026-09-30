@@ -461,6 +461,33 @@ export function isCommerciallyAvailableFeature(key: string): boolean {
   return def.commerciallyAvailable !== false;
 }
 
+/**
+ * True when every sellable plan-editor feature is enabled.
+ * Used for topbar “full plan” chrome — not slug names.
+ */
+export function hasFullCommercialFeatureCoverage(
+  features: Record<string, boolean> | readonly string[] | null | undefined,
+): boolean {
+  const required = ADMIN_ENTITLEMENT_KEYS.filter((key) =>
+    isCommerciallyAvailableFeature(key),
+  );
+  if (required.length === 0) return false;
+
+  const enabled = new Set<string>();
+  if (Array.isArray(features)) {
+    for (const key of features) {
+      if (!key) continue;
+      enabled.add(canonicalFeatureKey(key));
+    }
+  } else if (features) {
+    for (const [key, on] of Object.entries(features)) {
+      if (on) enabled.add(canonicalFeatureKey(key));
+    }
+  }
+
+  return required.every((key) => enabled.has(key));
+}
+
 /** Obsolete Tender Analysis credit copy — never sell or display as a plan quota. */
 export function isObsoleteAnalysesQuotaLabel(raw: string): boolean {
   const line = raw.trim().toLowerCase();

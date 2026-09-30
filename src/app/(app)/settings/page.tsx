@@ -41,6 +41,7 @@ export default async function SettingsPage() {
 
   const [
     prefs,
+    channelVisibility,
     billingSummary,
     documentComplianceEnabled,
     tenderCalendarEnabled,
@@ -48,6 +49,9 @@ export default async function SettingsPage() {
     pendingEmailChange,
   ] = await Promise.all([
     getCompanyNotificationPrefs(auth.user.companyId),
+    import("@/services/notifications/channel-settings").then((m) =>
+      m.getNotificationChannelSettings(),
+    ),
     loadSettingsBillingSummary(auth.user.companyId),
     import("@/modules/document-compliance").then((m) =>
       m.isDocumentComplianceAvailable(auth.user.companyId!).catch(() => false),
@@ -65,14 +69,12 @@ export default async function SettingsPage() {
     <div className="mx-auto max-w-3xl space-y-6 animate-fade-in">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">{t.title}</h1>
-        <p className="mt-1 text-sm text-muted">{t.subtitle}</p>
       </div>
 
       {/* A. Profile */}
       <Card>
         <CardHeader>
           <CardTitle>{t.accountTitle}</CardTitle>
-          <CardDescription>{t.accountBody}</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <AccountProfileForm
@@ -124,15 +126,12 @@ export default async function SettingsPage() {
 
       {/* C. Notifications */}
       <Card>
-        <CardHeader>
-          <CardTitle>{t.notificationsTitle}</CardTitle>
-          <CardDescription>{t.notificationsBody}</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-5">
           <NotificationPrefsForm
             initial={prefs}
             copy={t}
             canManage={canManageCompanySettings(auth.user.role)}
+            channelVisibility={channelVisibility}
           />
         </CardContent>
       </Card>
@@ -141,7 +140,6 @@ export default async function SettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle>{t.moduleRemindersTitle}</CardTitle>
-            <CardDescription>{t.moduleRemindersBody}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-3">
             {documentComplianceEnabled ? (
@@ -168,7 +166,6 @@ export default async function SettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>{t.appearanceTitle}</CardTitle>
-          <CardDescription>{t.appearanceBody}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap items-center gap-3">
           <ThemeToggle />
@@ -187,7 +184,6 @@ export default async function SettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>{cookiesCopy.settingsTitle}</CardTitle>
-          <CardDescription>{cookiesCopy.settingsDescription}</CardDescription>
         </CardHeader>
         <CardContent>
           <CookieSettingsLink

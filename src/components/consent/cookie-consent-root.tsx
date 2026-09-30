@@ -266,7 +266,6 @@ export function CookieConsentRoot({
                 >
                   {copy.settingsTitle}
                 </h2>
-                <p className="mt-1 text-sm text-muted">{copy.settingsDescription}</p>
               </div>
               <button
                 type="button"

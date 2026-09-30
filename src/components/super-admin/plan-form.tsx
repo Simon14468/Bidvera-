@@ -1428,9 +1428,10 @@ function PlanEditor({
             <span className="font-semibold text-emerald-200">Recommended</span>
             <span className="mt-0.5 block text-[11px] text-slate-400">
               Marks this plan on public pricing (/pricing, Paywall) with a
-              Recommended badge and a soft top-gradient hover. Use for the
-              featured plan in its category (typically the full-module Pro
-              suite).
+              Recommended badge and glass green/white hover. Also marks it as
+              the final professional tier in the database — workspaces on this
+              plan see no Upgrade CTA (Adobe-style). Use for the featured
+              full-module suite.
             </span>
           </span>
         </label>

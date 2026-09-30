@@ -66,12 +66,14 @@ export function LanguageSwitcher({
         disabled={pending}
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          "inline-flex h-9 items-center gap-1.5 rounded-xl border border-border bg-card text-sm font-medium text-muted transition",
-          "hover:border-primary/20 hover:bg-background hover:text-foreground",
+          "inline-flex h-9 items-center gap-1.5 rounded-xl bg-card text-sm font-medium text-muted transition",
+          "hover:bg-background hover:text-foreground",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           "disabled:opacity-60",
-          isHeader ? "px-2.5 sm:px-3" : "px-2.5",
-          open && "border-primary/25 text-foreground",
+          isHeader
+            ? "px-2.5 sm:px-3"
+            : "border border-border px-2.5 hover:border-primary/20",
+          open && (isHeader ? "text-foreground" : "border-primary/25 text-foreground"),
         )}
       >
         <Globe className="size-4 shrink-0" aria-hidden />

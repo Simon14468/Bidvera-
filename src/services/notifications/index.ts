@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db";
 import { enqueueJob } from "@/services/jobs";
 import { logError, logInfo } from "@/services/observability";
 import { OUTBOUND_CHANNELS } from "@/services/notifications/channels";
+import { getNotificationChannelSettings } from "@/services/notifications/channel-settings";
 import {
   getCompanyNotificationPrefs,
   prefersAlertType,
@@ -409,7 +410,14 @@ class ModularNotificationService implements NotificationService {
       alertType: alert.type,
     };
 
-    const enabled = OUTBOUND_CHANNELS.filter((c) => c.isEnabled(prefs));
+    const platformChannels = await getNotificationChannelSettings();
+    const enabled = OUTBOUND_CHANNELS.filter((c) => {
+      if (!c.isEnabled(prefs)) return false;
+      if (c.key === "whatsapp") return platformChannels.whatsappVisible;
+      if (c.key === "sms") return platformChannels.smsVisible;
+      if (c.key === "push") return platformChannels.pushVisible;
+      return true;
+    });
     let emailDelivered = false;
     for (const channel of enabled) {
       try {

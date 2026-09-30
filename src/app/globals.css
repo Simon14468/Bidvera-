@@ -45,7 +45,8 @@ html.light {
   --success: #22c55e;
   --warning: #f59e0b;
   --danger: #ef4444;
-  --border: #e5e7eb;
+  /* Match dark-shell edge clarity: visible gray rim on white cards */
+  --border: #c9cec9;
   --background: #fafafa;
   --card: #ffffff;
   --ink: #232b23;
@@ -511,11 +512,326 @@ html.light ::selection {
   box-shadow: var(--shadow-lift);
 }
 
-/* PricingGrid — soft top-gradient hover (dark-first, professional, light touch). */
+/* PricingGrid — equal cards, restrained Pro wash, RTL-safe price row. */
+.pricing-card {
+  --pricing-pad-x: 1.25rem;
+  --pricing-pad-y: 1.375rem;
+  --pricing-stack: 0.75rem;
+  --pricing-section: 1.15rem;
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+  padding: var(--pricing-pad-y) var(--pricing-pad-x) 1.25rem;
+  border-radius: 1rem;
+  border: 1px solid color-mix(in srgb, var(--foreground) 10%, var(--border));
+  background: color-mix(in srgb, var(--foreground) 4%, var(--card));
+  box-shadow: var(--shadow-soft);
+  color: var(--foreground);
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms ease;
+}
+
+html.light .pricing-card {
+  background: var(--card);
+  border-color: var(--border);
+}
+
+.pricing-card:hover {
+  border-color: color-mix(in srgb, var(--foreground) 18%, var(--border));
+}
+
+.pricing-card--highlighted:hover {
+  border-color: color-mix(in srgb, var(--primary) 55%, var(--border));
+}
+
+.pricing-card--highlighted {
+  border-color: color-mix(in srgb, var(--primary) 46%, var(--border));
+  box-shadow:
+    var(--shadow-soft),
+    0 0 0 1px color-mix(in srgb, var(--primary) 18%, transparent);
+}
+
+html.light .pricing-card--highlighted {
+  border-color: color-mix(in srgb, var(--primary) 38%, var(--border));
+  box-shadow:
+    var(--shadow-soft),
+    0 0 0 1px color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+.pricing-card__badge {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  inset-inline-start: var(--pricing-pad-x);
+  max-width: calc(100% - (var(--pricing-pad-x) * 2));
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem 0.72rem;
+  border-radius: 999px;
+  background: var(--primary);
+  color: var(--white);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-align: center;
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.14),
+    0 6px 14px color-mix(in srgb, var(--primary-deep) 30%, transparent);
+}
+
+html[lang="ar"] .pricing-card__badge {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.pricing-card__header {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.pricing-card__name {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin: 0;
+  min-width: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+html[lang="ar"] .pricing-card__name {
+  font-size: 1.0625rem;
+  letter-spacing: 0;
+}
+
+.pricing-card__name span {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.pricing-card__mark {
+  width: 1.75rem;
+  height: auto;
+  aspect-ratio: 1;
+  flex: none;
+  object-fit: contain;
+}
+
+.pricing-card__lede,
+.pricing-card__kicker {
+  margin: var(--pricing-stack) 0 0;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.pricing-card__lede {
+  min-height: calc(1.45em * 2);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.pricing-card__kicker {
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+html[lang="ar"] .pricing-card__lede,
+html[lang="ar"] .pricing-card__kicker {
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+
+html[lang="ar"] .pricing-card__lede {
+  min-height: calc(1.55em * 2);
+}
+
+html[lang="ar"] .pricing-card__limits,
+html[lang="ar"] .pricing-card__period,
+html[lang="ar"] .pricing-card__features,
+html[lang="ar"] .pricing-card__trial {
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+
+.pricing-card__limits {
+  margin: 0.65rem 0 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--foreground);
+  overflow-wrap: break-word;
+}
+
+.pricing-card__price {
+  display: flex;
+  justify-content: flex-start;
+  margin: var(--pricing-section) 0 0;
+  min-width: 0;
+}
+
+.pricing-card__price-cluster {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: nowrap;
+  gap: 0.35rem;
+  max-width: 100%;
+  min-width: 0;
+  unicode-bidi: isolate;
+}
+
+.pricing-card__amount {
+  font-size: 2.25rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--foreground);
+  unicode-bidi: isolate;
+  white-space: nowrap;
+}
+
+html[lang="ar"] .pricing-card__amount {
+  font-size: 1.875rem;
+  letter-spacing: 0;
+}
+
+.pricing-card__period {
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--muted);
+  unicode-bidi: isolate;
+  white-space: nowrap;
+}
+
+.pricing-card__trial {
+  display: grid;
+  gap: 0.15rem;
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.pricing-card__trial-title {
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.pricing-card__features {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin: var(--pricing-section) 0 0;
+  padding: var(--pricing-stack) 0 0;
+  border-top: 1px solid color-mix(in srgb, var(--foreground) 8%, var(--border));
+  list-style: none;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.pricing-card__features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  min-width: 0;
+  text-align: start;
+}
+
+.pricing-card__feature-text {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.pricing-card__check {
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+  margin-top: 0.2em;
+  color: var(--primary);
+}
+
+.pricing-card__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 2.5rem;
+  margin-top: 1.35rem;
+  padding: 0.5rem 0.85rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+html[lang="ar"] .pricing-card__cta {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.pricing-card__cta--solid {
+  border: 1px solid transparent;
+  background: var(--primary);
+  color: var(--white);
+}
+
+.pricing-card__cta--solid:hover {
+  background: var(--primary-hover);
+}
+
+.pricing-card__cta--quiet {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--foreground);
+}
+
+.pricing-card__cta--quiet:hover {
+  background: color-mix(in srgb, var(--foreground) 6%, transparent);
+}
+
+.pricing-card__cta--frozen {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--foreground) 4%, transparent);
+  color: var(--muted);
+  cursor: not-allowed;
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+/* Pro / Recommended — soft top wash. No scale, no glass blur. */
 .pricing-card-premium-hover {
   position: relative;
   isolation: isolate;
-  overflow: hidden;
+  overflow: visible;
+  box-shadow:
+    var(--shadow-soft),
+    inset 0 1px 0 color-mix(in srgb, var(--primary) 26%, transparent);
   transition:
     transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -531,10 +847,12 @@ html.light ::selection {
   height: 42%;
   z-index: 0;
   opacity: 0;
+  border-start-start-radius: inherit;
+  border-start-end-radius: inherit;
   background: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--primary) 22%, transparent) 0%,
-    color-mix(in srgb, var(--primary) 8%, transparent) 45%,
+    color-mix(in srgb, var(--primary) 16%, transparent) 0%,
+    color-mix(in srgb, var(--primary) 5%, transparent) 46%,
     transparent 100%
   );
   transition: opacity 220ms ease;
@@ -545,24 +863,29 @@ html.light ::selection {
   z-index: 1;
 }
 
+.pricing-card-premium-hover > .pricing-card__badge {
+  position: absolute;
+  z-index: 2;
+}
+
 .pricing-card-premium-hover:hover {
   transform: translateY(-2px);
   border-color: color-mix(in srgb, var(--primary) 42%, var(--border));
   box-shadow:
     var(--shadow-lift),
-    0 0 0 1px color-mix(in srgb, var(--primary) 18%, transparent);
+    inset 0 1px 0 color-mix(in srgb, var(--primary) 32%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--primary) 16%, transparent);
 }
 
 .pricing-card-premium-hover:hover::before {
   opacity: 1;
 }
 
-/* Light mode: keep the same idea, softer primary wash. */
 html.light .pricing-card-premium-hover::before {
   background: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--primary) 12%, transparent) 0%,
-    color-mix(in srgb, var(--primary) 4%, transparent) 40%,
+    color-mix(in srgb, var(--primary) 10%, transparent) 0%,
+    color-mix(in srgb, var(--primary) 3%, transparent) 42%,
     transparent 100%
   );
 }
@@ -571,6 +894,7 @@ html.light .pricing-card-premium-hover:hover {
   border-color: color-mix(in srgb, var(--primary) 28%, var(--border));
   box-shadow:
     var(--shadow-lift),
+    inset 0 1px 0 color-mix(in srgb, var(--primary) 22%, transparent),
     0 0 0 1px color-mix(in srgb, var(--primary) 12%, transparent);
 }
 

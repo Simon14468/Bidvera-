@@ -73,10 +73,9 @@ test("company profile page + mutations enforce company_profile", () => {
 
 test("company profile navigation is entitlement-gated (not always enabled)", () => {
   const sidebar = readSrc("src/components/app/app-sidebar.tsx");
-  assert.match(
-    sidebar,
-    /href:\s*"\/company".*entitlement:\s*"companyProfile"/,
-  );
+  assert.match(sidebar, /href:\s*"\/company"/);
+  assert.match(sidebar, /entitlement:\s*"companyProfile"/);
+  assert.match(sidebar, /hideWhenDisabled:\s*true/);
 
   const topbar = readSrc("src/components/app/app-topbar.tsx");
   assert.match(topbar, /companyProfileEnabled/);

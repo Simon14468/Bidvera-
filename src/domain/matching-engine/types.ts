@@ -28,6 +28,12 @@ export type MatchingProfileSnapshot = {
   experienceYears: { value: number; trust: MatchingTrustTier; source: string } | null;
   dcmCategories: MatchingSignal[];
   softNotes: string[];
+  /**
+   * Canonical company IANA timezone from notification prefs.
+   * Used for local deadline interpretation / Matching AI context — not a geography signal.
+   * Optional for older stored snapshots that predate this field.
+   */
+  timezone?: MatchingSignal | null;
 };
 
 export type MatchingTrustSummary = {

@@ -707,6 +707,47 @@ export async function saSaveAuthSettings(raw: unknown) {
   }
 }
 
+export async function saSaveNotificationChannelSettings(raw: unknown) {
+  try {
+    const ctx = await requireWritableSuperAdmin();
+    const {
+      saveNotificationChannelSettings,
+      getNotificationChannelAdminSnapshot,
+      notificationChannelAuditSafeSnapshot,
+      NOTIFICATION_CHANNEL_SETTINGS_KEY,
+    } = await import("@/services/notifications/channel-settings");
+    const { writeAdminAudit } = await import("@/services/admin/audit");
+    const previous = notificationChannelAuditSafeSnapshot(
+      await getNotificationChannelAdminSnapshot(),
+    );
+    const data = await saveNotificationChannelSettings(raw);
+    const safe = notificationChannelAuditSafeSnapshot(data);
+    await writeAdminAudit({
+      adminUserId: ctx.admin.id,
+      action: "NOTIFICATION_CHANNEL_SETTINGS_UPDATED",
+      targetType: "notification_channel_settings",
+      targetId: NOTIFICATION_CHANNEL_SETTINGS_KEY,
+      previousValue: previous,
+      newValue: safe,
+      ipHash: await requestIpHash(),
+    });
+    return { ok: true as const, data };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return {
+        ok: false as const,
+        error: {
+          code: "VALIDATION",
+          message:
+            error.issues[0]?.message ?? "Invalid notification channel settings.",
+          status: 400,
+        },
+      };
+    }
+    return { ok: false as const, error: toSafeClientError(error) };
+  }
+}
+
 export async function saSaveAssistantKnowledge(raw: unknown) {
   try {
     const ctx = await requireWritableSuperAdmin();

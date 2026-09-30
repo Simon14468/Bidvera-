@@ -1,6 +1,6 @@
 import { resolveAuthContext } from "@/auth/session";
 import { onboardingPathForStep } from "@/auth/onboarding";
-import { loadFreeWorkspaceTrialChrome } from "@/application/workspace-trial-banner";
+import { loadAppChromeSnapshot } from "@/application/app-chrome";
 import { AppSidebar } from "@/components/app/app-sidebar";
 import { AppTopbar } from "@/components/app/app-topbar";
 import { FreeWorkspaceTrialBanner } from "@/components/billing/free-workspace-trial-banner";
@@ -8,8 +8,8 @@ import { PwaProvider } from "@/components/pwa/pwa-provider";
 import { DatabaseUnavailable } from "@/components/system/database-unavailable";
 import { getDictionary } from "@/i18n/dictionaries";
 import { getLocale } from "@/i18n/get-locale";
+import type { Locale } from "@/i18n/config";
 import { isDatabaseTransientError } from "@/lib/db-capacity";
-import { notificationService } from "@/services/notifications";
 import { hasFeature } from "@/services/entitlements";
 import { isCommerciallyAvailableFeature } from "@/domain/billing/entitlement-catalog";
 import { formatFreeWorkspaceTrialBanner } from "@/services/billing/billing-display";
@@ -37,31 +37,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     redirect(onboardingPathForStep(auth.user.onboardingStep));
   }
 
-  const locale = await getLocale();
+  const locale = (await getLocale()) as Locale;
   const dict = getDictionary(locale);
   const companyId = auth.user.companyId;
 
   const [
-    tenderMod,
-    dcmMod,
-    sqMod,
-    calMod,
-    crMod,
-    qaMod,
-    matchMod,
-    upgradeMod,
-  ] = await Promise.all([
-    import("@/modules/tender-analysis"),
-    import("@/modules/document-compliance"),
-    import("@/modules/supplier-qualification"),
-    import("@/modules/tender-calendar"),
-    import("@/modules/client-requests"),
-    import("@/modules/questionnaire-assistant"),
-    import("@/modules/matching-engine"),
-    import("@/services/billing/upgrade-eligibility"),
-  ]);
-
-  const [
+    chrome,
     tenderAnalysisAvailable,
     documentComplianceEnabled,
     supplierQualificationEnabled,
@@ -73,20 +54,33 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     teamWorkflowEnabled,
     smartAlertsEnabled,
     companyProfileEnabled,
-    showUpgrade,
   ] = await Promise.all([
-    tenderMod.isTenderAnalysisAvailable(companyId).catch(() => false),
-    dcmMod.isDocumentComplianceAvailable(companyId).catch(() => false),
-    sqMod.isSupplierQualificationAvailable(companyId).catch(() => false),
-    calMod.isTenderCalendarAvailable(companyId).catch(() => false),
-    crMod.isClientRequestsAvailable(companyId).catch(() => false),
-    qaMod.isQuestionnaireAssistantAvailable(companyId).catch(() => false),
-    matchMod.isMatchingEngineAvailable(companyId).catch(() => false),
+    loadAppChromeSnapshot(companyId, locale),
+    import("@/modules/tender-analysis").then((m) =>
+      m.isTenderAnalysisAvailable(companyId).catch(() => false),
+    ),
+    import("@/modules/document-compliance").then((m) =>
+      m.isDocumentComplianceAvailable(companyId).catch(() => false),
+    ),
+    import("@/modules/supplier-qualification").then((m) =>
+      m.isSupplierQualificationAvailable(companyId).catch(() => false),
+    ),
+    import("@/modules/tender-calendar").then((m) =>
+      m.isTenderCalendarAvailable(companyId).catch(() => false),
+    ),
+    import("@/modules/client-requests").then((m) =>
+      m.isClientRequestsAvailable(companyId).catch(() => false),
+    ),
+    import("@/modules/questionnaire-assistant").then((m) =>
+      m.isQuestionnaireAssistantAvailable(companyId).catch(() => false),
+    ),
+    import("@/modules/matching-engine").then((m) =>
+      m.isMatchingEngineAvailable(companyId).catch(() => false),
+    ),
     hasFeature(companyId, "decision_memory").catch(() => false),
     hasFeature(companyId, "team_collaboration").catch(() => false),
     hasFeature(companyId, "smart_alerts").catch(() => false),
     hasFeature(companyId, "company_profile").catch(() => false),
-    upgradeMod.companyHasUpgradePath(companyId).catch(() => false),
   ]);
 
   // Internal/admin-only: never surface in company nav/chrome (SA can still open /tenders).
@@ -97,16 +91,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const matchingEngineEnabled =
     isCommerciallyAvailableFeature("matching_engine") && matchingEngineAvailable;
 
-  // Unread count only when alerts are entitled (avoids extra DB on every layout).
-  const unreadAlerts = smartAlertsEnabled
-    ? await notificationService.countUnread(companyId).catch(() => 0)
-    : 0;
+  const unreadAlerts = smartAlertsEnabled ? chrome.unreadAlerts : 0;
 
-  const trialChrome = await loadFreeWorkspaceTrialChrome(companyId).catch(
-    () => null,
-  );
-  const trialBanner = trialChrome
-    ? formatFreeWorkspaceTrialBanner(trialChrome, {
+  const trialBanner = chrome.trialChrome
+    ? formatFreeWorkspaceTrialBanner(chrome.trialChrome, {
         titleDays: dict.app.billing.freeWorkspaceTrialBannerDays,
         titleDay: dict.app.billing.freeWorkspaceTrialBannerDay,
         titleHours: dict.app.billing.freeWorkspaceTrialBannerHours,
@@ -136,13 +124,20 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           teamWorkflowEnabled={teamWorkflowEnabled}
           smartAlertsEnabled={smartAlertsEnabled}
           companyProfileEnabled={companyProfileEnabled}
-          showUpgrade={showUpgrade}
+          showUpgrade={chrome.showUpgrade}
         />
         <div className="flex min-w-0 flex-1 flex-col">
           <AppTopbar
+            locale={locale}
+            languageLabel={dict.nav.language}
+            shell={dict.app.shell}
+            companyName={chrome.companyName}
+            userName={auth.user.name ?? ""}
+            userAvatarUrl={auth.user.avatarUrl}
+            showUpgrade={chrome.showUpgrade}
+            planBadge={chrome.planBadge}
             tenderAnalysisEnabled={tenderAnalysisEnabled}
             companyProfileEnabled={companyProfileEnabled}
-            languageLabel={dict.nav.language}
           />
           <main className="min-w-0 flex-1 overflow-x-clip px-3 py-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:px-6 sm:py-6 lg:px-8">
             {trialBanner ? <FreeWorkspaceTrialBanner {...trialBanner} /> : null}

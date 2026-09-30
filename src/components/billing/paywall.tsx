@@ -4,34 +4,41 @@ import { startCheckoutAction } from "@/app/actions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TurnstileField } from "@/components/security/turnstile-field";
 import type { PublicBillingPlan } from "@/services/billing/catalog";
-import type { PaywallRecap } from "@/domain/types";
+import { resolvePaidPlanCtaKind } from "@/services/billing/plan-cta";
 import type { Locale } from "@/i18n/config";
+import type { Dictionary } from "@/i18n/dictionaries";
 import { formatPlanMoney } from "@/i18n/format-money";
+import { BRAND_MARK_SRC } from "@/components/brand/brand-logo";
+import { cn } from "@/lib/cn";
 import Image from "next/image";
 import { useMemo, useState, useTransition } from "react";
-import { BRAND_MARK_SRC } from "@/components/brand/brand-logo";
+
+type PricingCopy = Dictionary["pricing"];
 
 interface PaywallProps {
-  recap: PaywallRecap;
   plans: PublicBillingPlan[];
   defaultGateway: "stripe" | "paypal";
   locale?: Locale;
+  pricingLabels: PricingCopy;
   turnstileSiteKey?: string | null;
-  decisionLabels?: {
-    bid: string;
-    review: string;
-    noBid: string;
-    tendersAnalyzed: string;
-  };
+  /** Active billing plan for this company — freezes that card as Activated. */
+  currentPlanId?: string | null;
+  currentPlanSlug?: string | null;
+  currentMonthlyPriceCents?: number | null;
+  /** True when the workspace is on a live paid plan (not free/trial surface). */
+  hasActivePaidPlan?: boolean;
 }
 
 export function Paywall({
-  recap,
   plans,
   defaultGateway,
   locale = "en",
+  pricingLabels,
   turnstileSiteKey,
-  decisionLabels,
+  currentPlanId = null,
+  currentPlanSlug = null,
+  currentMonthlyPriceCents = null,
+  hasActivePaidPlan = false,
 }: PaywallProps) {
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -41,6 +48,10 @@ export function Paywall({
   const [turnstileReset, setTurnstileReset] = useState(0);
 
   const visiblePlans = useMemo(() => plans.filter((p) => p.gateways.length > 0), [plans]);
+  const yearlyAvailable = useMemo(
+    () => visiblePlans.some((p) => p.annualEnabled && p.annualPriceCents != null),
+    [visiblePlans],
+  );
 
   function checkout(plan: PublicBillingPlan) {
     setError(null);
@@ -76,79 +87,58 @@ export function Paywall({
   return (
     <div className="mx-auto max-w-5xl space-y-8 animate-fade-in">
       <div className="text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">Upgrade</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+          {pricingLabels.upgrade}
+        </p>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-          Choose a plan and pay securely
+          {pricingLabels.title}
         </h1>
         <p className="mx-auto mt-2 max-w-xl text-sm text-muted sm:text-base">
-          Only payment methods enabled by Bidvera appear here. Prices are verified server-side —
-          your browser cannot change them.
+          {pricingLabels.body}
         </p>
       </div>
 
-      <div className="flex flex-wrap items-center justify-center gap-2">
-        <button
-          type="button"
-          onClick={() => setInterval("MONTH")}
-          className={`h-10 rounded-xl px-4 text-sm font-medium ${
-            interval === "MONTH"
-              ? "bg-primary text-white"
-              : "border border-border bg-card text-foreground"
-          }`}
-        >
-          Monthly
-        </button>
-        <button
-          type="button"
-          onClick={() => setInterval("YEAR")}
-          className={`h-10 rounded-xl px-4 text-sm font-medium ${
-            interval === "YEAR"
-              ? "bg-primary text-white"
-              : "border border-border bg-card text-foreground"
-          }`}
-        >
-          Yearly
-        </button>
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {[
-          {
-            label: decisionLabels?.tendersAnalyzed ?? "Tenders analyzed",
-            value: recap.tendersAnalyzed,
-          },
-          {
-            label: decisionLabels
-              ? `${decisionLabels.bid}`
-              : "BID decisions",
-            value: recap.bidCount,
-            tone: "text-success",
-          },
-          {
-            label: decisionLabels
-              ? `${decisionLabels.review}`
-              : "REVIEW decisions",
-            value: recap.reviewCount,
-            tone: "text-warning",
-          },
-          {
-            label: decisionLabels
-              ? `${decisionLabels.noBid}`
-              : "NO-BID decisions",
-            value: recap.noBidCount,
-            tone: "text-danger",
-          },
-        ].map((item) => (
-          <Card key={item.label}>
-            <CardContent className="pt-5">
-              <p className={`text-2xl font-semibold tabular-nums ${item.tone ?? ""}`}>
-                {item.value}
-              </p>
-              <p className="mt-1 text-sm text-muted">{item.label}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {yearlyAvailable ? (
+        <div className="flex justify-center">
+          <div
+            className="inline-flex max-w-full flex-wrap justify-center rounded-xl border border-border bg-card p-1 shadow-[var(--shadow-soft)]"
+            role="group"
+            aria-label={pricingLabels.monthly}
+          >
+            {(
+              [
+                { key: "MONTH" as const, label: pricingLabels.monthly },
+                { key: "YEAR" as const, label: pricingLabels.yearly },
+              ] as const
+            ).map((opt) => (
+              <button
+                key={opt.key}
+                type="button"
+                onClick={() => setInterval(opt.key)}
+                className={cn(
+                  "inline-flex items-center gap-2 rounded-[10px] px-4 py-2 text-sm font-medium transition-colors",
+                  interval === opt.key
+                    ? "bg-primary text-white shadow-[var(--shadow-soft)]"
+                    : "text-muted hover:text-foreground",
+                )}
+                aria-pressed={interval === opt.key}
+              >
+                <span className="whitespace-nowrap">{opt.label}</span>
+                {opt.key === "YEAR" ? (
+                  <span
+                    className={cn(
+                      "whitespace-nowrap text-xs font-semibold",
+                      interval === "YEAR" ? "text-white/90" : "text-primary",
+                    )}
+                  >
+                    {pricingLabels.save}
+                  </span>
+                ) : null}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       {error ? <p className="text-center text-sm text-danger">{error}</p> : null}
 
@@ -178,18 +168,50 @@ export function Paywall({
               gatewayByPlan[plan.id] ??
               (plan.gateways.includes(defaultGateway) ? defaultGateway : plan.gateways[0]!);
             const intervalOk =
-              interval === "YEAR" ? plan.annualEnabled && plan.annualPriceCents != null : plan.monthlyEnabled;
+              interval === "YEAR"
+                ? plan.annualEnabled && plan.annualPriceCents != null
+                : plan.monthlyEnabled;
+            const ctaKind = resolvePaidPlanCtaKind({
+              plan,
+              currentPlanId,
+              currentPlanSlug,
+              currentMonthlyPriceCents,
+              hasActivePaidPlan,
+            });
+            const isCurrentPlan = ctaKind === "activated";
+            const periodSuffix =
+              interval === "YEAR"
+                ? pricingLabels.perMonthYearly
+                : pricingLabels.perMonth;
+            const seatsLine = pricingLabels.seatsOnly.replace(
+              "{seats}",
+              String(plan.seatsLimit),
+            );
+            const description = marketing.description?.trim() || seatsLine;
+            const ctaLabel =
+              ctaKind === "activated"
+                ? pricingLabels.activated
+                : ctaKind === "upgrade"
+                  ? pricingLabels.upgrade
+                  : pricingLabels.getPlan;
 
             return (
               <Card
                 key={plan.id}
                 className={
-                  plan.highlighted ? "relative border-primary ring-1 ring-primary/30" : undefined
+                  plan.highlighted || isCurrentPlan
+                    ? "relative border-primary ring-1 ring-primary/30"
+                    : undefined
                 }
               >
-                {plan.highlighted ? (
+                {plan.highlighted && !isCurrentPlan ? (
                   <span className="absolute -top-2.5 start-5 rounded-lg bg-primary px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-white">
-                    Recommended
+                    {pricingLabels.recommended}
+                  </span>
+                ) : null}
+                {isCurrentPlan ? (
+                  <span className="absolute -top-2.5 start-5 rounded-lg bg-foreground/90 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-background">
+                    {pricingLabels.currentPlan}
                   </span>
                 ) : null}
                 <CardHeader>
@@ -205,15 +227,16 @@ export function Paywall({
                     />
                     {marketing.name}
                   </CardTitle>
-                  <CardDescription>
-                    {plan.seatsLimit === 1
-                      ? "1 seat"
-                      : `Up to ${plan.seatsLimit} seats`}
-                  </CardDescription>
+                  <CardDescription>{description}</CardDescription>
                   <p className="pt-2 text-3xl font-semibold tracking-tight tabular-nums">
-                    {formatPlanMoney(price, plan.currency, locale, plan.currencyLabel)}
-                    <span className="text-base font-normal text-muted">
-                      /{interval === "YEAR" ? "year" : "month"}
+                    {formatPlanMoney(
+                      price,
+                      plan.currency,
+                      locale,
+                      plan.currencyLabel,
+                    )}
+                    <span className="ms-2 text-base font-normal text-muted">
+                      {periodSuffix}
                     </span>
                   </p>
                 </CardHeader>
@@ -227,14 +250,17 @@ export function Paywall({
                     ))}
                   </ul>
 
-                  {plan.gateways.length > 1 ? (
+                  {isCurrentPlan || plan.gateways.length <= 1 ? null : (
                     <div className="flex gap-2">
                       {plan.gateways.map((g) => (
                         <button
                           key={g}
                           type="button"
                           onClick={() =>
-                            setGatewayByPlan((prev) => ({ ...prev, [plan.id]: g }))
+                            setGatewayByPlan((prev) => ({
+                              ...prev,
+                              [plan.id]: g,
+                            }))
                           }
                           className={`h-9 flex-1 rounded-lg text-xs font-medium capitalize ${
                             selectedGateway === g
@@ -246,32 +272,33 @@ export function Paywall({
                         </button>
                       ))}
                     </div>
-                  ) : (
-                    <p className="text-center text-xs capitalize text-muted">
-                      Pay with {plan.gateways[0]}
-                    </p>
                   )}
 
                   <button
                     type="button"
-                    disabled={pending || !intervalOk}
+                    disabled={pending || !intervalOk || isCurrentPlan}
                     aria-busy={pending}
-                    onClick={() => checkout(plan)}
+                    aria-disabled={isCurrentPlan || undefined}
+                    onClick={() => {
+                      if (isCurrentPlan) return;
+                      checkout(plan);
+                    }}
                     className={`inline-flex h-11 w-full items-center justify-center rounded-xl text-sm font-medium transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 ${
-                      plan.highlighted
-                        ? "bg-primary text-white hover:bg-primary-hover shadow-[var(--shadow-soft)]"
-                        : "border border-border bg-card text-foreground hover:bg-background"
+                      isCurrentPlan
+                        ? "border border-border bg-foreground/[0.04] text-muted"
+                        : plan.highlighted || ctaKind === "upgrade"
+                          ? "bg-primary text-white hover:bg-primary-hover shadow-[var(--shadow-soft)]"
+                          : "border border-border bg-card text-foreground hover:bg-background"
                     }`}
                   >
-                    {pending
-                      ? "Opening secure checkout…"
-                      : !intervalOk
-                        ? "Interval unavailable"
-                        : `Continue securely with ${selectedGateway}`}
+                    {isCurrentPlan
+                      ? pricingLabels.activated
+                      : pending
+                        ? "…"
+                        : !intervalOk
+                          ? "—"
+                          : ctaLabel}
                   </button>
-                  <p className="text-center text-[11px] text-muted">
-                    Amount and plan are locked server-side. Card details stay with {selectedGateway}.
-                  </p>
                 </CardContent>
               </Card>
             );

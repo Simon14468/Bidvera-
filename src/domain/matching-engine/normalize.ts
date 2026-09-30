@@ -32,6 +32,7 @@ export function countTrustSummary(snapshot: MatchingProfileSnapshot): MatchingTr
   for (const s of snapshot.dcmCategories) bump(s.trust);
   if (snapshot.size) bump(snapshot.size.trust);
   if (snapshot.experienceYears) bump(snapshot.experienceYears.trust);
+  if (snapshot.timezone) bump(snapshot.timezone.trust);
   return summary;
 }
 
@@ -45,6 +46,7 @@ export function computeMatchingCompleteness(snapshot: MatchingProfileSnapshot): 
       snapshot.dcmCategories.some((s) => s.trust === "strong"),
     snapshot.size != null,
     snapshot.experienceYears != null,
+    snapshot.timezone != null,
   ];
   return Math.round((checks.filter(Boolean).length / checks.length) * 100);
 }

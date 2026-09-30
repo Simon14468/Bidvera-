@@ -135,6 +135,7 @@ describe("matching profile trust tiers", () => {
       verifiedEvidence: [{ title: "ISO 9001 Certificate", kind: "CERT" }],
       dcmValidCategories: [{ key: "iso9001", label: "ISO 9001" }],
       approvedQuestionnaireHints: [],
+      timezone: "Africa/Casablanca",
     });
     assert.ok(snapshot.services.some((s) => s.value === "Cleaning" && s.trust === "normal"));
     assert.ok(
@@ -143,8 +144,39 @@ describe("matching profile trust tiers", () => {
       ),
     );
     assert.ok(snapshot.dcmCategories.some((d) => d.trust === "strong"));
+    assert.equal(snapshot.timezone?.value, "Africa/Casablanca");
+    assert.equal(snapshot.timezone?.source, "company_notification_prefs.timezone");
+    assert.ok(
+      snapshot.softNotes.some((n) => n.includes("Africa/Casablanca")),
+    );
     const record = buildMatchingProfileRecord(snapshot);
     assert.equal(record.eligible, true);
+  });
+
+  it("injects company timezone into matching snapshot without treating it as geography", () => {
+    const snapshot = deriveMatchingProfileSnapshot({
+      company: { country: "Morocco", companySize: null },
+      profile: {
+        industry: "IT",
+        country: "Morocco",
+        companySize: null,
+        experienceLevel: null,
+        services: ["Cybersecurity"],
+        certifications: [],
+        experienceYears: null,
+        geographicCoverage: ["Morocco"],
+        employeeRange: null,
+      },
+      sq: null,
+      verifiedEvidence: [],
+      dcmValidCategories: [],
+      approvedQuestionnaireHints: [],
+      timezone: "Africa/Casablanca",
+    });
+    assert.equal(snapshot.timezone?.value, "Africa/Casablanca");
+    assert.ok(
+      !snapshot.geographies.some((g) => g.value === "Africa/Casablanca"),
+    );
   });
 
   it("treats approved questionnaire hints as soft only", () => {

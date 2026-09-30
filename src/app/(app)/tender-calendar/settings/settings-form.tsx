@@ -1,7 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { Alert } from "@/components/ui/alert";
+import { SettingsToggleRow } from "@/components/ui/settings-toggle-row";
 import type { ReminderSettingsDto } from "@/modules/tender-calendar";
+import { useState, useTransition } from "react";
+
+type Feedback =
+  | { kind: "success"; text: string }
+  | { kind: "danger"; text: string };
 
 export function ReminderSettingsForm({
   initial,
@@ -12,16 +18,11 @@ export function ReminderSettingsForm({
 }) {
   const [settings, setSettings] = useState(initial);
   const [pending, startTransition] = useTransition();
-  const [message, setMessage] = useState<string | null>(null);
-
-  function toggle(key: keyof ReminderSettingsDto) {
-    if (!canManage) return;
-    setSettings((s) => ({ ...s, [key]: !s[key] }));
-  }
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
 
   function onSave() {
     if (!canManage) return;
-    setMessage(null);
+    setFeedback(null);
     startTransition(async () => {
       const res = await fetch("/api/tender-calendar/settings", {
         method: "PATCH",
@@ -33,18 +34,24 @@ export function ReminderSettingsForm({
         settings?: ReminderSettingsDto;
       };
       if (!res.ok) {
-        setMessage(json.error ?? "Save failed.");
+        setFeedback({
+          kind: "danger",
+          text: json.error ?? "Couldn’t save reminder settings. Try again.",
+        });
         return;
       }
       if (json.settings) setSettings(json.settings);
-      setMessage("Saved.");
+      setFeedback({
+        kind: "success",
+        text: "Reminder settings saved successfully.",
+      });
     });
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-1">
       {!canManage ? (
-        <p className="rounded-xl border border-border bg-background px-3 py-2 text-sm text-muted">
+        <p className="mb-2 rounded-xl border border-border bg-background px-3 py-2 text-sm text-muted">
           Only OWNER or ADMIN can change reminder settings.
         </p>
       ) : null}
@@ -58,27 +65,38 @@ export function ReminderSettingsForm({
           ["remindSameDay", "Same day"],
         ] as const
       ).map(([key, label]) => (
-        <label key={key} className="flex items-center gap-3 text-sm">
-          <input
-            type="checkbox"
-            checked={settings[key]}
-            disabled={!canManage}
-            onChange={() => toggle(key)}
-          />
-          {label}
-        </label>
+        <SettingsToggleRow
+          key={key}
+          label={label}
+          checked={settings[key]}
+          disabled={!canManage}
+          onCheckedChange={(next) => {
+            if (!canManage) return;
+            setFeedback(null);
+            setSettings((s) => ({ ...s, [key]: next }));
+          }}
+        />
       ))}
       {canManage ? (
-        <button
-          type="button"
-          onClick={onSave}
-          disabled={pending}
-          className="inline-flex h-10 items-center rounded-xl bg-primary px-4 text-sm font-medium text-white disabled:opacity-60"
-        >
-          {pending ? "Saving…" : "Save reminders"}
-        </button>
+        <div className="space-y-3 pt-3">
+          <button
+            type="button"
+            onClick={onSave}
+            disabled={pending}
+            className="inline-flex h-10 items-center rounded-xl bg-primary px-4 text-sm font-medium text-white hover:bg-primary-hover disabled:opacity-60"
+          >
+            {pending ? "Saving…" : "Save reminders"}
+          </button>
+          {feedback ? (
+            <Alert
+              variant={feedback.kind === "success" ? "success" : "danger"}
+              title={feedback.kind === "success" ? "Saved" : "Save failed"}
+            >
+              {feedback.text}
+            </Alert>
+          ) : null}
+        </div>
       ) : null}
-      {message ? <p className="text-sm text-muted">{message}</p> : null}
     </div>
   );
 }

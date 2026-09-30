@@ -1,7 +1,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -38,7 +37,6 @@ export function WorkspaceQuickActions({
     <Card>
       <CardHeader className="pb-2">
         <CardTitle>{labels.quickActionsTitle}</CardTitle>
-        <CardDescription>{labels.quickActionsHint}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         {actions.map((action) => (

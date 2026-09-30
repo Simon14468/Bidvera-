@@ -1,6 +1,7 @@
 "use client";
 
 import { resendVerification } from "@/app/actions";
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState, useTransition } from "react";
@@ -30,8 +31,16 @@ export function VerifyEmailPanel({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
-        {message ? <p className="text-sm text-success">{message}</p> : null}
-        {error ? <p className="text-sm text-danger">{error}</p> : null}
+        {message ? (
+          <Alert variant="success" title="Sent">
+            {message}
+          </Alert>
+        ) : null}
+        {error ? (
+          <Alert variant="danger" title="Couldn’t resend">
+            {error}
+          </Alert>
+        ) : null}
         <Button
           type="button"
           variant="outline"

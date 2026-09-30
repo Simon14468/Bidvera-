@@ -65,6 +65,7 @@ export function deterministicSemanticRefineBoost(input: {
 
 export type AiReorderFn = (input: {
   companyServices: string[];
+  companyTimezone?: string | null;
   candidates: AiRefineCandidate[];
 }) => Promise<{ order: string[]; confidence: number } | null>;
 
@@ -75,6 +76,7 @@ export type AiReorderFn = (input: {
  */
 export async function refineEligibleWithAiAssist(input: {
   companyServices: string[];
+  companyTimezone?: string | null;
   candidates: AiRefineCandidate[];
   aiReorder?: AiReorderFn | null;
   /** When false, skip AI and use deterministic synonym boosts only. */
@@ -104,6 +106,7 @@ export async function refineEligibleWithAiAssist(input: {
   try {
     const ai = await input.aiReorder({
       companyServices: input.companyServices,
+      companyTimezone: input.companyTimezone ?? null,
       candidates: input.candidates,
     });
     if (!ai || ai.confidence < AI_REFINE_MIN_CONFIDENCE) {

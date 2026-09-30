@@ -43,6 +43,11 @@ export type MatchingProfileSourceInput = {
   approvedQuestionnaireHints: string[];
   /** Soft historical outcome tags (e.g. won industry) — never strong. */
   softOutcomeHints?: string[];
+  /**
+   * Canonical company IANA timezone (CompanyNotificationPrefs).
+   * Injected into matching snapshot for local-time context — never treated as geography.
+   */
+  timezone?: string | null;
 };
 
 function pushUnique(
@@ -219,6 +224,17 @@ export function deriveMatchingProfileSnapshot(
     }
   }
 
+  let timezone: MatchingSignal | null = null;
+  const tz = (input.timezone ?? "").trim();
+  if (tz) {
+    timezone = {
+      value: tz,
+      trust: "normal",
+      source: "company_notification_prefs.timezone",
+    };
+    softNotes.push(`Company timezone: ${tz}`);
+  }
+
   return {
     services,
     industries,
@@ -228,6 +244,7 @@ export function deriveMatchingProfileSnapshot(
     experienceYears,
     dcmCategories,
     softNotes,
+    timezone,
   };
 }
 

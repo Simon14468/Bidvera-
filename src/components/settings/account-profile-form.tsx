@@ -8,10 +8,12 @@ import {
   uploadUserAvatarAction,
 } from "@/app/actions";
 import { CompanyAvatar } from "@/components/brand/company-avatar";
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { FileChooseField } from "@/components/ui/file-choose-field";
 import { Input } from "@/components/ui/input";
 import type { Dictionary } from "@/i18n/dictionaries";
+import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 
@@ -165,15 +167,28 @@ export function AccountProfileForm({
     <div className="grid gap-4 sm:grid-cols-2 sm:col-span-2">
       <div className="flex flex-col gap-3 sm:col-span-2">
         <div className="flex flex-wrap items-center gap-4">
-          <CompanyAvatar
-            size={56}
-            className="rounded-xl"
-            src={preview}
-            alt={name}
-          />
+          <div className="relative shrink-0">
+            <CompanyAvatar
+              size={56}
+              className="rounded-xl"
+              src={preview}
+              alt={name}
+            />
+            {preview || initialAvatarUrl ? (
+              <button
+                type="button"
+                disabled={pending}
+                onClick={onRemoveAvatar}
+                aria-label={copy.avatarRemove}
+                title={copy.avatarRemove}
+                className="absolute -end-1.5 -top-1.5 inline-flex size-7 items-center justify-center rounded-full border border-danger/30 bg-card text-danger shadow-[var(--shadow-soft)] transition hover:bg-danger hover:text-white disabled:pointer-events-none disabled:opacity-50"
+              >
+                <Trash2 className="size-3.5" aria-hidden />
+              </button>
+            ) : null}
+          </div>
           <div className="min-w-0 flex-1 space-y-1">
             <p className="text-sm font-medium text-foreground">{copy.avatarLabel}</p>
-            <p className="text-xs text-muted">{copy.avatarHint}</p>
             <div className="flex flex-wrap items-center gap-2 pt-1">
               <FileChooseField
                 accept="image/jpeg,image/png,image/webp,image/gif"
@@ -182,16 +197,6 @@ export function AccountProfileForm({
                 chooseLabel={copy.avatarUpload}
                 onFilesChange={(files) => onPick(files[0] ?? null)}
               />
-              {preview || initialAvatarUrl ? (
-                <Button
-                  type="button"
-                  variant="outline"
-                  disabled={pending}
-                  onClick={onRemoveAvatar}
-                >
-                  {copy.avatarRemove}
-                </Button>
-              ) : null}
             </div>
           </div>
         </div>
@@ -229,7 +234,7 @@ export function AccountProfileForm({
               ]
                 .filter(Boolean)
                 .join(" ")
-            : copy.emailChangeHint
+            : undefined
         }
       />
 
@@ -269,19 +274,21 @@ export function AccountProfileForm({
         </div>
       ) : null}
 
-      <div className="flex flex-wrap items-center gap-3 sm:col-span-2">
-        <Button type="button" disabled={pending || !dirty} onClick={onSave}>
-          {pending ? copy.accountSaving : copy.accountSave}
-        </Button>
+      <div className="flex flex-col gap-3 sm:col-span-2">
+        <div className="flex flex-wrap items-center gap-3">
+          <Button type="button" disabled={pending || !dirty} onClick={onSave}>
+            {pending ? copy.accountSaving : copy.accountSave}
+          </Button>
+        </div>
         {message ? (
-          <p className="text-sm text-muted" role="status">
+          <Alert variant="success" title="Saved">
             {message}
-          </p>
+          </Alert>
         ) : null}
         {error ? (
-          <p className="text-sm text-destructive" role="alert">
+          <Alert variant="danger" title="Couldn’t save changes">
             {error}
-          </p>
+          </Alert>
         ) : null}
       </div>
     </div>

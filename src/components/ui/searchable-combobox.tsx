@@ -1,7 +1,9 @@
 "use client";
 
 import { cn } from "@/lib/cn";
-import { Check, ChevronDown } from "lucide-react";
+import { BRAND_MARK_SRC } from "@/components/brand/brand-logo";
+import { ChevronDown } from "lucide-react";
+import Image from "next/image";
 import {
   useCallback,
   useEffect,
@@ -19,10 +21,16 @@ import { createPortal } from "react-dom";
 export type SearchableComboboxOption = {
   value: string;
   label: string;
+  /** Secondary line under the label (e.g. UTC offset). */
+  description?: string;
+  /** Tertiary / muted line (e.g. IANA id). */
+  meta?: string;
   /** Extra tokens matched by search (e.g. ISO codes, English name). */
   searchText?: string;
   /** Optional leading content (flag, icon). */
   leading?: ReactNode;
+  /** Optional group heading for the options list. */
+  group?: string;
 };
 
 type PanelCoords = {
@@ -33,13 +41,41 @@ type PanelCoords = {
   placement: "bottom" | "top" | "sheet";
 };
 
+type FlatRow =
+  | { kind: "group"; key: string; label: string }
+  | { kind: "option"; option: SearchableComboboxOption; optionIndex: number };
+
 function matchesQuery(option: SearchableComboboxOption, query: string): boolean {
   const q = query.trim().toLowerCase();
   if (!q) return true;
-  const haystack = [option.label, option.value, option.searchText ?? ""]
+  const haystack = [
+    option.label,
+    option.value,
+    option.description ?? "",
+    option.meta ?? "",
+    option.group ?? "",
+    option.searchText ?? "",
+  ]
     .join(" ")
     .toLowerCase();
-  return haystack.includes(q);
+  // Support multi-word queries ("new york") against flattened IANA / labels.
+  return q.split(/\s+/).every((token) => haystack.includes(token));
+}
+
+function buildFlatRows(options: SearchableComboboxOption[]): FlatRow[] {
+  const rows: FlatRow[] = [];
+  let lastGroup: string | null = null;
+  let optionIndex = 0;
+  for (const option of options) {
+    const group = option.group?.trim() || "";
+    if (group && group !== lastGroup) {
+      rows.push({ kind: "group", key: `g-${group}`, label: group });
+      lastGroup = group;
+    }
+    rows.push({ kind: "option", option, optionIndex });
+    optionIndex += 1;
+  }
+  return rows;
 }
 
 export function SearchableCombobox({
@@ -54,6 +90,10 @@ export function SearchableCombobox({
   required,
   disabled,
   className,
+  triggerClassName,
+  triggerLeading,
+  panelMaxHeight = 320,
+  hint,
 }: {
   id?: string;
   label: string;
@@ -66,6 +106,14 @@ export function SearchableCombobox({
   required?: boolean;
   disabled?: boolean;
   className?: string;
+  /** Extra classes for the trigger button (e.g. borderless). */
+  triggerClassName?: string;
+  /** Always shown on the trigger (e.g. globe icon). */
+  triggerLeading?: ReactNode;
+  /** Preferred desktop panel height before clamping to viewport. */
+  panelMaxHeight?: number;
+  /** Optional hint under the control. */
+  hint?: ReactNode;
 }) {
   const reactId = useId();
   const listboxId = `${reactId}-listbox`;
@@ -96,6 +144,8 @@ export function SearchableCombobox({
     [options, query],
   );
 
+  const flatRows = useMemo(() => buildFlatRows(filtered), [filtered]);
+
   const updateCoords = useCallback(() => {
     const trigger = triggerRef.current;
     if (!trigger) return;
@@ -117,7 +167,7 @@ export function SearchableCombobox({
       return;
     }
 
-    const preferredMax = 320;
+    const preferredMax = panelMaxHeight;
     const spaceBelow = vh - rect.bottom - margin;
     const spaceAbove = rect.top - margin;
     const placement =
@@ -139,7 +189,7 @@ export function SearchableCombobox({
       maxHeight,
       placement,
     });
-  }, []);
+  }, [panelMaxHeight]);
 
   useLayoutEffect(() => {
     if (!open) return;
@@ -278,7 +328,7 @@ export function SearchableCombobox({
                   aria-autocomplete="list"
                   aria-controls={listboxId}
                   aria-activedescendant={activeId}
-                  className="h-10 w-full min-w-0 rounded-lg border border-border bg-background px-3 text-base text-foreground outline-none placeholder:text-muted focus-visible:ring-2 focus-visible:ring-ring sm:h-9 sm:text-sm"
+                  className="h-10 w-full min-w-0 rounded-lg border border-border bg-background px-3 text-start text-base text-foreground outline-none placeholder:text-muted focus-visible:ring-2 focus-visible:ring-ring sm:h-9 sm:text-sm"
                   autoComplete="off"
                   autoCorrect="off"
                   spellCheck={false}
@@ -291,9 +341,21 @@ export function SearchableCombobox({
                 {filtered.length === 0 ? (
                   <li className="px-3 py-3 text-sm text-muted">{emptyMessage}</li>
                 ) : (
-                  filtered.map((option, index) => {
+                  flatRows.map((row) => {
+                    if (row.kind === "group") {
+                      return (
+                        <li
+                          key={row.key}
+                          role="presentation"
+                          className="sticky top-0 z-[1] bg-card px-3 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-wide text-muted"
+                        >
+                          {row.label}
+                        </li>
+                      );
+                    }
+                    const { option, optionIndex } = row;
                     const isSelected = option.value === value;
-                    const isActive = index === activeIndex;
+                    const isActive = optionIndex === activeIndex;
                     return (
                       <li
                         key={option.value}
@@ -308,26 +370,64 @@ export function SearchableCombobox({
                         <button
                           type="button"
                           className={cn(
-                            "flex w-full min-w-0 items-center justify-between gap-2 px-3 py-2.5 text-start text-sm transition",
+                            "flex w-full min-w-0 items-start justify-between gap-2 px-3 py-2.5 text-start text-sm transition",
                             isActive && "bg-background",
                             isSelected
                               ? "bg-primary-muted font-medium text-primary"
                               : "text-foreground hover:bg-background",
                           )}
-                          onMouseEnter={() => setActiveIndex(index)}
+                          onMouseEnter={() => setActiveIndex(optionIndex)}
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            selectValue(option.value);
+                          }}
                           onClick={() => selectValue(option.value)}
                         >
-                          <span className="flex min-w-0 items-center gap-2.5">
+                          <span className="flex min-w-0 items-start gap-2.5">
                             {option.leading ? (
-                              <span className="inline-flex shrink-0 items-center justify-center">
+                              <span className="mt-0.5 inline-flex shrink-0 items-center justify-center">
                                 {option.leading}
                               </span>
                             ) : null}
-                            <span className="min-w-0 break-words">{option.label}</span>
+                            <span className="min-w-0">
+                              <span className="block break-words leading-snug">
+                                {option.label}
+                              </span>
+                              {option.description ? (
+                                <span
+                                  className={cn(
+                                    "mt-0.5 block text-xs font-normal tabular-nums",
+                                    isSelected ? "text-primary/80" : "text-muted",
+                                  )}
+                                >
+                                  {option.description}
+                                </span>
+                              ) : null}
+                              {option.meta ? (
+                                <span
+                                  className={cn(
+                                    "mt-0.5 block text-[11px] font-normal",
+                                    isSelected ? "text-primary/70" : "text-muted",
+                                  )}
+                                >
+                                  {option.meta}
+                                </span>
+                              ) : null}
+                            </span>
                           </span>
                           {isSelected ? (
-                            <Check className="size-4 shrink-0 text-primary" aria-hidden />
-                          ) : null}
+                            <Image
+                              src={BRAND_MARK_SRC}
+                              alt=""
+                              width={16}
+                              height={16}
+                              unoptimized
+                              className="mt-0.5 size-4 shrink-0 object-contain"
+                              aria-hidden
+                            />
+                          ) : (
+                            <span className="mt-0.5 size-4 shrink-0" aria-hidden />
+                          )}
                         </button>
                       </li>
                     );
@@ -359,26 +459,52 @@ export function SearchableCombobox({
         onClick={() => setOpen((v) => !v)}
         onKeyDown={onTriggerKeyDown}
         className={cn(
-          "box-border flex h-11 w-full max-w-full min-w-0 items-center justify-between gap-2 rounded-xl border border-border bg-card px-3 text-start text-base text-foreground",
+          "box-border flex min-h-11 w-full max-w-full min-w-0 items-center justify-between gap-2 rounded-xl border border-border bg-card px-3 py-2 text-start text-base text-foreground",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
           "disabled:cursor-not-allowed disabled:opacity-60",
-          "sm:h-10 sm:text-sm",
+          "sm:min-h-10 sm:text-sm",
           open && "border-primary/30 ring-2 ring-ring",
+          triggerClassName,
         )}
       >
         <span
           className={cn(
-            "flex min-w-0 flex-1 items-center gap-2.5 truncate",
+            "flex min-w-0 flex-1 items-center gap-2.5",
             selected ? "text-foreground" : "text-muted",
           )}
         >
-          {selected?.leading ? (
+          {triggerLeading ? (
+            <span className="inline-flex shrink-0 items-center justify-center text-muted">
+              {triggerLeading}
+            </span>
+          ) : selected?.leading ? (
             <span className="inline-flex shrink-0 items-center justify-center">
               {selected.leading}
             </span>
           ) : null}
           <span className="min-w-0 truncate">
-            {selected?.label ?? placeholder}
+            {selected ? (
+              selected.description || selected.meta ? (
+                <>
+                  <span className="block truncate font-medium leading-snug">
+                    {selected.label || selected.meta || selected.value}
+                  </span>
+                  {selected.description ? (
+                    <span className="mt-0.5 block truncate text-xs font-normal tabular-nums text-muted">
+                      {selected.description}
+                    </span>
+                  ) : selected.meta && selected.meta !== selected.label ? (
+                    <span className="mt-0.5 block truncate text-xs font-normal text-muted">
+                      {selected.meta}
+                    </span>
+                  ) : null}
+                </>
+              ) : (
+                <span className="block truncate">{selected.label}</span>
+              )
+            ) : (
+              <span className="truncate">{placeholder}</span>
+            )}
           </span>
         </span>
         <ChevronDown
@@ -389,6 +515,7 @@ export function SearchableCombobox({
           aria-hidden
         />
       </button>
+      {hint ? <div className="text-xs text-muted">{hint}</div> : null}
       {required ? (
         <input
           tabIndex={-1}

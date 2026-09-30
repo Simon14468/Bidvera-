@@ -1,7 +1,9 @@
 "use client";
 
 import { setGlobalLearningConsentAction } from "@/app/actions";
+import { Alert } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
+import { SettingsToggleRow } from "@/components/ui/settings-toggle-row";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -26,33 +28,29 @@ export function LearningConsentCard({
       <CardContent className="space-y-3 pt-5">
         <h2 className="text-sm font-semibold tracking-tight">{copy.learningTitle}</h2>
         <p className="text-xs leading-relaxed text-muted">{copy.learningBody}</p>
-        <label className="flex items-start gap-3 text-sm">
-          <input
-            type="checkbox"
-            className="mt-1"
-            checked={consent}
-            disabled={pending}
-            onChange={(e) => {
-              const next = e.target.checked;
-              setConsent(next);
-              setError(null);
-              startTransition(async () => {
-                const res = await setGlobalLearningConsentAction(next);
-                if (!res.ok) {
-                  setConsent(!next);
-                  setError(res.error.message);
-                  return;
-                }
-                router.refresh();
-              });
-            }}
-          />
-          <span>
-            {copy.learningCheckbox}
-            {pending ? ` ${copy.learningSaving}` : ""}
-          </span>
-        </label>
-        {error ? <p className="text-xs text-danger">{error}</p> : null}
+        <SettingsToggleRow
+          label={`${copy.learningCheckbox}${pending ? ` ${copy.learningSaving}` : ""}`}
+          checked={consent}
+          disabled={pending}
+          onCheckedChange={(next) => {
+            setConsent(next);
+            setError(null);
+            startTransition(async () => {
+              const res = await setGlobalLearningConsentAction(next);
+              if (!res.ok) {
+                setConsent(!next);
+                setError(res.error.message);
+                return;
+              }
+              router.refresh();
+            });
+          }}
+        />
+        {error ? (
+          <Alert variant="danger" title="Couldn’t update preference">
+            {error}
+          </Alert>
+        ) : null}
       </CardContent>
     </Card>
   );

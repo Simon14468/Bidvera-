@@ -9,6 +9,7 @@ import { getLocale } from "@/i18n/get-locale";
 import { resolveAuthContext } from "@/auth/session";
 import { listPublicPricingPlans } from "@/services/billing/catalog";
 import { canOfferFirstSignupFreeWorkspaceTrial } from "@/services/billing/subscription-state";
+import { getEffectiveLimits } from "@/services/plans/effective";
 import { buildPageMetadata } from "@/seo/metadata";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -34,9 +35,21 @@ export default async function PricingPage() {
     listPublicPricingPlans(locale),
     resolveAuthContext(),
   ]);
-  const showFirstSignupTrialCta = auth?.user.companyId
-    ? await canOfferFirstSignupFreeWorkspaceTrial(auth.user.companyId)
-    : !auth;
+  const companyId = auth?.user.companyId ?? null;
+  const [showFirstSignupTrialCta, limits] = await Promise.all([
+    companyId
+      ? canOfferFirstSignupFreeWorkspaceTrial(companyId)
+      : Promise.resolve(!auth),
+    companyId
+      ? getEffectiveLimits(companyId).catch(() => null)
+      : Promise.resolve(null),
+  ]);
+  const hasActivePaidPlan = Boolean(
+    limits &&
+      limits.planSlug !== "free" &&
+      limits.planSlug !== "trial" &&
+      limits.monthlyPriceCents > 0,
+  );
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
@@ -62,10 +75,17 @@ export default async function PricingPage() {
       ) : null}
 
       <div className="mt-10">
-        <PricingGrid plans={plans} labels={p} locale={locale} />
+        <PricingGrid
+          plans={plans}
+          labels={p}
+          locale={locale}
+          signedIn={Boolean(auth)}
+          currentPlanId={limits?.planId ?? null}
+          currentPlanSlug={limits?.planSlug ?? null}
+          currentMonthlyPriceCents={limits?.monthlyPriceCents ?? null}
+          hasActivePaidPlan={hasActivePaidPlan}
+        />
       </div>
-
-      <p className="mt-6 text-center text-sm text-muted">{p.yearlyNote}</p>
 
       <div className="mt-14 grid gap-4 sm:grid-cols-3">
         {[

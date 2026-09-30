@@ -70,6 +70,7 @@ export async function loadSettingsBillingSummary(
     planName: sub?.billingPlan?.name ?? entitlements.planName,
     cancelAtPeriodEnd: sub?.cancelAtPeriodEnd ?? false,
     currentPeriodEnd: sub?.currentPeriodEnd ?? usage.periodEndsAt,
+    features: entitlements.features,
   });
 
   const planName = resolveUserFacingPlanName({

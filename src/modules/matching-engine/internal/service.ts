@@ -117,7 +117,7 @@ function toRecommendationDto(row: {
 }
 
 async function loadSourceInput(companyId: string) {
-  const [company, sq, verifiedEvidence, dcmDocs, approvedDrafts] =
+  const [company, sq, verifiedEvidence, dcmDocs, approvedDrafts, notificationPrefs] =
     await Promise.all([
       prisma.company.findUnique({
         where: { id: companyId },
@@ -179,6 +179,10 @@ async function loadSourceInput(companyId: string) {
         take: 50,
         orderBy: { updatedAt: "desc" },
       }),
+      prisma.companyNotificationPrefs.findUnique({
+        where: { companyId },
+        select: { timezone: true },
+      }),
     ]);
 
   if (!company) {
@@ -196,6 +200,11 @@ async function loadSourceInput(companyId: string) {
     label: d.category.label,
   }));
 
+  const { isValidIanaTimeZone } = await import("@/lib/timezones");
+  const rawTimezone = notificationPrefs?.timezone?.trim() ?? "";
+  const timezone =
+    rawTimezone && isValidIanaTimeZone(rawTimezone) ? rawTimezone : null;
+
   return {
     company: {
       country: company.country,
@@ -206,6 +215,7 @@ async function loadSourceInput(companyId: string) {
     verifiedEvidence,
     dcmValidCategories,
     approvedQuestionnaireHints,
+    timezone,
   };
 }
 
@@ -781,6 +791,7 @@ async function generateMatchRecommendationsUnlocked(
 
     const aiResult = await refineEligibleWithAiAssist({
       companyServices: servicesForRefine,
+      companyTimezone: profileDto.snapshot.timezone?.value ?? null,
       candidates: eligible.map((e) => ({
         opportunityId: e.opportunityId,
         title: e.title,

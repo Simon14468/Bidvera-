@@ -1,9 +1,21 @@
 import { alertTypePrefKey } from "@/domain/smart-alerts";
 import { prisma } from "@/lib/db";
+import {
+  applyPlatformChannelGates,
+  getNotificationChannelSettings,
+} from "@/services/notifications/channel-settings";
+import { isValidIanaTimeZone } from "@/lib/timezones";
 import { z } from "zod";
 
 export const notificationPrefsSchema = z.object({
-  timezone: z.string().min(1).max(80).default("UTC"),
+  timezone: z
+    .string()
+    .min(1)
+    .max(80)
+    .default("UTC")
+    .refine((tz) => isValidIanaTimeZone(tz), {
+      message: "Invalid IANA timezone",
+    }),
   inAppEnabled: z.boolean().default(true),
   emailEnabled: z.boolean().default(true),
   whatsappEnabled: z.boolean().default(false),
@@ -50,9 +62,16 @@ export async function getCompanyNotificationPrefs(
   const row = await prisma.companyNotificationPrefs.findUnique({
     where: { companyId },
   });
-  if (!row) return { ...DEFAULT_NOTIFICATION_PREFS };
+  if (!row) {
+    // Unset timezone so the settings form can suggest the browser zone.
+    // Other channel defaults still apply; save validates IANA before persist.
+    return { ...DEFAULT_NOTIFICATION_PREFS, timezone: "" };
+  }
+  const timezone = isValidIanaTimeZone(row.timezone)
+    ? row.timezone.trim()
+    : DEFAULT_NOTIFICATION_PREFS.timezone;
   return notificationPrefsSchema.parse({
-    timezone: row.timezone,
+    timezone,
     inAppEnabled: row.inAppEnabled,
     emailEnabled: row.emailEnabled,
     whatsappEnabled: row.whatsappEnabled,
@@ -76,12 +95,18 @@ export async function saveCompanyNotificationPrefs(
   companyId: string,
   raw: unknown,
 ): Promise<NotificationPrefs> {
-  const data = notificationPrefsSchema.parse(raw);
+  const parsed = notificationPrefsSchema.parse(raw);
+  const platform = await getNotificationChannelSettings();
+  const data = applyPlatformChannelGates(parsed, platform);
   await prisma.companyNotificationPrefs.upsert({
     where: { companyId },
     create: { companyId, ...data },
     update: { ...data },
   });
+  const { scheduleMatchingProfileRebuild } = await import(
+    "@/application/matching-rebuild"
+  );
+  scheduleMatchingProfileRebuild(companyId);
   return data;
 }
 
