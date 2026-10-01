@@ -8,6 +8,10 @@ import {
   resolvePlanAmountCents,
   resolveStripePriceId,
 } from "@/services/billing/catalog";
+import {
+  allowStripeInlinePriceData,
+  isUsableStripePriceId,
+} from "@/services/billing/plan-gateway-ids";
 import { recordBillingAudit } from "@/services/billing/audit";
 import { revokePaidEntitlements } from "@/services/billing/revocation";
 import {
@@ -60,10 +64,7 @@ async function getStripe(): Promise<Stripe> {
   return new Stripe(creds.secretKey);
 }
 
-/** Inline price_data is a local/test fallback only — never production. */
-export function allowStripeInlinePriceData(nodeEnv: string | undefined = process.env.NODE_ENV): boolean {
-  return nodeEnv === "development" || nodeEnv === "test";
-}
+export { allowStripeInlinePriceData };
 
 export type StripeCheckoutLineItemInput = {
   priceId: string | null;
@@ -124,6 +125,13 @@ export async function createStripeCheckoutSession(input: {
   await assertPlanAllowsCheckout({ plan, gateway: "stripe", interval: input.interval });
 
   const priceId = resolveStripePriceId(plan, input.interval);
+  if (priceId && !isUsableStripePriceId(priceId)) {
+    throw new AppError(
+      ErrorCode.UPSTREAM,
+      "Stripe Price ID is not configured for this plan. Set it in Super Admin before taking payments.",
+      503,
+    );
+  }
   const amountCents = resolvePlanAmountCents(plan, input.interval);
   const stripe = await getStripe();
   const settings = await getBillingGatewaySettings();

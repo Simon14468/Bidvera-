@@ -18,6 +18,11 @@ import {
 import { marketingLabelsForPlan } from "@/services/entitlements";
 import { resolvePlanTrialDays } from "@/services/billing/trial-checkout";
 import { isPublicCommercialPricingPlan } from "@/services/billing/free-workspace-identity";
+import {
+  allowStripeInlinePriceData,
+  isUsablePaypalBillingPlanId,
+  isUsableStripePriceId,
+} from "@/services/billing/plan-gateway-ids";
 import type { Locale } from "@/i18n/config";
 import type { BillingInterval, Plan, PlanStatus } from "@prisma/client";
 import { unstable_cache } from "next/cache";
@@ -56,19 +61,50 @@ export type PublicBillingPlan = {
   };
   legacyEnum: Plan["legacyEnum"];
   gateways: Array<"stripe" | "paypal">;
+  /** Gateways that can actually charge the selected interval. */
+  gatewaysByInterval: {
+    month: Array<"stripe" | "paypal">;
+    year: Array<"stripe" | "paypal">;
+  };
 };
 
 type PlanWithFeatures = Plan & {
   planFeatures?: Array<{ enabled: boolean; feature: { key: string } }>;
 };
 
-function planGateways(
+export function configuredGatewaysForInterval(
   plan: Plan,
+  interval: BillingInterval,
   global: { stripeEnabled: boolean; paypalEnabled: boolean },
 ): Array<"stripe" | "paypal"> {
+  if (plan.isFree || plan.slug === "free" || plan.slug === "trial") return [];
+  if (interval === "MONTH" && !plan.monthlyEnabled) return [];
+  if (interval === "YEAR" && !plan.annualEnabled) return [];
   const out: Array<"stripe" | "paypal"> = [];
-  if (global.stripeEnabled && plan.stripeEnabled) out.push("stripe");
-  if (global.paypalEnabled && plan.paypalEnabled) out.push("paypal");
+  if (
+    global.stripeEnabled &&
+    plan.stripeEnabled &&
+    isUsableStripePriceId(resolveStripePriceId(plan, interval))
+  ) {
+    out.push("stripe");
+  }
+  if (
+    global.paypalEnabled &&
+    plan.paypalEnabled &&
+    isUsablePaypalBillingPlanId(resolvePaypalPlanId(plan, interval))
+  ) {
+    out.push("paypal");
+  }
+  return out;
+}
+
+function unionGateways(
+  month: Array<"stripe" | "paypal">,
+  year: Array<"stripe" | "paypal">,
+): Array<"stripe" | "paypal"> {
+  const out: Array<"stripe" | "paypal"> = [];
+  if (month.includes("stripe") || year.includes("stripe")) out.push("stripe");
+  if (month.includes("paypal") || year.includes("paypal")) out.push("paypal");
   return out;
 }
 
@@ -210,9 +246,22 @@ function toPublicBillingPlan(
     stripeTrialDays: null,
     copy: { month: monthCopy, year: yearCopy },
     legacyEnum: plan.legacyEnum,
-    gateways: planGateways(plan, settings),
+    gateways: unionGateways(
+      configuredGatewaysForInterval(plan, "MONTH", settings),
+      configuredGatewaysForInterval(plan, "YEAR", settings),
+    ),
+    gatewaysByInterval: {
+      month: configuredGatewaysForInterval(plan, "MONTH", settings),
+      year: configuredGatewaysForInterval(plan, "YEAR", settings),
+    },
   };
-  publicPlan.stripeTrialDays = publicStripeTrialDays(publicPlan, settings);
+  publicPlan.stripeTrialDays = publicStripeTrialDays(
+    {
+      ...publicPlan,
+      gateways: publicPlan.gatewaysByInterval.month,
+    },
+    settings,
+  );
   return publicPlan;
 }
 
@@ -240,7 +289,7 @@ async function loadPublicMarketingPlans(
 
 const cachedPublicMarketingPlans = unstable_cache(
   loadPublicMarketingPlans,
-  ["public-marketing-plans-v1"],
+  ["public-marketing-plans-v2"],
   { revalidate: 120, tags: ["public-billing-plans"] },
 );
 
@@ -321,6 +370,7 @@ export async function assertPlanAllowsCheckout(input: {
   if (input.interval === "YEAR" && !input.plan.annualEnabled) {
     throw Object.assign(new Error("PLAN_UNAVAILABLE"), { code: "PLAN_UNAVAILABLE" });
   }
+  assertIntervalGatewayMapping(input.plan, input.gateway, input.interval);
   if (
     input.plan.status !== "ACTIVE" ||
     !input.plan.visibleToPublic ||
@@ -343,6 +393,28 @@ export function resolvePlanAmountCents(plan: Plan, interval: BillingInterval): n
     throw Object.assign(new Error("PLAN_UNAVAILABLE"), { code: "PLAN_UNAVAILABLE" });
   }
   return plan.monthlyPriceCents;
+}
+
+export function assertIntervalGatewayMapping(
+  plan: Plan,
+  gateway: "stripe" | "paypal",
+  interval: BillingInterval,
+  nodeEnv: string | undefined = process.env.NODE_ENV,
+) {
+  if (gateway === "paypal" && !isUsablePaypalBillingPlanId(resolvePaypalPlanId(plan, interval))) {
+    throw Object.assign(new Error("PAYPAL_PLAN_NOT_CONFIGURED"), {
+      code: "PAYPAL_PLAN_NOT_CONFIGURED",
+    });
+  }
+  if (
+    gateway === "stripe" &&
+    !allowStripeInlinePriceData(nodeEnv) &&
+    !isUsableStripePriceId(resolveStripePriceId(plan, interval))
+  ) {
+    throw Object.assign(new Error("STRIPE_PRICE_NOT_CONFIGURED"), {
+      code: "STRIPE_PRICE_NOT_CONFIGURED",
+    });
+  }
 }
 
 export function resolveStripePriceId(plan: Plan, interval: BillingInterval): string | null {

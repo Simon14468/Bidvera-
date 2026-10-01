@@ -16,6 +16,11 @@ import {
 } from "@/services/entitlements";
 import { applyFreeWorkspaceCheckoutGuard } from "@/services/billing/free-plan-guard";
 import { shouldRejectDuplicateFreeWorkspacePlan } from "@/services/billing/free-workspace-identity";
+import {
+  blankToNull,
+  enforceNonCheckoutGatewayFlags,
+  normalizePlanGatewayWrite,
+} from "@/services/billing/plan-gateway-ids";
 
 export async function listPlansForAdmin() {
   return prisma.plan.findMany({
@@ -84,6 +89,36 @@ export async function upsertPlanForAdmin(
     previous,
   );
 
+  const guarded = enforceNonCheckoutGatewayFlags(applyFreeWorkspaceCheckoutGuard(data));
+  const gatewayWrite = normalizePlanGatewayWrite({
+    name: guarded.name,
+    slug: guarded.slug,
+    isFree: Boolean(guarded.isFree),
+    monthlyEnabled: guarded.monthlyEnabled,
+    annualEnabled: guarded.annualEnabled,
+    stripeEnabled: guarded.stripeEnabled ?? previous?.stripeEnabled ?? true,
+    paypalEnabled: guarded.paypalEnabled ?? previous?.paypalEnabled ?? true,
+    stripePriceMonthly:
+      guarded.stripePriceMonthly !== undefined
+        ? blankToNull(guarded.stripePriceMonthly)
+        : blankToNull(previous?.stripePriceMonthly),
+    stripePriceAnnual:
+      guarded.stripePriceAnnual !== undefined
+        ? blankToNull(guarded.stripePriceAnnual)
+        : blankToNull(previous?.stripePriceAnnual),
+    paypalPlanMonthly:
+      guarded.paypalPlanMonthly !== undefined
+        ? blankToNull(guarded.paypalPlanMonthly)
+        : blankToNull(previous?.paypalPlanMonthly),
+    paypalPlanAnnual:
+      guarded.paypalPlanAnnual !== undefined
+        ? blankToNull(guarded.paypalPlanAnnual)
+        : blankToNull(previous?.paypalPlanAnnual),
+  });
+  if (gatewayWrite.errors.length > 0) {
+    throw new AppError(ErrorCode.VALIDATION, gatewayWrite.errors.join(" "), 400);
+  }
+
   let plan;
   try {
     plan = await prisma.plan.upsert({
@@ -106,14 +141,14 @@ export async function upsertPlanForAdmin(
         trialEligible: data.trialEligible,
         trialDays: data.trialDays ?? null,
         graceDays: data.graceDays ?? null,
-        isFree: data.isFree ?? false,
+        isFree: guarded.isFree ?? false,
         visibleToPublic: data.visibleToPublic ?? true,
-        stripeEnabled: data.stripeEnabled ?? true,
-        paypalEnabled: data.paypalEnabled ?? true,
-        stripePriceMonthly: data.stripePriceMonthly ?? null,
-        stripePriceAnnual: data.stripePriceAnnual ?? null,
-        paypalPlanMonthly: data.paypalPlanMonthly ?? null,
-        paypalPlanAnnual: data.paypalPlanAnnual ?? null,
+        stripeEnabled: gatewayWrite.stripeEnabled,
+        paypalEnabled: gatewayWrite.paypalEnabled,
+        stripePriceMonthly: gatewayWrite.stripePriceMonthly,
+        stripePriceAnnual: gatewayWrite.stripePriceAnnual,
+        paypalPlanMonthly: gatewayWrite.paypalPlanMonthly,
+        paypalPlanAnnual: gatewayWrite.paypalPlanAnnual,
         currency: data.currency ?? "usd",
         status: data.status,
         highlighted: data.highlighted,
@@ -152,24 +187,16 @@ export async function upsertPlanForAdmin(
         trialEligible: data.trialEligible,
         trialDays: data.trialDays === undefined ? undefined : data.trialDays,
         graceDays: data.graceDays === undefined ? undefined : data.graceDays,
-        ...(data.isFree !== undefined ? { isFree: data.isFree } : {}),
+        ...(guarded.isFree !== undefined ? { isFree: guarded.isFree } : {}),
         ...(data.visibleToPublic !== undefined
           ? { visibleToPublic: data.visibleToPublic }
           : {}),
-        ...(data.stripeEnabled !== undefined ? { stripeEnabled: data.stripeEnabled } : {}),
-        ...(data.paypalEnabled !== undefined ? { paypalEnabled: data.paypalEnabled } : {}),
-        ...(data.stripePriceMonthly !== undefined
-          ? { stripePriceMonthly: data.stripePriceMonthly }
-          : {}),
-        ...(data.stripePriceAnnual !== undefined
-          ? { stripePriceAnnual: data.stripePriceAnnual }
-          : {}),
-        ...(data.paypalPlanMonthly !== undefined
-          ? { paypalPlanMonthly: data.paypalPlanMonthly }
-          : {}),
-        ...(data.paypalPlanAnnual !== undefined
-          ? { paypalPlanAnnual: data.paypalPlanAnnual }
-          : {}),
+        stripeEnabled: gatewayWrite.stripeEnabled,
+        paypalEnabled: gatewayWrite.paypalEnabled,
+        stripePriceMonthly: gatewayWrite.stripePriceMonthly,
+        stripePriceAnnual: gatewayWrite.stripePriceAnnual,
+        paypalPlanMonthly: gatewayWrite.paypalPlanMonthly,
+        paypalPlanAnnual: gatewayWrite.paypalPlanAnnual,
         ...(data.currency !== undefined ? { currency: data.currency } : {}),
         status: data.status,
         highlighted: data.highlighted,

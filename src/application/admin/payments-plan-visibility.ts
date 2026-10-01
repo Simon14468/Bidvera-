@@ -27,5 +27,6 @@ export function shouldRenderCommercialPaymentFields(plan: {
   slug: string;
   isFree: boolean;
 }): boolean {
+  if (plan.slug === "trial") return false;
   return !isOfficialFreeWorkspacePaymentsPlan(plan);
 }

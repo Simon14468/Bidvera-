@@ -55,6 +55,13 @@ function mapCheckoutError(error: unknown): never {
   if (code === "GATEWAY_DISABLED") {
     throw new AppError(ErrorCode.FORBIDDEN, "This payment method is currently unavailable.", 403);
   }
+  if (code === "PAYPAL_PLAN_NOT_CONFIGURED" || code === "STRIPE_PRICE_NOT_CONFIGURED") {
+    throw new AppError(
+      ErrorCode.VALIDATION,
+      "This payment method is not available for the selected billing interval.",
+      400,
+    );
+  }
   if (code === "PLAN_UNAVAILABLE") {
     throw new AppError(ErrorCode.VALIDATION, "This plan is not available for checkout.", 400);
   }
@@ -115,7 +122,7 @@ class MultiGatewayBillingService implements BillingService {
 
       const settings = await getBillingGatewaySettings();
       const interval = input.interval ?? "MONTH";
-      let gateway = input.gateway ?? settings.defaultGateway;
+      const gateway = input.gateway ?? settings.defaultGateway;
 
       // Resolve legacy plan ids (starter/pro/business) to DB plans when needed
       let planKey = input.planId;
@@ -132,8 +139,14 @@ class MultiGatewayBillingService implements BillingService {
       if (!match) {
         throw new AppError(ErrorCode.VALIDATION, "This plan is not available for checkout.", 400);
       }
-      if (!match.gateways.includes(gateway)) {
-        gateway = match.gateways[0]!;
+      const intervalGateways =
+        interval === "YEAR" ? match.gatewaysByInterval.year : match.gatewaysByInterval.month;
+      if (!intervalGateways.includes(gateway)) {
+        throw new AppError(
+          ErrorCode.VALIDATION,
+          "This payment method is not available for the selected billing interval.",
+          400,
+        );
       }
 
       await trackEvent({

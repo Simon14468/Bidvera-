@@ -48,6 +48,10 @@ export function Paywall({
   const [turnstileReset, setTurnstileReset] = useState(0);
 
   const visiblePlans = useMemo(() => plans.filter((p) => p.gateways.length > 0), [plans]);
+
+  function gatewaysForInterval(plan: PublicBillingPlan) {
+    return interval === "YEAR" ? plan.gatewaysByInterval.year : plan.gatewaysByInterval.month;
+  }
   const yearlyAvailable = useMemo(
     () => visiblePlans.some((p) => p.annualEnabled && p.annualPriceCents != null),
     [visiblePlans],
@@ -55,9 +59,11 @@ export function Paywall({
 
   function checkout(plan: PublicBillingPlan) {
     setError(null);
+    const available = gatewaysForInterval(plan);
     const gateway =
-      gatewayByPlan[plan.id] ??
-      (plan.gateways.includes(defaultGateway) ? defaultGateway : plan.gateways[0]!);
+      available.includes(gatewayByPlan[plan.id] ?? defaultGateway)
+        ? (gatewayByPlan[plan.id] ?? defaultGateway)
+        : available[0];
 
     if (interval === "YEAR" && !plan.annualEnabled) {
       setError("Annual billing is not available for this plan.");
@@ -65,6 +71,10 @@ export function Paywall({
     }
     if (interval === "MONTH" && !plan.monthlyEnabled) {
       setError("Monthly billing is not available for this plan.");
+      return;
+    }
+    if (!gateway) {
+      setError("This payment method is not available for the selected billing interval.");
       return;
     }
 
@@ -164,13 +174,16 @@ export function Paywall({
               interval === "YEAR" && plan.annualPriceCents != null
                 ? plan.annualPriceCents
                 : plan.monthlyPriceCents;
-            const selectedGateway =
-              gatewayByPlan[plan.id] ??
-              (plan.gateways.includes(defaultGateway) ? defaultGateway : plan.gateways[0]!);
+            const availableGateways = gatewaysForInterval(plan);
+            const selectedGateway = availableGateways.includes(
+              gatewayByPlan[plan.id] ?? defaultGateway,
+            )
+              ? (gatewayByPlan[plan.id] ?? defaultGateway)
+              : availableGateways[0];
             const intervalOk =
-              interval === "YEAR"
+              (interval === "YEAR"
                 ? plan.annualEnabled && plan.annualPriceCents != null
-                : plan.monthlyEnabled;
+                : plan.monthlyEnabled) && availableGateways.length > 0;
             const ctaKind = resolvePaidPlanCtaKind({
               plan,
               currentPlanId,
@@ -250,9 +263,9 @@ export function Paywall({
                     ))}
                   </ul>
 
-                  {isCurrentPlan || plan.gateways.length <= 1 ? null : (
+                  {isCurrentPlan || availableGateways.length <= 1 ? null : (
                     <div className="flex gap-2">
-                      {plan.gateways.map((g) => (
+                      {availableGateways.map((g) => (
                         <button
                           key={g}
                           type="button"

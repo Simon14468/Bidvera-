@@ -6,6 +6,7 @@ import {
   resolvePlanAmountCents,
   resolvePaypalPlanId,
 } from "@/services/billing/catalog";
+import { isUsablePaypalBillingPlanId } from "@/services/billing/plan-gateway-ids";
 import { recordBillingAudit } from "@/services/billing/audit";
 import { assertGatewayEnabled } from "@/services/billing/settings";
 import {
@@ -228,6 +229,75 @@ export async function getPayPalAccessToken(): Promise<string> {
   return json.access_token;
 }
 
+export type PaypalBillingPlanVerification = {
+  id: string;
+  status: "ACTIVE";
+  environment: "sandbox" | "live";
+};
+
+/**
+ * Confirms a billing Plan ID exists and is ACTIVE in one PayPal environment.
+ * Callers pass the base URL for the credentials currently configured (sandbox or live).
+ */
+export async function readPaypalBillingPlan(input: {
+  planId: string;
+  accessToken: string;
+  baseUrl: string;
+  environment: "sandbox" | "live";
+  fetchImpl?: typeof fetch;
+}): Promise<PaypalBillingPlanVerification> {
+  const fetchImpl = input.fetchImpl ?? fetch;
+  const response = await fetchImpl(
+    `${input.baseUrl}/v1/billing/plans/${encodeURIComponent(input.planId)}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${input.accessToken}`,
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  if (response.status === 404) {
+    throw new AppError(
+      ErrorCode.VALIDATION,
+      `PayPal Plan ID was not found in the current ${input.environment} environment.`,
+      400,
+    );
+  }
+  if (!response.ok) {
+    throw new AppError(
+      ErrorCode.UPSTREAM,
+      `PayPal could not verify this Plan ID in the current ${input.environment} environment.`,
+      502,
+    );
+  }
+
+  const json = (await response.json()) as { id?: string; status?: string };
+  if (!json.id || json.id !== input.planId || json.status !== "ACTIVE") {
+    throw new AppError(
+      ErrorCode.VALIDATION,
+      `PayPal Plan ID is not an active billing plan in the current ${input.environment} environment.`,
+      400,
+    );
+  }
+  return { id: json.id, status: "ACTIVE", environment: input.environment };
+}
+
+export async function lookupPaypalBillingPlan(
+  planId: string,
+): Promise<PaypalBillingPlanVerification> {
+  await assertPaypalRuntimeReady();
+  const creds = await resolvePaypalCredentials();
+  const token = await getPayPalAccessToken();
+  return readPaypalBillingPlan({
+    planId,
+    accessToken: token,
+    baseUrl: paypalBaseUrl(creds.environment),
+    environment: creds.environment,
+  });
+}
+
 export async function createPayPalCheckoutSession(input: {
   companyId: string;
   userEmail: string;
@@ -242,7 +312,7 @@ export async function createPayPalCheckoutSession(input: {
   const amountCents = resolvePlanAmountCents(plan, input.interval);
   const paypalPlanId = resolvePaypalPlanId(plan, input.interval);
 
-  if (!paypalPlanId) {
+  if (!isUsablePaypalBillingPlanId(paypalPlanId)) {
     throw new AppError(
       ErrorCode.UPSTREAM,
       `PayPal plan is not configured for ${plan.name}. Set the plan ID in Super Admin.`,

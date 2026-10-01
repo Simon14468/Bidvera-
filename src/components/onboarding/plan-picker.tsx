@@ -13,9 +13,12 @@ import { useMemo, useState, useTransition } from "react";
 function resolveCheckoutGateway(
   plan: PublicBillingPlan,
   defaultGateway: "stripe" | "paypal",
+  interval: "MONTH" | "YEAR",
 ): "stripe" | "paypal" | null {
-  if (plan.gateways.includes(defaultGateway)) return defaultGateway;
-  return plan.gateways[0] ?? null;
+  const available =
+    interval === "YEAR" ? plan.gatewaysByInterval.year : plan.gatewaysByInterval.month;
+  if (available.includes(defaultGateway)) return defaultGateway;
+  return available[0] ?? null;
 }
 
 function yearlyAmount(plan: PublicBillingPlan): number | null {
@@ -151,7 +154,11 @@ export function OnboardingPlanPicker({
           const yearPrice = yearlyAmount(plan);
           const usingYear = interval === "YEAR" && yearPrice != null;
           const price = usingYear ? yearPrice : plan.monthlyPriceCents;
-          const gateway = resolveCheckoutGateway(plan, defaultGateway);
+          const gateway = resolveCheckoutGateway(
+            plan,
+            defaultGateway,
+            usingYear ? "YEAR" : "MONTH",
+          );
           const showStripeTrial = Boolean(plan.stripeTrialDays) && gateway === "stripe";
           const checkoutBlocked = interval === "YEAR" && yearPrice == null;
           return (
