@@ -12,6 +12,7 @@ import {
   canonicalFeatureKey,
   isCommerciallyAvailableFeature,
   isObsoleteAnalysesQuotaLabel,
+  isPublicCatalogFeature,
   planDefaultFeatureKeys,
 } from "@/domain/billing/entitlement-catalog";
 import { marketingLabelsForPlan } from "@/services/entitlements";
@@ -103,7 +104,7 @@ export function publicEnabledFeatureKeys(plan: PlanWithFeatures): string[] {
       ?.filter((pf) => pf.enabled)
       .map((pf) => canonicalFeatureKey(pf.feature.key)) ?? [];
   const keys = mapped.length > 0 ? mapped : planDefaultFeatureKeys(plan.slug);
-  return [...new Set(keys)].filter((key) => isCommerciallyAvailableFeature(key));
+  return [...new Set(keys)].filter((key) => isPublicCatalogFeature(key));
 }
 
 export function publicStripeTrialDays(

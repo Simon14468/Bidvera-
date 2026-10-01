@@ -642,14 +642,14 @@ describe("Feature 8C — Matching Engine real validation", () => {
     assert.match(strip, /Sponsored/);
 
     const page = readSrc("src/app/(app)/matched-opportunities/page.tsx");
-    assert.match(page, /MATCHED/);
+    assert.match(page, /MatchedOpportunitiesClient|matchedOpportunities/);
     assert.match(page, /requireMatchingEngineModule/);
-    assert.match(page, /Sponsored|Organic/);
+    assert.match(page, /Sponsored|Organic|sponsoredTitle/);
     assert.doesNotMatch(page, /\bADS\b|ADVERTISEMENT/);
 
     const dash = readSrc("src/app/(app)/dashboard/page.tsx");
-    assert.match(dash, /getMatchedStripForCompany/);
-    assert.match(dash, /MatchedOpportunitiesStrip/);
+    assert.match(dash, /getMatchingDashboardOverview/);
+    assert.match(dash, /MatchingEngineOverview/);
     assert.doesNotMatch(dash, /generateMatchRecommendations|generateRecommendationsForCompany/);
 
     const sidebar = readSrc("src/components/app/app-sidebar.tsx");

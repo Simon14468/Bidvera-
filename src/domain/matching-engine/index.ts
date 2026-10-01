@@ -11,3 +11,5 @@ export * from "./analytics-rates";
 export * from "./intent";
 export * from "./sponsorship";
 export * from "./opportunity-validation";
+export * from "./project-identity";
+export * from "./public-fit";

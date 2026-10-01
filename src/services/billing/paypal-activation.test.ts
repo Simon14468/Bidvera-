@@ -409,25 +409,19 @@ test("PayPal production fail-closed never defaults to sandbox", async () => {
     setNodeEnv("production");
     delete process.env.PAYPAL_ENVIRONMENT;
     delete process.env.PAYPAL_MODE;
-    assert.throws(
-      () => resolvePaypalEnvironment(),
-      (error: unknown) =>
-        error instanceof AppError &&
-        error.status === 503 &&
-        /PAYPAL_ENVIRONMENT=production/i.test(error.message),
-    );
-    assert.throws(() => paypalBaseUrl(), (error: unknown) => error instanceof AppError);
+    // Unset env → live (never silent sandbox). Vault can still override via async resolver.
+    assert.equal(resolvePaypalEnvironment(), "live");
+    assert.equal(paypalBaseUrl(), "https://api-m.paypal.com");
 
     // Status must not silently advertise sandbox under NODE_ENV=production.
     const misconfigured = getPaypalIntegrationStatus();
     assert.equal(misconfigured.environment, "live");
     assert.equal(misconfigured.productionReady, false);
 
+    // Explicit sandbox env is allowed for SA/test on a real host.
     process.env.PAYPAL_ENVIRONMENT = "sandbox";
-    assert.throws(
-      () => resolvePaypalEnvironment(),
-      (error: unknown) => error instanceof AppError && error.status === 503,
-    );
+    assert.equal(resolvePaypalEnvironment(), "sandbox");
+    assert.equal(paypalBaseUrl(), "https://api-m.sandbox.paypal.com");
 
     process.env.PAYPAL_ENVIRONMENT = "production";
     process.env.PAYPAL_CLIENT_ID = "sb-sandbox-client";

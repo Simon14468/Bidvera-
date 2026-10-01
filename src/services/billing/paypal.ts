@@ -32,7 +32,7 @@ import {
  * sandbox | live (sync, env-only).
  * Prefer resolvePaypalEnvironmentAsync when vault fallback is allowed.
  * Accepts PAYPAL_ENVIRONMENT=production and legacy PAYPAL_MODE=live.
- * In NODE_ENV=production never defaults to sandbox — requires explicit live/production.
+ * In NODE_ENV=production never silently defaults to sandbox (defaults to live).
  */
 export function resolvePaypalEnvironment(): "sandbox" | "live" {
   const raw = (
@@ -43,15 +43,8 @@ export function resolvePaypalEnvironment(): "sandbox" | "live" {
     .trim()
     .toLowerCase();
   if (raw === "production" || raw === "live") return "live";
-  if (process.env.NODE_ENV === "production") {
-    throw new AppError(
-      ErrorCode.UPSTREAM,
-      "PayPal is misconfigured for production. Set PAYPAL_ENVIRONMENT=production (or live) with valid live credentials. Sandbox is not allowed when NODE_ENV=production.",
-      503,
-    );
-  }
   if (raw === "sandbox") return "sandbox";
-  return "sandbox";
+  return process.env.NODE_ENV === "production" ? "live" : "sandbox";
 }
 
 export function paypalBaseUrl(environment?: "sandbox" | "live") {
@@ -108,9 +101,11 @@ export function getPaypalIntegrationStatus() {
 
   const environment: "sandbox" | "live" = explicitLive
     ? "live"
-    : nodeProd
-      ? "live"
-      : "sandbox";
+    : raw === "sandbox"
+      ? "sandbox"
+      : nodeProd
+        ? "live"
+        : "sandbox";
 
   const clientId = process.env.PAYPAL_CLIENT_ID?.trim() ?? "";
   const secret = process.env.PAYPAL_CLIENT_SECRET?.trim() ?? "";

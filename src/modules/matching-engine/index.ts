@@ -35,6 +35,8 @@ export { requireMatchingEngineModule } from "./guard";
 
 export {
   countNewMatchesForCompany,
+  countMatchedOpportunityNotificationsForCompany,
+  acknowledgeMatchedOpportunityNotificationsForCompany,
   createCompanySponsorship,
   dismissRecommendationForCompany,
   generateRecommendationsForCompany,
@@ -74,6 +76,27 @@ export {
 
 export type { MatchingActivationReadiness } from "./internal/activation-readiness";
 
+export {
+  getMatchingActivationStatus,
+  refreshMatchingOpportunitiesForAdmin,
+  runMatchingNowForAdmin,
+  runMatchingPlatformWorkflow,
+  setMatchingEngineGlobalEnabled,
+} from "./internal/platform-workflow";
+
+export {
+  getMatchingPlatformRunState,
+  MATCHING_PLATFORM_RUN_SETTINGS_KEY,
+} from "./internal/platform-run";
+
+export type {
+  MatchingPlatformRunState,
+  MatchingPlatformRunStatus,
+  MatchingPlatformRunSummary,
+} from "./internal/platform-run";
+
+export type { MatchingActivationStatus } from "./internal/platform-workflow";
+
 export type {
   CompanyMatchingProfileDto,
   MatchRecommendationDto,
@@ -90,7 +113,18 @@ export type { MatchingSponsorshipDto } from "./internal/sponsorship";
 export type {
   MatchingSponsorshipPricingPlanDto,
   MatchingSponsorshipPricingRequestDto,
+  SponsorshipCheckoutGateway,
 } from "./internal/sponsorship-pricing";
+
+export {
+  listEnabledSponsorshipGateways,
+} from "./internal/sponsorship-pricing";
+
+export {
+  markSponsorshipRequestPaid,
+  verifySponsorshipPayPalPayment,
+  verifySponsorshipStripePayment,
+} from "./internal/sponsorship-checkout";
 
 export {
   getMatchingAiAdminSnapshot,

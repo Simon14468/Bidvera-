@@ -92,7 +92,11 @@ export default async function DashboardPage({ searchParams }: PageProps) {
       </section>
 
       {matchingOverview && matchingOverview.state !== "unavailable" ? (
-        <MatchingEngineOverview data={matchingOverview} locale={locale} />
+        <MatchingEngineOverview
+          data={matchingOverview}
+          locale={locale}
+          copy={dict.app.matchedOpportunities}
+        />
       ) : null}
 
       <section className="grid min-w-0 gap-4 xl:grid-cols-3">

@@ -67,6 +67,7 @@ describe("billing provider credentials", () => {
 
     assert.match(panel, /Test PayPal Connection/);
     assert.match(panel, /Test Stripe Connection/);
+    assert.match(panel, /Checkout mode|Sandbox|Live/);
     assert.match(panel, /clientSecretHint|secretKeyHint/);
     assert.doesNotMatch(panel, /clientSecret:\s*paypal\.|secretKey:\s*stripe\./);
     assert.match(admin, /PaymentCredentialsPanel/);

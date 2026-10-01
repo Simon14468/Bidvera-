@@ -59,7 +59,7 @@ describe("matching dashboard overview", () => {
     assert.match(dash, /state !== "unavailable"/);
     const ui = read("src/components/dashboard/matching-engine-overview.tsx");
     assert.match(ui, /\/matched-opportunities/);
-    assert.match(ui, /View matched opportunities/);
+    assert.match(ui, /viewAllOpportunities|View all opportunities/);
   });
 
   it("does not replace the eight core workspace KPIs", () => {

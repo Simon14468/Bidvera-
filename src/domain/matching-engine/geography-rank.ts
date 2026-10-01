@@ -4,7 +4,11 @@
  * unless the opportunity itself encodes a hard location requirement (8C scorer).
  */
 
-import { normalizeMatchingToken, tokens } from "./normalize";
+import {
+  geographyHierarchyScore,
+  normalizeMatchingToken,
+  tokens,
+} from "./normalize";
 
 export const GEOGRAPHY_BOOST_MAX = 5;
 
@@ -41,7 +45,7 @@ function shareNeighborGroup(a: string[], b: string[]): boolean {
 
 /**
  * Soft boost among eligible candidates:
- * same token (city/region/country) → neighbors → else 0 (still globally matchable).
+ * same token → hierarchy parent/child → neighbors → else 0.
  * Cross-border matching remains allowed when boost is 0.
  */
 export function geographyProximityBoost(
@@ -53,15 +57,24 @@ export function geographyProximityBoost(
   }
 
   if (sameTokenOverlap(companyGeographies, opportunityGeographies)) {
-    // Exact / same-token overlap (city, region, or country label)
     return GEOGRAPHY_BOOST_MAX;
+  }
+
+  const hierarchy = geographyHierarchyScore(
+    companyGeographies,
+    opportunityGeographies,
+  );
+  if (hierarchy >= 70) {
+    return Math.round(GEOGRAPHY_BOOST_MAX * 0.7 * 100) / 100;
+  }
+  if (hierarchy >= 55) {
+    return Math.round(GEOGRAPHY_BOOST_MAX * 0.45 * 100) / 100;
   }
 
   if (shareNeighborGroup(companyGeographies, opportunityGeographies)) {
     return Math.round(GEOGRAPHY_BOOST_MAX * 0.55 * 100) / 100;
   }
 
-  // Broader / global — no soft boost; still eligible if 8C passed
   return 0;
 }
 

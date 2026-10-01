@@ -7,15 +7,18 @@ import {
 } from "@/domain/schemas/landing";
 import { assertLandingUploadAllowed } from "@/domain/security/landing-upload-sniff";
 import { AppError, ErrorCode } from "@/lib/errors";
+import { resolveLandingUploadsRoot } from "@/lib/public-uploads";
 import { defaultLocale, locales, type Locale } from "@/i18n/config";
 import { mkdir, writeFile, unlink } from "fs/promises";
 import path from "path";
 import { randomBytes } from "crypto";
 
-const LANDING_PUBLIC_DIR = path.join(process.cwd(), "public", "uploads", "landing");
+function landingPublicDir() {
+  return resolveLandingUploadsRoot();
+}
 
 async function ensureLandingDir() {
-  await mkdir(LANDING_PUBLIC_DIR, { recursive: true });
+  await mkdir(landingPublicDir(), { recursive: true });
 }
 
 export function extractYoutubeId(url: string | null | undefined): string | null {
@@ -175,7 +178,7 @@ export async function saveLandingUpload(input: {
 
   // Ignore client filename/MIME — generate opaque name + sniffed extension only.
   const safe = `${input.kind}-${Date.now()}-${randomBytes(8).toString("hex")}${sniffed.ext}`;
-  const resolvedDir = path.resolve(LANDING_PUBLIC_DIR);
+  const resolvedDir = path.resolve(landingPublicDir());
   const full = path.resolve(resolvedDir, safe);
   if (!full.startsWith(resolvedDir + path.sep)) {
     throw new AppError(ErrorCode.VALIDATION, "Invalid upload path.", 400);
@@ -190,7 +193,7 @@ export async function deletePublicLandingFile(publicUrl: string | null | undefin
   if (!name || name !== publicUrl.replace("/uploads/landing/", "") || name.includes("..")) {
     return;
   }
-  await unlink(path.join(LANDING_PUBLIC_DIR, name)).catch(() => undefined);
+  await unlink(path.join(landingPublicDir(), name)).catch(() => undefined);
 }
 
 export async function listTestimonialsForAdmin() {

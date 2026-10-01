@@ -25,6 +25,7 @@ import {
   setSponsorshipPricingPlanStatus,
   upsertSponsorshipPricingPlan,
 } from "@/modules/matching-engine/internal/sponsorship-pricing";
+import { setSponsorshipCheckoutImplForTests } from "@/modules/matching-engine/internal/sponsorship-checkout";
 import {
   isMatchingSponsorshipGloballyEnabled,
   setMatchingSponsorshipGloballyEnabled,
@@ -81,9 +82,15 @@ async function seedCompany(suffix: string) {
 describe("Sponsored Matching pricing", () => {
   before(async () => {
     await cleanup();
+    setSponsorshipCheckoutImplForTests(async (input) => ({
+      url: `https://checkout.test/pay?request=${encodeURIComponent(input.requestId)}`,
+      provider: "stripe",
+      billingRef: `cs_test_${input.requestId}`,
+    }));
   });
 
   after(async () => {
+    setSponsorshipCheckoutImplForTests(null);
     await cleanup();
     await setMatchingSponsorshipGloballyEnabled(false);
   });
@@ -190,12 +197,15 @@ describe("Sponsored Matching pricing", () => {
         createSponsorshipPricingRequest({
           companyId: b,
           planId: customA.id,
+          userEmail: "buyer@example.com",
+          successUrl: "https://app.test/matched-opportunities/sponsored?paid=1",
+          cancelUrl: "https://app.test/matched-opportunities/sponsored",
         }),
       (err: unknown) => err instanceof AppError && err.status === 403,
     );
   });
 
-  it("company can submit request intent via NoOp billing; cannot mutate plans", async () => {
+  it("company can start checkout (PENDING_PAYMENT) via shared payment gateways", async () => {
     await setMatchingSponsorshipGloballyEnabled(true);
     const companyId = await seedCompany("req");
     const plan = await upsertSponsorshipPricingPlan({
@@ -208,15 +218,21 @@ describe("Sponsored Matching pricing", () => {
     });
     planIds.push(plan.id);
 
-    const request = await createSponsorshipPricingRequest({
+    const result = await createSponsorshipPricingRequest({
       companyId,
       planId: plan.id,
       notes: "Please contact us",
+      userEmail: "buyer@example.com",
+      successUrl: "https://app.test/matched-opportunities/sponsored?paid=1",
+      cancelUrl: "https://app.test/matched-opportunities/sponsored",
+      gateway: "stripe",
     });
-    assert.equal(request.status, "REQUESTED");
-    assert.equal(request.companyId, companyId);
-    assert.ok(request.billingRef?.startsWith("noop:"));
-    assert.equal(request.billingStatus, "NOT_REQUIRED");
+    assert.equal(result.request.status, "PENDING_PAYMENT");
+    assert.equal(result.request.companyId, companyId);
+    assert.ok(result.request.billingRef?.startsWith("cs_test_"));
+    assert.equal(result.request.billingStatus, "PENDING:stripe");
+    assert.equal(result.provider, "stripe");
+    assert.match(result.checkoutUrl, /^https:\/\/checkout\.test\/pay\?/);
 
     // Company surface has no upsert export path in public module entry for pricing CRUD.
     const entry = readSrc("src/modules/matching-engine/entry.ts");
@@ -242,6 +258,9 @@ describe("Sponsored Matching pricing", () => {
         createSponsorshipPricingRequest({
           companyId,
           planId: plan.id,
+          userEmail: "buyer@example.com",
+          successUrl: "https://app.test/matched-opportunities/sponsored?paid=1",
+          cancelUrl: "https://app.test/matched-opportunities/sponsored",
         }),
       (err: unknown) => err instanceof AppError && err.status === 403,
     );
@@ -258,16 +277,32 @@ describe("Sponsored Matching pricing", () => {
     const sponsoredPage = readSrc(
       "src/app/(app)/matched-opportunities/sponsored/page.tsx",
     );
+    const sponsoredClient = readSrc(
+      "src/modules/matching-engine/ui/sponsored-matching-request-client.tsx",
+    );
     assert.match(matched, /isMatchingSponsorshipGloballyEnabled/);
-    assert.match(matched, /Request Sponsored Matching/);
+    assert.match(matched, /listActiveSponsoredMatchingPlansForCompany/);
+    assert.match(matched, /SponsoredMatchingIcon/);
+    assert.match(matched, /sponsoredCta|showSponsoredCta/);
     assert.match(matched, /not a won contract/i);
     assert.doesNotMatch(matched, /priceCents|sponsorship-pricing/);
     assert.doesNotMatch(client, /priceCents|Sponsored Pricing|\$\d/);
     assert.match(sponsoredPage, /isMatchingSponsorshipGloballyEnabled/);
     assert.match(sponsoredPage, /SponsoredMatchingRequestClient/);
+    assert.match(sponsoredPage, /verifySponsorshipStripePayment|markSponsorshipRequestPaid/);
+    assert.match(sponsoredClient, /checkoutUrl/);
+    assert.match(sponsoredClient, /window\.location\.assign/);
     assert.match(
       readSrc("src/components/super-admin/sa-shell.tsx"),
       /matching-sponsored-pricing/,
+    );
+    assert.match(
+      readSrc("src/modules/matching-engine/internal/sponsorship-checkout.ts"),
+      /resolveStripeCredentials|resolvePaypalCredentials/,
+    );
+    assert.match(
+      readSrc("src/modules/matching-engine/internal/sponsorship-checkout.ts"),
+      /mode:\s*["']payment["']/,
     );
   });
 

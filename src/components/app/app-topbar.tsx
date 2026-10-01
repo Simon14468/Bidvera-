@@ -1,5 +1,6 @@
 import { CompanyAvatar } from "@/components/brand/company-avatar";
 import { PlanBadge } from "@/components/billing/plan-badge";
+import { MatchedOpportunitiesNotifyButton } from "@/components/app/matched-opportunities-notify-button";
 import { LanguageSwitcher } from "@/components/marketing/language-switcher";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
@@ -17,6 +18,8 @@ export function AppTopbar({
   planBadge = null,
   tenderAnalysisEnabled = false,
   companyProfileEnabled = true,
+  matchingEngineEnabled = false,
+  newMatchesCount = 0,
 }: {
   locale: Locale;
   languageLabel: string;
@@ -28,6 +31,8 @@ export function AppTopbar({
   planBadge?: PlanBadgeIdentity | null;
   tenderAnalysisEnabled?: boolean;
   companyProfileEnabled?: boolean;
+  matchingEngineEnabled?: boolean;
+  newMatchesCount?: number;
 }) {
   const t = shell;
   const companyHref = companyProfileEnabled ? "/company" : "/upgrade";
@@ -43,6 +48,14 @@ export function AppTopbar({
         </div>
 
         <div className="flex min-w-0 shrink-0 items-center gap-1 sm:gap-2.5">
+          {matchingEngineEnabled ? (
+            <MatchedOpportunitiesNotifyButton
+              initialCount={newMatchesCount}
+              label={t.matchedOpportunitiesNotify}
+              newMatchesLabel={t.newMatchesNotify}
+            />
+          ) : null}
+
           <LanguageSwitcher
             current={locale}
             label={languageLabel}

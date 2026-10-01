@@ -10,8 +10,12 @@ import type {
   MatchingSponsorshipPricingPlanStatus,
   MatchingSponsorshipPricingRequestStatus,
 } from "@prisma/client";
-import { getMatchingSponsorshipBillingPort } from "./sponsorship-billing";
 import { isMatchingSponsorshipGloballyEnabled } from "./sponsorship-settings";
+import {
+  createSponsorshipCheckoutSession,
+  listEnabledSponsorshipGateways,
+  type SponsorshipCheckoutGateway,
+} from "./sponsorship-checkout";
 
 export type MatchingSponsorshipPricingPlanDto = {
   id: string;
@@ -288,7 +292,15 @@ export async function createSponsorshipPricingRequest(input: {
   companyId: string;
   planId: string;
   notes?: string | null;
-}): Promise<MatchingSponsorshipPricingRequestDto> {
+  userEmail: string;
+  successUrl: string;
+  cancelUrl: string;
+  gateway?: SponsorshipCheckoutGateway | null;
+}): Promise<{
+  request: MatchingSponsorshipPricingRequestDto;
+  checkoutUrl: string;
+  provider: SponsorshipCheckoutGateway;
+}> {
   if (!(await isMatchingSponsorshipGloballyEnabled())) {
     throw new AppError(
       ErrorCode.FORBIDDEN,
@@ -319,35 +331,44 @@ export async function createSponsorshipPricingRequest(input: {
     data: {
       companyId: input.companyId,
       planId: plan.id,
-      status: "REQUESTED",
+      status: "PENDING_PAYMENT",
       planSnapshot: snapshotPlan(dto),
       notes: input.notes?.trim() || null,
     },
     include: { plan: true },
   });
 
-  // NoOp billing seam — request/order intent only; no real charge.
-  const billing = await getMatchingSponsorshipBillingPort().prepareSponsorshipBilling(
-    {
-      sponsorshipId: row.id,
-      sponsorCompanyId: input.companyId,
-      opportunityId: "pricing-request",
-      amountCents: plan.priceCents,
-      currency: plan.currency,
-    },
-  );
+  const checkout = await createSponsorshipCheckoutSession({
+    companyId: input.companyId,
+    userEmail: input.userEmail,
+    requestId: row.id,
+    planId: plan.id,
+    planName: plan.name,
+    amountCents: plan.priceCents,
+    currency: plan.currency,
+    successUrl: input.successUrl,
+    cancelUrl: input.cancelUrl,
+    gateway: input.gateway,
+  });
 
   const updated = await prisma.matchingSponsorshipPricingRequest.update({
     where: { id: row.id },
     data: {
-      billingRef: billing.billingRef,
-      billingStatus: billing.billingStatus,
+      billingRef: checkout.billingRef,
+      billingStatus: `PENDING:${checkout.provider}`,
     },
     include: { plan: true },
   });
 
-  return toRequestDto(updated);
+  return {
+    request: toRequestDto(updated),
+    checkoutUrl: checkout.url,
+    provider: checkout.provider,
+  };
 }
+
+export { listEnabledSponsorshipGateways };
+export type { SponsorshipCheckoutGateway };
 
 export async function listSponsorshipPricingRequestsForCompany(
   companyId: string,

@@ -151,8 +151,8 @@ test("G. cancel before conversion assigns Free Workspace", () => {
   assert.equal(slugToLegacyPlan("free"), "FREE");
   assert.ok(PLAN_ENTITLEMENT_DEFAULTS.free?.includes("company_profile"));
   assert.ok(PLAN_ENTITLEMENT_DEFAULTS.free?.includes("document_compliance"));
+  assert.ok(PLAN_ENTITLEMENT_DEFAULTS.free?.includes("matching_engine"));
   assert.ok(!PLAN_ENTITLEMENT_DEFAULTS.free?.includes("tender_analysis"));
-  assert.ok(!PLAN_ENTITLEMENT_DEFAULTS.free?.includes("matching_engine"));
 });
 
 test("H. Free Workspace is not a checkout product", () => {

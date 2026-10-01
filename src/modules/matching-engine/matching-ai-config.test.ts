@@ -276,7 +276,7 @@ describe("Matching AI — gate & fallback", () => {
   it("generate path uses runtime config and never calls AI on strip", () => {
     const service = readSrc("src/modules/matching-engine/internal/service.ts");
     assert.ok(service.includes("getMatchingAiRuntimeConfig"));
-    assert.ok(service.includes("createMatchingAiReorderFn"));
+    assert.ok(service.includes("createMatchingAiStructuredRefineFn"));
     assert.ok(service.includes("meetsRelevanceThreshold"));
     const strip = readSrc("src/modules/matching-engine/ui/matched-strip.tsx");
     assert.ok(!strip.includes("getMatchingAiRuntimeConfig"));

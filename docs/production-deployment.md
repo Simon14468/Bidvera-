@@ -97,10 +97,11 @@ npm run db:seed
 
 - Confirm `STORAGE_ROOT` and `BACKUP_ROOT` exist, writable by `bidvera`, and are **not** the same path
 - Set `DATABASE_URL_DIRECT` (required for Production readiness backups READY) and optional isolated `BACKUP_RESTORE_DATABASE_URL` before restore-tests
-- **Persist app-tree uploads across releases** (not covered by `STORAGE_ROOT`):
-  - `public/uploads/avatars` — profile photos
-  - `public/uploads/landing` — Super Admin landing media  
-  Recommended: bind-mount or symlink from `/var/lib/bidvera/public-uploads/{avatars,landing}` into `/opt/bidvera/public/uploads/` so a fresh `git`/`rsync` deploy does not wipe them.
+- **Shared public uploads (profile photos + landing media)** — required for multi-instance:
+  - Set `PUBLIC_UPLOADS_ROOT=/var/lib/bidvera/public-uploads`
+  - `sudo mkdir -p /var/lib/bidvera/public-uploads/{avatars,landing} && sudo chown -R bidvera:bidvera /var/lib/bidvera/public-uploads`
+  - Nginx serves `/uploads/*` from that directory (see `deploy/nginx/bidvera.conf`); Next.js route handlers are the fallback
+  - Migrate any existing files from a single instance’s `public/uploads/` into this shared root before switching traffic
 - Backup encryption uses `AUTH_SECRET` (AES-256-GCM). There is no separate backup encryption env var.
 
 ### E. Nginx + HTTPS

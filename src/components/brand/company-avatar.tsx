@@ -1,5 +1,8 @@
+"use client";
+
 import { cn } from "@/lib/cn";
 import Image from "next/image";
+import { useState } from "react";
 
 /**
  * Default company/profile mark.
@@ -22,7 +25,9 @@ export function CompanyAvatar({
   alt?: string;
 }) {
   const photo = src?.trim() || null;
-  const isCustom = Boolean(photo && photo !== COMPANY_AVATAR_SRC);
+  const [failed, setFailed] = useState(false);
+  const isCustom = Boolean(photo && photo !== COMPANY_AVATAR_SRC && !failed);
+  const resolvedSrc = isCustom ? photo! : COMPANY_AVATAR_SRC;
 
   return (
     <span
@@ -33,7 +38,7 @@ export function CompanyAvatar({
       style={{ width: size, height: size }}
     >
       <Image
-        src={photo || COMPANY_AVATAR_SRC}
+        src={resolvedSrc}
         alt={alt}
         width={size}
         height={size}
@@ -44,6 +49,9 @@ export function CompanyAvatar({
         }
         unoptimized={isCustom}
         aria-hidden={!alt}
+        onError={() => {
+          if (photo && photo !== COMPANY_AVATAR_SRC) setFailed(true);
+        }}
       />
     </span>
   );

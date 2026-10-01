@@ -209,18 +209,90 @@ export function PaymentCredentialsPanel({
               autoComplete="off"
             />
           </label>
-          <label className="mt-3 block text-sm text-slate-300">
-            Environment
-            <select
-              className={inputClass}
-              value={ppEnv}
-              disabled={paypal.environmentLockedByEnv}
-              onChange={(e) => setPpEnv(e.target.value as "sandbox" | "live")}
+          <div className="mt-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="text-sm font-medium text-slate-200">Checkout mode</p>
+              <span
+                className={
+                  paypal.environment === "live"
+                    ? "rounded-full bg-rose-500/15 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-rose-300"
+                    : "rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-amber-300"
+                }
+              >
+                Active: {paypal.environment === "live" ? "Live" : "Sandbox"}
+              </span>
+            </div>
+            <div
+              className="mt-2 grid grid-cols-2 gap-1 rounded-xl border border-slate-700 bg-slate-950 p-1"
+              role="group"
+              aria-label="PayPal Sandbox or Live mode"
             >
-              <option value="sandbox">Sandbox</option>
-              <option value="live">Live</option>
-            </select>
-          </label>
+              {(["sandbox", "live"] as const).map((mode) => {
+                const selected = ppEnv === mode;
+                const active = paypal.environment === mode;
+                return (
+                  <button
+                    key={mode}
+                    type="button"
+                    disabled={pending || paypal.environmentLockedByEnv}
+                    className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 ${
+                      selected
+                        ? mode === "live"
+                          ? "bg-rose-600 text-white shadow-sm"
+                          : "bg-amber-500 text-slate-950 shadow-sm"
+                        : "text-slate-300 hover:bg-slate-800"
+                    }`}
+                    onClick={() => {
+                      setPpEnv(mode);
+                      if (
+                        paypal.environmentLockedByEnv ||
+                        mode === paypal.environment
+                      ) {
+                        return;
+                      }
+                      setMsg(null);
+                      setErr(null);
+                      start(async () => {
+                        const r = await saSavePaypalCredentials({
+                          environment: mode,
+                        });
+                        if (!r.ok) {
+                          setErr(r.error.message);
+                          setPpEnv(paypal.environment);
+                          return;
+                        }
+                        setPaypal(r.data);
+                        setPpEnv(r.data.environment);
+                        setMsg(
+                          mode === "live"
+                            ? "PayPal switched to Live — real charges."
+                            : "PayPal switched to Sandbox — test payments only.",
+                        );
+                        router.refresh();
+                      });
+                    }}
+                  >
+                    {mode === "live" ? "Live" : "Sandbox"}
+                    {active ? " ✓" : ""}
+                  </button>
+                );
+              })}
+            </div>
+            {paypal.environmentLockedByEnv ? (
+              <p className="mt-2 text-xs text-amber-400">
+                Locked by{" "}
+                <code className="text-amber-300">PAYPAL_ENVIRONMENT</code> /{" "}
+                <code className="text-amber-300">PAYPAL_MODE</code> on the server.
+                Remove that env var to switch from Super Admin.
+              </p>
+            ) : (
+              <p className="mt-2 text-xs text-slate-500">
+                One-click switch for this server. Live uses real money; Sandbox is
+                for testing. Unsaved credential fields are not required to change
+                mode.
+              </p>
+            )}
+          </div>
 
           <div className="mt-4 flex flex-wrap gap-2">
             <button

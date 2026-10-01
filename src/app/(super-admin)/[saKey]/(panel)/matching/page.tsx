@@ -1,4 +1,6 @@
 import { requireSuperAdmin } from "@/auth/super-admin-session";
+import { MatchingActivationAdminPanel } from "@/components/super-admin/matching-activation-admin";
+import { getMatchingActivationAdminSnapshot } from "@/application/admin/matching-activation-service";
 import { getMatchingEngineHealthAnalytics } from "@/modules/matching-engine";
 
 export const dynamic = "force-dynamic";
@@ -10,17 +12,32 @@ function pct(rate: number | null | undefined): string {
 
 export default async function SaMatchingHealthPage() {
   await requireSuperAdmin();
-  const health = await getMatchingEngineHealthAnalytics();
+  const [health, activation] = await Promise.all([
+    getMatchingEngineHealthAnalytics(),
+    getMatchingActivationAdminSnapshot(),
+  ]);
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold text-white">Matching health</h1>
+        <h1 className="text-2xl font-semibold text-white">Matching</h1>
         <p className="mt-1 text-sm text-slate-400">
-          Aggregate Matching Engine ops metrics. Company-private behavior is not
-          exposed. Interest is self-reported — not a verified deal outcome.
+          Enable Matching, refresh opportunities, and run generation for eligible
+          companies. Company-private behavior is not exposed.
         </p>
       </div>
+
+      <MatchingActivationAdminPanel
+        initial={{
+          matchingEnabledGlobal: activation.matchingEnabledGlobal,
+          run: activation.run,
+          activeOpportunities: activation.activeOpportunities,
+          eligibleProfiles: activation.eligibleProfiles,
+          recommendationsVisible: activation.recommendationsVisible,
+          tedIngestEnabled: activation.tedIngestEnabled,
+          tedFiltersConfigured: activation.tedFiltersConfigured,
+        }}
+      />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Stat
@@ -98,8 +115,8 @@ export default async function SaMatchingHealthPage() {
           </ul>
         ) : (
           <p className="mt-3 text-sm text-emerald-300/90">
-            Corpus advisory clear — Matching Engine still remains OFF until
-            explicitly enabled.
+            Corpus advisory clear — use Enable Matching above to turn the module
+            on.
           </p>
         )}
       </section>

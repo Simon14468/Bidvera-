@@ -12,6 +12,7 @@ import {
   isCommerciallyAvailableFeature,
   isFeatureEnabledInMap,
   isIsolatedInternalFeatureKey,
+  isPublicCatalogFeature,
   planDefaultFeatureKeys,
   planHasAllCommercialModules,
   planQualifiesForPremiumPricingHover,
@@ -45,14 +46,23 @@ test("premium feature keys are in admin catalog and plan defaults", () => {
   }
 });
 
-test("free workspace is limited and does not activate Matching Engine", () => {
+test("free workspace includes Matching Engine with core readiness modules", () => {
   const free = planDefaultFeatureKeys("free");
   assert.ok(free.includes("company_profile"));
   assert.ok(free.includes("document_compliance"));
-  assert.equal(free.includes("matching_engine"), false);
+  assert.equal(free.includes("matching_engine"), true);
   assert.equal(free.includes("tender_analysis"), false);
   assert.equal(free.includes("decision_simulator"), false);
-  assert.equal(isCommerciallyAvailableFeature("matching_engine"), false);
+  assert.equal(isCommerciallyAvailableFeature("matching_engine"), true);
+});
+
+test("Matching Engine stays off public pricing catalogs while entitled in-app", () => {
+  assert.equal(isCommerciallyAvailableFeature("matching_engine"), true);
+  assert.equal(isPublicCatalogFeature("matching_engine"), false);
+  assert.equal(isPublicCatalogFeature("company_profile"), true);
+  const entitlements = readSrc("src/services/entitlements/index.ts");
+  assert.match(entitlements, /matching\.engine\.sa_kill_switch/);
+  assert.match(entitlements, /ensureMatchingEngineCommercialShip/);
 });
 
 test("trial plan excludes premium capabilities (same entitlement system)", () => {
@@ -231,10 +241,9 @@ test("marketing labels include Plan Editor modules when enabled", () => {
     false,
     "tender_analysis stays internal",
   );
-  assert.equal(
-    labels.some((l) => /matching/i.test(l)),
-    false,
-    "matching_engine stays unshipped",
+  assert.ok(
+    labels.some((l) => /matching|matched opportunities/i.test(l)),
+    "matching_engine is commercially available when enabled on a plan",
   );
 });
 

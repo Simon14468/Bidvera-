@@ -44,6 +44,12 @@ export type MatchRecommendationDto = {
   isNew: boolean;
   rankedAt: string;
   opportunity: PublicOpportunityDto;
+  /** Public-safe capability chips (never AI internals). */
+  capabilityChips: string[];
+  /** Public-safe gap / missing requirement notes. */
+  gapNotes: string[];
+  /** Dimension labels that support the match. */
+  matchedLabels: string[];
 };
 
 export type CompanyMatchingProfileDto = {

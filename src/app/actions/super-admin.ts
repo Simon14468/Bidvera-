@@ -15,6 +15,12 @@ import {
   testMatchingAiConnectionForAdmin,
 } from "@/application/admin/matching-ai-service";
 import {
+  getMatchingActivationAdminSnapshot,
+  saRefreshMatchingOpportunitiesForAdmin as refreshMatchingOpportunitiesForAdmin,
+  saRunMatchingNowForAdmin as runMatchingNowForAdmin,
+  saSetMatchingEngineGlobalForAdmin as setMatchingEngineGlobalForAdmin,
+} from "@/application/admin/matching-activation-service";
+import {
   getMatchingSponsorshipAdminSnapshot,
   saCreateMatchingSponsorship as createMatchingSponsorshipForAdmin,
   saSetMatchingSponsorshipGlobal as setMatchingSponsorshipGlobalForAdmin,
@@ -963,6 +969,55 @@ export async function saTestMatchingAiConnection(raw?: unknown) {
     const data = await testMatchingAiConnectionForAdmin(
       ctx,
       raw,
+      await requestIpHash(),
+    );
+    return { ok: true as const, data };
+  } catch (error) {
+    return { ok: false as const, error: toSafeClientError(error) };
+  }
+}
+
+export async function saGetMatchingActivationStatus() {
+  try {
+    await requireSuperAdmin();
+    return {
+      ok: true as const,
+      data: await getMatchingActivationAdminSnapshot(),
+    };
+  } catch (error) {
+    return { ok: false as const, error: toSafeClientError(error) };
+  }
+}
+
+export async function saSetMatchingEngineGlobal(raw: unknown) {
+  try {
+    const ctx = await requireWritableSuperAdmin();
+    const data = await setMatchingEngineGlobalForAdmin(
+      ctx,
+      raw,
+      await requestIpHash(),
+    );
+    return { ok: true as const, data };
+  } catch (error) {
+    return { ok: false as const, error: toSafeClientError(error) };
+  }
+}
+
+export async function saRunMatchingNow() {
+  try {
+    const ctx = await requireWritableSuperAdmin();
+    const data = await runMatchingNowForAdmin(ctx, await requestIpHash());
+    return { ok: true as const, data };
+  } catch (error) {
+    return { ok: false as const, error: toSafeClientError(error) };
+  }
+}
+
+export async function saRefreshMatchingOpportunities() {
+  try {
+    const ctx = await requireWritableSuperAdmin();
+    const data = await refreshMatchingOpportunitiesForAdmin(
+      ctx,
       await requestIpHash(),
     );
     return { ok: true as const, data };

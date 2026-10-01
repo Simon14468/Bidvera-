@@ -50,9 +50,9 @@ test("publicEnabledFeatureKeys falls back to slug defaults without PlanFeature r
   const keys = publicEnabledFeatureKeys({ slug: "free" } as Parameters<
     typeof publicEnabledFeatureKeys
   >[0]);
-  assert.deepEqual(keys, planDefaultFeatureKeys("free"));
   assert.deepEqual(keys, ["company_profile", "document_compliance"]);
   assert.equal(keys.includes("matching_engine"), false);
+  assert.ok(planDefaultFeatureKeys("free").includes("matching_engine"));
 });
 
 test("publicStripeTrialDays is 14 for eligible Stripe paid plans", () => {

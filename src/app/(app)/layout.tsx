@@ -54,6 +54,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     teamWorkflowEnabled,
     smartAlertsEnabled,
     companyProfileEnabled,
+    newMatchesCountRaw,
   ] = await Promise.all([
     loadAppChromeSnapshot(companyId, locale),
     import("@/modules/tender-analysis").then((m) =>
@@ -81,6 +82,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     hasFeature(companyId, "team_collaboration").catch(() => false),
     hasFeature(companyId, "smart_alerts").catch(() => false),
     hasFeature(companyId, "company_profile").catch(() => false),
+    import("@/modules/matching-engine")
+      .then((m) => m.countMatchedOpportunityNotificationsForCompany(companyId))
+      .catch(() => 0),
   ]);
 
   // Internal/admin-only: never surface in company nav/chrome (SA can still open /tenders).
@@ -92,6 +96,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     isCommerciallyAvailableFeature("matching_engine") && matchingEngineAvailable;
 
   const unreadAlerts = smartAlertsEnabled ? chrome.unreadAlerts : 0;
+  const newMatchesCount = matchingEngineEnabled ? newMatchesCountRaw : 0;
 
   const trialBanner = chrome.trialChrome
     ? formatFreeWorkspaceTrialBanner(chrome.trialChrome, {
@@ -138,6 +143,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             planBadge={chrome.planBadge}
             tenderAnalysisEnabled={tenderAnalysisEnabled}
             companyProfileEnabled={companyProfileEnabled}
+            matchingEngineEnabled={matchingEngineEnabled}
+            newMatchesCount={newMatchesCount}
           />
           <main className="min-w-0 flex-1 overflow-x-clip px-3 py-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:px-6 sm:py-6 lg:px-8">
             {trialBanner ? <FreeWorkspaceTrialBanner {...trialBanner} /> : null}

@@ -225,7 +225,75 @@ export type AppModuleBundle = {
     sponsoredRequestSubtitle: string;
     sponsoredUnavailableSubtitle: string;
     backToMatched: string;
+    sponsoredCta: string;
+    sponsoredPayWithStripe: string;
+    sponsoredPayWithPayPal: string;
+    sponsoredGatewayLabel: string;
+    sponsoredRedirecting: string;
+    sponsoredNoGateways: string;
+    sponsoredPaidSuccess: string;
+    sponsoredPaidPending: string;
+    sponsoredPaidError: string;
+    sponsoredCheckoutCancelled: string;
+    sponsoredNoPlansTitle: string;
+    sponsoredNoPlansBody: string;
+    sponsoredPeriodOneTime: string;
+    sponsoredPeriodThreeDays: string;
+    sponsoredPeriodMonthly: string;
+    sponsoredPeriodQuarterly: string;
+    sponsoredPeriodYearly: string;
+    sponsoredCampaignDays: string;
+    sponsoredCampaignDurationAdmin: string;
+    sponsoredUpToCampaigns: string;
+    sponsoredUpToImpressions: string;
+    sponsoredConfirmTitle: string;
+    sponsoredConfirmBody: string;
+    sponsoredPlanLabel: string;
+    sponsoredPriceLabel: string;
+    sponsoredDurationLabel: string;
+    sponsoredDays: string;
+    sponsoredAsConfigured: string;
+    sponsoredCampaignsCount: string;
+    sponsoredDefaultBenefit1: string;
+    sponsoredDefaultBenefit2: string;
+    sponsoredDefaultBenefit3: string;
+    sponsoredBenefitPriority: string;
+    sponsoredBenefitNoBypass: string;
+    sponsoredSubmit: string;
+    sponsoredSubmitSuccess: string;
+    sponsoredSubmitError: string;
     matchDisclaimer: string;
+    dashboardSectionTitle: string;
+    dashboardSectionSubtitle: string;
+    viewMatch: string;
+    viewAllOpportunities: string;
+    whyMatched: string;
+    gapsLabel: string;
+    highlyRelevant: string;
+    emptyImproveProfile: string;
+    updateCompanyProfile: string;
+    refreshMatches: string;
+    filterRelevance: string;
+    filterDeadline: string;
+    filterGeography: string;
+    filterCategory: string;
+    filterStatus: string;
+    statusAll: string;
+    statusNew: string;
+    statusViewed: string;
+    statusHighlyRelevant: string;
+    interested: string;
+    viewOpportunity: string;
+    locationLabel: string;
+    deadlineLabel: string;
+    matchedCapabilities: string;
+    noMatchFilter: string;
+    notEligibleTitle: string;
+    notEligibleBody: string;
+    unavailableTitle: string;
+    unavailableBody: string;
+    emptyTitleDashboard: string;
+    emptyBodyDashboard: string;
   };
   questionnaireAssistant: ModuleUi & {
     workbenchTitle: string;
@@ -705,12 +773,90 @@ const en: AppModuleBundle = {
     sponsoredEyebrow: "Sponsored matching",
     sponsoredRequestTitle: "Request Sponsored Matching",
     sponsoredRequestSubtitle:
-      "Choose an active plan to request sponsorship. This is a request / order intent only — payment is not processed here, and sponsorship never bypasses relevance.",
+      "Choose an active plan and pay securely with Stripe or PayPal. Sponsorship never bypasses matching relevance.",
     sponsoredUnavailableSubtitle:
       "Sponsored Matching is not available right now. Organic matched opportunities remain available when Matching Engine is enabled for your workspace.",
     backToMatched: "Back to matched opportunities",
+    sponsoredCta: "Sponsored Matching",
+    sponsoredPayWithStripe: "Pay with Stripe",
+    sponsoredPayWithPayPal: "Pay with PayPal",
+    sponsoredGatewayLabel: "Payment method",
+    sponsoredRedirecting: "Redirecting to checkout…",
+    sponsoredNoGateways:
+      "Payment methods are not configured. Ask Super Admin to enable Stripe or PayPal in Payments.",
+    sponsoredPaidSuccess:
+      "Payment received. Your Sponsored Matching request is confirmed.",
+    sponsoredPaidPending: "Payment is still processing. Refresh in a moment.",
+    sponsoredPaidError: "We could not confirm payment. Contact support if you were charged.",
+    sponsoredCheckoutCancelled: "Checkout was cancelled. No payment was taken.",
+    sponsoredNoPlansTitle: "No sponsored plans available",
+    sponsoredNoPlansBody:
+      "Active Sponsored Matching plans will appear here when Super Admin publishes them.",
+    sponsoredPeriodOneTime: "One-time",
+    sponsoredPeriodThreeDays: "3 days",
+    sponsoredPeriodMonthly: "Monthly",
+    sponsoredPeriodQuarterly: "Quarterly",
+    sponsoredPeriodYearly: "Yearly",
+    sponsoredCampaignDays: "{days}-day campaign",
+    sponsoredCampaignDurationAdmin: "Campaign duration set by admin",
+    sponsoredUpToCampaigns: "up to {n} campaigns",
+    sponsoredUpToImpressions: "up to {n} impressions",
+    sponsoredConfirmTitle: "Confirm & pay",
+    sponsoredConfirmBody:
+      "You will be redirected to Stripe or PayPal to complete payment using Bidvera’s configured payment credentials. Sponsorship never bypasses matching relevance.",
+    sponsoredPlanLabel: "Plan",
+    sponsoredPriceLabel: "Price",
+    sponsoredDurationLabel: "Duration / limits",
+    sponsoredDays: "{days} days",
+    sponsoredAsConfigured: "As configured",
+    sponsoredCampaignsCount: "{n} campaigns",
+    sponsoredDefaultBenefit1: "Sponsored label among relevant matches only",
+    sponsoredDefaultBenefit2: "Does not bypass eligibility or relevance",
+    sponsoredDefaultBenefit3: "Organic matches remain primary at equal relevance",
+    sponsoredBenefitPriority: "Priority placement among relevant matches",
+    sponsoredBenefitNoBypass: "Does not bypass relevance",
+    sponsoredSubmit: "Continue to payment",
+    sponsoredSubmitSuccess:
+      "Request submitted. Our team will follow up — no payment was charged.",
+    sponsoredSubmitError: "Could not start checkout.",
     matchDisclaimer:
       "A match means Bidvera identified a relevant opportunity — not a won contract.",
+    dashboardSectionTitle: "Matching Opportunities",
+    dashboardSectionSubtitle:
+      "Projects that fit your company capabilities, location, and qualifications.",
+    viewMatch: "View match",
+    viewAllOpportunities: "View all opportunities",
+    whyMatched: "Why it matches",
+    gapsLabel: "Gaps to review",
+    highlyRelevant: "Highly relevant",
+    emptyImproveProfile:
+      "Complete services, geography, and certifications on your company profile to improve match quality.",
+    updateCompanyProfile: "Update company profile",
+    refreshMatches: "Refresh matches",
+    filterRelevance: "Relevance",
+    filterDeadline: "Deadline",
+    filterGeography: "Geography",
+    filterCategory: "Category",
+    filterStatus: "Status",
+    statusAll: "All",
+    statusNew: "New",
+    statusViewed: "Viewed",
+    statusHighlyRelevant: "Highly relevant",
+    interested: "I'm interested",
+    viewOpportunity: "View opportunity",
+    locationLabel: "Location",
+    deadlineLabel: "Deadline",
+    matchedCapabilities: "Matched capabilities",
+    noMatchFilter: "No matches for these filters.",
+    notEligibleTitle: "Complete your matching profile",
+    notEligibleBody:
+      "Add company capabilities and geography so Bidvera can evaluate project fit. Matches are never fabricated.",
+    unavailableTitle: "Matching is not on this plan",
+    unavailableBody:
+      "When Matching is enabled for your workspace, relevant project matches appear here.",
+    emptyTitleDashboard: "No matches yet",
+    emptyBodyDashboard:
+      "When live projects fit your eligible profile, they appear here. Improving services and geography raises precision.",
   },
   questionnaireAssistant: {
     eyebrow: "Questionnaire Assistant",
@@ -1095,12 +1241,91 @@ Object.assign(es.matchedOpportunities, {
   sponsoredEyebrow: "Matching patrocinado",
   sponsoredRequestTitle: "Solicitar matching patrocinado",
   sponsoredRequestSubtitle:
-    "Elige un plan activo para solicitar patrocinio. Solo es intención de pedido — el pago no se procesa aquí y el patrocinio nunca elude la relevancia.",
+    "Elige un plan activo y paga de forma segura con Stripe o PayPal. El patrocinio nunca elude la relevancia del matching.",
   sponsoredUnavailableSubtitle:
     "El matching patrocinado no está disponible ahora. Las oportunidades orgánicas siguen disponibles cuando Matching Engine está activo.",
   backToMatched: "Volver a oportunidades coincidentes",
+  sponsoredCta: "Matching patrocinado",
+  sponsoredPayWithStripe: "Pagar con Stripe",
+  sponsoredPayWithPayPal: "Pagar con PayPal",
+  sponsoredGatewayLabel: "Método de pago",
+  sponsoredRedirecting: "Redirigiendo al pago…",
+  sponsoredNoGateways:
+    "No hay métodos de pago configurados. Pide a Super Admin activar Stripe o PayPal en Payments.",
+  sponsoredPaidSuccess:
+    "Pago recibido. Tu solicitud de matching patrocinado está confirmada.",
+  sponsoredPaidPending: "El pago aún se está procesando. Actualiza en un momento.",
+  sponsoredPaidError:
+    "No pudimos confirmar el pago. Contacta soporte si se te cobró.",
+  sponsoredCheckoutCancelled: "Checkout cancelado. No se realizó ningún cobro.",
+  sponsoredNoPlansTitle: "No hay planes patrocinados disponibles",
+  sponsoredNoPlansBody:
+    "Los planes de matching patrocinado activos aparecerán aquí cuando Super Admin los publique.",
+  sponsoredPeriodOneTime: "Pago único",
+  sponsoredPeriodThreeDays: "3 días",
+  sponsoredPeriodMonthly: "Mensual",
+  sponsoredPeriodQuarterly: "Trimestral",
+  sponsoredPeriodYearly: "Anual",
+  sponsoredCampaignDays: "Campaña de {days} días",
+  sponsoredCampaignDurationAdmin: "Duración de campaña definida por el administrador",
+  sponsoredUpToCampaigns: "hasta {n} campañas",
+  sponsoredUpToImpressions: "hasta {n} impresiones",
+  sponsoredConfirmTitle: "Confirmar y pagar",
+  sponsoredConfirmBody:
+    "Serás redirigido a Stripe o PayPal para completar el pago con las credenciales configuradas en Bidvera. El patrocinio nunca elude la relevancia del matching.",
+  sponsoredPlanLabel: "Plan",
+  sponsoredPriceLabel: "Precio",
+  sponsoredDurationLabel: "Duración / límites",
+  sponsoredDays: "{days} días",
+  sponsoredAsConfigured: "Según configuración",
+  sponsoredCampaignsCount: "{n} campañas",
+  sponsoredDefaultBenefit1: "Etiqueta patrocinada solo entre coincidencias relevantes",
+  sponsoredDefaultBenefit2: "No elude elegibilidad ni relevancia",
+  sponsoredDefaultBenefit3: "Las coincidencias orgánicas siguen siendo prioritarias a igual relevancia",
+  sponsoredBenefitPriority: "Colocación prioritaria entre coincidencias relevantes",
+  sponsoredBenefitNoBypass: "No elude la relevancia",
+  sponsoredSubmit: "Continuar al pago",
+  sponsoredSubmitSuccess:
+    "Solicitud enviada. Nuestro equipo hará seguimiento — no se cobró ningún pago.",
+  sponsoredSubmitError: "No se pudo iniciar el checkout.",
   matchDisclaimer:
     "Una coincidencia significa que Bidvera identificó una oportunidad relevante, no un contrato ganado.",
+  dashboardSectionTitle: "Oportunidades de matching",
+  dashboardSectionSubtitle:
+    "Proyectos que encajan con las capacidades, ubicación y cualificaciones de tu empresa.",
+  viewMatch: "Ver coincidencia",
+  viewAllOpportunities: "Ver todas las oportunidades",
+  whyMatched: "Por qué coincide",
+  gapsLabel: "Brechas a revisar",
+  highlyRelevant: "Muy relevante",
+  emptyImproveProfile:
+    "Completa servicios, geografía y certificaciones en el perfil de empresa para mejorar la calidad del match.",
+  updateCompanyProfile: "Actualizar perfil de empresa",
+  refreshMatches: "Actualizar coincidencias",
+  filterRelevance: "Relevancia",
+  filterDeadline: "Plazo",
+  filterGeography: "Geografía",
+  filterCategory: "Categoría",
+  filterStatus: "Estado",
+  statusAll: "Todos",
+  statusNew: "Nuevo",
+  statusViewed: "Visto",
+  statusHighlyRelevant: "Muy relevante",
+  interested: "Me interesa",
+  viewOpportunity: "Ver oportunidad",
+  locationLabel: "Ubicación",
+  deadlineLabel: "Plazo",
+  matchedCapabilities: "Capacidades coincidentes",
+  noMatchFilter: "No hay coincidencias para estos filtros.",
+  notEligibleTitle: "Completa tu perfil de matching",
+  notEligibleBody:
+    "Añade capacidades y geografía de la empresa para que Bidvera evalúe el encaje. Nunca se inventan coincidencias.",
+  unavailableTitle: "Matching no está en este plan",
+  unavailableBody:
+    "Cuando Matching esté activo en tu espacio, aquí aparecerán proyectos relevantes.",
+  emptyTitleDashboard: "Aún no hay coincidencias",
+  emptyBodyDashboard:
+    "Cuando proyectos activos encajen con tu perfil elegible, aparecerán aquí. Mejorar servicios y geografía aumenta la precisión.",
 });
 Object.assign(es.questionnaireAssistant, {
   eyebrow: "Asistente de cuestionarios",

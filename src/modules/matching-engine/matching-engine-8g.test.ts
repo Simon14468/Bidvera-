@@ -138,12 +138,17 @@ const cyberProfile: MatchingProfileSnapshot = {
 };
 
 describe("Feature 8G — production readiness defaults", () => {
-  it("keeps matching_engine OFF / unshipped by default", () => {
+  it("ships matching_engine ON by default (commercially available)", () => {
     assert.ok(ENTITLEMENT_FEATURE_KEYS.includes("matching_engine"));
-    assert.ok(UNSHIPPED_ENTITLEMENT_KEYS.includes("matching_engine"));
+    assert.equal(
+      (UNSHIPPED_ENTITLEMENT_KEYS as readonly string[]).includes(
+        "matching_engine",
+      ),
+      false,
+    );
     assert.equal(MATCHING_ENGINE_FEATURE_KEY, "matching_engine");
     const catalog = readSrc("src/domain/billing/entitlement-catalog.ts");
-    assert.match(catalog, /defaultEnabledGlobal:\s*false/);
+    assert.match(catalog, /defaultEnabledGlobal:\s*true/);
   });
 
   it("wires SA opportunity audit and sponsorship company gate in source", () => {

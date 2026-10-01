@@ -315,6 +315,8 @@ export type Dictionary = {
       decisionWorkspace: string;
       yourCompany: string;
       workspace: string;
+      matchedOpportunitiesNotify: string;
+      newMatchesNotify: string;
     };
     dashboard: {
       eyebrow: string;
@@ -1490,6 +1492,8 @@ const en: Dictionary = {
       decisionWorkspace: "Bidvera workspace",
       yourCompany: "Your company",
       workspace: "Workspace",
+      matchedOpportunitiesNotify: "Matched opportunities",
+      newMatchesNotify: "{count} new matched opportunities",
     },
     dashboard: {
       eyebrow: "Your Bidvera platform",
@@ -2727,6 +2731,8 @@ const es: Dictionary = {
       decisionWorkspace: "Espacio Bidvera",
       yourCompany: "Tu empresa",
       workspace: "Espacio de trabajo",
+      matchedOpportunitiesNotify: "Oportunidades coincidentes",
+      newMatchesNotify: "{count} nuevas oportunidades coincidentes",
     },
     dashboard: {
       eyebrow: "Resumen ejecutivo",
@@ -3943,6 +3949,8 @@ const zh: Dictionary = {
       decisionWorkspace: "Bidvera 工作区",
       yourCompany: "您的公司",
       workspace: "工作区",
+      matchedOpportunitiesNotify: "匹配的机会",
+      newMatchesNotify: "{count} 个新匹配机会",
     },
     dashboard: {
       eyebrow: "高管概览",
@@ -5126,6 +5134,8 @@ const ar: Dictionary = {
       decisionWorkspace: "مساحة Bidvera",
       yourCompany: "شركتك",
       workspace: "مساحة العمل",
+      matchedOpportunitiesNotify: "الفرص المطابقة",
+      newMatchesNotify: "{count} فرص مطابقة جديدة",
     },
     dashboard: {
       eyebrow: "نظرة تنفيذية",
@@ -6357,6 +6367,8 @@ const fr: Dictionary = {
       decisionWorkspace: "Espace Bidvera",
       yourCompany: "Votre entreprise",
       workspace: "Espace de travail",
+      matchedOpportunitiesNotify: "Opportunités correspondantes",
+      newMatchesNotify: "{count} nouvelles opportunités correspondantes",
     },
     dashboard: {
       eyebrow: "Vue exécutive",

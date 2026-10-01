@@ -106,11 +106,16 @@ async function seedCompany(slugSuffix: string) {
 }
 
 describe("Feature 8D — lifecycle domain helpers", () => {
-  it("keeps matching_engine OFF / unshipped by default", () => {
+  it("ships matching_engine ON by default (commercially available)", () => {
     assert.ok(ENTITLEMENT_FEATURE_KEYS.includes("matching_engine"));
-    assert.ok(UNSHIPPED_ENTITLEMENT_KEYS.includes("matching_engine"));
+    assert.equal(
+      (UNSHIPPED_ENTITLEMENT_KEYS as readonly string[]).includes(
+        "matching_engine",
+      ),
+      false,
+    );
     const catalog = readSrc("src/domain/billing/entitlement-catalog.ts");
-    assert.match(catalog, /defaultEnabledGlobal:\s*false/);
+    assert.match(catalog, /defaultEnabledGlobal:\s*true/);
   });
 
   it("defines lifecycle transitions and live eligibility", () => {

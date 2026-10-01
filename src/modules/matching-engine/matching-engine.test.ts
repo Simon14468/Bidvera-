@@ -48,6 +48,9 @@ function baseSnapshot(
     geographies: [
       { value: "Morocco", trust: "normal", source: "company_profile" },
     ],
+    countries: [
+      { value: "Morocco", trust: "normal", source: "company_profile" },
+    ],
     certifications: [
       { value: "ISO 9001", trust: "strong", source: "dcm.valid" },
     ],
@@ -62,17 +65,23 @@ function baseSnapshot(
 }
 
 describe("matching-engine identity & gate defaults", () => {
-  it("registers matching_engine OFF by default and not sold", () => {
+  it("registers matching_engine ON by default and commercially available on all plans", () => {
     assert.equal(MATCHING_ENGINE_MODULE_ID, "matching-engine");
     assert.equal(MATCHING_ENGINE_FEATURE_KEY, "matching_engine");
     assert.ok(ENTITLEMENT_FEATURE_KEYS.includes("matching_engine"));
-    assert.ok(UNSHIPPED_ENTITLEMENT_KEYS.includes("matching_engine"));
-    assert.equal(isCommerciallyAvailableFeature("matching_engine"), false);
+    assert.equal(
+      (UNSHIPPED_ENTITLEMENT_KEYS as readonly string[]).includes(
+        "matching_engine",
+      ),
+      false,
+    );
+    assert.equal(isCommerciallyAvailableFeature("matching_engine"), true);
     for (const keys of Object.values(PLAN_ENTITLEMENT_DEFAULTS)) {
-      assert.ok(!keys.includes("matching_engine"));
+      assert.ok(keys.includes("matching_engine"));
     }
     const catalog = readSrc("src/domain/billing/entitlement-catalog.ts");
-    assert.match(catalog, /defaultEnabledGlobal:\s*false/);
+    assert.match(catalog, /defaultEnabledGlobal:\s*true/);
+    assert.match(catalog, /includeInPublicCatalog:\s*false/);
     const settings = readSrc("src/services/settings/index.ts");
     assert.match(settings, /matching_engine\.min_eligible_companies/);
     assert.match(settings, /n:\s*45/);
@@ -236,6 +245,7 @@ describe("matching profile trust tiers", () => {
     });
     assert.equal(snapshot.services.length, 0);
     assert.equal(snapshot.certifications.length, 0);
+    assert.ok(snapshot.countries?.some((g) => g.value === "UAE"));
     assert.ok(snapshot.geographies.some((g) => g.value === "UAE"));
   });
 });

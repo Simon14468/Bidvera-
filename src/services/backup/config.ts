@@ -1,5 +1,6 @@
 import path from "node:path";
 import { z } from "zod";
+import { resolveLandingUploadsRoot as resolveSharedLandingUploadsRoot } from "@/lib/public-uploads";
 
 export const BACKUP_SETTINGS_KEY = "backup.settings";
 export const BACKUP_FORMAT_VERSION = 1;
@@ -54,7 +55,7 @@ export function resolveStorageRoot(
 }
 
 export function resolveLandingUploadsRoot(): string {
-  return path.resolve(process.cwd(), "public", "uploads", "landing");
+  return resolveSharedLandingUploadsRoot();
 }
 
 export function isPooledDatabaseUrl(url: string): boolean {

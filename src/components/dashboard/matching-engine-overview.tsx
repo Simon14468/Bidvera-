@@ -6,6 +6,29 @@ import { cn } from "@/lib/cn";
 import { ArrowRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 
+export type MatchingOverviewCopy = {
+  dashboardSectionTitle: string;
+  dashboardSectionSubtitle: string;
+  viewMatch: string;
+  viewAllOpportunities: string;
+  whyMatched: string;
+  highlyRelevant: string;
+  emptyImproveProfile: string;
+  updateCompanyProfile: string;
+  matchDisclaimer: string;
+  notEligibleTitle: string;
+  notEligibleBody: string;
+  unavailableTitle: string;
+  unavailableBody: string;
+  emptyTitleDashboard: string;
+  emptyBodyDashboard: string;
+  locationLabel: string;
+  deadlineLabel: string;
+  matchedCapabilities: string;
+  matchScore: string;
+  sponsored: string;
+};
+
 function StatCell({
   label,
   value,
@@ -16,60 +39,12 @@ function StatCell({
   hint?: string;
 }) {
   return (
-    <div className="rounded-xl border border-border bg-background px-3 py-3 min-w-0">
+    <div className="min-w-0 rounded-xl border border-border bg-background px-3 py-3">
       <p className="break-words text-xs text-muted">{label}</p>
-      <p className="mt-1 text-xl font-semibold tabular-nums tracking-tight sm:text-2xl">{value}</p>
+      <p className="mt-1 text-xl font-semibold tabular-nums tracking-tight sm:text-2xl">
+        {value}
+      </p>
       {hint ? <p className="mt-0.5 break-words text-[11px] text-muted">{hint}</p> : null}
-    </div>
-  );
-}
-
-function FunnelBars({
-  title,
-  stages,
-  emptyLabel,
-}: {
-  title: string;
-  stages: Array<{ id: string; label: string; value: number }>;
-  emptyLabel: string;
-}) {
-  const max = Math.max(0, ...stages.map((s) => s.value));
-  const hasData = stages.some((s) => s.value > 0);
-  return (
-    <div>
-      <p className="text-sm font-medium text-foreground">{title}</p>
-      {!hasData ? (
-        <p className="mt-3 text-sm text-muted">{emptyLabel}</p>
-      ) : (
-        <ul className="mt-3 space-y-2.5" role="list">
-          {stages.map((stage) => {
-            const pct = max > 0 ? (stage.value / max) * 100 : 0;
-            return (
-              <li key={stage.id} className="space-y-1">
-                <div className="flex items-baseline justify-between gap-2 text-xs">
-                  <span className="min-w-0 truncate text-muted">{stage.label}</span>
-                  <span className="shrink-0 font-medium tabular-nums text-foreground">
-                    {stage.value}
-                  </span>
-                </div>
-                <div
-                  className="h-2 overflow-hidden rounded-full bg-border/70"
-                  role="img"
-                  aria-label={`${stage.label}: ${stage.value}`}
-                >
-                  <div
-                    className="h-full rounded-full bg-primary transition-[width] duration-500"
-                    style={{
-                      width: `${Math.max(pct, stage.value > 0 ? 4 : 0)}%`,
-                    }}
-                    title={`${stage.label}: ${stage.value}`}
-                  />
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      )}
     </div>
   );
 }
@@ -77,9 +52,11 @@ function FunnelBars({
 export function MatchingEngineOverview({
   data,
   locale,
+  copy,
 }: {
   data: MatchingDashboardOverview;
   locale: Locale;
+  copy: MatchingOverviewCopy;
 }) {
   if (data.state === "unavailable") {
     return (
@@ -87,22 +64,14 @@ export function MatchingEngineOverview({
         <CardHeader className="pb-2">
           <div className="flex items-center gap-2">
             <Sparkles className="size-4 text-primary" aria-hidden />
-            <CardTitle>Matching Engine Overview</CardTitle>
+            <CardTitle>{copy.dashboardSectionTitle}</CardTitle>
           </div>
-          <CardDescription>
-            Bidvera analyzes available opportunities against your company&apos;s profile,
-            capabilities, qualifications and location to surface relevant matches.
-          </CardDescription>
+          <CardDescription>{copy.dashboardSectionSubtitle}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="rounded-xl border border-dashed border-border bg-background px-4 py-8 text-center">
-            <p className="text-sm font-medium text-foreground">
-              Matching is not available on this workspace yet
-            </p>
-            <p className="mt-1 text-sm text-muted">
-              When Matching Engine is enabled for your plan, live match statistics will appear here.
-              No sample or estimated figures are shown.
-            </p>
+            <p className="text-sm font-medium text-foreground">{copy.unavailableTitle}</p>
+            <p className="mt-1 text-sm text-muted">{copy.unavailableBody}</p>
           </div>
         </CardContent>
       </Card>
@@ -115,27 +84,20 @@ export function MatchingEngineOverview({
         <CardHeader className="pb-2">
           <div className="flex items-center gap-2">
             <Sparkles className="size-4 text-primary" aria-hidden />
-            <CardTitle>Matching Engine Overview</CardTitle>
+            <CardTitle>{copy.dashboardSectionTitle}</CardTitle>
           </div>
-          <CardDescription>
-            Bidvera analyzes available opportunities against your company&apos;s profile,
-            capabilities, qualifications and location to surface relevant matches.
-          </CardDescription>
+          <CardDescription>{copy.dashboardSectionSubtitle}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="rounded-xl border border-dashed border-border bg-background px-4 py-8 text-center">
-            <p className="text-sm font-medium text-foreground">
-              Matching is not currently available for this company
-            </p>
-            <p className="mt-1 text-sm text-muted">
-              Complete company capabilities and geography in your profile so the engine can
-              evaluate eligibility. Matches are never fabricated.
-            </p>
+            <p className="text-sm font-medium text-foreground">{copy.notEligibleTitle}</p>
+            <p className="mt-1 text-sm text-muted">{copy.notEligibleBody}</p>
+            <p className="mt-2 text-xs text-muted">{copy.emptyImproveProfile}</p>
             <Link
               href="/company"
               className="mt-4 inline-flex text-sm font-medium text-primary hover:underline"
             >
-              Update company profile
+              {copy.updateCompanyProfile}
             </Link>
           </div>
         </CardContent>
@@ -146,26 +108,25 @@ export function MatchingEngineOverview({
   const stats = data.stats!;
 
   return (
-    <section className="space-y-4" aria-label="Matching Engine Overview">
+    <section className="space-y-4" aria-label={copy.dashboardSectionTitle}>
       <Card>
         <CardHeader className="pb-2">
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <Sparkles className="size-4 shrink-0 text-primary" aria-hidden />
-                <CardTitle>Matching Engine Overview</CardTitle>
+                <CardTitle>{copy.dashboardSectionTitle}</CardTitle>
               </div>
               <CardDescription className="mt-1">
-                Bidvera analyzes available opportunities against your company&apos;s profile,
-                capabilities, qualifications and location to surface relevant matches.
-                A match means a relevant opportunity was identified — not a won contract.
+                {copy.dashboardSectionSubtitle} {copy.matchDisclaimer}
               </CardDescription>
+              <span className="sr-only">not a won contract</span>
             </div>
             <Link
               href="/matched-opportunities"
               className="inline-flex h-11 w-full shrink-0 items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-3 text-sm font-medium transition hover:border-primary/25 hover:bg-background sm:h-9 sm:w-auto"
             >
-              View matched opportunities
+              {copy.viewAllOpportunities}
               <ArrowRight className="size-3.5" aria-hidden />
             </Link>
           </div>
@@ -173,99 +134,130 @@ export function MatchingEngineOverview({
         <CardContent className="space-y-5">
           {data.state === "empty" ? (
             <div className="rounded-xl border border-dashed border-border bg-background px-4 py-8 text-center">
-              <p className="text-sm font-medium text-foreground">No matches yet</p>
-              <p className="mt-1 text-sm text-muted">
-                When opportunities match your eligible profile, statistics and recent matches
-                will appear here. Completing company capabilities and geography improves match quality.
+              <p className="text-sm font-medium text-foreground">
+                {copy.emptyTitleDashboard}
               </p>
+              <p className="mt-1 text-sm text-muted">{copy.emptyBodyDashboard}</p>
+              <p className="mt-2 text-xs text-muted">{copy.emptyImproveProfile}</p>
               <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
                 <Link
                   href="/company"
                   className="inline-flex text-sm font-medium text-primary hover:underline"
                 >
-                  Update company profile
+                  {copy.updateCompanyProfile}
                 </Link>
                 <Link
                   href="/matched-opportunities"
                   className="inline-flex text-sm font-medium text-primary hover:underline"
                 >
-                  View matched opportunities →
+                  {copy.viewAllOpportunities}
                 </Link>
               </div>
             </div>
           ) : (
             <>
               <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-6">
-                <StatCell label="Matches found" value={stats.matchesFound} />
+                <StatCell label="Matches" value={stats.matchesFound} />
                 <StatCell
-                  label="Highly relevant"
+                  label={copy.highlyRelevant}
                   value={stats.highlyRelevant}
-                  hint="Score ≥ 70"
+                  hint="≥ 70"
                 />
                 <StatCell label="Viewed" value={stats.viewed} />
                 <StatCell label="Interested" value={stats.interested} />
                 <StatCell label="Dismissed" value={stats.dismissed} />
-                <StatCell
-                  label="Event views"
-                  value={data.eventViews}
-                  hint="Behavior events"
-                />
-              </div>
-
-              <div className="grid gap-6 lg:grid-cols-2">
-                <FunnelBars
-                  title="Match funnel"
-                  stages={data.funnel}
-                  emptyLabel="No funnel activity yet."
-                />
-                <FunnelBars
-                  title="Match quality"
-                  stages={data.quality}
-                  emptyLabel="No quality breakdown yet."
-                />
+                <StatCell label="Event views" value={data.eventViews} />
               </div>
 
               <div>
                 <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
-                  <p className="text-sm font-medium text-foreground">Recent matches</p>
+                  <p className="text-sm font-medium text-foreground">
+                    {copy.dashboardSectionTitle}
+                  </p>
                   <Link
                     href="/matched-opportunities"
                     className="text-sm font-medium text-primary hover:underline"
                   >
-                    View matched opportunities →
+                    {copy.viewAllOpportunities}
                   </Link>
                 </div>
                 {data.recent.length === 0 ? (
-                  <p className="mt-3 text-sm text-muted">No recent matches to show.</p>
+                  <p className="mt-3 text-sm text-muted">{copy.emptyTitleDashboard}</p>
                 ) : (
-                  <ul className="mt-3 space-y-2">
+                  <ul className="mt-3 space-y-3">
                     {data.recent.map((item) => (
                       <li key={item.id}>
-                        <Link
-                          href={item.href}
+                        <div
                           className={cn(
-                            "flex flex-col gap-1 rounded-xl border border-border px-3 py-3 transition sm:flex-row sm:items-start sm:justify-between sm:gap-3",
-                            "hover:border-primary/25 hover:bg-background",
+                            "flex flex-col gap-3 rounded-xl border border-border px-3 py-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4",
                           )}
                         >
-                          <div className="min-w-0">
-                            <p className="break-words text-sm font-medium sm:truncate">
-                              {item.title}
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <p className="break-words text-sm font-semibold tracking-tight">
+                                {item.title}
+                              </p>
+                              {item.highlyRelevant ? (
+                                <span className="rounded-md bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-amber-800 dark:text-amber-300">
+                                  {copy.highlyRelevant}
+                                </span>
+                              ) : null}
+                              {item.sponsored ? (
+                                <span className="rounded-md border border-border px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted">
+                                  {copy.sponsored}
+                                </span>
+                              ) : null}
+                            </div>
+                            <p className="mt-1.5 text-xs text-muted">
+                              <span className="font-medium text-foreground/80">
+                                {copy.whyMatched}:
+                              </span>{" "}
+                              {item.explanation}
                             </p>
-                            <p className="mt-1 break-words text-xs text-muted">
-                              {item.geography ? `${item.geography} · ` : ""}
-                              {item.highlyRelevant ? "Highly relevant" : "Relevant"}
-                              {item.sponsored ? " · Sponsored" : ""}
-                              {` · ${item.status}`}
+                            {item.capabilityChips.length > 0 ? (
+                              <div className="mt-2 flex flex-wrap gap-1.5">
+                                <span className="sr-only">{copy.matchedCapabilities}</span>
+                                {item.capabilityChips.map((chip) => (
+                                  <span
+                                    key={chip}
+                                    className="rounded-md bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary"
+                                  >
+                                    {chip}
+                                  </span>
+                                ))}
+                              </div>
+                            ) : null}
+                            <p className="mt-2 break-words text-xs text-muted">
+                              {item.geography
+                                ? `${copy.locationLabel}: ${item.geography}`
+                                : null}
+                              {item.geography && item.deadline ? " · " : null}
                               {item.deadline
-                                ? ` · ${formatDate(item.deadline, locale)}`
-                                : ""}
+                                ? `${copy.deadlineLabel}: ${formatDate(item.deadline, locale)}`
+                                : null}
+                              {(item.category || item.industry) &&
+                              (item.geography || item.deadline)
+                                ? " · "
+                                : null}
+                              {item.category || item.industry || null}
                             </p>
                           </div>
-                          <span className="shrink-0 text-xs font-medium tabular-nums text-primary">
-                            {Math.round(item.score)}
-                          </span>
-                        </Link>
+                          <div className="flex shrink-0 flex-row items-center justify-between gap-3 sm:flex-col sm:items-end">
+                            <span className="text-xs tabular-nums text-muted">
+                              {copy.matchScore}{" "}
+                              <span className="text-base font-semibold text-primary">
+                                {Math.round(item.score)}
+                              </span>
+                            </span>
+                            <Link
+                              href={item.href}
+                              className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-border bg-background px-3 text-xs font-medium transition hover:border-primary/30"
+                            >
+                              {copy.viewMatch}
+                              <ArrowRight className="size-3.5" aria-hidden />
+                            </Link>
+                          </div>
+                        </div>
                       </li>
                     ))}
                   </ul>

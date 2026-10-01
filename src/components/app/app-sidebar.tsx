@@ -19,6 +19,7 @@ import {
   FileSearch,
   Inbox,
   LayoutDashboard,
+  Link as LinkIcon,
   Lock,
   LogOut,
   Menu,
@@ -105,6 +106,13 @@ const navSections: NavSection[] = [
     items: [
       { href: "/dashboard", icon: LayoutDashboard, key: "dashboard" },
       {
+        href: "/matched-opportunities",
+        icon: LinkIcon,
+        key: "matchedOpportunities",
+        entitlement: "matchingEngine",
+        hideWhenDisabled: true,
+      },
+      {
         href: "/tenders",
         icon: FileSearch,
         key: "tenders",
@@ -145,13 +153,6 @@ const navSections: NavSection[] = [
         icon: ClipboardList,
         key: "questionnaireAssistant",
         entitlement: "questionnaireAssistant",
-        hideWhenDisabled: true,
-      },
-      {
-        href: "/matched-opportunities",
-        icon: Sparkles,
-        key: "matchedOpportunities",
-        entitlement: "matchingEngine",
         hideWhenDisabled: true,
       },
     ],

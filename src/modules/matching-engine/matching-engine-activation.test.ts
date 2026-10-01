@@ -33,7 +33,6 @@ const PREFIX = `me-act-${Date.now().toString(36)}-`;
 const companyIds: string[] = [];
 const opportunityIds: string[] = [];
 let prevThresholdValue: object | null = null;
-let prevFeatureGlobal = false;
 
 const eligibleSnapshot: MatchingProfileSnapshot = {
   services: [{ value: "Cybersecurity", trust: "strong", source: "sq" }],
@@ -210,10 +209,6 @@ describe("Matching activation — corpus gate & fail-closed", () => {
       setting?.value != null && typeof setting.value === "object"
         ? (setting.value as object)
         : null;
-    const feature = await prisma.feature.findUnique({
-      where: { key: MATCHING_ENGINE_FEATURE_KEY },
-    });
-    prevFeatureGlobal = feature?.enabledGlobal ?? false;
     await prisma.feature.updateMany({
       where: { key: MATCHING_ENGINE_FEATURE_KEY },
       data: { enabledGlobal: false },
@@ -222,10 +217,8 @@ describe("Matching activation — corpus gate & fail-closed", () => {
 
   after(async () => {
     await cleanup();
-    await prisma.feature.updateMany({
-      where: { key: MATCHING_ENGINE_FEATURE_KEY },
-      data: { enabledGlobal: prevFeatureGlobal },
-    });
+    // Matching ships ON for company accounts — restore commercial default.
+    await setFeatureGlobal(MATCHING_ENGINE_FEATURE_KEY, true);
     if (prevThresholdValue) {
       await prisma.systemSetting.update({
         where: { key: MATCHING_ENGINE_MIN_ELIGIBLE_SETTING_KEY },
@@ -307,7 +300,10 @@ describe("Matching activation — corpus gate & fail-closed", () => {
     });
     assert.ok(listed.some((r) => r.opportunity.id === opp.id));
 
-    await setFeatureGlobal(MATCHING_ENGINE_FEATURE_KEY, false);
+    await prisma.feature.updateMany({
+      where: { key: MATCHING_ENGINE_FEATURE_KEY },
+      data: { enabledGlobal: false },
+    });
     await setSetting(MATCHING_ENGINE_MIN_ELIGIBLE_SETTING_KEY, { n: 45 });
   });
 

@@ -8,6 +8,8 @@ import {
   hashMatchingSnapshot,
   isMatchingProfileEligible,
   countTrustSummary,
+  normalizeSizeBand,
+  sizeBandFromEmployeeCount,
 } from "./normalize";
 
 export type MatchingProfileSourceInput = {
@@ -94,11 +96,7 @@ function experienceYearsFromLevel(level: string | null): number | null {
 
 function sizeFromEmployeeCount(n: number | null): string | null {
   if (n == null || !Number.isFinite(n)) return null;
-  if (n <= 10) return "1-10";
-  if (n <= 50) return "11-50";
-  if (n <= 200) return "51-200";
-  if (n <= 1000) return "201-1000";
-  return "1000+";
+  return sizeBandFromEmployeeCount(n);
 }
 
 /**
@@ -110,6 +108,7 @@ export function deriveMatchingProfileSnapshot(
 ): MatchingProfileSnapshot {
   const services: MatchingSignal[] = [];
   const industries: MatchingSignal[] = [];
+  const countries: MatchingSignal[] = [];
   const geographies: MatchingSignal[] = [];
   const certifications: MatchingSignal[] = [];
   const dcmCategories: MatchingSignal[] = [];
@@ -125,13 +124,14 @@ export function deriveMatchingProfileSnapshot(
     for (const g of profile.geographicCoverage) {
       pushUnique(geographies, g, "normal", "company_profile.geographicCoverage");
     }
-    pushUnique(geographies, profile.country, "normal", "company_profile.country");
+    // Country is a separate signal — do not also inject into geographies.
+    pushUnique(countries, profile.country, "normal", "company_profile.country");
     for (const c of profile.certifications) {
       pushUnique(certifications, c, "normal", "company_profile.certifications");
     }
   }
 
-  pushUnique(geographies, input.company.country, "normal", "company.country");
+  pushUnique(countries, input.company.country, "normal", "company.country");
 
   if (input.sq) {
     for (const s of input.sq.servicesProducts) {
@@ -143,7 +143,7 @@ export function deriveMatchingProfileSnapshot(
     for (const g of input.sq.geographicCoverage) {
       pushUnique(geographies, g, "normal", "sq.geographicCoverage");
     }
-    pushUnique(geographies, input.sq.country, "normal", "sq.country");
+    pushUnique(countries, input.sq.country, "normal", "sq.country");
     for (const c of input.sq.certifications) {
       pushUnique(certifications, c, "normal", "sq.certifications");
     }
@@ -180,15 +180,16 @@ export function deriveMatchingProfileSnapshot(
   }
 
   let size: MatchingSignal | null = null;
-  const sizeValue =
+  const sizeRaw =
     profile?.companySize ??
     profile?.employeeRange ??
     input.company.companySize ??
     sizeFromEmployeeCount(input.sq?.employeeCount ?? null);
+  const sizeValue = normalizeSizeBand(sizeRaw) ?? sizeRaw;
   if (sizeValue) {
     size = {
       value: sizeValue,
-      trust: profile?.companySize || profile?.employeeRange ? "normal" : "normal",
+      trust: "normal",
       source: profile?.companySize
         ? "company_profile.companySize"
         : profile?.employeeRange
@@ -235,9 +236,19 @@ export function deriveMatchingProfileSnapshot(
     softNotes.push(`Company timezone: ${tz}`);
   }
 
+  // Eligibility needs at least one location signal. If coverage is empty but
+  // country exists, mirror country into geographies for pool eligibility only
+  // (scorer still treats countries separately and avoids double-counting).
+  if (geographies.length === 0 && countries.length > 0) {
+    for (const c of countries) {
+      pushUnique(geographies, c.value, c.trust, `${c.source}->coverage_fallback`);
+    }
+  }
+
   return {
     services,
     industries,
+    countries,
     geographies,
     certifications,
     size,

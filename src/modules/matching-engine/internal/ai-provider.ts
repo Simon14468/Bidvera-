@@ -7,7 +7,17 @@ import {
   providerChatCompletion,
   testProviderModelConnection,
 } from "@/services/ai/providers";
-import type { AiRefineCandidate } from "@/domain/matching-engine";
+import type {
+  AiRefineCandidate,
+  AiStructuredRefineOutput,
+} from "@/domain/matching-engine";
+import {
+  AI_REFINE_BOOST_MAX,
+  AI_REFINE_MAX_CANDIDATES,
+  assertAiPayloadIsPublicSafe,
+  buildAiRefineNormalizedInput,
+  sanitizeAiStructuredRefineBatch,
+} from "@/domain/matching-engine";
 import {
   sanitizeMatchingAiErrorMessage,
   MATCHING_AI_PROVIDER_BASE_URLS,
@@ -19,6 +29,17 @@ export type MatchingAiReorderInput = {
   apiKey: string;
   companyServices: string[];
   /** Company IANA timezone from matching profile — local deadline context only. */
+  companyTimezone?: string | null;
+  candidates: AiRefineCandidate[];
+};
+
+export type MatchingAiStructuredInput = {
+  model: string;
+  apiKey: string;
+  companyServices: string[];
+  companyIndustries: string[];
+  companyCertifications: string[];
+  companyCountries: string[];
   companyTimezone?: string | null;
   candidates: AiRefineCandidate[];
 };
@@ -46,6 +67,62 @@ export interface MatchingAIProvider {
   reorderEligible(
     input: MatchingAiReorderInput,
   ): Promise<MatchingAiReorderResult | null>;
+  refineEligibleStructured(
+    input: MatchingAiStructuredInput,
+  ): Promise<AiStructuredRefineOutput[] | null>;
+}
+
+function buildStructuredPrompt(input: MatchingAiStructuredInput): {
+  system: string;
+  user: string;
+} {
+  const eligibleIds = input.candidates.map((c) => c.opportunityId);
+  const candidates = input.candidates.slice(0, AI_REFINE_MAX_CANDIDATES).map((c) => {
+    const built = buildAiRefineNormalizedInput({
+      companyServices: input.companyServices,
+      companyIndustries: input.companyIndustries,
+      companyCertifications: input.companyCertifications,
+      companyCountries: input.companyCountries,
+      companyTimezone: input.companyTimezone,
+      candidate: c,
+    });
+    return built.opportunity;
+  });
+
+  const company = {
+    services: input.companyServices.slice(0, 12).map((s) => String(s).slice(0, 64)),
+    industries: input.companyIndustries.slice(0, 8).map((s) => String(s).slice(0, 64)),
+    certifications: input.companyCertifications
+      .slice(0, 8)
+      .map((s) => String(s).slice(0, 64)),
+    countries: input.companyCountries.slice(0, 4).map((s) => String(s).slice(0, 48)),
+    timezone: input.companyTimezone
+      ? String(input.companyTimezone).slice(0, 80)
+      : null,
+  };
+
+  const payload = { company, eligibleIds, candidates };
+  const unsafe = assertAiPayloadIsPublicSafe(payload);
+  if (unsafe.length > 0) {
+    throw new Error(`AI payload rejected: banned fields ${unsafe.join(",")}`);
+  }
+
+  const system = [
+    "You assist Bidvera Matching Engine with semantic refinement ONLY.",
+    "All candidates already passed a hard capability/relevance gate.",
+    "Compare company matching signals to public opportunity text.",
+    "You MUST NOT invent capabilities, certifications, experience, or qualifications.",
+    "You MUST NOT add opportunity IDs that are not in eligibleIds.",
+    "You MUST NOT override mandatory country, certification, or deadline requirements.",
+    "You MUST NOT resurrect opportunities rejected by the hard gate.",
+    "Geography may differ across countries; do not reject cross-border matches.",
+    "When company.timezone is provided, use it only for local deadline urgency — never invent locations.",
+    `boundedRefineScore MUST be between 0 and ${AI_REFINE_BOOST_MAX} inclusive.`,
+    "Respond with JSON only:",
+    '{"refinements":[{"opportunityId":"id","semanticServiceFit":0-1,"semanticIndustryFit":0-1,"requirementFit":0-1,"detectedGaps":["..."],"explanation":"...","boundedRefineScore":0-3,"confidence":0-1}]}',
+  ].join(" ");
+
+  return { system, user: JSON.stringify(payload) };
 }
 
 function buildReorderPrompt(input: MatchingAiReorderInput): {
@@ -71,7 +148,7 @@ function buildReorderPrompt(input: MatchingAiReorderInput): {
     "You MUST NOT remove eligibility — only reorder.",
     "Geography may differ across countries; do not reject cross-border matches.",
     "When companyTimezone is provided, treat it as the company's local clock for urgency/deadline context only — never invent locations from it.",
-    "Respond with JSON only: {\"order\":[\"id\",...],\"confidence\":0.0-1.0}",
+    'Respond with JSON only: {"order":["id",...],"confidence":0.0-1.0}',
   ].join(" ");
 
   const user = JSON.stringify({
@@ -101,7 +178,6 @@ function parseReorderResponse(
     const order = json.order
       .filter((id): id is string => typeof id === "string")
       .filter((id) => eligibleIds.has(id));
-    // Deduplicate while preserving order
     const seen = new Set<string>();
     const unique = order.filter((id) => {
       if (seen.has(id)) return false;
@@ -114,6 +190,35 @@ function parseReorderResponse(
         ? Math.max(0, Math.min(1, json.confidence))
         : 0.6;
     return { order: unique, confidence };
+  } catch {
+    return null;
+  }
+}
+
+async function chatStructured(
+  providerKey: MatchingAiProviderKey,
+  input: MatchingAiStructuredInput,
+): Promise<AiStructuredRefineOutput[] | null> {
+  if (input.candidates.length === 0) return null;
+  const eligibleIds = new Set(input.candidates.map((c) => c.opportunityId));
+  const { system, user } = buildStructuredPrompt(input);
+
+  const result = await providerChatCompletion({
+    providerKey,
+    baseUrl: MATCHING_AI_PROVIDER_BASE_URLS[providerKey],
+    model: input.model,
+    apiKey: input.apiKey,
+    system,
+    user,
+    temperature: 0,
+    maxTokens: 900,
+    responseFormat: "json",
+  });
+
+  try {
+    const parsed = JSON.parse(result.content) as unknown;
+    const sanitized = sanitizeAiStructuredRefineBatch(parsed, eligibleIds);
+    return sanitized.length > 0 ? sanitized : null;
   } catch {
     return null;
   }
@@ -186,6 +291,7 @@ function createProvider(key: MatchingAiProviderKey): MatchingAIProvider {
     key,
     testConnection: (input) => chatTest(key, input),
     reorderEligible: (input) => chatReorder(key, input),
+    refineEligibleStructured: (input) => chatStructured(key, input),
   };
 }
 
@@ -223,6 +329,40 @@ export function createMatchingAiReorderFn(input: {
         model: input.model,
         apiKey: input.apiKey,
         companyServices: args.companyServices,
+        companyTimezone: args.companyTimezone ?? null,
+        candidates: args.candidates,
+      });
+    } catch {
+      return null;
+    }
+  };
+}
+
+/**
+ * Preferred structured refine fn — returns sanitized contract objects only.
+ */
+export function createMatchingAiStructuredRefineFn(input: {
+  provider: MatchingAiProviderKey;
+  model: string;
+  apiKey: string;
+}): (args: {
+  companyServices: string[];
+  companyIndustries: string[];
+  companyCertifications: string[];
+  companyCountries: string[];
+  companyTimezone?: string | null;
+  candidates: AiRefineCandidate[];
+}) => Promise<AiStructuredRefineOutput[] | null> {
+  const provider = getMatchingAIProvider(input.provider);
+  return async (args) => {
+    try {
+      return await provider.refineEligibleStructured({
+        model: input.model,
+        apiKey: input.apiKey,
+        companyServices: args.companyServices,
+        companyIndustries: args.companyIndustries,
+        companyCertifications: args.companyCertifications,
+        companyCountries: args.companyCountries,
         companyTimezone: args.companyTimezone ?? null,
         candidates: args.candidates,
       });

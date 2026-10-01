@@ -16,6 +16,7 @@ import {
   isCommerciallyAvailableFeature,
   isFeatureEnabledInMap,
   isIsolatedInternalFeatureKey,
+  isPublicCatalogFeature,
   planDefaultFeatureKeys,
   planHasAllCommercialModules,
   planQualifiesForPremiumPricingHover,
@@ -41,6 +42,7 @@ export {
   isCommerciallyAvailableFeature,
   isFeatureEnabledInMap,
   isIsolatedInternalFeatureKey,
+  isPublicCatalogFeature,
   planDefaultFeatureKeys,
   planHasAllCommercialModules,
   planQualifiesForPremiumPricingHover,
@@ -98,6 +100,53 @@ export function seatsLimitForPlan(
 /** One in-flight / completed seed per process — layout fires many parallel hasFeature calls. */
 let featureRowsReady: Promise<void> | null = null;
 
+/**
+ * Matching ships ON for company accounts (catalog defaultEnabledGlobal).
+ * Super Admin kill switch sticks via SystemSetting — tests/jobs that flip
+ * enabledGlobal without setFeatureGlobal are overwritten back ON on next boot.
+ */
+const MATCHING_ENGINE_SA_KILL_SWITCH_KEY = "matching.engine.sa_kill_switch";
+
+async function ensureMatchingEngineCommercialShip() {
+  const def = entitlementDef("matching_engine");
+  if (!def || def.defaultEnabledGlobal === false) return;
+  if (!isCommerciallyAvailableFeature("matching_engine")) return;
+
+  const feature = await prisma.feature.findUnique({
+    where: { key: "matching_engine" },
+    select: { id: true },
+  });
+  if (!feature) return;
+
+  const saKilled = await prisma.systemSetting.findUnique({
+    where: { key: MATCHING_ENGINE_SA_KILL_SWITCH_KEY },
+    select: { key: true },
+  });
+  if (!saKilled) {
+    await prisma.feature.updateMany({
+      where: { key: "matching_engine", enabledGlobal: false },
+      data: { enabledGlobal: true },
+    });
+  }
+
+  // Create-if-missing on every plan so custom / Free Workspace plans get Matching
+  // without overwriting an explicit Super Admin Plan Editor disable.
+  const plans = await prisma.plan.findMany({ select: { id: true } });
+  for (const plan of plans) {
+    await prisma.planFeature.upsert({
+      where: {
+        planId_featureId: { planId: plan.id, featureId: feature.id },
+      },
+      create: {
+        planId: plan.id,
+        featureId: feature.id,
+        enabled: true,
+      },
+      update: {},
+    });
+  }
+}
+
 async function ensureFeatureRows() {
   if (!featureRowsReady) {
     featureRowsReady = (async () => {
@@ -120,6 +169,7 @@ async function ensureFeatureRows() {
           }),
         ),
       );
+      await ensureMatchingEngineCommercialShip();
     })().catch((error) => {
       // Allow a later request to retry after a transient pool/capacity failure.
       featureRowsReady = null;
@@ -209,6 +259,7 @@ async function loadEffectiveEntitlements(
     } else {
       features.advanced_decision_engine = true;
       features.company_profile = true;
+      features.matching_engine = true;
     }
 
     return {
@@ -252,6 +303,7 @@ async function loadEffectiveEntitlements(
       // Unmapped plan: core gates until Admin configures entitlements
       features.advanced_decision_engine = true;
       features.company_profile = true;
+      features.matching_engine = true;
     }
 
     return {
@@ -289,6 +341,7 @@ async function loadEffectiveEntitlements(
       ...emptyFeatures,
       advanced_decision_engine: true,
       company_profile: true,
+      matching_engine: true,
     },
     source: "legacy_enum",
   };
@@ -453,6 +506,30 @@ export async function listFeatures() {
 }
 
 export async function setFeatureGlobal(featureKey: string, enabled: boolean) {
+  const key = canonicalFeatureKey(featureKey);
+  // Record SA Matching kill switch before ensureFeatureRows so commercial ship
+  // does not immediately flip enabledGlobal back ON.
+  if (key === "matching_engine") {
+    if (enabled) {
+      await prisma.systemSetting.deleteMany({
+        where: { key: MATCHING_ENGINE_SA_KILL_SWITCH_KEY },
+      });
+    } else {
+      await prisma.systemSetting.upsert({
+        where: { key: MATCHING_ENGINE_SA_KILL_SWITCH_KEY },
+        create: {
+          key: MATCHING_ENGINE_SA_KILL_SWITCH_KEY,
+          value: { disabledAt: new Date().toISOString() },
+          description:
+            "Super Admin explicitly disabled Matching Engine (kill switch)",
+        },
+        update: {
+          value: { disabledAt: new Date().toISOString() },
+        },
+      });
+    }
+  }
+
   await ensureFeatureRows();
   return prisma.feature.update({
     where: { key: featureKey },

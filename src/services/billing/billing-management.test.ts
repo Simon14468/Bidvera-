@@ -193,8 +193,8 @@ test("L. billing mutations stay tenant-scoped", () => {
   assert.doesNotMatch(page, /STRIPE_SECRET_KEY|paymentFingerprint|riskScore/);
 });
 
-test("M. commercially-off features stay out of purchasable admin keys", () => {
-  assert.equal(ADMIN_ENTITLEMENT_KEYS.includes("matching_engine"), false);
+test("M. Matching Engine is sellable in admin but Tender Analysis stays internal", () => {
+  assert.equal(ADMIN_ENTITLEMENT_KEYS.includes("matching_engine"), true);
   assert.equal(ADMIN_ENTITLEMENT_KEYS.includes("tender_discovery"), false);
   assert.equal(ADMIN_ENTITLEMENT_KEYS.includes("tender_analysis"), false);
   assert.ok(ADMIN_ENTITLEMENT_KEYS.includes("company_profile"));

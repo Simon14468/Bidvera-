@@ -11,6 +11,7 @@ import {
   restoreDatabaseUrlIsIsolated,
   resolveStorageRoot,
 } from "@/services/backup/config";
+import { resolvePublicUploadsRoot } from "@/lib/public-uploads";
 import { resolveSuperAdminPath } from "@/config/super-admin";
 import {
   getTurnstileServerConfig,
@@ -261,6 +262,43 @@ async function checkStorage(
     label: "Storage",
     status: "READY",
     detail: "STORAGE_ROOT set and writable (path not shown).",
+  };
+}
+
+async function checkPublicUploads(
+  env: Record<string, string | undefined>,
+): Promise<ReadinessItem> {
+  const configured = Boolean(env.PUBLIC_UPLOADS_ROOT?.trim());
+  if (!configured) {
+    return {
+      id: "public_uploads",
+      label: "Public uploads",
+      status: "NOT_CONFIGURED",
+      detail:
+        "PUBLIC_UPLOADS_ROOT unset — profile avatars use app-local public/uploads (breaks multi-instance / redeploys).",
+    };
+  }
+  const root = resolvePublicUploadsRoot(env);
+  try {
+    await mkdir(path.join(root, "avatars"), { recursive: true });
+    await mkdir(path.join(root, "landing"), { recursive: true });
+    const probe = path.join(root, `.readiness-write-${process.pid}`);
+    await writeFile(probe, "ok", "utf8");
+    await rm(probe, { force: true });
+    await access(root, fsConstants.W_OK);
+  } catch {
+    return {
+      id: "public_uploads",
+      label: "Public uploads",
+      status: "ERROR",
+      detail: "PUBLIC_UPLOADS_ROOT is set but not writable.",
+    };
+  }
+  return {
+    id: "public_uploads",
+    label: "Public uploads",
+    status: "READY",
+    detail: "PUBLIC_UPLOADS_ROOT set and writable (avatars + landing).",
   };
 }
 
@@ -847,6 +885,7 @@ export async function collectProductionReadiness(
   const [
     database,
     storage,
+    publicUploads,
     backups,
     rateLimiting,
     worker,
@@ -857,6 +896,7 @@ export async function collectProductionReadiness(
   ] = await Promise.all([
     checkDatabase(),
     checkStorage(env),
+    checkPublicUploads(env),
     checkBackups(env),
     checkRateLimiting(env),
     checkWorker(env),
@@ -873,6 +913,7 @@ export async function collectProductionReadiness(
     checkHttps(env),
     database,
     storage,
+    publicUploads,
     worker,
     rateLimiting,
     backups,

@@ -166,6 +166,25 @@ export async function countNewMatchesForCompany(companyId: string) {
   return countNewRelevantMatches(companyId);
 }
 
+/** Topbar / email badge — unread Alert rows for matched opportunities only. */
+export async function countMatchedOpportunityNotificationsForCompany(
+  companyId: string,
+) {
+  const { countUnreadMatchedOpportunityAlerts } = await import(
+    "./internal/match-alerts"
+  );
+  return countUnreadMatchedOpportunityAlerts(companyId);
+}
+
+export async function acknowledgeMatchedOpportunityNotificationsForCompany(
+  companyId: string,
+) {
+  const { acknowledgeMatchedOpportunityNotifications } = await import(
+    "./internal/match-alerts"
+  );
+  return acknowledgeMatchedOpportunityNotifications(companyId);
+}
+
 export async function listCompanySponsorships(companyId: string) {
   return listSponsorships({ sponsorCompanyId: companyId, limit: 50 });
 }
@@ -211,11 +230,15 @@ export async function listActiveSponsoredMatchingPlansForCompany(
   return listActiveSponsorshipPricingPlansForCompany(companyId, opts);
 }
 
-/** Company sponsorship pricing REQUEST / ORDER intent (NoOp billing). */
+/** Company sponsorship pricing request + shared Stripe/PayPal checkout. */
 export async function requestSponsoredMatchingPlanForCompany(input: {
   companyId: string;
   planId: string;
   notes?: string | null;
+  userEmail: string;
+  successUrl: string;
+  cancelUrl: string;
+  gateway?: "stripe" | "paypal" | null;
 }) {
   return createSponsorshipPricingRequest(input);
 }

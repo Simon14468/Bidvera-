@@ -55,9 +55,14 @@ export type EntitlementDef = {
   commerciallyAvailable?: boolean;
   /**
    * Initial Feature.enabledGlobal on first upsert. Defaults to true.
-   * Matching Engine stays OFF until Super Admin enables it.
+   * Super Admin Features / Matching page remains the kill switch afterward.
    */
   defaultEnabledGlobal?: boolean;
+  /**
+   * When false, omitted from public pricing / marketing feature keys even if
+   * commercially available and plan-entitled. Defaults to true.
+   */
+  includeInPublicCatalog?: boolean;
 };
 
 /** Entitlement keys that must not appear on plans or pricing until shipped. */
@@ -67,7 +72,6 @@ export const UNSHIPPED_ENTITLEMENT_KEYS = [
   "analytics",
   "proposal_assistance",
   "tender_discovery",
-  "matching_engine",
 ] as const satisfies readonly EntitlementFeatureKey[];
 
 const UNSHIPPED_KEY_SET = new Set<string>(UNSHIPPED_ENTITLEMENT_KEYS);
@@ -80,8 +84,6 @@ const UNSHIPPED_MARKETING_LABEL_BLOCKLIST = new Set(
     "proposal assistance",
     "tender discovery",
     "analytics",
-    "matching engine",
-    "matched opportunities",
   ].map((s) => s.toLowerCase()),
 );
 
@@ -146,12 +148,14 @@ export const ENTITLEMENT_CATALOG: EntitlementDef[] = [
     key: "matching_engine",
     name: "Matching Engine",
     description:
-      "Module master switch for Bidvera Matching Engine (matched opportunities). Remains hidden until globally enabled, entitled, and enough eligible companies exist. Super Admin retain Features toggle and enter-company testing while OFF.",
+      "Module master switch for Bidvera Matching Engine (matched opportunities). Entitled on all standard company plans; Super Admin kill switch via enabledGlobal (Features / Matching page).",
     adminLabel: "Matching Engine (module)",
     marketingLabel: "Matched opportunities",
     enforced: true,
-    commerciallyAvailable: false,
-    defaultEnabledGlobal: false,
+    commerciallyAvailable: true,
+    defaultEnabledGlobal: true,
+    /** In-app for entitled companies; not advertised on public pricing grids. */
+    includeInPublicCatalog: false,
   },
   {
     key: "advanced_decision_engine",
@@ -316,10 +320,12 @@ export const PLAN_ENTITLEMENT_DEFAULTS: Record<string, EntitlementFeatureKey[]> 
   free: [
     "company_profile",
     "document_compliance",
+    "matching_engine",
   ],
   trial: [
     "advanced_decision_engine",
     "company_profile",
+    "matching_engine",
   ],
   starter: [
     "document_compliance",
@@ -327,6 +333,7 @@ export const PLAN_ENTITLEMENT_DEFAULTS: Record<string, EntitlementFeatureKey[]> 
     "tender_calendar",
     "client_requests",
     "questionnaire_assistant",
+    "matching_engine",
     "advanced_decision_engine",
     "company_profile",
     "smart_alerts",
@@ -340,6 +347,7 @@ export const PLAN_ENTITLEMENT_DEFAULTS: Record<string, EntitlementFeatureKey[]> 
     "tender_calendar",
     "client_requests",
     "questionnaire_assistant",
+    "matching_engine",
     "advanced_decision_engine",
     "company_profile",
     "smart_alerts",
@@ -358,6 +366,7 @@ export const PLAN_ENTITLEMENT_DEFAULTS: Record<string, EntitlementFeatureKey[]> 
     "tender_calendar",
     "client_requests",
     "questionnaire_assistant",
+    "matching_engine",
     "advanced_decision_engine",
     "company_profile",
     "smart_alerts",
@@ -377,8 +386,8 @@ export function planDefaultFeatureKeys(slug: string): EntitlementFeatureKey[] {
 }
 
 /**
- * Commercially sold Plan Editor module master switches (excludes Tender Analysis
- * and Matching Engine, which are not sold on public pricing).
+ * Commercially sold Plan Editor module master switches (excludes Tender Analysis).
+ * Matching Engine is entitled on plans but omitted from this module-checkbox group.
  */
 export const COMMERCIAL_MODULE_FEATURE_KEYS = [
   "document_compliance",
@@ -461,6 +470,14 @@ export function isCommerciallyAvailableFeature(key: string): boolean {
   return def.commerciallyAvailable !== false;
 }
 
+/** True when the key may appear on public pricing / marketing feature lists. */
+export function isPublicCatalogFeature(key: string): boolean {
+  if (!isCommerciallyAvailableFeature(key)) return false;
+  const def = entitlementDef(canonicalFeatureKey(key));
+  if (!def) return false;
+  return def.includeInPublicCatalog !== false;
+}
+
 /**
  * True when every sellable plan-editor feature is enabled.
  * Used for topbar “full plan” chrome — not slug names.
@@ -517,7 +534,7 @@ export function filterCommerciallyHonestLabels(
     if (UNSHIPPED_MARKETING_LABEL_BLOCKLIST.has(line)) return false;
     if (isObsoleteAnalysesQuotaLabel(raw)) return false;
     for (const def of ENTITLEMENT_CATALOG) {
-      if (def.commerciallyAvailable === false) {
+      if (def.commerciallyAvailable === false || def.includeInPublicCatalog === false) {
         if (
           line === def.marketingLabel.toLowerCase() ||
           line === def.name.toLowerCase() ||
@@ -556,7 +573,6 @@ export function buildEntitlementMarketingLabels(input: {
     if (def.hiddenInAdmin) continue;
     // Internal / unshipped — never sell on pricing even if a PlanFeature row exists.
     if (def.key === "tender_analysis") continue;
-    if (def.key === "matching_engine") continue;
     if (enabled.has(canonicalFeatureKey(def.key))) {
       labels.push(def.marketingLabel);
     }

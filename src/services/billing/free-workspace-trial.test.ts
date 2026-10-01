@@ -420,8 +420,9 @@ describe("Free Workspace 14-day trial grant", () => {
     assert.match(entitlements, /PlanFeature rows are authoritative/);
     assert.match(entitlements, /source: "billing_plan"/);
     const layout = read("src/app/(app)/layout.tsx");
-    assert.match(layout, /loadFreeWorkspaceTrialChrome/);
+    assert.match(layout, /loadAppChromeSnapshot/);
     assert.match(layout, /FreeWorkspaceTrialBanner/);
+    assert.match(layout, /formatFreeWorkspaceTrialBanner/);
     const card = read("src/components/dashboard/workspace-plan-card.tsx");
     assert.match(card, /isExpiredTrial/);
     assert.match(card, /\/upgrade\?reason=trial_expired/);

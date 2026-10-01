@@ -42,6 +42,11 @@ export type MatchingRecentItem = {
   status: string;
   sponsored: boolean;
   href: string;
+  explanation: string;
+  capabilityChips: string[];
+  matchedLabels: string[];
+  category: string | null;
+  industry: string | null;
 };
 
 export type MatchingDashboardOverview = {
@@ -107,8 +112,6 @@ export async function getMatchingDashboardOverview(
     };
   }
 
-  // Stats via bounded score/status projection (no 100-row opportunity join).
-  // Recent strip still uses the module DTO path (limit 5).
   const now = new Date();
   const liveVisibleWhere = {
     companyId,
@@ -154,7 +157,6 @@ export async function getMatchingDashboardOverview(
     dismissed,
   };
 
-  // Honest funnel from recommendation lifecycle only (no outcome stage in Matching Engine).
   const funnel: MatchingFunnelStage[] = [
     { id: "matched", label: "Matched", value: matchesFound },
     { id: "viewed", label: "Viewed", value: viewed },
@@ -177,7 +179,13 @@ export async function getMatchingDashboardOverview(
     highlyRelevant: m.score >= HIGHLY_RELEVANT_SCORE,
     status: m.status,
     sponsored: m.opportunity.sponsored || m.type === "SPONSORED",
-    href: `/matched-opportunities`,
+    href: `/matched-opportunities#${m.id}`,
+    explanation:
+      m.explanation ?? m.reasons[0] ?? "Relevant to your company profile.",
+    capabilityChips: m.capabilityChips,
+    matchedLabels: m.matchedLabels,
+    category: m.opportunity.category,
+    industry: m.opportunity.industry,
   }));
 
   const state: MatchingOverviewState =

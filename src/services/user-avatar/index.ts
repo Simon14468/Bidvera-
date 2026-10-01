@@ -1,16 +1,23 @@
 /**
  * User profile avatar uploads — public files under /uploads/avatars/{userId}/.
  * Reuses landing image sniff (JPG/PNG/WebP/GIF); never trusts client MIME.
+ *
+ * Disk root: PUBLIC_UPLOADS_ROOT/avatars (shared in production) or
+ * {cwd}/public/uploads/avatars. Served by app/uploads/avatars/.../route.ts.
  */
 import { assertLandingUploadAllowed } from "@/domain/security/landing-upload-sniff";
 import { AppError, ErrorCode } from "@/lib/errors";
 import { prisma } from "@/lib/db";
+import {
+  publicAvatarUrl,
+  resolveAvatarsRoot,
+  resolveSafeAvatarFilePath,
+} from "@/lib/public-uploads";
 import { randomBytes } from "crypto";
 import { mkdir, unlink, writeFile } from "fs/promises";
 import path from "path";
 
 const AVATAR_MAX_BYTES = 5 * 1024 * 1024;
-const AVATARS_ROOT = path.join(process.cwd(), "public", "uploads", "avatars");
 
 export function assertSafeUserAvatarUrl(
   userId: string,
@@ -30,7 +37,7 @@ export function assertSafeUserAvatarUrl(
 }
 
 async function ensureUserAvatarDir(userId: string) {
-  const dir = path.join(AVATARS_ROOT, userId);
+  const dir = path.join(resolveAvatarsRoot(), userId);
   await mkdir(dir, { recursive: true });
   return dir;
 }
@@ -41,10 +48,9 @@ export async function deleteUserAvatarFile(publicUrl: string | null | undefined)
   const parts = relative.split("/");
   if (parts.length !== 2) return;
   const [userId, name] = parts;
-  if (!userId || !name || name.includes("..")) return;
-  const full = path.resolve(AVATARS_ROOT, userId, name);
-  const root = path.resolve(AVATARS_ROOT, userId);
-  if (!full.startsWith(root + path.sep)) return;
+  if (!userId || !name) return;
+  const full = resolveSafeAvatarFilePath(userId, name);
+  if (!full) return;
   await unlink(full).catch(() => undefined);
 }
 
@@ -68,11 +74,11 @@ export async function saveUserAvatarUpload(input: {
   const dir = await ensureUserAvatarDir(input.userId);
   const safe = `avatar-${Date.now()}-${randomBytes(8).toString("hex")}${sniffed.ext}`;
   const full = path.resolve(dir, safe);
-  if (!full.startsWith(dir + path.sep)) {
+  if (!full.startsWith(path.resolve(dir) + path.sep)) {
     throw new AppError(ErrorCode.VALIDATION, "Invalid upload path.", 400);
   }
   await writeFile(full, input.body);
-  return `/uploads/avatars/${input.userId}/${safe}`;
+  return publicAvatarUrl(input.userId, safe);
 }
 
 export async function setUserAvatarUrl(userId: string, avatarUrl: string | null) {

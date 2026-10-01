@@ -52,6 +52,7 @@ export {
 
 export {
   createMatchingAiReorderFn,
+  createMatchingAiStructuredRefineFn,
   getMatchingAIProvider,
   testMatchingAiConnection,
 } from "./ai-provider";

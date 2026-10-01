@@ -2521,6 +2521,8 @@ enum MatchingSponsorshipPricingPlanStatus {
 
 enum MatchingSponsorshipPricingRequestStatus {
   REQUESTED
+  PENDING_PAYMENT
+  PAID
   CANCELLED
 }
 
@@ -2675,8 +2677,8 @@ model MatchingSponsorshipPricingPlan {
 }
 
 /**
- * Company sponsorship pricing REQUEST / ORDER intent only.
- * No real payment processing — reuses NoOp billing seam.
+ * Company sponsorship pricing request + checkout.
+ * Payment uses Super Admin Payments credentials (Stripe/PayPal).
  */
 model MatchingSponsorshipPricingRequest {
   id            String                                   @id @default(cuid())

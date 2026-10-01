@@ -135,9 +135,14 @@ function cyberProfile(geo = "Morocco"): MatchingProfileSnapshot {
 }
 
 describe("Feature 8E — domain quality & rates", () => {
-  it("keeps matching_engine OFF / unshipped by default", () => {
+  it("ships matching_engine ON by default (commercially available)", () => {
     assert.ok(ENTITLEMENT_FEATURE_KEYS.includes("matching_engine"));
-    assert.ok(UNSHIPPED_ENTITLEMENT_KEYS.includes("matching_engine"));
+    assert.equal(
+      (UNSHIPPED_ENTITLEMENT_KEYS as readonly string[]).includes(
+        "matching_engine",
+      ),
+      false,
+    );
     assert.equal(MATCHING_ENGINE_FEATURE_KEY, "matching_engine");
   });
 

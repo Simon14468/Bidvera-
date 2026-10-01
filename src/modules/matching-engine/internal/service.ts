@@ -15,6 +15,12 @@ import {
   scoreCompanyOpportunityMatch,
   compareMatchRank,
   validateOpportunityIngest,
+  AI_REFINE_BOOST_MAX,
+  buildProjectIdentityKey,
+  withProjectIdentityKey,
+  projectContentSimilarity,
+  PROJECT_NEAR_DUPLICATE_THRESHOLD,
+  publicFitFromMatchedDimensions,
   type MatchingPreferenceWeights,
   type MatchingProfileSnapshot,
 } from "@/domain/matching-engine";
@@ -34,7 +40,7 @@ import { getCompanyMatchingPreferences } from "./preferences";
 import {
   getMatchingAiRuntimeConfig,
 } from "./ai-config";
-import { createMatchingAiReorderFn } from "./ai-provider";
+import { createMatchingAiStructuredRefineFn } from "./ai-provider";
 import { isMatchingSponsorshipGloballyEnabled } from "./sponsorship-settings";
 import { withMatchingGenerateLock } from "./generate-lock";
 import { reconcileOpportunitySponsoredFlag } from "./sponsorship";
@@ -95,8 +101,13 @@ function toRecommendationDto(row: {
   finalRankScore?: number | null;
   isNew?: boolean | null;
   rankedAt: Date;
+  matchedDimensions?: unknown;
   opportunity: Parameters<typeof toPublicOpportunity>[0];
 }): MatchRecommendationDto {
+  const fit = publicFitFromMatchedDimensions(row.matchedDimensions, {
+    opportunityServices: row.opportunity.services,
+    reasons: row.reasons,
+  });
   return {
     id: row.id,
     type: row.type,
@@ -113,6 +124,9 @@ function toRecommendationDto(row: {
     isNew: row.isNew ?? false,
     rankedAt: row.rankedAt.toISOString(),
     opportunity: toPublicOpportunity(row.opportunity),
+    capabilityChips: fit.capabilityChips,
+    gapNotes: fit.gapNotes,
+    matchedLabels: fit.matchedLabels,
   };
 }
 
@@ -393,7 +407,10 @@ function liveOpportunityWhere(now = new Date()) {
   };
 }
 
-/** Internal opportunity corpus boundary — public fields only. Dedupes by (source, externalRef). */
+/** Internal opportunity corpus boundary — public fields only.
+ * Dedupes by (source, externalRef), then by project identity fingerprint,
+ * then by near-duplicate content similarity — merge/update instead of cloning projects.
+ */
 export async function upsertMatchingOpportunity(
   input: UpsertOpportunityInput,
 ): Promise<PublicOpportunityDto> {
@@ -410,6 +427,21 @@ export async function upsertMatchingOpportunity(
   const source = input.source?.trim() || "INTERNAL";
   const externalRef = input.externalRef?.trim() || null;
   const deadline = parseDeadline(input.deadline);
+  const projectIdentityKey = buildProjectIdentityKey({
+    title,
+    source,
+    externalRef,
+    category: input.category,
+    industry: input.industry,
+    geographies: input.geographies,
+    services: input.services,
+    deadline,
+    signalsJson: input.signalsJson,
+  });
+  const signalsWithIdentity = withProjectIdentityKey(
+    input.signalsJson,
+    projectIdentityKey,
+  );
   const contentHash = computeOpportunityContentHash({
     title,
     summary: input.summary,
@@ -422,13 +454,97 @@ export async function upsertMatchingOpportunity(
     sizeBand: input.sizeBand,
     experienceHint: input.experienceHint,
     deadline,
-    signalsJson: input.signalsJson,
+    signalsJson: signalsWithIdentity,
     // Sponsored is owned exclusively by MatchingSponsorship sync — never from client.
     sponsored: false,
   });
 
   const status = input.status ?? "DRAFT";
   const intentDirection = normalizeMatchingIntentDirection(input.intentDirection);
+
+  let existing =
+    input.id
+      ? await prisma.matchingOpportunity.findUnique({ where: { id: input.id } })
+      : null;
+  if (!existing && externalRef) {
+    existing = await prisma.matchingOpportunity.findUnique({
+      where: { source_externalRef: { source, externalRef } },
+    });
+  }
+  // Same real-world project under a different ingest path → merge into existing row.
+  if (!existing) {
+    const byIdentity = await prisma.matchingOpportunity.findFirst({
+      where: {
+        status: { in: ["DRAFT", "ACTIVE", "PAUSED"] },
+        signalsJson: {
+          path: ["projectIdentityKey"],
+          equals: projectIdentityKey,
+        },
+      },
+      orderBy: { updatedAt: "desc" },
+    });
+    if (byIdentity) existing = byIdentity;
+  }
+  if (!existing && !externalRef) {
+    // Bounded near-dup scan: same source + recent ACTIVE/DRAFT with high title similarity.
+    const candidates = await prisma.matchingOpportunity.findMany({
+      where: {
+        source,
+        status: { in: ["DRAFT", "ACTIVE", "PAUSED"] },
+      },
+      orderBy: { updatedAt: "desc" },
+      take: 40,
+      select: {
+        id: true,
+        title: true,
+        category: true,
+        industry: true,
+        geographies: true,
+        services: true,
+        deadline: true,
+        signalsJson: true,
+        source: true,
+        externalRef: true,
+        contentHash: true,
+        status: true,
+      },
+    });
+    const probe = {
+      title,
+      source,
+      externalRef,
+      category: input.category,
+      industry: input.industry,
+      geographies: input.geographies,
+      services: input.services,
+      deadline,
+      signalsJson: signalsWithIdentity,
+    };
+    for (const cand of candidates) {
+      const sim = projectContentSimilarity(probe, {
+        title: cand.title,
+        source: cand.source,
+        externalRef: cand.externalRef,
+        category: cand.category,
+        industry: cand.industry,
+        geographies: cand.geographies,
+        services: cand.services,
+        deadline: cand.deadline,
+        signalsJson: cand.signalsJson,
+      });
+      if (sim >= PROJECT_NEAR_DUPLICATE_THRESHOLD) {
+        existing = await prisma.matchingOpportunity.findUnique({
+          where: { id: cand.id },
+        });
+        break;
+      }
+    }
+  }
+
+  // When merging into an existing project row, preserve its natural key.
+  const writeSource = existing ? existing.source : source;
+  const writeExternalRef = existing ? existing.externalRef : externalRef;
+
   const data = {
     title,
     summary: input.summary?.trim() || null,
@@ -441,8 +557,8 @@ export async function upsertMatchingOpportunity(
     sizeBand: input.sizeBand?.trim() || null,
     experienceHint: input.experienceHint?.trim() || null,
     deadline,
-    source,
-    externalRef,
+    source: writeSource,
+    externalRef: writeExternalRef,
     status,
     intentDirection,
     contentHash,
@@ -450,22 +566,9 @@ export async function upsertMatchingOpportunity(
       input.sponsorshipMeta === undefined
         ? undefined
         : (input.sponsorshipMeta as Prisma.InputJsonValue),
-    signalsJson:
-      input.signalsJson === undefined
-        ? undefined
-        : (input.signalsJson as Prisma.InputJsonValue),
+    signalsJson: signalsWithIdentity as Prisma.InputJsonValue,
     ...(status === "ACTIVE" ? { publishedAt: new Date(), expiredAt: null, pausedAt: null } : {}),
   };
-
-  let existing =
-    input.id
-      ? await prisma.matchingOpportunity.findUnique({ where: { id: input.id } })
-      : null;
-  if (!existing && externalRef) {
-    existing = await prisma.matchingOpportunity.findUnique({
-      where: { source_externalRef: { source, externalRef } },
-    });
-  }
 
   let row;
   let materialChange = true;
@@ -487,7 +590,6 @@ export async function upsertMatchingOpportunity(
     await invalidateRecommendationsForOpportunity(row.id);
   } else if (materialChange && existing) {
     // Content/status changed while live — leave recs; companies regenerate async.
-    // Soft-hide until regenerate by not forcing; list still shows until scores refresh.
   }
 
   return toPublicOpportunity({ ...row, sponsored });
@@ -654,7 +756,9 @@ type EligiblePending = {
   category: string | null;
   industries: string[];
   industry: string | null;
+  certifications: string[];
   geographies: string[];
+  countries: string[];
 };
 
 export async function generateMatchRecommendations(
@@ -706,7 +810,10 @@ async function generateMatchRecommendationsUnlocked(
       prefs?.weights ?? null;
     const sponsorshipGlobalOn = await isMatchingSponsorshipGloballyEnabled();
 
-    const companyGeos = profileDto.snapshot.geographies.map((g) => g.value);
+    const companyGeos = [
+      ...profileDto.snapshot.geographies.map((g) => g.value),
+      ...(profileDto.snapshot.countries ?? []).map((c) => c.value),
+    ];
     const companyServices = profileDto.snapshot.services
       .filter((s) => s.trust !== "soft")
       .map((s) => s.value);
@@ -714,6 +821,18 @@ async function generateMatchRecommendationsUnlocked(
       companyServices.length > 0
         ? companyServices
         : profileDto.snapshot.services.map((s) => s.value);
+    const companyIndustries = profileDto.snapshot.industries
+      .filter((s) => s.trust !== "soft")
+      .map((s) => s.value);
+    const companyCertifications = [
+      ...profileDto.snapshot.certifications,
+      ...profileDto.snapshot.dcmCategories,
+    ]
+      .filter((s) => s.trust !== "soft")
+      .map((s) => s.value);
+    const companyCountries = (profileDto.snapshot.countries ?? []).map(
+      (c) => c.value,
+    );
 
     const now = new Date();
     const failedOpportunityIds: string[] = [];
@@ -767,7 +886,9 @@ async function generateMatchRecommendationsUnlocked(
           category: opp.category,
           industries: opp.industries,
           industry: opp.industry,
+          certifications: opp.certifications,
           geographies: opp.geographies,
+          countries: signals.countries,
         });
       }
 
@@ -780,9 +901,9 @@ async function generateMatchRecommendationsUnlocked(
         ? null
         : await getMatchingAiRuntimeConfig();
     const enableAi = Boolean(aiRuntime?.ready);
-    const aiReorder =
+    const aiStructuredRefine =
       enableAi && aiRuntime
-        ? createMatchingAiReorderFn({
+        ? createMatchingAiStructuredRefineFn({
             provider: aiRuntime.provider,
             model: aiRuntime.model,
             apiKey: aiRuntime.apiKey,
@@ -791,6 +912,9 @@ async function generateMatchRecommendationsUnlocked(
 
     const aiResult = await refineEligibleWithAiAssist({
       companyServices: servicesForRefine,
+      companyIndustries,
+      companyCertifications,
+      companyCountries,
       companyTimezone: profileDto.snapshot.timezone?.value ?? null,
       candidates: eligible.map((e) => ({
         opportunityId: e.opportunityId,
@@ -798,10 +922,14 @@ async function generateMatchRecommendationsUnlocked(
         summary: e.summary,
         services: e.services,
         category: e.category,
+        industries: e.industries.length > 0 ? e.industries : e.industry ? [e.industry] : [],
+        certifications: e.certifications,
+        countries: e.countries,
+        geographies: e.geographies,
         relevanceScore: e.score,
       })),
       enableAi,
-      aiReorder,
+      aiStructuredRefine,
     });
 
     // Prefetch existing recs once — avoid N+1 findUnique before each upsert.
@@ -814,16 +942,29 @@ async function generateMatchRecommendationsUnlocked(
     );
 
     const keptIds: string[] = [];
+    const createdMatches: Array<{ opportunityId: string; title: string }> = [];
     for (const e of eligible) {
       const preferenceBoost = preferenceAffinityScore(preferenceWeights, e);
-      const geographyBoost = geographyProximityBoost(companyGeos, e.geographies);
-      const aiRefineBoost = aiResult.boosts[e.opportunityId] ?? 0;
+      const geographyBoost = geographyProximityBoost(companyGeos, [
+        ...e.geographies,
+        ...e.countries,
+      ]);
+      const aiRefineBoost = Math.min(
+        AI_REFINE_BOOST_MAX,
+        Math.max(0, aiResult.boosts[e.opportunityId] ?? 0),
+      );
       const finalRankScore = computeFinalRankScore({
         relevanceScore: e.score,
         preferenceBoost,
         geographyBoost,
         aiRefineBoost,
       });
+
+      const aiStructured = aiResult.structured[e.opportunityId];
+      const explanation =
+        aiStructured?.explanation && aiStructured.explanation.trim()
+          ? `${e.explanation} AI: ${aiStructured.explanation}`
+          : e.explanation;
 
       const row = await upsertRecommendationPreservingState({
         companyId,
@@ -833,7 +974,7 @@ async function generateMatchRecommendationsUnlocked(
         confidence: e.confidence,
         matchedDimensions: e.matchedDimensions,
         reasons: e.reasons,
-        explanation: e.explanation,
+        explanation,
         rankedAt: now,
         preferenceBoost,
         geographyBoost,
@@ -841,8 +982,15 @@ async function generateMatchRecommendationsUnlocked(
         finalRankScore,
         existing: existingByOpp.get(e.opportunityId) ?? null,
       });
-      if (row.created) recommendationsCreated += 1;
-      else recommendationsUpdated += 1;
+      if (row.created) {
+        recommendationsCreated += 1;
+        createdMatches.push({
+          opportunityId: e.opportunityId,
+          title: e.title ?? "",
+        });
+      } else {
+        recommendationsUpdated += 1;
+      }
       keptIds.push(row.id);
     }
 
@@ -870,6 +1018,24 @@ async function generateMatchRecommendationsUnlocked(
       offset: 0,
       status: "VISIBLE",
     });
+
+    if (createdMatches.length > 0) {
+      try {
+        const { emitNewMatchedOpportunityAlerts } = await import(
+          "./match-alerts"
+        );
+        await emitNewMatchedOpportunityAlerts({
+          companyId,
+          created: createdMatches,
+        });
+      } catch (alertError) {
+        logError("matching_engine.alerts.new_matches_failed", {
+          companyId,
+          message:
+            alertError instanceof Error ? alertError.message : "unknown",
+        });
+      }
+    }
 
     logInfo("matching_engine.generate.completed", {
       companyId,
@@ -947,6 +1113,7 @@ export async function listMatchRecommendations(
       finalRankScore: true,
       isNew: true,
       rankedAt: true,
+      matchedDimensions: true,
       opportunity: {
         select: {
           id: true,
@@ -1066,6 +1233,12 @@ export async function markRecommendationRead(
     data: { status: "READ", isNew: false },
     include: { opportunity: true },
   });
+  try {
+    const { markMatchedOpportunityAlertRead } = await import("./match-alerts");
+    await markMatchedOpportunityAlertRead(companyId, existing.opportunityId);
+  } catch {
+    // Alert sync is best-effort — recommendation read already succeeded.
+  }
   return toRecommendationDto(row);
 }
 
@@ -1099,6 +1272,13 @@ export async function dismissRecommendation(
     actorUserId,
     idempotencyKey: `dismiss:${companyId}:${row.id}`,
   });
+
+  try {
+    const { markMatchedOpportunityAlertRead } = await import("./match-alerts");
+    await markMatchedOpportunityAlertRead(companyId, row.opportunityId);
+  } catch {
+    // best-effort
+  }
 
   return toRecommendationDto(row);
 }

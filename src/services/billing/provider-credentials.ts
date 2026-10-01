@@ -213,7 +213,8 @@ function pickEnv(name: string): string {
 
 /**
  * Resolve PayPal environment.
- * Env PAYPAL_ENVIRONMENT / PAYPAL_MODE wins; else vault; else sandbox in non-prod.
+ * Precedence: process env → SA vault → live in production / sandbox otherwise.
+ * Never silently defaults to sandbox under NODE_ENV=production.
  */
 export async function resolvePaypalEnvironmentAsync(): Promise<"sandbox" | "live"> {
   const raw = (
@@ -224,21 +225,6 @@ export async function resolvePaypalEnvironmentAsync(): Promise<"sandbox" | "live
     .trim()
     .toLowerCase();
   if (raw === "production" || raw === "live") return "live";
-  if (process.env.NODE_ENV === "production") {
-    // Env unset or sandbox under production → fail closed (same as sync resolver).
-    if (raw && raw !== "production" && raw !== "live") {
-      throw new AppError(
-        ErrorCode.UPSTREAM,
-        "PayPal is misconfigured for production. Set PAYPAL_ENVIRONMENT=production (or live) with valid live credentials. Sandbox is not allowed when NODE_ENV=production.",
-        503,
-      );
-    }
-    throw new AppError(
-      ErrorCode.UPSTREAM,
-      "PayPal is misconfigured for production. Set PAYPAL_ENVIRONMENT=production (or live) with valid live credentials. Sandbox is not allowed when NODE_ENV=production.",
-      503,
-    );
-  }
   if (raw === "sandbox") return "sandbox";
 
   const vault = (await readVaultObject(
@@ -249,7 +235,7 @@ export async function resolvePaypalEnvironmentAsync(): Promise<"sandbox" | "live
     return vault.environment;
   }
 
-  return "sandbox";
+  return process.env.NODE_ENV === "production" ? "live" : "sandbox";
 }
 
 export type ResolvedPaypalCredentials = {
