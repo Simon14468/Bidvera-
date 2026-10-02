@@ -94,7 +94,9 @@ export async function upsertPlanForAdmin(
     data.stripePriceMonthly === undefined &&
     data.stripePriceAnnual === undefined &&
     data.paypalPlanMonthly === undefined &&
-    data.paypalPlanAnnual === undefined;
+    data.paypalPlanAnnual === undefined &&
+    data.paypalSandboxPlanMonthly === undefined &&
+    data.paypalSandboxPlanAnnual === undefined;
   const preserveStoredGatewayIds = Boolean(
     previous &&
       gatewayIdsOmitted &&
@@ -125,6 +127,14 @@ export async function upsertPlanForAdmin(
       guarded.paypalPlanAnnual !== undefined
         ? blankToNull(guarded.paypalPlanAnnual)
         : blankToNull(previous?.paypalPlanAnnual),
+    paypalSandboxPlanMonthly:
+      guarded.paypalSandboxPlanMonthly !== undefined
+        ? blankToNull(guarded.paypalSandboxPlanMonthly)
+        : blankToNull(previous?.paypalSandboxPlanMonthly),
+    paypalSandboxPlanAnnual:
+      guarded.paypalSandboxPlanAnnual !== undefined
+        ? blankToNull(guarded.paypalSandboxPlanAnnual)
+        : blankToNull(previous?.paypalSandboxPlanAnnual),
   });
   if (gatewayWrite.errors.length > 0 && !preserveStoredGatewayIds) {
     throw new AppError(ErrorCode.VALIDATION, gatewayWrite.errors.join(" "), 400);
@@ -160,6 +170,8 @@ export async function upsertPlanForAdmin(
         stripePriceAnnual: gatewayWrite.stripePriceAnnual,
         paypalPlanMonthly: gatewayWrite.paypalPlanMonthly,
         paypalPlanAnnual: gatewayWrite.paypalPlanAnnual,
+        paypalSandboxPlanMonthly: gatewayWrite.paypalSandboxPlanMonthly,
+        paypalSandboxPlanAnnual: gatewayWrite.paypalSandboxPlanAnnual,
         currency: data.currency ?? "usd",
         status: data.status,
         highlighted: data.highlighted,
@@ -211,6 +223,8 @@ export async function upsertPlanForAdmin(
               stripePriceAnnual: gatewayWrite.stripePriceAnnual,
               paypalPlanMonthly: gatewayWrite.paypalPlanMonthly,
               paypalPlanAnnual: gatewayWrite.paypalPlanAnnual,
+              paypalSandboxPlanMonthly: gatewayWrite.paypalSandboxPlanMonthly,
+              paypalSandboxPlanAnnual: gatewayWrite.paypalSandboxPlanAnnual,
             }),
         currency: previous ? previous.currency : (data.currency ?? "usd"),
         status: data.status,

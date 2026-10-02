@@ -42,6 +42,8 @@ export const planUpsertSchema = z.object({
   stripePriceAnnual: z.string().max(200).optional().nullable(),
   paypalPlanMonthly: z.string().max(200).optional().nullable(),
   paypalPlanAnnual: z.string().max(200).optional().nullable(),
+  paypalSandboxPlanMonthly: z.string().max(200).optional().nullable(),
+  paypalSandboxPlanAnnual: z.string().max(200).optional().nullable(),
   currency: z.string().min(3).max(8).optional(),
   status: z.enum(["ACTIVE", "INACTIVE", "ARCHIVED"]).default("ACTIVE"),
   highlighted: z.boolean().default(false),

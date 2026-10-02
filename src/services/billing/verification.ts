@@ -7,6 +7,7 @@ import {
   resolveStripePriceId,
 } from "@/services/billing/catalog";
 import { recordBillingAudit } from "@/services/billing/audit";
+import { resolvePaypalEnvironmentAsync } from "@/services/billing/provider-credentials";
 import {
   assertPendingCheckoutMatches,
   isStripeCheckoutSessionRef,
@@ -343,7 +344,12 @@ export async function verifyPayPalSubscriptionForActivation(input: {
   const expectedAmountCents = resolvePlanAmountCents(plan, binding.interval);
   assertExactAmountCents(expectedAmountCents, binding.amountCents, "Checkout");
 
-  const expectedPaypalPlanId = resolvePaypalPlanId(plan, binding.interval);
+  const paypalEnvironment = await resolvePaypalEnvironmentAsync();
+  const expectedPaypalPlanId = resolvePaypalPlanId(
+    plan,
+    binding.interval,
+    paypalEnvironment,
+  );
   if (!expectedPaypalPlanId) {
     throw new AppError(ErrorCode.UPSTREAM, "PayPal plan is not configured.", 503);
   }

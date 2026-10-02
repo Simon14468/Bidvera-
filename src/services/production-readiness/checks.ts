@@ -569,11 +569,8 @@ async function checkPaypal(
     }
     const missing: string[] = [];
     for (const plan of plans) {
-      if (plan.monthlyEnabled && !resolvePaypalPlanId(plan as Plan, "MONTH")) {
+      if (plan.monthlyEnabled && !resolvePaypalPlanId(plan as Plan, "MONTH", "live")) {
         missing.push(`${plan.slug}/MONTH`);
-      }
-      if (plan.annualEnabled && !resolvePaypalPlanId(plan as Plan, "YEAR")) {
-        missing.push(`${plan.slug}/YEAR`);
       }
     }
     if (missing.length) {

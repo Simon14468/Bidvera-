@@ -9,9 +9,11 @@ import { revalidatePublicPlanSurfaces } from "@/application/admin/revalidate-pla
 import {
   enforceNonCheckoutGatewayFlags,
   normalizePlanGatewayWrite,
+  paypalPlanIdForEnvironment,
   planExemptFromGatewayMappings,
 } from "@/services/billing/plan-gateway-ids";
 import { lookupPaypalBillingPlan } from "@/services/billing/paypal";
+import { resolvePaypalEnvironmentAsync } from "@/services/billing/provider-credentials";
 
 export const planGatewayUpdateSchema = z.object({
   planId: z.string().min(1),
@@ -24,31 +26,34 @@ export const planGatewayUpdateSchema = z.object({
   stripePriceAnnual: z.string().max(200).optional().nullable(),
   paypalPlanMonthly: z.string().max(200).optional().nullable(),
   paypalPlanAnnual: z.string().max(200).optional().nullable(),
+  paypalSandboxPlanMonthly: z.string().max(200).optional().nullable(),
+  paypalSandboxPlanAnnual: z.string().max(200).optional().nullable(),
 });
 
 async function assertPaypalMappingsMatchCurrentEnvironment(input: {
   planName: string;
   paypalEnabled: boolean;
   monthlyEnabled: boolean;
-  annualEnabled: boolean;
+  environment: "sandbox" | "live";
   paypalPlanMonthly: string | null;
   paypalPlanAnnual: string | null;
 }) {
   if (!input.paypalEnabled) return;
-  const checks: Array<{ label: "Monthly" | "Annual"; id: string | null; required: boolean }> = [
+  const prefix = input.environment === "sandbox" ? "Sandbox " : "Live ";
+  const checks: Array<{ label: string; id: string | null; required: boolean }> = [
     {
-      label: "Monthly",
+      label: `${prefix}Monthly`,
       id: input.paypalPlanMonthly,
       required: input.monthlyEnabled,
     },
     {
-      label: "Annual",
+      label: `${prefix}Annual`,
       id: input.paypalPlanAnnual,
-      required: input.annualEnabled,
+      required: false,
     },
   ];
   for (const check of checks) {
-    if (!check.required || !check.id) continue;
+    if (!check.id) continue;
     try {
       await lookupPaypalBillingPlan(check.id);
     } catch (error) {
@@ -93,31 +98,53 @@ export async function updatePlanGatewaysForAdmin(
     slug: previous.slug,
     isFree: Boolean(guarded.isFree),
   });
-  const mapped = normalizePlanGatewayWrite({
-    name: previous.name,
-    slug: previous.slug,
-    isFree: Boolean(guarded.isFree),
-    monthlyEnabled: previous.monthlyEnabled,
-    annualEnabled: previous.annualEnabled,
-    stripeEnabled: Boolean(guarded.stripeEnabled),
-    paypalEnabled: Boolean(guarded.paypalEnabled),
-    stripePriceMonthly: data.stripePriceMonthly ?? null,
-    stripePriceAnnual: data.stripePriceAnnual ?? null,
-    paypalPlanMonthly: data.paypalPlanMonthly ?? null,
-    paypalPlanAnnual: data.paypalPlanAnnual ?? null,
-  });
+  const paypalEnvironment = await resolvePaypalEnvironmentAsync();
+  const mapped = normalizePlanGatewayWrite(
+    {
+      name: previous.name,
+      slug: previous.slug,
+      isFree: Boolean(guarded.isFree),
+      monthlyEnabled: previous.monthlyEnabled,
+      annualEnabled: previous.annualEnabled,
+      stripeEnabled: Boolean(guarded.stripeEnabled),
+      paypalEnabled: Boolean(guarded.paypalEnabled),
+      stripePriceMonthly: data.stripePriceMonthly ?? null,
+      stripePriceAnnual: data.stripePriceAnnual ?? null,
+      paypalPlanMonthly:
+        data.paypalPlanMonthly === undefined
+          ? previous.paypalPlanMonthly
+          : data.paypalPlanMonthly,
+      paypalPlanAnnual:
+        data.paypalPlanAnnual === undefined
+          ? previous.paypalPlanAnnual
+          : data.paypalPlanAnnual,
+      paypalSandboxPlanMonthly:
+        data.paypalSandboxPlanMonthly === undefined
+          ? previous.paypalSandboxPlanMonthly
+          : data.paypalSandboxPlanMonthly,
+      paypalSandboxPlanAnnual:
+        data.paypalSandboxPlanAnnual === undefined
+          ? previous.paypalSandboxPlanAnnual
+          : data.paypalSandboxPlanAnnual,
+    },
+    { paypalEnvironment },
+  );
   if (mapped.errors.length > 0) {
     throw new AppError(ErrorCode.VALIDATION, mapped.errors.join(" "), 400);
   }
 
   if (!exempt) {
+    const activePaypal = {
+      paypalPlanMonthly: paypalPlanIdForEnvironment(mapped, "MONTH", paypalEnvironment),
+      paypalPlanAnnual: paypalPlanIdForEnvironment(mapped, "YEAR", paypalEnvironment),
+    };
     await assertPaypalMappingsMatchCurrentEnvironment({
       planName: previous.name,
       paypalEnabled: mapped.paypalEnabled,
       monthlyEnabled: previous.monthlyEnabled,
-      annualEnabled: previous.annualEnabled,
-      paypalPlanMonthly: mapped.paypalPlanMonthly,
-      paypalPlanAnnual: mapped.paypalPlanAnnual,
+      environment: paypalEnvironment,
+      paypalPlanMonthly: activePaypal.paypalPlanMonthly,
+      paypalPlanAnnual: activePaypal.paypalPlanAnnual,
     });
   }
 
@@ -141,6 +168,8 @@ export async function updatePlanGatewaysForAdmin(
           stripePriceAnnual: mapped.stripePriceAnnual,
           paypalPlanMonthly: mapped.paypalPlanMonthly,
           paypalPlanAnnual: mapped.paypalPlanAnnual,
+          paypalSandboxPlanMonthly: mapped.paypalSandboxPlanMonthly,
+          paypalSandboxPlanAnnual: mapped.paypalSandboxPlanAnnual,
         },
   });
 
@@ -157,6 +186,8 @@ export async function updatePlanGatewaysForAdmin(
       stripePriceAnnual: previous.stripePriceAnnual,
       paypalPlanMonthly: previous.paypalPlanMonthly,
       paypalPlanAnnual: previous.paypalPlanAnnual,
+      paypalSandboxPlanMonthly: previous.paypalSandboxPlanMonthly,
+      paypalSandboxPlanAnnual: previous.paypalSandboxPlanAnnual,
     },
     newValue: {
       visibleToPublic: plan.visibleToPublic,
@@ -166,6 +197,8 @@ export async function updatePlanGatewaysForAdmin(
       stripePriceAnnual: plan.stripePriceAnnual,
       paypalPlanMonthly: plan.paypalPlanMonthly,
       paypalPlanAnnual: plan.paypalPlanAnnual,
+      paypalSandboxPlanMonthly: plan.paypalSandboxPlanMonthly,
+      paypalSandboxPlanAnnual: plan.paypalSandboxPlanAnnual,
     },
     ipHash,
   });

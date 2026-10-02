@@ -22,7 +22,10 @@ import {
   allowStripeInlinePriceData,
   isUsablePaypalBillingPlanId,
   isUsableStripePriceId,
+  paypalPlanIdForEnvironment,
+  type PaypalCheckoutEnvironment,
 } from "@/services/billing/plan-gateway-ids";
+import { resolvePaypalEnvironmentAsync } from "@/services/billing/provider-credentials";
 import type { Locale } from "@/i18n/config";
 import type { BillingInterval, Plan, PlanStatus } from "@prisma/client";
 import { unstable_cache } from "next/cache";
@@ -76,6 +79,7 @@ export function configuredGatewaysForInterval(
   plan: Plan,
   interval: BillingInterval,
   global: { stripeEnabled: boolean; paypalEnabled: boolean },
+  paypalEnvironment: PaypalCheckoutEnvironment = "live",
 ): Array<"stripe" | "paypal"> {
   if (plan.isFree || plan.slug === "free" || plan.slug === "trial") return [];
   if (interval === "MONTH" && !plan.monthlyEnabled) return [];
@@ -91,7 +95,7 @@ export function configuredGatewaysForInterval(
   if (
     global.paypalEnabled &&
     plan.paypalEnabled &&
-    isUsablePaypalBillingPlanId(resolvePaypalPlanId(plan, interval))
+    isUsablePaypalBillingPlanId(resolvePaypalPlanId(plan, interval, paypalEnvironment))
   ) {
     out.push("paypal");
   }
@@ -190,6 +194,7 @@ function toPublicBillingPlan(
   plan: PlanWithFeatures,
   settings: BillingGatewaySettings,
   locale: Locale,
+  paypalEnvironment: PaypalCheckoutEnvironment,
 ): PublicBillingPlan {
   const monthLabels = entitlementLabelsForPlan(plan, "month");
   const yearLabels = entitlementLabelsForPlan(plan, "year");
@@ -247,12 +252,12 @@ function toPublicBillingPlan(
     copy: { month: monthCopy, year: yearCopy },
     legacyEnum: plan.legacyEnum,
     gateways: unionGateways(
-      configuredGatewaysForInterval(plan, "MONTH", settings),
-      configuredGatewaysForInterval(plan, "YEAR", settings),
+      configuredGatewaysForInterval(plan, "MONTH", settings, paypalEnvironment),
+      configuredGatewaysForInterval(plan, "YEAR", settings, paypalEnvironment),
     ),
     gatewaysByInterval: {
-      month: configuredGatewaysForInterval(plan, "MONTH", settings),
-      year: configuredGatewaysForInterval(plan, "YEAR", settings),
+      month: configuredGatewaysForInterval(plan, "MONTH", settings, paypalEnvironment),
+      year: configuredGatewaysForInterval(plan, "YEAR", settings, paypalEnvironment),
     },
   };
   publicPlan.stripeTrialDays = publicStripeTrialDays(
@@ -274,6 +279,7 @@ function toPublicBillingPlan(
  */
 async function loadPublicMarketingPlans(
   locale: Locale,
+  paypalEnvironment: PaypalCheckoutEnvironment,
 ): Promise<PublicBillingPlan[]> {
   const settings = await getBillingGatewaySettings();
   const plans = await prisma.plan.findMany({
@@ -284,18 +290,22 @@ async function loadPublicMarketingPlans(
     include: { planFeatures: { include: { feature: true } } },
     orderBy: [{ sortOrder: "asc" }, { monthlyPriceCents: "asc" }],
   });
-  return plans.map((plan) => toPublicBillingPlan(plan, settings, locale));
+  return plans.map((plan) =>
+    toPublicBillingPlan(plan, settings, locale, paypalEnvironment),
+  );
 }
 
 const cachedPublicMarketingPlans = unstable_cache(
   loadPublicMarketingPlans,
-  ["public-marketing-plans-v2"],
+  ["public-marketing-plans-v3"],
   { revalidate: 120, tags: ["public-billing-plans"] },
 );
 
 export const listPublicMarketingPlans = cache(
-  async (locale: Locale = "en"): Promise<PublicBillingPlan[]> =>
-    cachedPublicMarketingPlans(locale),
+  async (locale: Locale = "en"): Promise<PublicBillingPlan[]> => {
+    const paypalEnvironment = await resolvePaypalEnvironmentAsync();
+    return cachedPublicMarketingPlans(locale, paypalEnvironment);
+  },
 );
 
 /**
@@ -305,7 +315,10 @@ export const listPublicMarketingPlans = cache(
 export async function listPublicPricingPlans(
   locale: Locale = "en",
 ): Promise<PublicBillingPlan[]> {
-  const settings = await getBillingGatewaySettings();
+  const [settings, paypalEnvironment] = await Promise.all([
+    getBillingGatewaySettings(),
+    resolvePaypalEnvironmentAsync(),
+  ]);
   const plans = await prisma.plan.findMany({
     where: {
       status: "ACTIVE",
@@ -318,19 +331,27 @@ export async function listPublicPricingPlans(
   });
   return plans
     .filter(isPublicCommercialPricingPlan)
-    .map((plan) => toPublicBillingPlan(plan, settings, locale));
+    .map((plan) => toPublicBillingPlan(plan, settings, locale, paypalEnvironment));
+}
+
+export function isPublicCheckoutPlan(plan: {
+  isFree: boolean;
+  monthlyEnabled: boolean;
+  annualEnabled: boolean;
+  gateways: Array<"stripe" | "paypal">;
+}): boolean {
+  return (
+    !plan.isFree &&
+    (plan.monthlyEnabled || plan.annualEnabled) &&
+    plan.gateways.length > 0
+  );
 }
 
 /** Paid checkout cards (gateways required). Same localization as marketing. */
 export const listPublicCheckoutPlans = cache(
   async (locale: Locale = "en"): Promise<PublicBillingPlan[]> => {
     const plans = await listPublicMarketingPlans(locale);
-    return plans.filter(
-      (p) =>
-        !p.isFree &&
-        (p.monthlyEnabled || p.annualEnabled) &&
-        p.gateways.length > 0,
-    );
+    return plans.filter(isPublicCheckoutPlan);
   },
 );
 
@@ -370,7 +391,15 @@ export async function assertPlanAllowsCheckout(input: {
   if (input.interval === "YEAR" && !input.plan.annualEnabled) {
     throw Object.assign(new Error("PLAN_UNAVAILABLE"), { code: "PLAN_UNAVAILABLE" });
   }
-  assertIntervalGatewayMapping(input.plan, input.gateway, input.interval);
+  const paypalEnvironment =
+    input.gateway === "paypal" ? await resolvePaypalEnvironmentAsync() : "live";
+  assertIntervalGatewayMapping(
+    input.plan,
+    input.gateway,
+    input.interval,
+    process.env.NODE_ENV,
+    paypalEnvironment,
+  );
   if (
     input.plan.status !== "ACTIVE" ||
     !input.plan.visibleToPublic ||
@@ -400,8 +429,12 @@ export function assertIntervalGatewayMapping(
   gateway: "stripe" | "paypal",
   interval: BillingInterval,
   nodeEnv: string | undefined = process.env.NODE_ENV,
+  paypalEnvironment: PaypalCheckoutEnvironment = "live",
 ) {
-  if (gateway === "paypal" && !isUsablePaypalBillingPlanId(resolvePaypalPlanId(plan, interval))) {
+  if (
+    gateway === "paypal" &&
+    !isUsablePaypalBillingPlanId(resolvePaypalPlanId(plan, interval, paypalEnvironment))
+  ) {
     throw Object.assign(new Error("PAYPAL_PLAN_NOT_CONFIGURED"), {
       code: "PAYPAL_PLAN_NOT_CONFIGURED",
     });
@@ -443,12 +476,10 @@ export function assertStripePriceIdConfigured(plan: Plan, interval: BillingInter
   return priceId;
 }
 
-export function resolvePaypalPlanId(plan: Plan, interval: BillingInterval): string | null {
-  if (interval === "YEAR") {
-    return plan.paypalPlanAnnual || null;
-  }
-  return (
-    plan.paypalPlanMonthly ||
-    (plan.paypalPlanIdEnv ? process.env[plan.paypalPlanIdEnv] ?? null : null)
-  );
+export function resolvePaypalPlanId(
+  plan: Plan,
+  interval: BillingInterval,
+  environment: PaypalCheckoutEnvironment = "live",
+): string | null {
+  return paypalPlanIdForEnvironment(plan, interval, environment);
 }

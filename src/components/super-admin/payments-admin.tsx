@@ -12,8 +12,8 @@ import {
 } from "@/components/super-admin/payment-credentials-panel";
 import {
   gatewayMappingLabels,
-  isUsablePaypalBillingPlanId,
   isUsableStripePriceId,
+  paypalIntervalStatus,
 } from "@/services/billing/plan-gateway-ids";
 import type { BillingGatewaySettings } from "@/services/billing/settings";
 import { useRouter } from "next/navigation";
@@ -34,6 +34,8 @@ type PlanRow = {
   stripePriceAnnual: string | null;
   paypalPlanMonthly: string | null;
   paypalPlanAnnual: string | null;
+  paypalSandboxPlanMonthly: string | null;
+  paypalSandboxPlanAnnual: string | null;
   subscriptionsCount: number;
 };
 
@@ -262,10 +264,23 @@ export function PaymentsAdminPanel({
       </section>
 
       <section className="rounded-xl border border-slate-800 p-4">
-        <h2 className="text-lg font-medium text-white">Plan visibility & gateways</h2>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-lg font-medium text-white">Plan visibility & gateways</h2>
+          <span
+            className={
+              paypalIntegration?.environment === "live"
+                ? "rounded-full bg-rose-500/15 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-rose-300"
+                : "rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-amber-300"
+            }
+          >
+            Active PayPal environment:{" "}
+            {paypalIntegration?.environment === "live" ? "LIVE" : "SANDBOX"}
+          </span>
+        </div>
         <p className="mt-1 text-sm text-slate-400">
           Control which plans and payment methods appear in checkout. Price IDs and PayPal Plan
-          IDs are mapping values, not provider secrets.
+          IDs are mapping values, not provider secrets. Live and Sandbox PayPal Plan IDs are
+          stored separately and are never copied between environments.
           {paypalIntegration
             ? ` PayPal mappings are verified against the current ${paypalIntegration.environment} environment.`
             : ""}
@@ -294,8 +309,12 @@ export function PaymentsAdminPanel({
                     p.stripePriceAnnual,
                     p.paypalPlanMonthly,
                     p.paypalPlanAnnual,
+                    p.paypalSandboxPlanMonthly,
+                    p.paypalSandboxPlanAnnual,
+                    paypalIntegration?.environment ?? "sandbox",
                   ].join("|")}
                   plan={p}
+                  paypalEnvironment={paypalIntegration?.environment ?? "sandbox"}
                   pending={pending}
                   freeWorkspaceSettingsHref={freeWorkspaceSettingsHref}
                   onSaved={(message) => {
@@ -374,11 +393,13 @@ function StatusPills({ labels }: { labels: string[] }) {
 
 function PlanGatewayRow({
   plan,
+  paypalEnvironment,
   pending,
   onSaved,
   freeWorkspaceSettingsHref,
 }: {
   plan: PlanRow;
+  paypalEnvironment: "sandbox" | "live";
   pending: boolean;
   onSaved: (msg: string) => void;
   freeWorkspaceSettingsHref?: string;
@@ -391,6 +412,12 @@ function PlanGatewayRow({
   const [stripeAnnual, setStripeAnnual] = useState(plan.stripePriceAnnual ?? "");
   const [paypalMonthly, setPaypalMonthly] = useState(plan.paypalPlanMonthly ?? "");
   const [paypalAnnual, setPaypalAnnual] = useState(plan.paypalPlanAnnual ?? "");
+  const [paypalSandboxMonthly, setPaypalSandboxMonthly] = useState(
+    plan.paypalSandboxPlanMonthly ?? "",
+  );
+  const [paypalSandboxAnnual, setPaypalSandboxAnnual] = useState(
+    plan.paypalSandboxPlanAnnual ?? "",
+  );
   const [rowError, setRowError] = useState<string | null>(null);
   const [localPending, start] = useTransition();
 
@@ -487,14 +514,23 @@ function PlanGatewayRow({
     annualId: stripeAnnual,
     usable: isUsableStripePriceId,
   });
-  const paypalLabels = gatewayMappingLabels({
-    enabled: plan.isFree ? false : paypalOn,
-    monthlyEnabled: plan.monthlyEnabled,
-    annualEnabled: plan.annualEnabled,
-    monthlyId: paypalMonthly,
-    annualId: paypalAnnual,
-    usable: isUsablePaypalBillingPlanId,
+  const activePaypalMonthly =
+    paypalEnvironment === "sandbox" ? paypalSandboxMonthly : paypalMonthly;
+  const activePaypalAnnual =
+    paypalEnvironment === "sandbox" ? paypalSandboxAnnual : paypalAnnual;
+  const paypalMonthlyStatus = paypalIntervalStatus({
+    paypalEnabled: plan.isFree ? false : paypalOn,
+    intervalEnabled: plan.monthlyEnabled,
+    id: activePaypalMonthly,
+    required: true,
   });
+  const paypalAnnualStatus = paypalIntervalStatus({
+    paypalEnabled: plan.isFree ? false : paypalOn,
+    intervalEnabled: plan.annualEnabled,
+    id: activePaypalAnnual,
+    required: false,
+  });
+  const paypalEnvLabel = paypalEnvironment === "sandbox" ? "Sandbox" : "Live";
 
   return (
     <tr className="border-b border-slate-800/60 align-top">
@@ -539,7 +575,15 @@ function PlanGatewayRow({
         {shouldRenderCommercialPaymentFields(plan) ? (
           <div className="grid min-w-[16rem] gap-1">
             <StatusPills labels={stripeLabels.map((label) => `Stripe ${label}`)} />
-            <StatusPills labels={paypalLabels.map((label) => `PayPal ${label}`)} />
+            <p className="text-[11px] text-slate-400">
+              PayPal Monthly → {paypalMonthlyStatus}
+              {paypalMonthlyStatus === "Missing"
+                ? `. ${paypalEnvLabel} Monthly PayPal Plan ID missing`
+                : ""}
+            </p>
+            <p className="text-[11px] text-slate-400">
+              PayPal Annual → {paypalAnnualStatus}
+            </p>
             <input
               className="rounded border border-slate-700 bg-slate-950 px-2 py-1 font-mono text-xs"
               placeholder="Stripe price monthly"
@@ -558,10 +602,17 @@ function PlanGatewayRow({
               value={stripeAnnual}
               onChange={(e) => setStripeAnnual(e.target.value)}
             />
+            <p className="pt-1 text-[10px] font-semibold uppercase tracking-wide text-rose-300">
+              Live PayPal Plan IDs
+            </p>
             <input
-              className="rounded border border-slate-700 bg-slate-950 px-2 py-1 font-mono text-xs"
+              className={`rounded border px-2 py-1 font-mono text-xs ${
+                paypalEnvironment === "live"
+                  ? "border-rose-700 bg-slate-950"
+                  : "border-slate-700 bg-slate-950"
+              }`}
               placeholder="PayPal plan monthly"
-              aria-label={`PayPal plan monthly ${plan.name}`}
+              aria-label={`Live PayPal plan monthly ${plan.name}`}
               spellCheck={false}
               autoComplete="off"
               value={paypalMonthly}
@@ -569,12 +620,37 @@ function PlanGatewayRow({
             />
             <input
               className="rounded border border-slate-700 bg-slate-950 px-2 py-1 font-mono text-xs"
-              placeholder="PayPal plan annual"
-              aria-label={`PayPal plan annual ${plan.name}`}
+              placeholder="Live PayPal plan annual (optional)"
+              aria-label={`Live PayPal plan annual ${plan.name}`}
               spellCheck={false}
               autoComplete="off"
               value={paypalAnnual}
               onChange={(e) => setPaypalAnnual(e.target.value)}
+            />
+            <p className="pt-1 text-[10px] font-semibold uppercase tracking-wide text-amber-300">
+              Sandbox PayPal Plan IDs
+            </p>
+            <input
+              className={`rounded border px-2 py-1 font-mono text-xs ${
+                paypalEnvironment === "sandbox"
+                  ? "border-amber-600 bg-slate-950"
+                  : "border-slate-700 bg-slate-950"
+              }`}
+              placeholder="Sandbox PayPal plan monthly"
+              aria-label={`Sandbox PayPal plan monthly ${plan.name}`}
+              spellCheck={false}
+              autoComplete="off"
+              value={paypalSandboxMonthly}
+              onChange={(e) => setPaypalSandboxMonthly(e.target.value)}
+            />
+            <input
+              className="rounded border border-slate-700 bg-slate-950 px-2 py-1 font-mono text-xs"
+              placeholder="Sandbox PayPal plan annual (optional)"
+              aria-label={`Sandbox PayPal plan annual ${plan.name}`}
+              spellCheck={false}
+              autoComplete="off"
+              value={paypalSandboxAnnual}
+              onChange={(e) => setPaypalSandboxAnnual(e.target.value)}
             />
             {rowError ? (
               <p className="max-w-sm whitespace-normal text-xs text-rose-300">{rowError}</p>
@@ -601,6 +677,8 @@ function PlanGatewayRow({
                 stripePriceAnnual: stripeAnnual || null,
                 paypalPlanMonthly: paypalMonthly || null,
                 paypalPlanAnnual: paypalAnnual || null,
+                paypalSandboxPlanMonthly: paypalSandboxMonthly || null,
+                paypalSandboxPlanAnnual: paypalSandboxAnnual || null,
               });
               if (!result.ok) {
                 setRowError(result.error.message);

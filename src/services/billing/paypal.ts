@@ -27,6 +27,7 @@ import type { BillingInterval } from "@prisma/client";
 
 import {
   resolvePaypalCredentials,
+  resolvePaypalEnvironmentAsync,
 } from "@/services/billing/provider-credentials";
 
 /**
@@ -310,7 +311,8 @@ export async function createPayPalCheckoutSession(input: {
   const plan = await getCheckoutPlanOrThrow(input.planIdOrSlug);
   await assertPlanAllowsCheckout({ plan, gateway: "paypal", interval: input.interval });
   const amountCents = resolvePlanAmountCents(plan, input.interval);
-  const paypalPlanId = resolvePaypalPlanId(plan, input.interval);
+  const paypalEnvironment = await resolvePaypalEnvironmentAsync();
+  const paypalPlanId = resolvePaypalPlanId(plan, input.interval, paypalEnvironment);
 
   if (!isUsablePaypalBillingPlanId(paypalPlanId)) {
     throw new AppError(

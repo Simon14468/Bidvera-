@@ -49,6 +49,16 @@ export function enforceNonCheckoutGatewayFlags<
   return input;
 }
 
+export type PaypalCheckoutEnvironment = "sandbox" | "live";
+
+export type PaypalPlanMapping = {
+  paypalPlanMonthly?: string | null;
+  paypalPlanAnnual?: string | null;
+  paypalSandboxPlanMonthly?: string | null;
+  paypalSandboxPlanAnnual?: string | null;
+  paypalPlanIdEnv?: string | null;
+};
+
 export type PlanGatewayWriteInput = {
   name: string;
   slug: string;
@@ -61,6 +71,8 @@ export type PlanGatewayWriteInput = {
   stripePriceAnnual: string | null;
   paypalPlanMonthly: string | null;
   paypalPlanAnnual: string | null;
+  paypalSandboxPlanMonthly?: string | null;
+  paypalSandboxPlanAnnual?: string | null;
 };
 
 export type PlanGatewayWriteResult = {
@@ -70,8 +82,47 @@ export type PlanGatewayWriteResult = {
   stripePriceAnnual: string | null;
   paypalPlanMonthly: string | null;
   paypalPlanAnnual: string | null;
+  paypalSandboxPlanMonthly: string | null;
+  paypalSandboxPlanAnnual: string | null;
   errors: string[];
 };
+
+/**
+ * Live IDs live on paypalPlanMonthly/Annual.
+ * Sandbox IDs live on paypalSandboxPlanMonthly/Annual.
+ * A value in one environment is never read as the other environment's Plan ID.
+ */
+export function paypalPlanIdForEnvironment(
+  plan: PaypalPlanMapping,
+  interval: "MONTH" | "YEAR",
+  environment: PaypalCheckoutEnvironment,
+  readEnv: (name: string) => string | undefined = (name) => process.env[name],
+): string | null {
+  if (environment === "sandbox") {
+    return blankToNull(
+      interval === "YEAR" ? plan.paypalSandboxPlanAnnual : plan.paypalSandboxPlanMonthly,
+    );
+  }
+  if (interval === "YEAR") return blankToNull(plan.paypalPlanAnnual);
+  return (
+    blankToNull(plan.paypalPlanMonthly) ||
+    (plan.paypalPlanIdEnv ? blankToNull(readEnv(plan.paypalPlanIdEnv)) : null)
+  );
+}
+
+export type PaypalIntervalStatus = "Off" | "Configured" | "Missing" | "Invalid" | "Optional";
+
+export function paypalIntervalStatus(input: {
+  paypalEnabled: boolean;
+  intervalEnabled: boolean;
+  id: string | null | undefined;
+  required: boolean;
+}): PaypalIntervalStatus {
+  if (!input.paypalEnabled || !input.intervalEnabled) return "Off";
+  const id = blankToNull(input.id);
+  if (!id) return input.required ? "Missing" : "Optional";
+  return isUsablePaypalBillingPlanId(id) ? "Configured" : "Invalid";
+}
 
 function intervalIdError(input: {
   planName: string;
@@ -102,11 +153,22 @@ function intervalIdError(input: {
   return null;
 }
 
-export function normalizePlanGatewayWrite(input: PlanGatewayWriteInput): PlanGatewayWriteResult {
+function paypalFormatError(planName: string, label: string, id: string | null): string | null {
+  if (!id || isUsablePaypalBillingPlanId(id)) return null;
+  return `PayPal is enabled for ${planName}, but the ${label} is not a valid PayPal billing Plan ID.`;
+}
+
+export function normalizePlanGatewayWrite(
+  input: PlanGatewayWriteInput,
+  options?: { paypalEnvironment?: PaypalCheckoutEnvironment },
+): PlanGatewayWriteResult {
+  const paypalEnvironment = options?.paypalEnvironment ?? "live";
   const stripePriceMonthly = blankToNull(input.stripePriceMonthly);
   const stripePriceAnnual = blankToNull(input.stripePriceAnnual);
   const paypalPlanMonthly = blankToNull(input.paypalPlanMonthly);
   const paypalPlanAnnual = blankToNull(input.paypalPlanAnnual);
+  const paypalSandboxPlanMonthly = blankToNull(input.paypalSandboxPlanMonthly);
+  const paypalSandboxPlanAnnual = blankToNull(input.paypalSandboxPlanAnnual);
 
   if (planExemptFromGatewayMappings(input)) {
     return {
@@ -116,8 +178,42 @@ export function normalizePlanGatewayWrite(input: PlanGatewayWriteInput): PlanGat
       stripePriceAnnual,
       paypalPlanMonthly,
       paypalPlanAnnual,
+      paypalSandboxPlanMonthly,
+      paypalSandboxPlanAnnual,
       errors: [],
     };
+  }
+
+  const activeMonthly =
+    paypalEnvironment === "sandbox" ? paypalSandboxPlanMonthly : paypalPlanMonthly;
+  const activeMonthlyLabel =
+    paypalEnvironment === "sandbox"
+      ? "Sandbox Monthly PayPal Plan ID"
+      : "Monthly PayPal Plan ID";
+  const paypalErrors: Array<string | null> = [];
+  if (input.paypalEnabled) {
+    if (input.monthlyEnabled) {
+      if (!activeMonthly) {
+        paypalErrors.push(
+          `PayPal is enabled for ${input.name}, but the ${activeMonthlyLabel} is missing.`,
+        );
+      } else {
+        paypalErrors.push(paypalFormatError(input.name, activeMonthlyLabel, activeMonthly));
+      }
+    }
+    const inactiveMonthly =
+      paypalEnvironment === "sandbox" ? paypalPlanMonthly : paypalSandboxPlanMonthly;
+    const inactiveMonthlyLabel =
+      paypalEnvironment === "sandbox"
+        ? "Live Monthly PayPal Plan ID"
+        : "Sandbox Monthly PayPal Plan ID";
+    paypalErrors.push(paypalFormatError(input.name, inactiveMonthlyLabel, inactiveMonthly));
+    paypalErrors.push(
+      paypalFormatError(input.name, "Live Annual PayPal Plan ID", paypalPlanAnnual),
+    );
+    paypalErrors.push(
+      paypalFormatError(input.name, "Sandbox Annual PayPal Plan ID", paypalSandboxPlanAnnual),
+    );
   }
 
   const errors = [
@@ -137,22 +233,7 @@ export function normalizePlanGatewayWrite(input: PlanGatewayWriteInput): PlanGat
       usable: isUsableStripePriceId,
       enabled: input.stripeEnabled && input.annualEnabled,
     }),
-    intervalIdError({
-      planName: input.name,
-      gatewayLabel: "PayPal",
-      intervalLabel: "Monthly",
-      id: paypalPlanMonthly,
-      usable: isUsablePaypalBillingPlanId,
-      enabled: input.paypalEnabled && input.monthlyEnabled,
-    }),
-    intervalIdError({
-      planName: input.name,
-      gatewayLabel: "PayPal",
-      intervalLabel: "Annual",
-      id: paypalPlanAnnual,
-      usable: isUsablePaypalBillingPlanId,
-      enabled: input.paypalEnabled && input.annualEnabled,
-    }),
+    ...paypalErrors,
   ].filter((message): message is string => Boolean(message));
 
   return {
@@ -162,6 +243,8 @@ export function normalizePlanGatewayWrite(input: PlanGatewayWriteInput): PlanGat
     stripePriceAnnual,
     paypalPlanMonthly,
     paypalPlanAnnual,
+    paypalSandboxPlanMonthly,
+    paypalSandboxPlanAnnual,
     errors,
   };
 }

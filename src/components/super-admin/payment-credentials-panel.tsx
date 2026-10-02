@@ -287,9 +287,9 @@ export function PaymentCredentialsPanel({
               </p>
             ) : (
               <p className="mt-2 text-xs text-slate-500">
-                One-click switch for this server. Live uses real money; Sandbox is
-                for testing. Unsaved credential fields are not required to change
-                mode.
+                Active environment is the Super Admin vault. PAYPAL_ENVIRONMENT is
+                used only when the vault environment is unset. Live uses real money;
+                Sandbox is for testing. Plan IDs are not shared between them.
               </p>
             )}
           </div>

@@ -4,6 +4,7 @@
 
 import type { SuperAdminContext } from "@/auth/super-admin-session";
 import { writeAdminAudit } from "@/services/admin/audit";
+import { revalidatePublicPlanSurfaces } from "@/application/admin/revalidate-plans";
 import {
   getPaypalCredentialsAdminSnapshot,
   getStripeCredentialsAdminSnapshot,
@@ -48,6 +49,9 @@ export async function savePaypalCredentialsForAdmin(
       cleared: Boolean((raw as { clearAll?: boolean })?.clearAll),
     },
   });
+  if (before.environment !== after.environment) {
+    revalidatePublicPlanSurfaces();
+  }
   return snap;
 }
 

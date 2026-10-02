@@ -39,6 +39,8 @@ export default async function SaPaymentsPage() {
           stripePriceAnnual: plan.stripePriceAnnual,
           paypalPlanMonthly: plan.paypalPlanMonthly,
           paypalPlanAnnual: plan.paypalPlanAnnual,
+          paypalSandboxPlanMonthly: plan.paypalSandboxPlanMonthly,
+          paypalSandboxPlanAnnual: plan.paypalSandboxPlanAnnual,
           subscriptionsCount: plan._count.subscriptions,
         }))}
       />

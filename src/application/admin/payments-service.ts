@@ -81,6 +81,8 @@ export async function getPaymentsAdminDashboard() {
         stripePriceAnnual: true,
         paypalPlanMonthly: true,
         paypalPlanAnnual: true,
+        paypalSandboxPlanMonthly: true,
+        paypalSandboxPlanAnnual: true,
         _count: { select: { subscriptions: true } },
       },
     }),

@@ -126,24 +126,21 @@ describe("plan gateway mapping validation", () => {
     );
   });
 
-  it("rejects PayPal enabled with a missing annual Plan ID", () => {
+  it("allows a missing PayPal annual Plan ID because annual is optional", () => {
     const result = normalizePlanGatewayWrite({
       name: "Starter",
       slug: "starter",
       isFree: false,
-      monthlyEnabled: false,
+      monthlyEnabled: true,
       annualEnabled: true,
       stripeEnabled: false,
       paypalEnabled: true,
       stripePriceMonthly: null,
       stripePriceAnnual: null,
-      paypalPlanMonthly: null,
+      paypalPlanMonthly: PAYPAL_MONTH,
       paypalPlanAnnual: null,
     });
-    assert.match(
-      result.errors.join(" "),
-      /PayPal is enabled for Starter, but the Annual PayPal Plan ID is missing/,
-    );
+    assert.deepEqual(result.errors, []);
   });
 
   it("accepts PayPal billing Plan IDs and rejects arbitrary strings", () => {

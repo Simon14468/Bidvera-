@@ -33,7 +33,7 @@ type PaypalVault = {
   clientId?: string;
   clientSecret?: string;
   webhookId?: string;
-  /** sandbox | live — vault preference when env is unset */
+  /** sandbox | live — runtime source of truth. PAYPAL_ENVIRONMENT is fallback only. */
   environment?: "sandbox" | "live";
 };
 
@@ -211,31 +211,38 @@ function pickEnv(name: string): string {
   return sanitizeSecretKey(process.env[name]) ?? "";
 }
 
+export type PaypalCheckoutEnvironment = "sandbox" | "live";
+
 /**
- * Resolve PayPal environment.
- * Precedence: process env → SA vault → live in production / sandbox otherwise.
- * Never silently defaults to sandbox under NODE_ENV=production.
+ * PayPal checkout environment.
+ * Precedence: Super Admin vault → PAYPAL_ENVIRONMENT / PAYPAL_MODE → live in production, sandbox otherwise.
+ * Process env does not lock or override a vault choice.
  */
-export async function resolvePaypalEnvironmentAsync(): Promise<"sandbox" | "live"> {
-  const raw = (
-    process.env.PAYPAL_ENVIRONMENT ??
-    process.env.PAYPAL_MODE ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
+export function resolvePaypalEnvironmentFromSources(input: {
+  vaultEnvironment?: string | null;
+  environmentEnv?: string | null;
+  modeEnv?: string | null;
+  nodeEnv?: string | null;
+}): PaypalCheckoutEnvironment {
+  const vault = input.vaultEnvironment?.trim().toLowerCase();
+  if (vault === "live" || vault === "sandbox") return vault;
+  const raw = (input.environmentEnv ?? input.modeEnv ?? "").trim().toLowerCase();
   if (raw === "production" || raw === "live") return "live";
   if (raw === "sandbox") return "sandbox";
+  return input.nodeEnv === "production" ? "live" : "sandbox";
+}
 
+export async function resolvePaypalEnvironmentAsync(): Promise<PaypalCheckoutEnvironment> {
   const vault = (await readVaultObject(
     BILLING_PAYPAL_VAULT_KEY,
     "billing-paypal",
   )) as PaypalVault;
-  if (vault.environment === "live" || vault.environment === "sandbox") {
-    return vault.environment;
-  }
-
-  return process.env.NODE_ENV === "production" ? "live" : "sandbox";
+  return resolvePaypalEnvironmentFromSources({
+    vaultEnvironment: vault.environment,
+    environmentEnv: process.env.PAYPAL_ENVIRONMENT,
+    modeEnv: process.env.PAYPAL_MODE,
+    nodeEnv: process.env.NODE_ENV,
+  });
 }
 
 export type ResolvedPaypalCredentials = {
@@ -337,9 +344,7 @@ export async function getPaypalCredentialsAdminSnapshot() {
 
   return {
     environment: creds.environment,
-    environmentLockedByEnv: Boolean(
-      (process.env.PAYPAL_ENVIRONMENT ?? process.env.PAYPAL_MODE ?? "").trim(),
-    ),
+    environmentLockedByEnv: false,
     credentialsConfigured: credentialsConfigured && !invalidLive,
     webhookConfigured: Boolean(creds.webhookId),
     clientIdHint: maskSecretHint(creds.clientId),

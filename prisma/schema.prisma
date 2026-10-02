@@ -1467,8 +1467,14 @@ model Plan {
   paypalEnabled     Boolean    @default(true)
   stripePriceMonthly String?
   stripePriceAnnual  String?
+  /** Live PayPal billing Plan ID. Existing values stay here and are never copied into sandbox. */
   paypalPlanMonthly  String?
+  /** Live PayPal billing Plan ID. Annual is optional. */
   paypalPlanAnnual   String?
+  /** Sandbox-only PayPal billing Plan ID. Not inferred from the live ID. */
+  paypalSandboxPlanMonthly String?
+  /** Sandbox-only PayPal billing Plan ID. Annual is optional. */
+  paypalSandboxPlanAnnual  String?
   highlighted       Boolean    @default(false)
   sortOrder         Int        @default(0)
   /**
