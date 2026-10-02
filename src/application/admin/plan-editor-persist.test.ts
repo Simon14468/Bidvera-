@@ -38,6 +38,18 @@ test("upsertPlanForAdmin writes slug and refuses create-over-existing slug", () 
   assert.match(service, /previous\.slug !== data\.slug/);
 });
 
+test("price edits keep currency and stored gateway IDs", () => {
+  const service = readSrc("src/application/admin/plan-service.ts");
+  assert.match(service, /preserveStoredGatewayIds/);
+  assert.match(service, /currency: previous \? previous\.currency/);
+  assert.match(service, /syncSubscribersToPlanLimits/);
+  const form = readSrc("src/components/super-admin/plan-form.tsx");
+  assert.match(form, /Monthly price/);
+  assert.match(form, /Yearly price/);
+  assert.match(form, /Update plan & sync subscribers/);
+  assert.match(form, /readOnly=\{initial != null\}/);
+});
+
 test("public plan cache is expired immediately after admin save", () => {
   const revalidate = readSrc("src/application/admin/revalidate-plans.ts");
   assert.match(revalidate, /updateTag\("public-billing-plans"\)/);

@@ -34,9 +34,11 @@ export { normalizePlanSlug } from "@/domain/billing/plan-slug";
 const inputClass =
   "rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100";
 
-function dollarsToCents(value: string): number {
-  const n = Number(value);
-  if (!Number.isFinite(n) || n < 0) return 0;
+function dollarsToCents(value: string): number | null {
+  const trimmed = value.trim();
+  if (!/^\d+(\.\d{1,2})?$/.test(trimmed)) return null;
+  const n = Number(trimmed);
+  if (!Number.isFinite(n) || n < 0) return null;
   return Math.round(n * 100);
 }
 
@@ -136,6 +138,7 @@ export function PlansManager({
 }) {
   const router = useRouter();
   const [msg, setMsg] = useState<string | null>(null);
+  const [msgOk, setMsgOk] = useState(true);
   const [pending, start] = useTransition();
   const [editing, setEditing] = useState<AdminPlanRow | null>(() => {
     if (!focusSlug) return null;
@@ -271,6 +274,7 @@ export function PlansManager({
                             planId: p.id,
                             status: next,
                           });
+                          setMsgOk(r.ok);
                           setMsg(
                             r.ok
                               ? `${p.name} → ${next}`
@@ -303,6 +307,7 @@ export function PlansManager({
                 translations,
               });
               if (!r.ok) {
+                setMsgOk(false);
                 setMsg(r.error.message);
                 return;
               }
@@ -314,6 +319,7 @@ export function PlansManager({
                     }
                   : prev,
               );
+              setMsgOk(true);
               setMsg(
                 "Published — live now on /pricing and /upgrade (refresh those tabs).",
               );
@@ -340,6 +346,7 @@ export function PlansManager({
               start(async () => {
                 const r = await saUpsertPlan(payload);
                 if (!r.ok) {
+                  setMsgOk(false);
                   setMsg(r.error.message);
                   return;
                 }
@@ -354,8 +361,13 @@ export function PlansManager({
                 );
                 setEditing(nextRow);
                 setEditorEpoch((n) => n + 1);
+                setMsgOk(true);
+                const monthly = Number(payload.monthlyPriceCents);
+                const annual = payload.annualPriceCents;
                 setMsg(
-                  "Plan saved — subscribers synced; live on /pricing, /upgrade, and Paywall.",
+                  `Prices saved. Subscribers synced. Monthly ${centsToDollars(monthly)} and yearly ${
+                    annual == null ? "not set" : centsToDollars(Number(annual))
+                  } are live on /pricing.`,
                 );
                 router.refresh();
               });
@@ -364,7 +376,11 @@ export function PlansManager({
         </div>
       )}
 
-      {msg ? <p className="text-sm text-emerald-300/90">{msg}</p> : null}
+      {msg ? (
+        <p className={`text-sm ${msgOk ? "text-emerald-300" : "text-rose-300"}`} role="status">
+          {msg}
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -923,6 +939,7 @@ function PlanEditor({
   const [slug, setSlug] = useState(
     () => initial?.slug ?? defaultSlug ?? "",
   );
+  const [priceError, setPriceError] = useState<string | null>(null);
   const [sourceKey, setSourceKey] = useState(initial?.id ?? "new");
   const nextKey = initial?.id ?? "new";
   if (nextKey !== sourceKey) {
@@ -969,9 +986,21 @@ function PlanEditor({
         e.preventDefault();
         const form = e.currentTarget;
         const fd = new FormData(form);
-        const monthlyDollars = String(fd.get("monthlyDollars") ?? "0");
+        const monthlyDollars = String(fd.get("monthlyDollars") ?? "");
         const annualDollars = String(fd.get("annualDollars") ?? "");
         const yearlySeats = String(fd.get("seatsLimitYearly") ?? "");
+        const monthlyPriceCents = isFree ? 0 : dollarsToCents(monthlyDollars);
+        const annualPriceCents =
+          isFree || !annualDollars.trim() ? null : dollarsToCents(annualDollars);
+        if (!isFree && monthlyPriceCents == null) {
+          setPriceError("Monthly price must be a number greater than or equal to 0.");
+          return;
+        }
+        if (!isFree && annualDollars.trim() && annualPriceCents == null) {
+          setPriceError("Yearly price must be a number greater than or equal to 0.");
+          return;
+        }
+        setPriceError(null);
         // Free Workspace system identity keeps slug "free"; paid plans are fully editable.
         const nextSlug = isFree ? "free" : normalizePlanSlug(slug || String(fd.get("slug") ?? ""));
         if (!nextSlug || nextSlug.length < 2) {
@@ -983,11 +1012,8 @@ function PlanEditor({
             slug: nextSlug,
             name: String(fd.get("name")),
             description: String(fd.get("description") || "") || null,
-            monthlyPriceCents: isFree ? 0 : dollarsToCents(monthlyDollars),
-            annualPriceCents:
-              isFree || !annualDollars
-                ? null
-                : dollarsToCents(annualDollars),
+            monthlyPriceCents: isFree ? 0 : (monthlyPriceCents ?? 0),
+            annualPriceCents,
             annualMonths: Number(fd.get("annualMonths") || 12),
             monthlyEnabled,
             annualEnabled,
@@ -1019,7 +1045,7 @@ function PlanEditor({
               const n = Number(raw);
               return Number.isFinite(n) ? n : null;
             })(),
-            currency: String(fd.get("currency") || "usd"),
+            currency: initial?.currency ?? String(fd.get("currency") || "usd"),
             sortOrder: Number(fd.get("sortOrder") || 0),
             highlighted: fd.get("highlighted") === "on",
             preferEntitlementLabels: preferLabels,
@@ -1215,12 +1241,13 @@ function PlanEditor({
         <>
           <div className="grid gap-2 sm:grid-cols-2">
             <label className="text-xs text-slate-400">
-              Monthly price (USD)
+              Monthly price
               <input
                 name="monthlyDollars"
                 type="number"
                 step="0.01"
                 min="0"
+                inputMode="decimal"
                 required
                 defaultValue={
                   initial ? centsToDollars(initial.monthlyPriceCents) : ""
@@ -1229,12 +1256,13 @@ function PlanEditor({
               />
             </label>
             <label className="text-xs text-slate-400">
-              Yearly price (USD)
+              Yearly price
               <input
                 name="annualDollars"
                 type="number"
                 step="0.01"
                 min="0"
+                inputMode="decimal"
                 defaultValue={
                   initial?.annualPriceCents != null
                     ? centsToDollars(initial.annualPriceCents)
@@ -1261,8 +1289,14 @@ function PlanEditor({
               Currency
               <input
                 name="currency"
+                readOnly={initial != null}
                 defaultValue={initial?.currency ?? "usd"}
-                className={`mt-1 w-full ${inputClass}`}
+                className={`mt-1 w-full ${inputClass} ${initial ? "opacity-70" : ""}`}
+                title={
+                  initial
+                    ? "Currency stays on the plan. Price edits do not change it."
+                    : undefined
+                }
               />
             </label>
             <label className="text-xs text-slate-400">
@@ -1486,12 +1520,13 @@ function PlanEditor({
         />
       </label>
 
+      {priceError ? <p className="text-sm text-rose-300">{priceError}</p> : null}
       <button
         type="submit"
         disabled={pending}
         className="rounded-lg bg-emerald-700 px-3 py-2 text-sm disabled:opacity-50"
       >
-        {initial ? "Update plan & sync subscribers" : "Create plan"}
+        {pending ? "Saving…" : initial ? "Update plan & sync subscribers" : "Create plan"}
       </button>
     </form>
   );

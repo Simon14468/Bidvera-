@@ -90,6 +90,17 @@ export async function upsertPlanForAdmin(
   );
 
   const guarded = enforceNonCheckoutGatewayFlags(applyFreeWorkspaceCheckoutGuard(data));
+  const gatewayIdsOmitted =
+    data.stripePriceMonthly === undefined &&
+    data.stripePriceAnnual === undefined &&
+    data.paypalPlanMonthly === undefined &&
+    data.paypalPlanAnnual === undefined;
+  const preserveStoredGatewayIds = Boolean(
+    previous &&
+      gatewayIdsOmitted &&
+      (data.stripeEnabled === undefined || data.stripeEnabled === previous.stripeEnabled) &&
+      (data.paypalEnabled === undefined || data.paypalEnabled === previous.paypalEnabled),
+  );
   const gatewayWrite = normalizePlanGatewayWrite({
     name: guarded.name,
     slug: guarded.slug,
@@ -115,7 +126,7 @@ export async function upsertPlanForAdmin(
         ? blankToNull(guarded.paypalPlanAnnual)
         : blankToNull(previous?.paypalPlanAnnual),
   });
-  if (gatewayWrite.errors.length > 0) {
+  if (gatewayWrite.errors.length > 0 && !preserveStoredGatewayIds) {
     throw new AppError(ErrorCode.VALIDATION, gatewayWrite.errors.join(" "), 400);
   }
 
@@ -193,11 +204,15 @@ export async function upsertPlanForAdmin(
           : {}),
         stripeEnabled: gatewayWrite.stripeEnabled,
         paypalEnabled: gatewayWrite.paypalEnabled,
-        stripePriceMonthly: gatewayWrite.stripePriceMonthly,
-        stripePriceAnnual: gatewayWrite.stripePriceAnnual,
-        paypalPlanMonthly: gatewayWrite.paypalPlanMonthly,
-        paypalPlanAnnual: gatewayWrite.paypalPlanAnnual,
-        ...(data.currency !== undefined ? { currency: data.currency } : {}),
+        ...(preserveStoredGatewayIds
+          ? {}
+          : {
+              stripePriceMonthly: gatewayWrite.stripePriceMonthly,
+              stripePriceAnnual: gatewayWrite.stripePriceAnnual,
+              paypalPlanMonthly: gatewayWrite.paypalPlanMonthly,
+              paypalPlanAnnual: gatewayWrite.paypalPlanAnnual,
+            }),
+        currency: previous ? previous.currency : (data.currency ?? "usd"),
         status: data.status,
         highlighted: data.highlighted,
         sortOrder: data.sortOrder,
